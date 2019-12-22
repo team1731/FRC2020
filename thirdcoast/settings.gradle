@@ -1,0 +1,4 @@
+rootProject.name = 'thirdcoast'
+include 'swerve'
+include 'telemetry'
+include 'deadeye'
