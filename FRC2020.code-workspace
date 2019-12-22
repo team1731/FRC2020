@@ -1,7 +1,10 @@
 {
 	"folders": [
 		{
-			"path": "."
+			"path": "swerve-example"
+		},
+		{
+			"path": "thirdcoast"
 		}
 	],
 	"settings": {
