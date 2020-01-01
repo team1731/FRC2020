@@ -1,12 +1,17 @@
 package org.strykeforce.thirdcoast.swerve;
 
-import static com.ctre.phoenix.motorcontrol.ControlMode.*;
+import static com.ctre.phoenix.motorcontrol.ControlMode.MotionMagic;
+import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
+import static com.ctre.phoenix.motorcontrol.ControlMode.Velocity;
 import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.TELEOP;
+
+import java.util.Objects;
+import java.util.function.DoubleConsumer;
 
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import java.util.Objects;
-import java.util.function.DoubleConsumer;
+import com.revrobotics.CANSparkMax;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode;
@@ -15,25 +20,31 @@ import org.strykeforce.thirdcoast.talon.Errors;
 /**
  * Controls a swerve drive wheel azimuth and drive motors.
  *
- * <p>The swerve-drive inverse kinematics algorithm will always calculate individual wheel angles as
- * -0.5 to 0.5 rotations, measured clockwise with zero being the straight-ahead position. Wheel
- * speed is calculated as 0 to 1 in the direction of the wheel angle.
+ * <p>
+ * The swerve-drive inverse kinematics algorithm will always calculate
+ * individual wheel angles as -0.5 to 0.5 rotations, measured clockwise with
+ * zero being the straight-ahead position. Wheel speed is calculated as 0 to 1
+ * in the direction of the wheel angle.
  *
- * <p>This class will calculate how to implement this angle and drive direction optimally for the
- * azimuth and drive motors. In some cases it makes sense to reverse wheel direction to avoid
- * rotating the wheel azimuth 180 degrees.
+ * <p>
+ * This class will calculate how to implement this angle and drive direction
+ * optimally for the azimuth and drive motors. In some cases it makes sense to
+ * reverse wheel direction to avoid rotating the wheel azimuth 180 degrees.
  *
- * <p>Hardware assumed by this class includes a CTRE magnetic encoder on the azimuth motor and no
- * limits on wheel azimuth rotation. Azimuth Talons have an ID in the range 0-3 with corresponding
- * drive Talon IDs in the range 10-13.
+ * <p>
+ * Hardware assumed by this class includes a CTRE magnetic encoder on the
+ * azimuth motor and no limits on wheel azimuth rotation. Azimuth Talons have an
+ * ID in the range 0-3 with corresponding drive Talon IDs in the range 10-13.
  */
 public class Wheel {
   private static final int TICKS = 4096;
 
   private static final Logger logger = LoggerFactory.getLogger(Wheel.class);
   private final double driveSetpointMax;
-  private final TalonSRX driveTalon;
-  private final TalonSRX azimuthTalon;
+  //private final TalonSRX driveTalon;
+  private final CANSparkMax driveSpark;
+  //private final TalonSRX azimuthTalon;
+  private final CANSparkMax azimuthSpark;
   protected DoubleConsumer driver;
   private boolean isInverted = false;
 
@@ -49,14 +60,15 @@ public class Wheel {
    * @param drive the configured drive TalonSRX
    * @param driveSetpointMax scales closed-loop drive output to this value when drive setpoint = 1.0
    */
-  public Wheel(TalonSRX azimuth, TalonSRX drive, double driveSetpointMax) {
+  public Wheel(CANSparkMax azimuth, CANSparkMax drive, double driveSetpointMax) {
     this.driveSetpointMax = driveSetpointMax;
-    azimuthTalon = Objects.requireNonNull(azimuth);
-    driveTalon = Objects.requireNonNull(drive);
+    azimuthSpark = Objects.requireNonNull(azimuth);
+    driveSpark = Objects.requireNonNull(drive);
 
     setDriveMode(TELEOP);
 
-    logger.debug("azimuth = {} drive = {}", azimuthTalon.getDeviceID(), driveTalon.getDeviceID());
+    //logger.debug("azimuth = {} drive = {}", azimuthTalon.getDeviceID(), driveTalon.getDeviceID());
+    logger.debug("azimuth = {} drive = {}", azimuthSpark.getDeviceId(), driveSpark.getDeviceId());
     logger.debug("driveSetpointMax = {}", driveSetpointMax);
     if (driveSetpointMax == 0.0) logger.warn("driveSetpointMax may not have been configured");
   }
@@ -77,7 +89,8 @@ public class Wheel {
 
     azimuth *= -TICKS; // flip azimuth, hardware configuration dependent
 
-    double azimuthPosition = azimuthTalon.getSelectedSensorPosition(0);
+    //double azimuthPosition = azimuthTalon.getSelectedSensorPosition(0);
+    double azimuthPosition = azimuthSpark.get();
     double azimuthError = Math.IEEEremainder(azimuth - azimuthPosition, TICKS);
 
     // minimize azimuth rotation, reversing drive if necessary
@@ -87,7 +100,8 @@ public class Wheel {
       drive = -drive;
     }
 
-    azimuthTalon.set(MotionMagic, azimuthPosition + azimuthError);
+    //azimuthTalon.set(MotionMagic, azimuthPosition + azimuthError);
+    azimuthSpark.set(azimuthPosition + azimuthError);
     driver.accept(drive);
   }
 
@@ -97,11 +111,13 @@ public class Wheel {
    * @param position position in encoder ticks.
    */
   public void setAzimuthPosition(int position) {
-    azimuthTalon.set(MotionMagic, position);
+    //azimuthTalon.set(MotionMagic, position);
+    azimuthSpark.set(position);
   }
 
   public void disableAzimuth() {
-    azimuthTalon.neutralOutput();
+    //azimuthTalon.neutralOutput();
+    azimuthSpark.set(0);
   }
 
   /**
@@ -121,12 +137,14 @@ public class Wheel {
     switch (driveMode) {
       case OPEN_LOOP:
       case TELEOP:
-        driver = (setpoint) -> driveTalon.set(PercentOutput, setpoint);
-        break;
+        //driver = (setpoint) -> driveTalon.set(PercentOutput, setpoint);
+        driver = (setpoint) -> driveSpark.set(setpoint);
+      break;
       case CLOSED_LOOP:
       case TRAJECTORY:
       case AZIMUTH:
-        driver = (setpoint) -> driveTalon.set(Velocity, setpoint * driveSetpointMax);
+        //driver = (setpoint) -> driveTalon.set(Velocity, setpoint * driveSetpointMax);
+        driver = (setpoint) -> driveSpark.set(setpoint * driveSetpointMax);
         break;
     }
   }
@@ -136,7 +154,8 @@ public class Wheel {
    * current position in case the wheel has been manually rotated away from its previous setpoint.
    */
   public void stop() {
-    azimuthTalon.set(MotionMagic, azimuthTalon.getSelectedSensorPosition(0));
+    //azimuthTalon.set(MotionMagic, azimuthTalon.getSelectedSensorPosition(0));
+    azimuthSpark.set(azimuthSpark.get());
     driver.accept(0d);
   }
 
@@ -156,9 +175,10 @@ public class Wheel {
    */
   public void setAzimuthZero(int zero) {
     int azimuthSetpoint = getAzimuthAbsolutePosition() - zero;
-    ErrorCode err = azimuthTalon.setSelectedSensorPosition(azimuthSetpoint, 0, 10);
-    Errors.check(err, logger);
-    azimuthTalon.set(MotionMagic, azimuthSetpoint);
+    //ErrorCode err = azimuthTalon.setSelectedSensorPosition(azimuthSetpoint, 0, 10);
+    //Errors.check(err, logger);
+    //azimuthTalon.set(MotionMagic, azimuthSetpoint);
+    azimuthSpark.set(azimuthSetpoint);
   }
 
   /**
@@ -167,7 +187,8 @@ public class Wheel {
    * @return 0 - 4095, corresponding to one full revolution.
    */
   public int getAzimuthAbsolutePosition() {
-    return azimuthTalon.getSensorCollection().getPulseWidthPosition() & 0xFFF;
+    //return azimuthTalon.getSensorCollection().getPulseWidthPosition() & 0xFFF;
+    return (int)azimuthSpark.get() & 0xFFF;
   }
 
   /**
@@ -175,8 +196,8 @@ public class Wheel {
    *
    * @return azimuth Talon instance used by wheel
    */
-  public TalonSRX getAzimuthTalon() {
-    return azimuthTalon;
+  public CANSparkMax getAzimuthTalon() {
+    return azimuthSpark;
   }
 
   /**
@@ -184,8 +205,8 @@ public class Wheel {
    *
    * @return drive Talon instance used by wheel
    */
-  public TalonSRX getDriveTalon() {
-    return driveTalon;
+  public CANSparkMax getDriveTalon() {
+    return driveSpark;
   }
 
   public double getDriveSetpointMax() {
@@ -199,10 +220,10 @@ public class Wheel {
   @Override
   public String toString() {
     return "Wheel{"
-        + "azimuthTalon="
-        + azimuthTalon
-        + ", driveTalon="
-        + driveTalon
+        + "azimuthSpark="
+        + azimuthSpark
+        + ", driveSpark="
+        + driveSpark
         + ", driveSetpointMax="
         + driveSetpointMax
         + '}';

@@ -4,6 +4,13 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
+
+import com.revrobotics.CANEncoder;
+import com.revrobotics.CANPIDController;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.ControlType;
+
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -62,46 +69,47 @@ public class DriveSubsystem extends Subsystem {
   }
 
   private Wheel[] getWheels() {
-    TalonSRXConfiguration azimuthConfig = new TalonSRXConfiguration();
-    azimuthConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
-    azimuthConfig.continuousCurrentLimit = 10;
-    azimuthConfig.peakCurrentDuration = 0;
-    azimuthConfig.peakCurrentLimit = 0;
-    azimuthConfig.slot0.kP = 10.0;
-    azimuthConfig.slot0.kI = 0.0;
-    azimuthConfig.slot0.kD = 100.0;
-    azimuthConfig.slot0.kF = 0.0;
-    azimuthConfig.slot0.integralZone = 0;
-    azimuthConfig.slot0.allowableClosedloopError = 0;
-    azimuthConfig.motionAcceleration = 10_000;
-    azimuthConfig.motionCruiseVelocity = 800;
-
-    TalonSRXConfiguration driveConfig = new TalonSRXConfiguration();
-    driveConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
-    driveConfig.continuousCurrentLimit = 40;
-    driveConfig.peakCurrentDuration = 0;
-    driveConfig.peakCurrentLimit = 0;
-
+     
     Wheel[] wheels = new Wheel[4];
+    int smartMotionSlot = 0;
+    for (int i = 0; i < 4; i++) {
 
-    //
-    // 2 wheel drive for now - because we have 4 talons...
-    //
-    // our CANbus IDs are:
-    //   2 & 6
-    //   3 & 7
-    //
-    for (int i = 0; i < 2; i++) {
-      TalonSRX azimuthTalon = new TalonSRX(i + 2);
-      azimuthTalon.configAllSettings(azimuthConfig);
+      CANSparkMax azimuthSpark = new CANSparkMax(i, MotorType.kBrushless);
+      azimuthSpark.restoreFactoryDefaults();
+      CANPIDController azimuth_pidController = azimuthSpark.getPIDController();
+      CANEncoder azimuth_encoder = azimuthSpark.getEncoder();
+      azimuth_pidController.setP(5e-5);
+      azimuth_pidController.setI(1e-6);
+      azimuth_pidController.setD(0);
+      azimuth_pidController.setFF(0.000156);
+      azimuth_pidController.setOutputRange(-1, 1);
+ 
+      azimuth_pidController.setSmartMotionMaxVelocity(2000, smartMotionSlot);
+      azimuth_pidController.setSmartMotionMinOutputVelocity(0, smartMotionSlot);
+      azimuth_pidController.setSmartMotionMaxAccel(1500, smartMotionSlot);
+      azimuth_pidController.setSmartMotionAllowedClosedLoopError(50, smartMotionSlot);
 
-      TalonSRX driveTalon = new TalonSRX(i + 6);
-      driveTalon.configAllSettings(driveConfig);
-      driveTalon.setNeutralMode(NeutralMode.Brake);
+      CANSparkMax driveSpark = new CANSparkMax(i + 10, MotorType.kBrushless);
+      driveSpark.restoreFactoryDefaults();
+      CANPIDController drive_pidController = driveSpark.getPIDController();
+      CANEncoder drive_encoder = driveSpark.getEncoder();
+      drive_pidController.setP(5e-5);
+      drive_pidController.setI(1e-6);
+      drive_pidController.setD(0);
+      drive_pidController.setFF(0.000156);
+      drive_pidController.setOutputRange(-1, 1);
+      drive_pidController.setSmartMotionMaxVelocity(2000, smartMotionSlot);
+      drive_pidController.setSmartMotionMinOutputVelocity(0, smartMotionSlot);
+      drive_pidController.setSmartMotionMaxAccel(1500, smartMotionSlot);
+      drive_pidController.setSmartMotionAllowedClosedLoopError(50, smartMotionSlot);
 
-      Wheel wheel = new Wheel(azimuthTalon, driveTalon, DRIVE_SETPOINT_MAX);
+      Wheel wheel = new Wheel(azimuthSpark, driveSpark, DRIVE_SETPOINT_MAX);
+
       wheels[i] = wheel;
+
     }
+     
+
 
     return wheels;
   }
