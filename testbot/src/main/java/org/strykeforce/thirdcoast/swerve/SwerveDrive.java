@@ -5,6 +5,8 @@ import edu.wpi.first.wpilibj.Preferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.Errors;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 /**
  * Control a Third Coast swerve drive.
@@ -31,8 +33,12 @@ public class SwerveDrive {
   private final double[] ws = new double[WHEEL_COUNT];
   private final double[] wa = new double[WHEEL_COUNT];
   private boolean isFieldOriented;
+  private CANSparkMax m_motor;
 
   public SwerveDrive(SwerveDriveConfig config) {
+    m_motor = new CANSparkMax(0, MotorType.kBrushless);
+    m_motor.disable();
+
     gyro = config.gyro;
     wheels = config.wheels;
 
