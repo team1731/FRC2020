@@ -12,8 +12,12 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-public class Robot extends TimedRobot {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+
+public class Robot extends TimedRobot {
+  private static final Logger logger = LoggerFactory.getLogger(Robot.class);
   public static final DriveSubsystem DRIVE = new DriveSubsystem();
 
   // Controls initialize Commands so this should be instantiated last to prevent

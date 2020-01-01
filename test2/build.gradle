@@ -48,13 +48,11 @@ repositories {
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
 // Also defines JUnit 4.
 dependencies {
-    compile "org.slf4j:slf4j-api:1.7.28"
     compile wpi.deps.wpilib()
     compile wpi.deps.vendor.java()
     nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
     nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
     testCompile 'junit:junit:4.12'
-    runtime 'org.slf4j:slf4j-simple:1.7.28'
 }
 
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
