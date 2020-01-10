@@ -35,8 +35,10 @@ public class Robot extends TimedRobot {
     DRIVE.zeroAzimuthEncoders();
     DRIVE.zeroGyro();
 
- //   m_motor = new CANSparkMax(deviceID, MotorType.kBrushless);
- //   m_motor.disable();
+    //just some example lines i used to prove that code completion still works!
+    //m_motor = new CANSparkMax(deviceID, MotorType.kBrushless);
+    //m_motor.disable();
+
   }
 
   @Override
