@@ -102,6 +102,7 @@ public class Wheel {
 
     //azimuthTalon.set(MotionMagic, azimuthPosition + azimuthError);
     azimuthSpark.set(azimuthPosition + azimuthError);
+    System.out.println(""+this + ":" + azimuthPosition + azimuthError);
     driver.accept(drive);
   }
 
