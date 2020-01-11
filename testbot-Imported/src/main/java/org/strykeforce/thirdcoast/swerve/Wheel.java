@@ -11,6 +11,9 @@ import java.util.function.DoubleConsumer;
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANEncoder;
+import com.revrobotics.CANPIDController;
+import com.revrobotics.ControlType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +40,7 @@ import org.strykeforce.thirdcoast.talon.Errors;
  * ID in the range 0-3 with corresponding drive Talon IDs in the range 10-13.
  */
 public class Wheel {
-  private static final int TICKS = 4096;
+  private static final int TICKS = 16;
 
   private static final Logger logger = LoggerFactory.getLogger(Wheel.class);
   private final double driveSetpointMax;
@@ -47,6 +50,9 @@ public class Wheel {
   private final CANSparkMax azimuthSpark;
   protected DoubleConsumer driver;
   private boolean isInverted = false;
+  private CANPIDController m_pidController;
+  private CANEncoder m_encoder;
+
 
   /**
    * This constructs a wheel with supplied azimuth and drive talons.
@@ -64,6 +70,8 @@ public class Wheel {
     this.driveSetpointMax = driveSetpointMax;
     azimuthSpark = Objects.requireNonNull(azimuth);
     driveSpark = Objects.requireNonNull(drive);
+    m_pidController = azimuthSpark.getPIDController();
+    m_encoder = azimuthSpark.getEncoder();
 
     setDriveMode(TELEOP);
 
@@ -90,7 +98,9 @@ public class Wheel {
     azimuth *= -TICKS; // flip azimuth, hardware configuration dependent
 
     //double azimuthPosition = azimuthTalon.getSelectedSensorPosition(0);
-    double azimuthPosition = azimuthSpark.get();
+
+
+    double azimuthPosition = m_encoder.getPosition();
     double azimuthError = Math.IEEEremainder(azimuth - azimuthPosition, TICKS);
 
     // minimize azimuth rotation, reversing drive if necessary
@@ -102,6 +112,7 @@ public class Wheel {
 
     //azimuthTalon.set(MotionMagic, azimuthPosition + azimuthError);
     azimuthSpark.set(azimuthPosition + azimuthError);
+    m_pidController.setReference(azimuthPosition + azimuthError, ControlType.kSmartMotion);
     driver.accept(drive);
   }
 
@@ -113,6 +124,7 @@ public class Wheel {
   public void setAzimuthPosition(int position) {
     //azimuthTalon.set(MotionMagic, position);
     azimuthSpark.set(position);
+
   }
 
   public void disableAzimuth() {
