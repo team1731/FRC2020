@@ -79,8 +79,8 @@ public class DriverControls {
     // RIGHT_Y(2),
     // LEFT_X(0),
     // LEFT_Y(1),
-    RIGHT_X(4),
-    RIGHT_Y(3),
+    RIGHT_X(3),
+    RIGHT_Y(4),
     LEFT_X(0),
     LEFT_Y(1),
 
