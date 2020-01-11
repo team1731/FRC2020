@@ -74,7 +74,7 @@ public class DriveSubsystem extends Subsystem {
     int smartMotionSlot = 0;
     for (int i = 1; i < 5; i++) {
 
-      CANSparkMax azimuthSpark = new CANSparkMax(i, MotorType.kBrushless);
+      CANSparkMax azimuthSpark = new CANSparkMax(i + 10, MotorType.kBrushless);
       azimuthSpark.restoreFactoryDefaults();
       CANPIDController azimuth_pidController = azimuthSpark.getPIDController();
       CANEncoder azimuth_encoder = azimuthSpark.getEncoder();
@@ -89,7 +89,7 @@ public class DriveSubsystem extends Subsystem {
       azimuth_pidController.setSmartMotionMaxAccel(1500, smartMotionSlot);
       azimuth_pidController.setSmartMotionAllowedClosedLoopError(50, smartMotionSlot);
 
-      CANSparkMax driveSpark = new CANSparkMax(i + 10, MotorType.kBrushless);
+      CANSparkMax driveSpark = new CANSparkMax(i, MotorType.kBrushless);
       driveSpark.restoreFactoryDefaults();
       CANPIDController drive_pidController = driveSpark.getPIDController();
       CANEncoder drive_encoder = driveSpark.getEncoder();

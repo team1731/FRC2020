@@ -40,7 +40,7 @@ import org.strykeforce.thirdcoast.talon.Errors;
  * ID in the range 0-3 with corresponding drive Talon IDs in the range 10-13.
  */
 public class Wheel {
-  private static final int TICKS = 16 * 4096;
+  private static final int TICKS = 16 * 1024;
 
   private static final Logger logger = LoggerFactory.getLogger(Wheel.class);
   private final double driveSetpointMax;
