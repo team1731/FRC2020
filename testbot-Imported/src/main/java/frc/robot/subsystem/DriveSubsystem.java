@@ -29,6 +29,7 @@ public class DriveSubsystem extends Subsystem {
   private static final double DRIVE_SETPOINT_MAX = 0.0;
   private static final double ROBOT_LENGTH = 1.0;
   private static final double ROBOT_WIDTH = 1.0;
+  private static Wheel[] wheelObjects;
 
   private final SwerveDrive swerve = getSwerve();
 
@@ -128,6 +129,11 @@ public class DriveSubsystem extends Subsystem {
      
 
     logger.info("<b>DriveSubsystem</b>: getWheels returning");
+    wheelObjects = wheels;
     return wheels;
+  }
+
+  public Wheel[] getWheelObjects(){
+      return wheelObjects;
   }
 }

@@ -14,6 +14,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.ControlType;
+//import com.sun.java.swing.plaf.windows.TMSchema.Control;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +44,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Wheel {
   public int wheelID;
-  private static final int TICKS = 16 * 4096;
+  private static final int TICKS = 16;
 
   private static final Logger logger = LoggerFactory.getLogger(Wheel.class);
   private final double driveSetpointMax;
@@ -54,7 +55,7 @@ public class Wheel {
   protected DoubleConsumer driver;
   private boolean isInverted = false;
   private CANPIDController m_pidController;
-  private CANEncoder m_encoder;
+  public CANEncoder m_encoder;
 
 
   /**
@@ -84,8 +85,6 @@ public class Wheel {
     logger.info("driveSetpointMax = {}", driveSetpointMax);
     if (driveSetpointMax == 0.0) logger.warn("driveSetpointMax may not have been configured");
 
-    SmartDashboard.putNumber("Wheel"+wheelID+" Encoder Pos", m_encoder.getPosition());
-
     logger.info("<b>Wheel</b>: Wheel constructed");
   }
 
@@ -100,10 +99,12 @@ public class Wheel {
     logger.info("<b>Wheel</b>: set starting");
     // don't reset wheel azimuth direction to zero when returning to neutral
     SmartDashboard.putNumber("Wheel"+wheelID+" Encoder Pos", m_encoder.getPosition());
+    SmartDashboard.putNumber("Wheel"+wheelID+" Encoder Get Abs", getAzimuthAbsolutePosition());
     if (drive == 0) {
-      logger.info("<b>Wheel</b>: set returning. drive == 0");
-      driver.accept(0d);
-      return;
+      logger.info("<b>Wheel</b>: drive == 0. Going through anyway.");
+      //logger.info("<b>Wheel</b>: set returning. drive == 0");
+      //driver.accept(0d);
+      //return;
     }
 
     azimuth *= -TICKS; // flip azimuth, hardware configuration dependent
@@ -187,7 +188,8 @@ public class Wheel {
   public void stop() {
     logger.info("<b>Wheel</b>: stop starting");
     //azimuthTalon.set(MotionMagic, azimuthTalon.getSelectedSensorPosition(0));
-    azimuthSpark.set(azimuthSpark.get());
+    //azimuthSpark.set(azimuthSpark.get());
+    m_pidController.setReference(getAzimuthAbsolutePosition(), ControlType.kSmartMotion);
     driver.accept(0d);
     logger.info("<b>Wheel</b>: stop finished");
   }
@@ -212,7 +214,8 @@ public class Wheel {
     //ErrorCode err = azimuthTalon.setSelectedSensorPosition(azimuthSetpoint, 0, 10);
     //Errors.check(err, logger);
     //azimuthTalon.set(MotionMagic, azimuthSetpoint);
-    azimuthSpark.set(azimuthSetpoint);
+    //azimuthSpark.set(azimuthSetpoint);
+    m_pidController.setReference(azimuthSetpoint, ControlType.kSmartMotion);
     logger.info("<b>Wheel</b>: setAzimuthZero finished");
   }
 
@@ -223,7 +226,8 @@ public class Wheel {
    */
   public int getAzimuthAbsolutePosition() {
     //return azimuthTalon.getSensorCollection().getPulseWidthPosition() & 0xFFF;
-    return (int)azimuthSpark.get() & 0xFFF;
+    //return (int)azimuthSpark.get() & 0xFFF;
+    return (int)m_encoder.getPosition() & 0xFFF;
   }
 
   /**

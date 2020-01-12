@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.control.Controls;
 import frc.robot.subsystem.DriveSubsystem;
 import java.util.Date;
@@ -14,6 +15,8 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.strykeforce.thirdcoast.swerve.Wheel;
 
 
 public class Robot extends TimedRobot {
@@ -28,6 +31,7 @@ public class Robot extends TimedRobot {
   private CANPIDController m_pidController;
   private CANEncoder m_encoder;
   private static final int deviceID = 1;
+  private Wheel[] wheelObjects;
 
   @Override
   public void robotInit() {
@@ -39,7 +43,6 @@ public class Robot extends TimedRobot {
     //just some example lines i used to prove that code completion still works!
     //m_motor = new CANSparkMax(deviceID, MotorType.kBrushless);
     //m_motor.disable();
-
   }
 
   @Override
@@ -47,5 +50,20 @@ public class Robot extends TimedRobot {
     logger.info("<b>Robot</b>: teleopPeriodic started");
     Scheduler.getInstance().run();
     logger.info("<b>Robot</b>: teleopPeriodic finished");
+  }
+
+  @Override
+  public void disabledPeriodic(){
+    if(wheelObjects == null){
+      wheelObjects = DRIVE.getWheelObjects();
+    } else if(wheelObjects.length == 4) {
+      for (int i = 0; i < wheelObjects.length; i++) {
+        Wheel wheel = wheelObjects[i];
+        if(wheel.m_encoder != null){
+          SmartDashboard.putNumber("Wheel"+wheel.wheelID+" Encoder Pos", wheel.m_encoder.getPosition());
+          SmartDashboard.putNumber("Wheel"+wheel.wheelID+" Encoder Get Abs", wheel.getAzimuthAbsolutePosition());
+        }
+      }
+    }
   }
 }
