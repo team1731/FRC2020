@@ -2,6 +2,7 @@ package org.strykeforce.thirdcoast.swerve;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.slf4j.Logger;
@@ -60,6 +61,7 @@ public class SwerveDrive {
     setFieldOriented(gyro != null && gyro.isConnected());
 
     if (isFieldOriented) {
+      logger.info("ROBOT IS FIELD ORIENTED IN SWERVEDRIVE.JAVA");
       gyro.enableLogging(config.gyroLoggingEnabled);
       double robotPeriod = config.robotPeriod;
       double gyroRateCoeff = config.gyroRateCoeff;
@@ -100,6 +102,9 @@ public class SwerveDrive {
     logger.info("drive mode = {}", driveMode);
     logger.info("gyro is configured: {}", gyro != null);
     logger.info("gyro is connected: {}", gyro != null && gyro.isConnected());
+    if (isFieldOriented) {
+      logger.info("ROBOT IS FIELD ORIENTED IN setDriveMode()");
+    }
   }
 
   /**
@@ -127,9 +132,10 @@ public class SwerveDrive {
     // Use gyro for field-oriented drive. We use getAngle instead of getYaw to enable arbitrary
     // autonomous starting positions.
     if (isFieldOriented) {
+      logger.info("ROBOT IS FIELD ORIENTED");
       double angle = gyro.getAngle();
-      SmartDashboard.putNumber("GYRO ANGLE", angle);
-      SmartDashboard.putNumber("GYRO RATE", gyro.getRate());
+      SmartDashboard.putNumber("GYRO_ANGLE", angle);
+      SmartDashboard.putNumber("GYRO_RATE", gyro.getRate());
       angle += gyro.getRate() * kGyroRateCorrection;
       angle = Math.IEEEremainder(angle, 360.0);
 
