@@ -74,12 +74,12 @@ public class DriverControls {
   }
 
   public enum Axis {
-    RIGHT_X(1),
+    RIGHT_X(4),
     RIGHT_Y(0),
-    LEFT_X(2),
+    LEFT_X(1),
     LEFT_Y(5),
     TUNER(6),
-    LEFT_BACK(4),
+    LEFT_BACK(7),
     RIGHT_BACK(3);
 
     private final int id;

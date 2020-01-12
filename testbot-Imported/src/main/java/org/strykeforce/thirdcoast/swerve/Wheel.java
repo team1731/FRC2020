@@ -96,7 +96,7 @@ public class Wheel {
    * @param drive 0 to 1.0 in the direction of the wheel azimuth
    */
   public void set(double azimuth, double drive) {
-    logger.info("<b>Wheel</b>: set starting");
+   // logger.info("<b>Wheel</b>: set starting");
     // don't reset wheel azimuth direction to zero when returning to neutral
     SmartDashboard.putNumber("Wheel"+wheelID+" Encoder Pos", m_encoder.getPosition());
     SmartDashboard.putNumber("Wheel"+wheelID+" Encoder Get Abs", getAzimuthAbsolutePosition());
@@ -107,13 +107,19 @@ public class Wheel {
       //return;
     }
 
-    azimuth *= -TICKS; // flip azimuth, hardware configuration dependent
+    azimuth *= TICKS; // flip azimuth, hardware configuration dependent
+
+    SmartDashboard.putNumber("Wheel"+wheelID+" BDL wanted AZ in ticks",azimuth);
 
     //double azimuthPosition = azimuthTalon.getSelectedSensorPosition(0);
 
 
     double azimuthPosition = m_encoder.getPosition();
     double azimuthError = Math.IEEEremainder(azimuth - azimuthPosition, TICKS);
+    
+    SmartDashboard.putNumber("Wheel"+wheelID+" BDL actual AZ in ticks",azimuthPosition);
+    SmartDashboard.putNumber("Wheel"+wheelID+" BDL actual error in ticks",azimuthError);
+
 
     // minimize azimuth rotation, reversing drive if necessary
     isInverted = Math.abs(azimuthError) > 0.25 * TICKS;
@@ -124,9 +130,11 @@ public class Wheel {
 
     //azimuthTalon.set(MotionMagic, azimuthPosition + azimuthError);
     //azimuthSpark.set(azimuthPosition + azimuthError);
-    m_pidController.setReference(azimuthPosition + azimuthError, ControlType.kSmartMotion);
+    SmartDashboard.putNumber("Wheel"+wheelID+" BDL Commanded Position",(azimuthPosition + azimuthError));
+    m_pidController.setReference((azimuthPosition + azimuthError), ControlType.kSmartMotion);
+    //m_pidController.setReference(5, ControlType.kSmartMotion);
     driver.accept(drive);
-    logger.info("<b>Wheel</b>: set finished");
+  //  logger.info("<b>Wheel</b>: set finished");
   }
 
   /**
@@ -215,7 +223,8 @@ public class Wheel {
     //Errors.check(err, logger);
     //azimuthTalon.set(MotionMagic, azimuthSetpoint);
     //azimuthSpark.set(azimuthSetpoint);
-    m_pidController.setReference(azimuthSetpoint, ControlType.kSmartMotion);
+    //m_pidController.setReference(azimuthSetpoint, ControlType.kSmartMotion);
+    m_encoder.setPosition(0);  //TODO change whith 221 encoder
     logger.info("<b>Wheel</b>: setAzimuthZero finished");
   }
 
@@ -227,7 +236,8 @@ public class Wheel {
   public int getAzimuthAbsolutePosition() {
     //return azimuthTalon.getSensorCollection().getPulseWidthPosition() & 0xFFF;
     //return (int)azimuthSpark.get() & 0xFFF;
-    return (int)m_encoder.getPosition() & 0xFFF;
+    //TODO - need to return azimuth from the 221 encoder
+    return 0;
   }
 
   /**

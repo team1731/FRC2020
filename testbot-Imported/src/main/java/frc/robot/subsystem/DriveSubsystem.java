@@ -98,13 +98,14 @@ public class DriveSubsystem extends Subsystem {
       azimuth_pidController.setP(5e-5);
       azimuth_pidController.setI(1e-6);
       azimuth_pidController.setD(0);
+      azimuth_pidController.setIZone(0);
       azimuth_pidController.setFF(0.000156);
       azimuth_pidController.setOutputRange(-1, 1);
  
       azimuth_pidController.setSmartMotionMaxVelocity(2000, smartMotionSlot);
       azimuth_pidController.setSmartMotionMinOutputVelocity(0, smartMotionSlot);
       azimuth_pidController.setSmartMotionMaxAccel(1500, smartMotionSlot);
-      azimuth_pidController.setSmartMotionAllowedClosedLoopError(50, smartMotionSlot);
+      azimuth_pidController.setSmartMotionAllowedClosedLoopError(0, smartMotionSlot);
 
       CANSparkMax driveSpark = new CANSparkMax(i, MotorType.kBrushless);
       driveSpark.restoreFactoryDefaults();
