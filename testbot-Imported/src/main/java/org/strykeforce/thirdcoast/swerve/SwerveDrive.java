@@ -2,6 +2,8 @@ package org.strykeforce.thirdcoast.swerve;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.Errors;
@@ -96,6 +98,8 @@ public class SwerveDrive {
       wheel.setDriveMode(driveMode);
     }
     logger.info("drive mode = {}", driveMode);
+    logger.info("gyro is configured: {}", gyro != null);
+    logger.info("gyro is connected: {}", gyro != null && gyro.isConnected());
   }
 
   /**
@@ -124,6 +128,8 @@ public class SwerveDrive {
     // autonomous starting positions.
     if (isFieldOriented) {
       double angle = gyro.getAngle();
+      SmartDashboard.putNumber("GYRO ANGLE", angle);
+      SmartDashboard.putNumber("GYRO RATE", gyro.getRate());
       angle += gyro.getRate() * kGyroRateCorrection;
       angle = Math.IEEEremainder(angle, 360.0);
 

@@ -3,9 +3,12 @@ package frc.robot.command;
 import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.TELEOP;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.control.DriverControls;
 import frc.robot.subsystem.DriveSubsystem;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public final class TeleOpDriveCommand extends Command {
   private static final double DEADBAND = 0.05;
@@ -29,6 +32,9 @@ public final class TeleOpDriveCommand extends Command {
     double azimuth = deadband(controls.getYaw());
 
     swerve.drive(forward, strafe, azimuth);
+    SmartDashboard.putNumber("FORWARD", forward);
+    SmartDashboard.putNumber("STRAFE", strafe);
+    SmartDashboard.putNumber("AZIMUTH", azimuth);
   }
 
   @Override

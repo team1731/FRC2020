@@ -56,17 +56,17 @@ public class DriverControls {
 
   /** Tuner knob. */
   public double getTuner() {
-    return joystick.getRawAxis(Axis.TUNER.id);
+    return 0.0; //joystick.getRawAxis(Axis.TUNER.id);
   }
 
   /** Left slider on back of controller. */
   public double getLeftBackAxis() {
-    return joystick.getRawAxis(Axis.LEFT_BACK.id);
+    return 0.0; //joystick.getRawAxis(Axis.LEFT_BACK.id);
   }
 
   /** Right slider on back of controller. */
   public double getRightBackAxis() {
-    return joystick.getRawAxis(Axis.RIGHT_BACK.id);
+    return 0.0; //joystick.getRawAxis(Axis.RIGHT_BACK.id);
   }
 
   private <E extends Enum<E>> Command log(E control) {
@@ -75,14 +75,14 @@ public class DriverControls {
 
   public enum Axis {
     // XBOX
-    // RIGHT_X(4),
-    // RIGHT_Y(2),
-    // LEFT_X(0),
-    // LEFT_Y(1),
-    RIGHT_X(3),
-    RIGHT_Y(4),
+    RIGHT_X(4),
+    RIGHT_Y(5), //2),
     LEFT_X(0),
     LEFT_Y(1),
+    // RIGHT_X(3),
+    // RIGHT_Y(4),
+    // LEFT_X(0),
+    // LEFT_Y(1),
 
     TUNER(6),
     LEFT_BACK(4),
