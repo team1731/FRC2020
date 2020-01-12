@@ -11,6 +11,9 @@ import org.strykeforce.thirdcoast.talon.Errors;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import frc.robot.Robot;
+import frc.robot.control.DriverControls;
+
 /**
  * Control a Third Coast swerve drive.
  *
@@ -39,6 +42,7 @@ public class SwerveDrive {
   private CANSparkMax m_motor;
 
   public SwerveDrive(SwerveDriveConfig config) {
+    logger.info("<b>SwerveDrive</b>: SwerveDrive starting");
     m_motor = new CANSparkMax(0, MotorType.kBrushless);
     m_motor.disable();
 
@@ -78,6 +82,8 @@ public class SwerveDrive {
     logger.debug("width = {}", width);
     logger.debug("enableGyroLogging = {}", config.gyroLoggingEnabled);
     logger.debug("gyroRateCorrection = {}", kGyroRateCorrection);
+
+    logger.info("<b>SwerveDrive</b>: SwerveDrive constructed");
   }
 
   /**
@@ -96,6 +102,7 @@ public class SwerveDrive {
    * @param driveMode the drive mode
    */
   public void setDriveMode(DriveMode driveMode) {
+    logger.info("<b>SwerveDrive</b>: setDriveMode starting");
     for (Wheel wheel : wheels) {
       wheel.setDriveMode(driveMode);
     }
@@ -105,6 +112,7 @@ public class SwerveDrive {
     if (isFieldOriented) {
       logger.info("ROBOT IS FIELD ORIENTED IN setDriveMode()");
     }
+    logger.info("<b>SwerveDrive</b>: setDriveMode finished");
   }
 
   /**
@@ -115,9 +123,11 @@ public class SwerveDrive {
    * @param drive 0 to 1 in the direction of the wheel azimuth
    */
   public void set(double azimuth, double drive) {
+    logger.info("<b>SwerveDrive</b>: set starting");
     for (Wheel wheel : wheels) {
       wheel.set(azimuth, drive);
     }
+    logger.info("<b>SwerveDrive</b>: set finished");
   }
 
   /**
@@ -128,7 +138,8 @@ public class SwerveDrive {
    * @param azimuth robot rotation, from -1.0 (CCW) to 1.0 (CW)
    */
   public void drive(double forward, double strafe, double azimuth) {
-
+    logger.info("<b>SwerveDrive</b>: drive starting");
+    
     // Use gyro for field-oriented drive. We use getAngle instead of getYaw to enable arbitrary
     // autonomous starting positions.
     if (isFieldOriented) {
@@ -174,6 +185,7 @@ public class SwerveDrive {
     for (int i = 0; i < WHEEL_COUNT; i++) {
       wheels[i].set(wa[i], ws[i]);
     }
+    logger.info("<b>SwerveDrive</b>: drive finished");
   }
 
   /**
@@ -182,10 +194,13 @@ public class SwerveDrive {
    * thereby prevent wheel rotation if the wheels were moved manually while the robot was disabled.
    */
   public void stop() {
+    logger.info("<b>SwerveDrive</b>: stop starting");
     for (Wheel wheel : wheels) {
       wheel.stop();
     }
     logger.info("stopped all wheels");
+
+    logger.info("<b>SwerveDrive</b>: stop finished");
   }
 
   /**
@@ -203,11 +218,13 @@ public class SwerveDrive {
   }
 
   void saveAzimuthPositions(Preferences prefs) {
+    logger.info("<b>SwerveDrive</b>: saveAzimuthPositions starting");
     for (int i = 0; i < WHEEL_COUNT; i++) {
       int position = wheels[i].getAzimuthAbsolutePosition();
       prefs.putInt(getPreferenceKeyForWheel(i), position);
       logger.info("azimuth {}: saved zero = {}", i, position);
     }
+    logger.info("<b>SwerveDrive</b>: saveAzimuthPositions finished");
   }
 
   /**
@@ -222,6 +239,7 @@ public class SwerveDrive {
   }
 
   void zeroAzimuthEncoders(Preferences prefs) {
+    logger.info("<b>SwerveDrive</b>: zeroAzimuthEncoders starting");
     Errors.setCount(0);
     for (int i = 0; i < WHEEL_COUNT; i++) {
       int position = prefs.getInt(getPreferenceKeyForWheel(i), DEFAULT_ABSOLUTE_AZIMUTH_OFFSET);
@@ -230,6 +248,8 @@ public class SwerveDrive {
     }
     int errorCount = Errors.getCount();
     if (errorCount > 0) logger.error("TalonSRX set azimuth zero error count = {}", errorCount);
+
+    logger.info("<b>SwerveDrive</b>: zeroAzimuthEncoders finished");
   }
 
   /**

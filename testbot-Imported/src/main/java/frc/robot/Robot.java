@@ -31,10 +31,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+    logger.info("<b>Robot</b>: robotInit Started");
     System.out.println("Today is " + new Date().toString());
     DRIVE.zeroAzimuthEncoders();
     DRIVE.zeroGyro();
-
+    logger.info("<b>Robot</b>: robotInit Finished");
     //just some example lines i used to prove that code completion still works!
     //m_motor = new CANSparkMax(deviceID, MotorType.kBrushless);
     //m_motor.disable();
@@ -43,6 +44,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    logger.info("<b>Robot</b>: teleopPeriodic started");
     Scheduler.getInstance().run();
+    logger.info("<b>Robot</b>: teleopPeriodic finished");
   }
 }

@@ -20,6 +20,8 @@ import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode;
 import org.strykeforce.thirdcoast.talon.Errors;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 /**
  * Controls a swerve drive wheel azimuth and drive motors.
  *
@@ -40,7 +42,8 @@ import org.strykeforce.thirdcoast.talon.Errors;
  * ID in the range 0-3 with corresponding drive Talon IDs in the range 10-13.
  */
 public class Wheel {
-  private static final int TICKS = 16 * 1024;
+  public int wheelID;
+  private static final int TICKS = 16 * 4096;
 
   private static final Logger logger = LoggerFactory.getLogger(Wheel.class);
   private final double driveSetpointMax;
@@ -67,6 +70,7 @@ public class Wheel {
    * @param driveSetpointMax scales closed-loop drive output to this value when drive setpoint = 1.0
    */
   public Wheel(CANSparkMax azimuth, CANSparkMax drive, double driveSetpointMax) {
+    logger.info("<b>Wheel</b>: Wheel starting");
     this.driveSetpointMax = driveSetpointMax;
     azimuthSpark = Objects.requireNonNull(azimuth);
     driveSpark = Objects.requireNonNull(drive);
@@ -76,9 +80,13 @@ public class Wheel {
     setDriveMode(TELEOP);
 
     //logger.debug("azimuth = {} drive = {}", azimuthTalon.getDeviceID(), driveTalon.getDeviceID());
-    logger.debug("azimuth = {} drive = {}", azimuthSpark.getDeviceId(), driveSpark.getDeviceId());
-    logger.debug("driveSetpointMax = {}", driveSetpointMax);
+    logger.info("azimuth = {} drive = {}", azimuthSpark.getDeviceId(), driveSpark.getDeviceId());
+    logger.info("driveSetpointMax = {}", driveSetpointMax);
     if (driveSetpointMax == 0.0) logger.warn("driveSetpointMax may not have been configured");
+
+    SmartDashboard.putNumber("Wheel"+wheelID+" Encoder Pos", m_encoder.getPosition());
+
+    logger.info("<b>Wheel</b>: Wheel constructed");
   }
 
   /**
@@ -89,8 +97,11 @@ public class Wheel {
    * @param drive 0 to 1.0 in the direction of the wheel azimuth
    */
   public void set(double azimuth, double drive) {
+    logger.info("<b>Wheel</b>: set starting");
     // don't reset wheel azimuth direction to zero when returning to neutral
+    SmartDashboard.putNumber("Wheel"+wheelID+" Encoder Pos", m_encoder.getPosition());
     if (drive == 0) {
+      logger.info("<b>Wheel</b>: set returning. drive == 0");
       driver.accept(0d);
       return;
     }
@@ -111,9 +122,10 @@ public class Wheel {
     }
 
     //azimuthTalon.set(MotionMagic, azimuthPosition + azimuthError);
-    azimuthSpark.set(azimuthPosition + azimuthError);
+    //azimuthSpark.set(azimuthPosition + azimuthError);
     m_pidController.setReference(azimuthPosition + azimuthError, ControlType.kSmartMotion);
     driver.accept(drive);
+    logger.info("<b>Wheel</b>: set finished");
   }
 
   /**
@@ -122,14 +134,18 @@ public class Wheel {
    * @param position position in encoder ticks.
    */
   public void setAzimuthPosition(int position) {
+    logger.info("<b>Wheel</b>: setAzimuthPosition starting");
     //azimuthTalon.set(MotionMagic, position);
-    azimuthSpark.set(position);
-
+    //azimuthSpark.set(position);
+    m_pidController.setReference(position, ControlType.kSmartMotion);
+    logger.info("<b>Wheel</b>: setAzimuthPosition finished");
   }
 
   public void disableAzimuth() {
+    logger.info("<b>Wheel</b>: disableAzimuth starting");
     //azimuthTalon.neutralOutput();
     azimuthSpark.set(0);
+    logger.info("<b>Wheel</b>: disableAzimuth finished");
   }
 
   /**
@@ -146,6 +162,7 @@ public class Wheel {
    * @param driveMode the desired drive mode
    */
   public void setDriveMode(DriveMode driveMode) {
+    logger.info("<b>Wheel</b>: setDriveMode starting");
     switch (driveMode) {
       case OPEN_LOOP:
       case TELEOP:
@@ -156,9 +173,11 @@ public class Wheel {
       case TRAJECTORY:
       case AZIMUTH:
         //driver = (setpoint) -> driveTalon.set(Velocity, setpoint * driveSetpointMax);
-        driver = (setpoint) -> driveSpark.set(setpoint * driveSetpointMax);
+        driver = (setpoint) -> m_pidController.setReference(setpoint * driveSetpointMax, ControlType.kSmartMotion);
+        //driver = (setpoint) -> driveSpark.set(setpoint * driveSetpointMax);
         break;
     }
+    logger.info("<b>Wheel</b>: setDriveMode finished");
   }
 
   /**
@@ -166,9 +185,11 @@ public class Wheel {
    * current position in case the wheel has been manually rotated away from its previous setpoint.
    */
   public void stop() {
+    logger.info("<b>Wheel</b>: stop starting");
     //azimuthTalon.set(MotionMagic, azimuthTalon.getSelectedSensorPosition(0));
     azimuthSpark.set(azimuthSpark.get());
     driver.accept(0d);
+    logger.info("<b>Wheel</b>: stop finished");
   }
 
   /**
@@ -186,11 +207,13 @@ public class Wheel {
    * @param zero zero setpoint, absolute encoder position (in ticks) where wheel is zeroed.
    */
   public void setAzimuthZero(int zero) {
+    logger.info("<b>Wheel</b>: setAzimuthZero starting");
     int azimuthSetpoint = getAzimuthAbsolutePosition() - zero;
     //ErrorCode err = azimuthTalon.setSelectedSensorPosition(azimuthSetpoint, 0, 10);
     //Errors.check(err, logger);
     //azimuthTalon.set(MotionMagic, azimuthSetpoint);
     azimuthSpark.set(azimuthSetpoint);
+    logger.info("<b>Wheel</b>: setAzimuthZero finished");
   }
 
   /**

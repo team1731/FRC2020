@@ -1,6 +1,8 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.RobotBase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Do NOT add any static variables to this class, or any initialization at all. Unless you know what
@@ -16,6 +18,9 @@ public final class Main {
    * <p>If you change your main robot class, change the parameter type.
    */
   public static void main(String... args) {
+    Logger logger = LoggerFactory.getLogger(Main.class);
+    logger.info("<b>Main</b>: Starting main");
     RobotBase.startRobot(Robot::new);
+    logger.info("<b>Main</b>: Done");
   }
 }
