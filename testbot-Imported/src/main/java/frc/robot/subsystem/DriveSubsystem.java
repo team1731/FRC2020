@@ -20,12 +20,12 @@ import org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode;
 import org.strykeforce.thirdcoast.swerve.SwerveDriveConfig;
 import org.strykeforce.thirdcoast.swerve.Wheel;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 public class DriveSubsystem extends Subsystem {
 
-  private static final Logger logger = LoggerFactory.getLogger(DriveSubsystem.class);
+  //private static final Logger logger = LoggerFactory.getLogger(DriveSubsystem.class);
   private static final double DRIVE_SETPOINT_MAX = 0.0;
   private static final double ROBOT_LENGTH = 1.0;
   private static final double ROBOT_WIDTH = 1.0;
@@ -37,42 +37,42 @@ public class DriveSubsystem extends Subsystem {
 
   @Override
   protected void initDefaultCommand() {
-    logger.info("<b>DriveSubsystem</b>: initDefaultCommand started");
+    //logger.info("<b>DriveSubsystem</b>: initDefaultCommand started");
     setDefaultCommand(new TeleOpDriveCommand());
-    logger.info("<b>DriveSubsystem</b>: initDefaultCommand finished");
+    //logger.info("<b>DriveSubsystem</b>: initDefaultCommand finished");
   }
 
   public void setDriveMode(DriveMode mode) {
-    logger.info("<b>DriveSubsystem</b>: setDriveMode started");
+    //logger.info("<b>DriveSubsystem</b>: setDriveMode started");
     swerve.setDriveMode(mode);
-    logger.info("<b>DriveSubsystem</b>: setDriveMode finished");
+    //logger.info("<b>DriveSubsystem</b>: setDriveMode finished");
   }
 
   public void zeroAzimuthEncoders() {
-    logger.info("<b>DriveSubsystem</b>: zeroAzimuthEncoders started");
+    //logger.info("<b>DriveSubsystem</b>: zeroAzimuthEncoders started");
     swerve.zeroAzimuthEncoders();
-    logger.info("<b>DriveSubsystem</b>: zeroAzimuthEncoders finished");
+    //logger.info("<b>DriveSubsystem</b>: zeroAzimuthEncoders finished");
   }
 
   public void drive(double forward, double strafe, double azimuth) {
-    logger.info("<b>DriveSubsystem</b>: drive started");
+    //logger.info("<b>DriveSubsystem</b>: drive started");
     swerve.drive(forward, strafe, azimuth);
-    logger.info("<b>DriveSubsystem</b>: drive finished");
+    //logger.info("<b>DriveSubsystem</b>: drive finished");
   }
 
   public void zeroGyro() {
-    logger.info("<b>DriveSubsystem</b>: zeroGyro started");
+    //logger.info("<b>DriveSubsystem</b>: zeroGyro started");
     AHRS gyro = swerve.getGyro();
     gyro.setAngleAdjustment(0);
     double adj = gyro.getAngle() % 360;
     gyro.setAngleAdjustment(-adj);
-    logger.info("<b>DriveSubsystem</b>: zeroGyro finished");
+    //logger.info("<b>DriveSubsystem</b>: zeroGyro finished");
   }
 
   // Swerve configuration
 
   private SwerveDrive getSwerve() {
-    logger.info("<b>DriveSubsystem</b>: getSwerve started");
+    //logger.info("<b>DriveSubsystem</b>: getSwerve started");
     SwerveDriveConfig config = new SwerveDriveConfig();
     config.wheels = getWheels();
     config.gyro = new AHRS(SPI.Port.kMXP);
@@ -81,12 +81,12 @@ public class DriveSubsystem extends Subsystem {
     config.gyroLoggingEnabled = true;
     config.summarizeTalonErrors = false;
 
-    logger.info("<b>DriveSubsystem</b>: getSwerve returning");
+    //logger.info("<b>DriveSubsystem</b>: getSwerve returning");
     return new SwerveDrive(config);
   }
 
   private Wheel[] getWheels() {
-    logger.info("<b>DriveSubsystem</b>: getWheels starting");
+    //logger.info("<b>DriveSubsystem</b>: getWheels starting");
     Wheel[] wheels = new Wheel[4];
     int smartMotionSlot = 0;
     for (int i = 1; i < 5; i++) {
@@ -129,7 +129,7 @@ public class DriveSubsystem extends Subsystem {
     }
      
 
-    logger.info("<b>DriveSubsystem</b>: getWheels returning");
+    //logger.info("<b>DriveSubsystem</b>: getWheels returning");
     wheelObjects = wheels;
     return wheels;
   }

@@ -71,7 +71,7 @@ public class Wheel {
    * @param driveSetpointMax scales closed-loop drive output to this value when drive setpoint = 1.0
    */
   public Wheel(CANSparkMax azimuth, CANSparkMax drive, double driveSetpointMax) {
-    logger.info("<b>Wheel</b>: Wheel starting");
+    //logger.info("<b>Wheel</b>: Wheel starting");
     this.driveSetpointMax = driveSetpointMax;
     azimuthSpark = Objects.requireNonNull(azimuth);
     driveSpark = Objects.requireNonNull(drive);
@@ -85,7 +85,7 @@ public class Wheel {
     logger.info("driveSetpointMax = {}", driveSetpointMax);
     if (driveSetpointMax == 0.0) logger.warn("driveSetpointMax may not have been configured");
 
-    logger.info("<b>Wheel</b>: Wheel constructed");
+    //logger.info("<b>Wheel</b>: Wheel constructed");
   }
 
   /**
@@ -101,7 +101,7 @@ public class Wheel {
     SmartDashboard.putNumber("Wheel"+wheelID+" Encoder Pos", m_encoder.getPosition());
     SmartDashboard.putNumber("Wheel"+wheelID+" Encoder Get Abs", getAzimuthAbsolutePosition());
     if (drive == 0) {
-      logger.info("<b>Wheel</b>: drive == 0. Going through anyway.");
+      //logger.info("<b>Wheel</b>: drive == 0. Going through anyway.");
       //logger.info("<b>Wheel</b>: set returning. drive == 0");
       //driver.accept(0d);
       //return;
@@ -143,18 +143,18 @@ public class Wheel {
    * @param position position in encoder ticks.
    */
   public void setAzimuthPosition(int position) {
-    logger.info("<b>Wheel</b>: setAzimuthPosition starting");
+    //logger.info("<b>Wheel</b>: setAzimuthPosition starting");
     //azimuthTalon.set(MotionMagic, position);
     //azimuthSpark.set(position);
     m_pidController.setReference(position, ControlType.kSmartMotion);
-    logger.info("<b>Wheel</b>: setAzimuthPosition finished");
+    //logger.info("<b>Wheel</b>: setAzimuthPosition finished");
   }
 
   public void disableAzimuth() {
-    logger.info("<b>Wheel</b>: disableAzimuth starting");
+    //logger.info("<b>Wheel</b>: disableAzimuth starting");
     //azimuthTalon.neutralOutput();
     azimuthSpark.set(0);
-    logger.info("<b>Wheel</b>: disableAzimuth finished");
+    //logger.info("<b>Wheel</b>: disableAzimuth finished");
   }
 
   /**
@@ -171,7 +171,7 @@ public class Wheel {
    * @param driveMode the desired drive mode
    */
   public void setDriveMode(DriveMode driveMode) {
-    logger.info("<b>Wheel</b>: setDriveMode starting");
+    //logger.info("<b>Wheel</b>: setDriveMode starting");
     switch (driveMode) {
       case OPEN_LOOP:
       case TELEOP:
@@ -186,7 +186,7 @@ public class Wheel {
         //driver = (setpoint) -> driveSpark.set(setpoint * driveSetpointMax);
         break;
     }
-    logger.info("<b>Wheel</b>: setDriveMode finished");
+    //logger.info("<b>Wheel</b>: setDriveMode finished");
   }
 
   /**
@@ -194,12 +194,12 @@ public class Wheel {
    * current position in case the wheel has been manually rotated away from its previous setpoint.
    */
   public void stop() {
-    logger.info("<b>Wheel</b>: stop starting");
+    //logger.info("<b>Wheel</b>: stop starting");
     //azimuthTalon.set(MotionMagic, azimuthTalon.getSelectedSensorPosition(0));
     //azimuthSpark.set(azimuthSpark.get());
     m_pidController.setReference(getAzimuthAbsolutePosition(), ControlType.kSmartMotion);
     driver.accept(0d);
-    logger.info("<b>Wheel</b>: stop finished");
+    //logger.info("<b>Wheel</b>: stop finished");
   }
 
   /**
@@ -217,7 +217,7 @@ public class Wheel {
    * @param zero zero setpoint, absolute encoder position (in ticks) where wheel is zeroed.
    */
   public void setAzimuthZero(int zero) {
-    logger.info("<b>Wheel</b>: setAzimuthZero starting");
+    //logger.info("<b>Wheel</b>: setAzimuthZero starting");
     int azimuthSetpoint = getAzimuthAbsolutePosition() - zero;
     //ErrorCode err = azimuthTalon.setSelectedSensorPosition(azimuthSetpoint, 0, 10);
     //Errors.check(err, logger);
@@ -225,7 +225,7 @@ public class Wheel {
     //azimuthSpark.set(azimuthSetpoint);
     //m_pidController.setReference(azimuthSetpoint, ControlType.kSmartMotion);
     m_encoder.setPosition(0);  //TODO change whith 221 encoder
-    logger.info("<b>Wheel</b>: setAzimuthZero finished");
+    //logger.info("<b>Wheel</b>: setAzimuthZero finished");
   }
 
   /**

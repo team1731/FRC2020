@@ -41,17 +41,17 @@ public class DriverControls {
 
   /** Left stick X (up-down) axis. */
   public double getForward() {
-    return -joystick.getRawAxis(Axis.LEFT_X.id);
+    return -joystick.getRawAxis(Axis.LEFT_Y.id);
   }
 
   /** Left stick Y (left-right) axis. */
   public double getStrafe() {
-    return joystick.getRawAxis(Axis.LEFT_Y.id);
+    return joystick.getRawAxis(Axis.LEFT_X.id);
   }
 
   /** Right stick Y (left-right) axis. */
   public double getYaw() {
-    return joystick.getRawAxis(Axis.RIGHT_Y.id);
+    return joystick.getRawAxis(Axis.RIGHT_X.id);
   }
 
   /** Tuner knob. */
