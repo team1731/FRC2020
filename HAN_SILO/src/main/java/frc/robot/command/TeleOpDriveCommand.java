@@ -8,8 +8,6 @@ import frc.robot.Robot;
 import frc.robot.control.DriverControls;
 import frc.robot.subsystem.DriveSubsystem;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 public final class TeleOpDriveCommand extends Command {
   private static final double DEADBAND = 0.05;
 

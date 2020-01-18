@@ -1,23 +1,23 @@
 package org.usfirst.frc.team1731.robot.vision;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
+//import java.io.IOException;
+//import java.io.InputStream;
+//import java.io.OutputStream;
+//import java.net.ServerSocket;
+//import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Collections;
+//import java.util.Collections;
 
 import edu.wpi.first.wpilibj.SerialPort;
 import org.json.simple.parser.JSONParser;
 
 import org.usfirst.frc.team1731.lib.util.CrashTrackingRunnable;
-import org.usfirst.frc.team1731.robot.Constants;
+//import org.usfirst.frc.team1731.robot.Constants;
 import org.usfirst.frc.team1731.robot.loops.JevoisVisionProcessor;
 import org.json.simple.JSONObject;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+//import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * This controls all vision actions, including vision updates, capture, and interfacing with the Android phone with

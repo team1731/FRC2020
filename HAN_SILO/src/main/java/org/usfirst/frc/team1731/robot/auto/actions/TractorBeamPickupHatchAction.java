@@ -1,12 +1,12 @@
 package org.usfirst.frc.team1731.robot.auto.actions;
 
-import java.util.Optional;
+//import java.util.Optional;
 
 import org.usfirst.frc.team1731.robot.RobotState;
-import org.usfirst.frc.team1731.robot.ShooterAimingParameters;
+//import org.usfirst.frc.team1731.robot.ShooterAimingParameters;
 import org.usfirst.frc.team1731.robot.subsystems.Drive;
 import org.usfirst.frc.team1731.robot.subsystems.Superstructure;
-import edu.wpi.first.wpilibj.Timer;
+//import edu.wpi.first.wpilibj.Timer;
 
 /**
  * Waits for the robot to pass by a provided path marker (i.e. a waypoint on the field). This action routinely compares

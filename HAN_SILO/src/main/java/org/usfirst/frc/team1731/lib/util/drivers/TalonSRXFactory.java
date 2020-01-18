@@ -1,10 +1,10 @@
 package org.usfirst.frc.team1731.lib.util.drivers;
 
-import edu.wpi.first.wpilibj.MotorSafety;
+//import edu.wpi.first.wpilibj.MotorSafety;
 
 import org.usfirst.frc.team1731.robot.Constants;
 
-import com.ctre.phoenix.motorcontrol.ControlFrame;
+//import com.ctre.phoenix.motorcontrol.ControlFrame;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;

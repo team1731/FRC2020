@@ -2,7 +2,7 @@ package org.usfirst.frc.team1731.robot.auto.modes;
 
 import org.usfirst.frc.team1731.robot.Constants;
 import org.usfirst.frc.team1731.robot.auto.AutoModeBase;
-import org.usfirst.frc.team1731.robot.paths.PathContainer;
+//import org.usfirst.frc.team1731.robot.paths.PathContainer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public abstract class MirrorableMode extends AutoModeBase {

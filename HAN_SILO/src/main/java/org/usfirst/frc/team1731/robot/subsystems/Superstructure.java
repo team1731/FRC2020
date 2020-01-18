@@ -1,25 +1,25 @@
 package org.usfirst.frc.team1731.robot.subsystems;
 
-import java.util.Optional;
+//import java.util.Optional;
 
-import org.usfirst.frc.team1731.lib.util.CircularBuffer;
-import org.usfirst.frc.team1731.lib.util.InterpolatingDouble;
-import org.usfirst.frc.team1731.lib.util.drivers.RevRoboticsAirPressureSensor;
+//import org.usfirst.frc.team1731.lib.util.CircularBuffer;
+//import org.usfirst.frc.team1731.lib.util.InterpolatingDouble;
+//import org.usfirst.frc.team1731.lib.util.drivers.RevRoboticsAirPressureSensor;
 import org.usfirst.frc.team1731.robot.Constants;
-import org.usfirst.frc.team1731.robot.Constants.GRABBER_POSITION;
+//import org.usfirst.frc.team1731.robot.Constants.GRABBER_POSITION;
 import org.usfirst.frc.team1731.robot.Constants.ELEVATOR_POSITION;
 import org.usfirst.frc.team1731.robot.Robot;
-import org.usfirst.frc.team1731.robot.RobotState;
-import org.usfirst.frc.team1731.robot.ShooterAimingParameters;
+//import org.usfirst.frc.team1731.robot.RobotState;
+//import org.usfirst.frc.team1731.robot.ShooterAimingParameters;
 import org.usfirst.frc.team1731.robot.loops.Loop;
 import org.usfirst.frc.team1731.robot.loops.Looper;
 
-import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.Solenoid;
+//import edu.wpi.first.wpilibj.Compressor;
+//import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.DriverStation;
+//import edu.wpi.first.wpilibj.DriverStation;
 
 
 /**

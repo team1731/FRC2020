@@ -1,7 +1,7 @@
 package org.usfirst.frc.team1731.robot.auto.actions;
 
 import org.usfirst.frc.team1731.robot.subsystems.Intake;
-import org.usfirst.frc.team1731.robot.subsystems.Intake.WantedState;
+//import org.usfirst.frc.team1731.robot.subsystems.Intake.WantedState;
 import org.usfirst.frc.team1731.robot.subsystems.Superstructure;
 
 import edu.wpi.first.wpilibj.Timer;

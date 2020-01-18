@@ -14,11 +14,11 @@ import org.usfirst.frc.team1731.lib.util.math.RigidTransform2d;
 import org.usfirst.frc.team1731.robot.Constants.ELEVATOR_POSITION;
 import org.usfirst.frc.team1731.robot.auto.AutoModeBase;
 import org.usfirst.frc.team1731.robot.auto.AutoModeExecuter;
-import org.usfirst.frc.team1731.robot.auto.modes.LeftFeedStationToRocketRearMode;
+//import org.usfirst.frc.team1731.robot.auto.modes.LeftFeedStationToRocketRearMode;
 import org.usfirst.frc.team1731.robot.auto.modes.LeftRocketFrontToFeedStationMode;
 import org.usfirst.frc.team1731.robot.auto.modes.LeftFeedStationToRocketFrontMode;
 import org.usfirst.frc.team1731.robot.auto.modes.LeftRocketRearToFeedStationMode;
-import org.usfirst.frc.team1731.robot.auto.modes.PlacePanel;
+//import org.usfirst.frc.team1731.robot.auto.modes.PlacePanel;
 import org.usfirst.frc.team1731.robot.auto.modes.LeftLevel1ToRocketRearMode;
 import org.usfirst.frc.team1731.robot.auto.modes.LeftLevel1ToCargoL1Mode;
 import org.usfirst.frc.team1731.robot.auto.modes.LeftCargoL1ToFeederStationMode;
@@ -44,7 +44,7 @@ import org.usfirst.frc.team1731.robot.auto.modes.spacey.Mode_I;
 import org.usfirst.frc.team1731.robot.auto.modes.spacey.Mode_J;
 import org.usfirst.frc.team1731.robot.loops.Looper;
 import org.usfirst.frc.team1731.robot.loops.RobotStateEstimator;
-import org.usfirst.frc.team1731.robot.loops.VisionCamProcessor;
+//import org.usfirst.frc.team1731.robot.loops.VisionCamProcessor;
 import org.usfirst.frc.team1731.robot.loops.JevoisVisionProcessor;
 import org.usfirst.frc.team1731.robot.subsystems.ConnectionMonitor;
 import org.usfirst.frc.team1731.robot.subsystems.Drive;
@@ -63,7 +63,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DigitalOutput;
-import edu.wpi.first.wpilibj.SerialPort;
+//import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.TimedRobot;
 
 
@@ -89,7 +89,7 @@ public class Robot extends TimedRobot {
     private static Map<String, AutoModeBase> AUTO_MODES; // modes defined in Mark's "BIBLE"
     
     private static AutoModeBase newLeftRocketRearToFeedStationMode  = new LeftRocketRearToFeedStationMode();
-    private static AutoModeBase newLeftFeedStationToRocketRearMode  = new LeftFeedStationToRocketRearMode();
+    //private static AutoModeBase newLeftFeedStationToRocketRearMode  = new LeftFeedStationToRocketRearMode();
     private static AutoModeBase newLeftRocketFrontToFeedStationMode = new LeftRocketFrontToFeedStationMode();
     private static AutoModeBase newLeftFeedStationToRocketFrontMode = new LeftFeedStationToRocketFrontMode();
     private static AutoModeBase newLeftLevel1ToCargoL1Mode          = new LeftLevel1ToCargoL1Mode();
@@ -560,7 +560,7 @@ public class Robot extends TimedRobot {
             else if(mControlBoard.getAutoFeederStationToRear()){ //2
                 if(mAutoModeExecuter == null){
                     mAutoModeExecuter = new AutoModeExecuter();
-                    mAutoModeExecuter.setAutoMode( newLeftFeedStationToRocketRearMode );
+                    //mAutoModeExecuter.setAutoMode( newLeftFeedStationToRocketRearMode );
                     mAutoModeExecuter.start();
                 }
             }

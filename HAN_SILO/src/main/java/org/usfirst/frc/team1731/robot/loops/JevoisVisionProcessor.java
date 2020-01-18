@@ -3,10 +3,10 @@ package org.usfirst.frc.team1731.robot.loops;
 import org.usfirst.frc.team1731.robot.GoalTracker;
 import org.usfirst.frc.team1731.robot.RobotState;
 import org.usfirst.frc.team1731.robot.vision.JevoisVisionUpdate;
-import org.usfirst.frc.team1731.robot.vision.VisionUpdate;
-import org.usfirst.frc.team1731.robot.vision.VisionUpdateReceiver;
+//import org.usfirst.frc.team1731.robot.vision.VisionUpdate;
+//import org.usfirst.frc.team1731.robot.vision.VisionUpdateReceiver;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+//import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * This function adds vision updates (from the Nexus smartphone) to a list in RobotState. This helps keep track of goals
