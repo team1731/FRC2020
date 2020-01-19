@@ -75,10 +75,21 @@ public class DriverControls {
 
   public enum Axis {
     // XBOX
+    
     RIGHT_X(4),
-    RIGHT_Y(5), //2),
+    RIGHT_Y(5),
     LEFT_X(0),
     LEFT_Y(1),
+    
+
+    //FANCY FLIGHT CONTROLLER
+    /*
+    RIGHT_X(3),
+    RIGHT_Y(4),
+    LEFT_X(0),
+    LEFT_Y(1),
+    */
+
     // RIGHT_X(3),
     // RIGHT_Y(4),
     // LEFT_X(0),

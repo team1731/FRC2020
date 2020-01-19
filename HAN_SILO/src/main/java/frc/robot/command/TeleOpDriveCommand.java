@@ -11,7 +11,20 @@ import frc.robot.subsystem.DriveSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public final class TeleOpDriveCommand extends Command {
-  private static final double DEADBAND = 0.075;
+
+  /*
+    PLEASE NOTE:
+    PowerA controllers (the off brand wired controllers we get) have terrible left thumbsticks. They typically end up
+    centering at about +0.87 or -0.87. However, the right thumbstick X is
+    literally perfection, centering at 0.0.
+    I have not tested official XBox controllers. That will need to happen later
+    The fancy flight sim controller for whatever inane reason centers at -0.1 and -0.08. It could be that it's not trimmed,
+    but the trim switches do nothing to change the values, and they also don't have a button in the driver station
+
+    Please keep these notes in mind when adjusting the DEADBAND variable
+  */
+
+  private static final double DEADBAND = 0.09;
 
   private static final DriveSubsystem swerve = Robot.DRIVE;
   private static final DriverControls controls = Robot.CONTROLS.getDriverControls();
@@ -33,8 +46,11 @@ public final class TeleOpDriveCommand extends Command {
 
     swerve.drive(forward, strafe, azimuth);
     SmartDashboard.putNumber("FORWARD", forward);
+    SmartDashboard.putNumber("FORWARD_RAW", controls.getForward());
     SmartDashboard.putNumber("STRAFE", strafe);
+    SmartDashboard.putNumber("STRAFE_RAW", controls.getStrafe());
     SmartDashboard.putNumber("AZIMUTH", azimuth);
+    SmartDashboard.putNumber("AZIMUTH_RAW", controls.getYaw());
   }
 
   @Override
