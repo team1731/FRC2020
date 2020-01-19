@@ -11,7 +11,7 @@ import frc.robot.subsystem.DriveSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public final class TeleOpDriveCommand extends Command {
-  private static final double DEADBAND = 0.05;
+  private static final double DEADBAND = 0.075;
 
   private static final DriveSubsystem swerve = Robot.DRIVE;
   private static final DriverControls controls = Robot.CONTROLS.getDriverControls();

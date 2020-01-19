@@ -60,10 +60,15 @@ public class SwerveDrive {
     kLengthComponent = length / radius;
     kWidthComponent = width / radius;
 
+    SmartDashboard.putString("Field Oriented", "nyet");
+
     logger.info("gyro is configured: {}", gyro != null);
     logger.info("gyro is connected: {}", gyro != null && gyro.isConnected());
+    SmartDashboard.putString("gyro is connected", (gyro != null && gyro.isConnected()) ? "hm yes" : "uh no");
     setFieldOriented(gyro != null && gyro.isConnected());
 
+    UpdateGyroDashboard();
+    
     if (isFieldOriented) {
       logger.info("ROBOT IS FIELD ORIENTED IN SWERVEDRIVE.JAVA");
       gyro.enableLogging(config.gyroLoggingEnabled);
@@ -84,6 +89,15 @@ public class SwerveDrive {
     logger.debug("gyroRateCorrection = {}", kGyroRateCorrection);
 
     //logger.info("<b>SwerveDrive</b>: SwerveDrive constructed");
+  }
+
+  private void UpdateGyroDashboard(){
+    if(gyro != null){
+      SmartDashboard.putNumber("Gyro Orientation", gyro.getAngle());
+    } else {
+     SmartDashboard.putNumber("Gyro Orientation", 361);
+    }
+
   }
 
   /**
@@ -109,6 +123,7 @@ public class SwerveDrive {
     logger.info("drive mode = {}", driveMode);
     logger.info("gyro is configured: {}", gyro != null);
     logger.info("gyro is connected: {}", gyro != null && gyro.isConnected());
+    SmartDashboard.putString("gyro is connected", (gyro != null && gyro.isConnected()) ? "hm yes" : "uh no");
     if (isFieldOriented) {
       logger.info("ROBOT IS FIELD ORIENTED IN setDriveMode()");
     }
@@ -139,7 +154,7 @@ public class SwerveDrive {
    */
   public void drive(double forward, double strafe, double azimuth) {
     //logger.info("<b>SwerveDrive</b>: drive starting");
-    
+    UpdateGyroDashboard();
     // Use gyro for field-oriented drive. We use getAngle instead of getYaw to enable arbitrary
     // autonomous starting positions.
     if (isFieldOriented) {
@@ -287,6 +302,7 @@ public class SwerveDrive {
    */
   public void setFieldOriented(boolean enabled) {
     isFieldOriented = enabled;
+    SmartDashboard.putString("Field Oriented", enabled ? "da" : "nyet");
     logger.info("field orientation driving is {}", isFieldOriented ? "ENABLED" : "DISABLED");
   }
 

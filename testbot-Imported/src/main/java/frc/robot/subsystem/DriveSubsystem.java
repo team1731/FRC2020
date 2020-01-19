@@ -95,6 +95,7 @@ public class DriveSubsystem extends Subsystem {
       azimuthSpark.restoreFactoryDefaults();
       CANPIDController azimuth_pidController = azimuthSpark.getPIDController();
       CANEncoder azimuth_encoder = azimuthSpark.getEncoder();
+      azimuthSpark.setInverted(true);
       azimuth_pidController.setP(5e-5);
       azimuth_pidController.setI(1e-6);
       azimuth_pidController.setD(0);
