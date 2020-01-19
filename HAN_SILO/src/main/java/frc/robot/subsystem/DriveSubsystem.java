@@ -27,8 +27,8 @@ public class DriveSubsystem extends Subsystem {
 
   //private static final Logger logger = LoggerFactory.getLogger(DriveSubsystem.class);
   private static final double DRIVE_SETPOINT_MAX = 0.0;
-  private static final double ROBOT_LENGTH = 1.0;
-  private static final double ROBOT_WIDTH = 1.0;
+  //private static final double ROBOT_LENGTH = 1.0;
+  //private static final double ROBOT_WIDTH = 1.0;
   private static Wheel[] wheelObjects;
 
   private final SwerveDrive swerve = getSwerve();
@@ -76,8 +76,8 @@ public class DriveSubsystem extends Subsystem {
     SwerveDriveConfig config = new SwerveDriveConfig();
     config.wheels = getWheels();
     config.gyro = new AHRS(SPI.Port.kMXP);
-    config.length = ROBOT_LENGTH;
-    config.width = ROBOT_WIDTH;
+    //config.length = ROBOT_LENGTH;
+    //config.width = ROBOT_WIDTH;
     config.gyroLoggingEnabled = true;
     config.summarizeTalonErrors = false;
 
@@ -95,6 +95,7 @@ public class DriveSubsystem extends Subsystem {
       azimuthSpark.restoreFactoryDefaults();
       CANPIDController azimuth_pidController = azimuthSpark.getPIDController();
       CANEncoder azimuth_encoder = azimuthSpark.getEncoder();
+      azimuthSpark.setInverted(true);
       azimuth_pidController.setP(5e-5);
       azimuth_pidController.setI(1e-6);
       azimuth_pidController.setD(0);

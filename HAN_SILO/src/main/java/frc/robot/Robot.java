@@ -1,13 +1,4 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2017-2018 FIRST. All Rights Reserved.                        */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package frc.robot;
-
-
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -26,10 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.strykeforce.thirdcoast.swerve.Wheel;
-
-
-
-
 
 
 public class Robot extends TimedRobot {
@@ -52,6 +39,7 @@ public class Robot extends TimedRobot {
     System.out.println("Today is " + new Date().toString());
     DRIVE.zeroAzimuthEncoders();
     DRIVE.zeroGyro();
+
     //logger.info("<b>Robot</b>: robotInit Finished");
     //just some example lines i used to prove that code completion still works!
     //m_motor = new CANSparkMax(deviceID, MotorType.kBrushless);
