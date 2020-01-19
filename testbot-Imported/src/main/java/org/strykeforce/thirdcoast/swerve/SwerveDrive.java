@@ -65,7 +65,8 @@ public class SwerveDrive {
     logger.info("gyro is configured: {}", gyro != null);
     logger.info("gyro is connected: {}", gyro != null && gyro.isConnected());
     SmartDashboard.putString("gyro is connected", (gyro != null && gyro.isConnected()) ? "hm yes" : "uh no");
-    setFieldOriented(gyro != null && gyro.isConnected());
+    boolean gyroIsConnected = gyro.isConnected();
+    setFieldOriented(gyro != null && gyroIsConnected);
 
     UpdateGyroDashboard();
     
@@ -301,8 +302,9 @@ public class SwerveDrive {
    * @param enabled true to enable field-oriented driving.
    */
   public void setFieldOriented(boolean enabled) {
-    isFieldOriented = enabled;
-    SmartDashboard.putString("Field Oriented", enabled ? "da" : "nyet");
+    isFieldOriented = true;
+    //isFieldOriented = enabled;
+    SmartDashboard.putString("Field Oriented", isFieldOriented ? "da" : "nyet");
     logger.info("field orientation driving is {}", isFieldOriented ? "ENABLED" : "DISABLED");
   }
 

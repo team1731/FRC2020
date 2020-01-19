@@ -39,6 +39,7 @@ public class Robot extends TimedRobot {
     System.out.println("Today is " + new Date().toString());
     DRIVE.zeroAzimuthEncoders();
     DRIVE.zeroGyro();
+
     //logger.info("<b>Robot</b>: robotInit Finished");
     //just some example lines i used to prove that code completion still works!
     //m_motor = new CANSparkMax(deviceID, MotorType.kBrushless);
