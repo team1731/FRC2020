@@ -27,6 +27,11 @@ public class PathSegment {
     private boolean extrapolateLookahead;
     private String marker;
 
+    //Trying to implement azimuth
+    private double azimuthStart;
+    private double azimuthEnd;
+    private double azimuthCenter;
+
     /**
      * Constructor for a linear segment
      * 
@@ -42,7 +47,7 @@ public class PathSegment {
      *            maximum speed allowed on the segment
      */
     public PathSegment(double x1, double y1, double x2, double y2, double maxSpeed, MotionState startState,
-            double endSpeed) {
+            double endSpeed, double azimuthStart, double azimuthEnd) {
         this.start = new Translation2d(x1, y1);
         this.end = new Translation2d(x2, y2);
 
@@ -52,10 +57,14 @@ public class PathSegment {
         extrapolateLookahead = false;
         isLine = true;
         createMotionProfiler(startState, endSpeed);
+
+        //Implementing Azimuth
+        this.azimuthStart = azimuthStart;
+        this.azimuthEnd = azimuthEnd;
     }
 
     public PathSegment(double x1, double y1, double x2, double y2, double maxSpeed, MotionState startState,
-            double endSpeed, String marker) {
+            double endSpeed, String marker, double azimuthStart, double azimuthEnd) {
         this.start = new Translation2d(x1, y1);
         this.end = new Translation2d(x2, y2);
 
@@ -66,6 +75,10 @@ public class PathSegment {
         isLine = true;
         this.marker = marker;
         createMotionProfiler(startState, endSpeed);
+        
+        //Implementing Azimuth
+        this.azimuthStart = azimuthStart;
+        this.azimuthEnd = azimuthEnd;
     }
 
     /**
@@ -87,7 +100,7 @@ public class PathSegment {
      *            maximum speed allowed on the segment
      */
     public PathSegment(double x1, double y1, double x2, double y2, double cx, double cy, double maxSpeed,
-            MotionState startState, double endSpeed) {
+            MotionState startState, double endSpeed, double azimuthStart, double azimuthCenter, double azimuthEnd) {
         this.start = new Translation2d(x1, y1);
         this.end = new Translation2d(x2, y2);
         this.center = new Translation2d(cx, cy);
@@ -99,10 +112,15 @@ public class PathSegment {
         extrapolateLookahead = false;
         isLine = false;
         createMotionProfiler(startState, endSpeed);
+
+        //Implementing Azimuth
+        this.azimuthStart = azimuthStart;
+        this.azimuthCenter = azimuthCenter;
+        this.azimuthEnd = azimuthEnd;
     }
 
     public PathSegment(double x1, double y1, double x2, double y2, double cx, double cy, double maxSpeed,
-            MotionState startState, double endSpeed, String marker) {
+            MotionState startState, double endSpeed, String marker, double azimuthStart, double azimuthCenter, double azimuthEnd) {
         this.start = new Translation2d(x1, y1);
         this.end = new Translation2d(x2, y2);
         this.center = new Translation2d(cx, cy);
@@ -115,6 +133,11 @@ public class PathSegment {
         isLine = false;
         this.marker = marker;
         createMotionProfiler(startState, endSpeed);
+        
+        //Implementing Azimuth
+        this.azimuthStart = azimuthStart;
+        this.azimuthCenter = azimuthCenter;
+        this.azimuthEnd = azimuthEnd;
     }
 
     /**
@@ -155,6 +178,27 @@ public class PathSegment {
         } else {
             return deltaStart.norm() * Translation2d.getAngle(deltaStart, deltaEnd).getRadians();
         }
+    }
+
+    /**
+     * @return the starting azimuth in degrees, with 0 being starting orientation
+     */
+    public double getStartAzimuth(){
+        return azimuthStart;
+    }
+
+    /**
+     * @return the ending azimuth in degrees, with 0 being starting orientation
+     */
+    public double getEndAzimuth(){
+        return azimuthEnd;
+    }
+
+    /**
+     * @return the center azimuth in degrees, with 0 being starting orientation
+     */
+    public double getCenterAzimuth(){
+        return azimuthCenter;
     }
 
     /**
@@ -277,10 +321,10 @@ public class PathSegment {
         if (isLine) {
             return "(" + "start: " + start + ", end: " + end + ", speed: " + maxSpeed // + ", profile: " +
                                                                                       // speedController
-                    + ")";
+                    + ", azimuthStart: " + azimuthStart + ", azimuthCenter " + azimuthCenter + ", azimuthEnd: " + azimuthEnd + ")";
         } else {
             return "(" + "start: " + start + ", end: " + end + ", center: " + center + ", speed: " + maxSpeed
-                    + ")"; // + ", profile: " + speedController + ")";
+                    + ", azimuthStart: " + azimuthStart + ", azimuthEnd: " + azimuthEnd + ")"; // + ", profile: " + speedController + ")";
         }
     }
 }

@@ -62,6 +62,7 @@ public class SwerveDrive {
 
     logger.info("gyro is configured: {}", gyro != null);
     logger.info("gyro is connected: {}", gyro != null && gyro.isConnected());
+    SmartDashboard.putString("Gyro Connected", (gyro != null && gyro.isConnected()) ? "da" : "nyet");
     setFieldOriented(gyro != null && gyro.isConnected());
 
     if (isFieldOriented) {
@@ -142,6 +143,8 @@ public class SwerveDrive {
     
     // Use gyro for field-oriented drive. We use getAngle instead of getYaw to enable arbitrary
     // autonomous starting positions.
+
+    SmartDashboard.putString("Field Oriented", isFieldOriented ? "hm yes" : "uh no");
     if (isFieldOriented) {
       logger.info("ROBOT IS FIELD ORIENTED");
       double angle = gyro.getAngle();
@@ -286,7 +289,10 @@ public class SwerveDrive {
    * @param enabled true to enable field-oriented driving.
    */
   public void setFieldOriented(boolean enabled) {
-    isFieldOriented = enabled;
+    //isFieldOriented = enabled;
+    isFieldOriented = true;
+    logger.warn("[SwerveDrive]: isFieldOriented is being forced to true. Do not allow this to happen in competitions");
+    SmartDashboard.putString("Field Oriented", isFieldOriented ? "hm yes" : "uh no");
     logger.info("field orientation driving is {}", isFieldOriented ? "ENABLED" : "DISABLED");
   }
 

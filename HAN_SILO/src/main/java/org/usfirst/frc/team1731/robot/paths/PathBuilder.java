@@ -57,28 +57,65 @@ public class PathBuilder {
         double radius;
         double speed;
         String marker;
+        double azimuth;
 
         public Waypoint(Waypoint other) {
-            this(other.position.x(), other.position.y(), other.radius, other.speed, other.marker);
+            this(other.position.x(), other.position.y(), other.radius, other.speed, other.marker, other.azimuth);
         }
 
+        public Waypoint(double x, double y, double r, double s, double a) {
+            position = new Translation2d(x, y);
+            radius = r;
+            speed = s;
+            azimuth = a;
+        }
+
+        /**
+         * @deprecated added azimuth constructors. Add an extra double to the end.
+         */
+        @Deprecated
         public Waypoint(double x, double y, double r, double s) {
             position = new Translation2d(x, y);
             radius = r;
             speed = s;
         }
 
+        public Waypoint(Translation2d pos, double r, double s, double a) {
+            position = pos;
+            radius = r;
+            speed = s;
+            azimuth = a;
+        }
+
+        /**
+         * @deprecated added azimuth constructors. Add an extra double to the end.
+         */
+        @Deprecated
         public Waypoint(Translation2d pos, double r, double s) {
             position = pos;
             radius = r;
             speed = s;
+            azimuth = 0;
         }
 
+        public Waypoint(double x, double y, double r, double s, String m, double a) {
+            position = new Translation2d(x, y);
+            radius = r;
+            speed = s;
+            marker = m;
+            azimuth = a;
+        }
+
+        /**
+         * @deprecated added azimuth constructors. Add an extra double to the end.
+         */
+        @Deprecated
         public Waypoint(double x, double y, double r, double s, String m) {
             position = new Translation2d(x, y);
             radius = r;
             speed = s;
             marker = m;
+            azimuth = 0;
         }
     }
 
@@ -92,6 +129,8 @@ public class PathBuilder {
         Translation2d end;
         Translation2d slope;
         double speed;
+        double azimuthStart;
+        double azimuthEnd;
 
         public Line(Waypoint a, Waypoint b) {
             this.a = a;
@@ -100,6 +139,9 @@ public class PathBuilder {
             speed = b.speed;
             start = a.position.translateBy(slope.scale(a.radius / slope.norm()));
             end = b.position.translateBy(slope.scale(-b.radius / slope.norm()));
+
+            azimuthStart = a.azimuth;
+            azimuthEnd = b.azimuth;
         }
 
         private void addToPath(Path p, double endSpeed) {
@@ -107,10 +149,10 @@ public class PathBuilder {
             if (pathLength > kEpsilon) {
                 if (b.marker != null) {
                     p.addSegment(new PathSegment(start.x(), start.y(), end.x(), end.y(), b.speed,
-                            p.getLastMotionState(), endSpeed, b.marker));
+                            p.getLastMotionState(), endSpeed, b.marker, a.azimuth, b.azimuth));
                 } else {
                     p.addSegment(new PathSegment(start.x(), start.y(), end.x(), end.y(), b.speed,
-                            p.getLastMotionState(), endSpeed));
+                            p.getLastMotionState(), endSpeed, a.azimuth, b.azimuth));
                 }
             }
 
@@ -143,7 +185,8 @@ public class PathBuilder {
             a.addToPath(p, speed);
             if (radius > kEpsilon && radius < kReallyBigNumber) {
                 p.addSegment(new PathSegment(a.end.x(), a.end.y(), b.start.x(), b.start.y(), center.x(), center.y(),
-                        speed, p.getLastMotionState(), b.speed));
+                            speed, p.getLastMotionState(), b.speed, a.azimuthStart, a.azimuthEnd, b.azimuthEnd));
+                //Technically, a.azimuthEnd and b.azimuthStart should be the same since they *should* be the same waypoint
             }
         }
 
