@@ -40,7 +40,9 @@ public class Constants extends ConstantsBase {
     public static int kWristTalonKF = 0;
     public static int kWristTalonKP = 30;
 
-    
+    public static int kRangeLEDId = 8;
+    public static int kGreenLEDId = 9;
+
     // Shooter tuning parameters
     public static boolean kIsShooterTuning = false;
     public static double kShooterTuningRpmFloor = 2900;
