@@ -420,7 +420,7 @@ public class Robot extends TimedRobot {
             boolean pickUp = mControlBoard.getAutoPickUp();
             boolean pickupHatch = mControlBoard.getPickupPanel();
             boolean ejectHatch = mControlBoard.getShootPanel();
-            boolean pickupCargo = mControlBoard.getPickupBall();
+            boolean pickupPowerCell = mControlBoard.getPickupBall();
             boolean ejectCargo = mControlBoard.getShootBall();
             boolean elevCargoShipPos = mControlBoard.getCargoShipBall();
             boolean startingConfiguration = mControlBoard.getStartingConfiguration();       
@@ -461,10 +461,10 @@ public class Robot extends TimedRobot {
                 mSuperstructure.setWantedState(Superstructure.WantedState.HATCH_CAPTURED); 
             } else if (ejectCargo) {
                 mSuperstructure.setWantedState(Superstructure.WantedState.EJECTING_CARGO);
-            } else if (pickupCargo) {
-                mSuperstructure.setWantedState(Superstructure.WantedState.CARGO_CAPTURED);
+            } else if (pickupPowerCell) {
+                mSuperstructure.setWantedState(Superstructure.WantedState.POWERCELL_INTAKING);
             } else {
-            	mSuperstructure.setWantedState(Superstructure.WantedState.ELEVATOR_TRACKING);
+            	mSuperstructure.setWantedState(Superstructure.WantedState.IDLE);
             }
             	
             // Drive base

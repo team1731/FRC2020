@@ -24,7 +24,7 @@ public class IntakeAction implements Action {
 
     @Override
     public boolean isFinished() {
-        return mIntake.hasCargo();
+        return false; //mIntake.hasCargo();
     }
 
     @Override

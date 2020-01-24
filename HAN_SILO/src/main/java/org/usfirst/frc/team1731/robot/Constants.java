@@ -290,7 +290,7 @@ public class Constants extends ConstantsBase {
 	public static final int kFeederVictor = 1;
 
     // Intake
-	public static final int kIntakeTalon = 8;
+	public static final int kIntakeVictor = 8;
 
     // Shooter
 //	public static final int kShooterVictor = 4;
@@ -324,6 +324,10 @@ public class Constants extends ConstantsBase {
 
 	public static  double kRotateTime = 500;
     public static  double kUnlockClimberTime = 500;
+
+    // Intake solenoid
+    public static final int kIntakeHoodSolenoid1 = 1;
+    public static final int kIntakeHoodSolenoid2 = 2;
 
     // Analog Inputs
     public static int kLEDOnId = 2;

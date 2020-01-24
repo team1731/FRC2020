@@ -87,7 +87,7 @@ public class Superstructure extends Subsystem {
         IDLE,
         WAITING_FOR_LOW_POSITION,
         WAITING_FOR_HIGH_POSITION,
-        WAITING_FOR_POWERCUBE_INTAKE,
+        WAITING_FOR_POWERCELL_INTAKE,
         CLIMBING,
         CALIBRATINGUP,
         CALIBRATINGDOWN,
@@ -121,7 +121,7 @@ public class Superstructure extends Subsystem {
         HATCH_CAPTURED,
         EJECTING_CARGO,
         EJECTING_HATCH,
-        CARGO_CAPTURED,
+        POWERCELL_INTAKING,
         STARTINGCONFIGURATION
     }
 
@@ -166,7 +166,7 @@ public class Superstructure extends Subsystem {
                 case WAITING_FOR_HIGH_POSITION:
                     newState = handleWaitingForHightPosition();
                     break;
-                case WAITING_FOR_POWERCUBE_INTAKE:
+                case WAITING_FOR_POWERCELL_INTAKE:
                     newState = waitingForPowerCubeIntake();
                     break;
                 case CALIBRATINGUP:
@@ -234,7 +234,7 @@ public class Superstructure extends Subsystem {
             case AUTOINTAKING:
                 return SystemState.WAITING_FOR_LOW_POSITION;
             case INTAKING:
-                return SystemState.WAITING_FOR_POWERCUBE_INTAKE;
+                return SystemState.WAITING_FOR_POWERCELL_INTAKE;
             case SPITTING:
                 return SystemState.SPITTING;
             case CALIBRATINGDOWN:
@@ -251,7 +251,7 @@ public class Superstructure extends Subsystem {
                 return SystemState.HATCH_CAPTURED;
             case EJECTING_HATCH:
                 return SystemState.EJECTING_HATCH;
-            case CARGO_CAPTURED:
+            case POWERCELL_INTAKING:
                 return SystemState.CARGO_CAPTURED;
             case EJECTING_CARGO:
                 return SystemState.EJECTING_CARGO;
@@ -275,7 +275,7 @@ public class Superstructure extends Subsystem {
             case AUTOINTAKING:
                 return SystemState.WAITING_FOR_LOW_POSITION;
             case INTAKING:
-                return SystemState.WAITING_FOR_POWERCUBE_INTAKE;
+                return SystemState.WAITING_FOR_POWERCELL_INTAKE;
             case SPITTING:
                 return SystemState.SPITTING;
             case CALIBRATINGDOWN:
@@ -292,7 +292,7 @@ public class Superstructure extends Subsystem {
                 return SystemState.HATCH_CAPTURED;
             case EJECTING_HATCH:
                 return SystemState.EJECTING_HATCH;
-            case CARGO_CAPTURED:
+            case POWERCELL_INTAKING:
                 return SystemState.CARGO_CAPTURED;
             case EJECTING_CARGO:
                 return SystemState.EJECTING_CARGO;
@@ -302,14 +302,14 @@ public class Superstructure extends Subsystem {
         }
 
         private SystemState handleCargoCapture() {
-            mBeakSwinger.set(DoubleSolenoid.Value.kReverse);
-            mBeakLips.set(DoubleSolenoid.Value.kReverse);
-            mTopRoller.set(DoubleSolenoid.Value.kForward);
-            mMustache.set(DoubleSolenoid.Value.kReverse);
+            //mBeakSwinger.set(DoubleSolenoid.Value.kReverse);
+            //mBeakLips.set(DoubleSolenoid.Value.kReverse);
+            //mTopRoller.set(DoubleSolenoid.Value.kForward);
+            //mMustache.set(DoubleSolenoid.Value.kReverse);
             mIntake.setWantedState(Intake.WantedState.INTAKING);
-            seWristtWantedPosition(WantedWristPosition.CARGOPICKUP);
-            setWantedElevatorPosition(ELEVATOR_POSITION.ELEVATOR_CARGO_PICKUP);
-            mElevator.setWantedPosition(Constants.kElevatorBallPickup_EncoderValue);
+            //seWristtWantedPosition(WantedWristPosition.CARGOPICKUP);
+            //setWantedElevatorPosition(ELEVATOR_POSITION.ELEVATOR_CARGO_PICKUP);
+            //mElevator.setWantedPosition(Constants.kElevatorBallPickup_EncoderValue);
 
             switch (mWantedState) {
             case CLIMBINGUP:
@@ -317,7 +317,7 @@ public class Superstructure extends Subsystem {
             case AUTOINTAKING:
                 return SystemState.WAITING_FOR_LOW_POSITION;
             case INTAKING:
-                return SystemState.WAITING_FOR_POWERCUBE_INTAKE;
+                return SystemState.WAITING_FOR_POWERCELL_INTAKE;
             case SPITTING:
                 return SystemState.SPITTING;
             case CALIBRATINGDOWN:
@@ -336,7 +336,7 @@ public class Superstructure extends Subsystem {
                 return SystemState.HATCH_CAPTURED;
             case EJECTING_HATCH:
                 return SystemState.EJECTING_HATCH;
-            case CARGO_CAPTURED:
+            case POWERCELL_INTAKING:
                 return SystemState.CARGO_CAPTURED;
             case EJECTING_CARGO:
                 return SystemState.EJECTING_CARGO;
@@ -357,7 +357,7 @@ public class Superstructure extends Subsystem {
             case AUTOINTAKING:
                 return SystemState.WAITING_FOR_LOW_POSITION;
             case INTAKING:
-                return SystemState.WAITING_FOR_POWERCUBE_INTAKE;
+                return SystemState.WAITING_FOR_POWERCELL_INTAKE;
             case SPITTING:
                 return SystemState.SPITTING;
             case CALIBRATINGDOWN:
@@ -374,7 +374,7 @@ public class Superstructure extends Subsystem {
                 return SystemState.HATCH_CAPTURED;
             case EJECTING_HATCH:
                 return SystemState.EJECTING_HATCH;
-            case CARGO_CAPTURED:
+            case POWERCELL_INTAKING:
                 return SystemState.CARGO_CAPTURED;
             case EJECTING_CARGO:
                 return SystemState.EJECTING_CARGO;
@@ -395,7 +395,7 @@ public class Superstructure extends Subsystem {
             case AUTOINTAKING:
                 return SystemState.WAITING_FOR_LOW_POSITION;
             case INTAKING:
-                return SystemState.WAITING_FOR_POWERCUBE_INTAKE;
+                return SystemState.WAITING_FOR_POWERCELL_INTAKE;
             case SPITTING:
                 return SystemState.SPITTING;
             case CALIBRATINGDOWN:
@@ -414,7 +414,7 @@ public class Superstructure extends Subsystem {
             
                 mBeakLips.set(DoubleSolenoid.Value.kForward);
                 return SystemState.ELEVATOR_TRACKING;
-            case CARGO_CAPTURED:
+            case POWERCELL_INTAKING:
                 return SystemState.CARGO_CAPTURED;
             case EJECTING_CARGO:
                 return SystemState.EJECTING_CARGO;
@@ -426,7 +426,8 @@ public class Superstructure extends Subsystem {
         private SystemState handleElevatorTracking(double timestamp) {
         	mElevator.setWantedPosition(mWantedElevatorPosition);
             mElevator.setWantedState(Elevator.WantedState.ELEVATORTRACKING);
-            if (mIntake.getSystemState() != Intake.SystemState.HOLDING) {
+            //ORIGONALY WAS NOT INTAKING BUT HOLDING
+            if (mIntake.getSystemState() != Intake.SystemState.INTAKING) {
                 mIntake.setWantedState(Intake.WantedState.IDLE);
             }
             mClimber.setWantedState(Climber.WantedState.IDLE);
@@ -441,7 +442,7 @@ public class Superstructure extends Subsystem {
             case AUTOINTAKING:
                 return SystemState.WAITING_FOR_LOW_POSITION;
             case INTAKING:
-                return SystemState.WAITING_FOR_POWERCUBE_INTAKE;
+                return SystemState.WAITING_FOR_POWERCELL_INTAKE;
             case SPITTING:
                 return SystemState.SPITTING;
             case CALIBRATINGDOWN:
@@ -458,7 +459,7 @@ public class Superstructure extends Subsystem {
                 return SystemState.HATCH_CAPTURED;
             case EJECTING_HATCH:
                 return SystemState.EJECTING_HATCH;
-            case CARGO_CAPTURED:
+            case POWERCELL_INTAKING:
                 return SystemState.CARGO_CAPTURED;
             case EJECTING_CARGO:
                 return SystemState.EJECTING_CARGO;
@@ -478,7 +479,7 @@ public class Superstructure extends Subsystem {
             case AUTOINTAKING:
                 return SystemState.RETURNING_HOME;
             case INTAKING:
-                return SystemState.WAITING_FOR_POWERCUBE_INTAKE;
+                return SystemState.WAITING_FOR_POWERCELL_INTAKE;
             case SPITTING:
                 return SystemState.SPITTING;
             case CALIBRATINGDOWN:
@@ -495,7 +496,7 @@ public class Superstructure extends Subsystem {
                 return SystemState.HATCH_CAPTURED;
             case EJECTING_HATCH:
                 return SystemState.EJECTING_HATCH;
-            case CARGO_CAPTURED:
+            case POWERCELL_INTAKING:
                 return SystemState.CARGO_CAPTURED;
             case EJECTING_CARGO:
                 return SystemState.EJECTING_CARGO;    
@@ -514,7 +515,7 @@ public class Superstructure extends Subsystem {
             case AUTOINTAKING:
                 return SystemState.WAITING_FOR_LOW_POSITION;
             case INTAKING:
-                return SystemState.WAITING_FOR_POWERCUBE_INTAKE;
+                return SystemState.WAITING_FOR_POWERCELL_INTAKE;
             case SPITTING:
                 return SystemState.SPITTING;
             case CALIBRATINGDOWN:
@@ -531,7 +532,7 @@ public class Superstructure extends Subsystem {
                 return SystemState.HATCH_CAPTURED;
             case EJECTING_HATCH:
                 return SystemState.EJECTING_HATCH;
-            case CARGO_CAPTURED:
+            case POWERCELL_INTAKING:
                 return SystemState.CARGO_CAPTURED;
             case EJECTING_CARGO:
                 return SystemState.EJECTING_CARGO;
@@ -550,7 +551,7 @@ public class Superstructure extends Subsystem {
             case AUTOINTAKING:
                 return SystemState.WAITING_FOR_LOW_POSITION;
             case INTAKING:
-                return SystemState.WAITING_FOR_POWERCUBE_INTAKE;
+                return SystemState.WAITING_FOR_POWERCELL_INTAKE;
             case SPITTING:
                 return SystemState.SPITTING;
             case CALIBRATINGDOWN:
@@ -569,7 +570,7 @@ public class Superstructure extends Subsystem {
                 return SystemState.HATCH_CAPTURED;
             case EJECTING_HATCH:
                 return SystemState.EJECTING_HATCH;
-            case CARGO_CAPTURED:
+            case POWERCELL_INTAKING:
                 return SystemState.CARGO_CAPTURED;
             case EJECTING_CARGO:
                 return SystemState.EJECTING_CARGO;
@@ -589,7 +590,7 @@ public class Superstructure extends Subsystem {
             case AUTOINTAKING:
                 return SystemState.WAITING_FOR_LOW_POSITION;
             case INTAKING:
-                return SystemState.WAITING_FOR_POWERCUBE_INTAKE;
+                return SystemState.WAITING_FOR_POWERCELL_INTAKE;
             case SPITTING:
                 return SystemState.SPITTING;
             case CALIBRATINGDOWN:
@@ -606,7 +607,7 @@ public class Superstructure extends Subsystem {
                 return SystemState.HATCH_CAPTURED;
             case EJECTING_HATCH:
                 return SystemState.EJECTING_HATCH;
-             case CARGO_CAPTURED:
+             case POWERCELL_INTAKING:
                 return SystemState.CARGO_CAPTURED;
             case EJECTING_CARGO:
                 return SystemState.EJECTING_CARGO;    
@@ -625,7 +626,7 @@ public class Superstructure extends Subsystem {
             case AUTOINTAKING:
                 return SystemState.WAITING_FOR_LOW_POSITION;
             case INTAKING:
-                return SystemState.WAITING_FOR_POWERCUBE_INTAKE;
+                return SystemState.WAITING_FOR_POWERCELL_INTAKE;
             case SPITTING:
                 return SystemState.SPITTING;
             case CALIBRATINGDOWN:
@@ -642,7 +643,7 @@ public class Superstructure extends Subsystem {
                 return SystemState.HATCH_CAPTURED;
             case EJECTING_HATCH:
                 return SystemState.EJECTING_HATCH;
-            case CARGO_CAPTURED:
+            case POWERCELL_INTAKING:
                 return SystemState.CARGO_CAPTURED;
             case EJECTING_CARGO:
                 return SystemState.EJECTING_CARGO;
@@ -661,7 +662,7 @@ public class Superstructure extends Subsystem {
             case AUTOINTAKING:
                 return SystemState.WAITING_FOR_LOW_POSITION;
             case INTAKING:
-                return SystemState.WAITING_FOR_POWERCUBE_INTAKE;
+                return SystemState.WAITING_FOR_POWERCELL_INTAKE;
             case SPITTING:
                 return SystemState.SPITTING;
             case CALIBRATINGDOWN:
@@ -678,7 +679,7 @@ public class Superstructure extends Subsystem {
                 return SystemState.HATCH_CAPTURED;
             case EJECTING_HATCH:
                 return SystemState.EJECTING_HATCH;
-            case CARGO_CAPTURED:
+            case POWERCELL_INTAKING:
                 return SystemState.CARGO_CAPTURED;
             case EJECTING_CARGO:
                 return SystemState.EJECTING_CARGO;    
@@ -698,9 +699,9 @@ public class Superstructure extends Subsystem {
             	//if (mIntake.gotCube()) {
             	//	return SystemState.RETURNING_HOME;
             	//}
-                return SystemState.WAITING_FOR_POWERCUBE_INTAKE;
+                return SystemState.WAITING_FOR_POWERCELL_INTAKE;
             case INTAKING:
-                return SystemState.WAITING_FOR_POWERCUBE_INTAKE;
+                return SystemState.WAITING_FOR_POWERCELL_INTAKE;
             case SPITTING:
                 return SystemState.SPITTING;
             case CALIBRATINGDOWN:
@@ -717,7 +718,7 @@ public class Superstructure extends Subsystem {
                 return SystemState.HATCH_CAPTURED;
             case EJECTING_HATCH:
                 return SystemState.EJECTING_HATCH;
-            case CARGO_CAPTURED:
+            case POWERCELL_INTAKING:
                 return SystemState.CARGO_CAPTURED;
             case EJECTING_CARGO:
                 return SystemState.EJECTING_CARGO;    
@@ -739,13 +740,13 @@ public class Superstructure extends Subsystem {
                 return SystemState.CLIMBING;
             case AUTOINTAKING:{
             	if (mElevator.atBottom())
-            		return SystemState.WAITING_FOR_POWERCUBE_INTAKE; 
+            		return SystemState.WAITING_FOR_POWERCELL_INTAKE; 
             	else  
                 return SystemState.WAITING_FOR_LOW_POSITION;
             	}
             	
             case INTAKING:
-                return SystemState.WAITING_FOR_POWERCUBE_INTAKE;
+                return SystemState.WAITING_FOR_POWERCELL_INTAKE;
             case SPITTING:
                 return SystemState.SPITTING;
             case CALIBRATINGDOWN:
@@ -762,7 +763,7 @@ public class Superstructure extends Subsystem {
                 return SystemState.HATCH_CAPTURED;
             case EJECTING_HATCH:
                 return SystemState.EJECTING_HATCH;
-            case CARGO_CAPTURED:
+            case POWERCELL_INTAKING:
                 return SystemState.CARGO_CAPTURED;
             case EJECTING_CARGO:
                 return SystemState.EJECTING_CARGO;      
@@ -780,7 +781,7 @@ public class Superstructure extends Subsystem {
             case AUTOINTAKING:
                 return SystemState.WAITING_FOR_LOW_POSITION;
             case INTAKING:
-                return SystemState.WAITING_FOR_POWERCUBE_INTAKE;
+                return SystemState.WAITING_FOR_POWERCELL_INTAKE;
             case SPITTING:
                 return SystemState.SPITTING;
             case CALIBRATINGDOWN:
@@ -806,8 +807,8 @@ public class Superstructure extends Subsystem {
     private SystemState handleIdle(boolean stateChanged) {
         if (stateChanged) {
             stop();
-            mMustache.set(DoubleSolenoid.Value.kReverse);
-            mElevator.setWantedState(Elevator.WantedState.IDLE);
+            //mMustache.set(DoubleSolenoid.Value.kReverse);
+            //mElevator.setWantedState(Elevator.WantedState.IDLE);
             mIntake.setWantedState(Intake.WantedState.IDLE);
             mClimber.setWantedState(Climber.WantedState.IDLE);
         }
@@ -818,7 +819,7 @@ public class Superstructure extends Subsystem {
         case AUTOINTAKING:
             return SystemState.WAITING_FOR_LOW_POSITION;
         case INTAKING:
-            return SystemState.WAITING_FOR_POWERCUBE_INTAKE;      
+            return SystemState.WAITING_FOR_POWERCELL_INTAKE;      
         case SPITTING:
             return SystemState.SPITTING;
         case CALIBRATINGDOWN:
@@ -835,7 +836,7 @@ public class Superstructure extends Subsystem {
             return SystemState.HATCH_CAPTURED;
         case EJECTING_HATCH:
             return SystemState.EJECTING_HATCH; 
-        case CARGO_CAPTURED:
+        case POWERCELL_INTAKING:
             return SystemState.CARGO_CAPTURED;
         case EJECTING_CARGO:
             return SystemState.EJECTING_CARGO;     
@@ -870,7 +871,9 @@ public class Superstructure extends Subsystem {
 
     public void setWantedElevatorPosition(ELEVATOR_POSITION position) {
      //   System.out.println("INELEVATORSETWANTEDPOSITION******************************************************");
-        boolean cargo = mIntake.hasCargo();
+        //boolean cargo = mIntake.hasCargo();
+        // This was for last year. Will take this out soon
+        boolean cargo = true;
         double encoderValue = Constants.kElevatorHomeEncoderValue;
         if (cargo) {
             switch (position) {
