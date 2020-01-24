@@ -3,6 +3,7 @@ package frc.robot;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.usfirst.frc.team1731.lib.util.CheesyDriveHelper;
 import org.usfirst.frc.team1731.lib.util.CrashTracker;
@@ -13,60 +14,16 @@ import org.usfirst.frc.team1731.lib.util.InterpolatingTreeMap;
 import org.usfirst.frc.team1731.lib.util.LatchedBoolean;
 import org.usfirst.frc.team1731.lib.util.math.RigidTransform2d;
 import org.usfirst.frc.team1731.robot.Constants;
+import org.usfirst.frc.team1731.robot.ControlBoardInterface;
+import org.usfirst.frc.team1731.robot.GamepadControlBoard;
+import org.usfirst.frc.team1731.robot.ShooterAimingParameters;
 import org.usfirst.frc.team1731.robot.SubsystemManager;
 import org.usfirst.frc.team1731.robot.Constants.GRABBER_POSITION;
 import org.usfirst.frc.team1731.robot.auto.AutoModeBase;
 import org.usfirst.frc.team1731.robot.auto.AutoModeExecuter;
-import org.usfirst.frc.team1731.robot.auto.modes.AutoDetectAllianceSwitchThenPlaceMode;
-import org.usfirst.frc.team1731.robot.auto.modes.LeftPutCubeOnLeftScale;
-import org.usfirst.frc.team1731.robot.auto.modes.LeftPutCubeOnLeftScaleAndLeftSwitch;
-import org.usfirst.frc.team1731.robot.auto.modes.LeftPutCubeOnRightScaleAndRightSwitch;
-import org.usfirst.frc.team1731.robot.auto.modes.LeftRocketRearToFeedStationMode;
-import org.usfirst.frc.team1731.robot.auto.modes.MiddleRightPutCubeOnLeftSwitch;
-import org.usfirst.frc.team1731.robot.auto.modes.MiddleRightPutCubeOnRightSwitch;
-import org.usfirst.frc.team1731.robot.auto.modes.RightPut3CubesOnLeftScale;
-import org.usfirst.frc.team1731.robot.auto.modes.RightPutCubeOnLeftScale;
-import org.usfirst.frc.team1731.robot.auto.modes.RightPutCubeOnLeftScaleAndLeftSwitch;
-import org.usfirst.frc.team1731.robot.auto.modes.RightPut2CubesOnRightScale;
-import org.usfirst.frc.team1731.robot.auto.modes.RightPutCubeOnRightScale;
-import org.usfirst.frc.team1731.robot.auto.modes.StandStillMode;
-import org.usfirst.frc.team1731.robot.auto.modes.TestAuto;
-import org.usfirst.frc.team1731.robot.auto.modes._new._55_LeftDriveForward;
-import org.usfirst.frc.team1731.robot.auto.modes._new._24_LeftPut1LeftScale1RightSwitchEnd;
-import org.usfirst.frc.team1731.robot.auto.modes._new._49_LeftPut1LeftScaleEnd;
-import org.usfirst.frc.team1731.robot.auto.modes._new._52_LeftPut1LeftScaleEnd1RightSwitch;
-import org.usfirst.frc.team1731.robot.auto.modes._new._50_LeftPut1LeftSwitchEnd1LeftScaleEnd;
-import org.usfirst.frc.team1731.robot.auto.modes._new._27_LeftPut1LeftSwitchEnd1LeftSwitch;
-import org.usfirst.frc.team1731.robot.auto.modes._new._28_LeftPut1LeftSwitchEnd1RightScale;
-import org.usfirst.frc.team1731.robot.auto.modes._new._54_LeftPut1RightScale2RightSwitch;
-import org.usfirst.frc.team1731.robot.auto.modes._new._31_LeftPut2LeftScale1LeftSwitch;
-import org.usfirst.frc.team1731.robot.auto.modes._new._25_LeftPut2LeftScale1RightSwitch;
-import org.usfirst.frc.team1731.robot.auto.modes._new._48_LeftPut2LeftScaleEnd;
-import org.usfirst.frc.team1731.robot.auto.modes._new._20_LeftPut2RightScale1RightSwitch;
-import org.usfirst.frc.team1731.robot.auto.modes._new._23_LeftPut3LeftScale;
-import org.usfirst.frc.team1731.robot.auto.modes._new._19_LeftPut3RightScale;
-import org.usfirst.frc.team1731.robot.auto.modes._new._47_MiddleDriveForward;
-import org.usfirst.frc.team1731.robot.auto.modes._new._34_MiddlePut1LeftSwitch;
-import org.usfirst.frc.team1731.robot.auto.modes._new._36_MiddlePut1LeftSwitch1Exchange;
-import org.usfirst.frc.team1731.robot.auto.modes._new._37_MiddlePut1RightSwitch;
-import org.usfirst.frc.team1731.robot.auto.modes._new._39_MiddlePut1RightSwitch1Exchange;
-import org.usfirst.frc.team1731.robot.auto.modes._new._35_MiddlePut2LeftSwitch;
-import org.usfirst.frc.team1731.robot.auto.modes._new._38_MiddlePut2RightSwitch;
-import org.usfirst.frc.team1731.robot.auto.modes._new._05_RightDriveForward;
-import org.usfirst.frc.team1731.robot.auto.modes._new._40_RightPut1LeftScale2LeftSwitch;
-import org.usfirst.frc.team1731.robot.auto.modes._new._08_RightPut1RightScale1LeftSwitchEnd;
-import org.usfirst.frc.team1731.robot.auto.modes._new._41_RightPut1RightScaleEnd;
-import org.usfirst.frc.team1731.robot.auto.modes._new._42_RightPut1RightScaleEnd1LeftSwitch;
-import org.usfirst.frc.team1731.robot.auto.modes._new._12_RightPut1RightSwitchEnd1LeftScale;
-import org.usfirst.frc.team1731.robot.auto.modes._new._46_RightPut1RightSwitchEnd1RightScaleEnd;
-import org.usfirst.frc.team1731.robot.auto.modes._new._11_RightPut1RightSwitchEnd1RightSwitch;
-import org.usfirst.frc.team1731.robot.auto.modes._new._03_RightPut2LeftScale1LeftSwitch;
-import org.usfirst.frc.team1731.robot.auto.modes._new._09_RightPut2RightScale1LeftSwitch;
-import org.usfirst.frc.team1731.robot.auto.modes._new._15_RightPut2RightScale1RightSwitch;
-import org.usfirst.frc.team1731.robot.auto.modes._new._43_RightPut2RightScaleEnd;
-import org.usfirst.frc.team1731.robot.auto.modes._new._00_DO_NOTHING;
-import org.usfirst.frc.team1731.robot.auto.modes._new._02_RightPut3LeftScale;
-import org.usfirst.frc.team1731.robot.auto.modes._new._07_RightPut3RightScale;
+import org.usfirst.frc.team1731.robot.auto.modes.*;
+import org.usfirst.frc.team1731.robot.auto.modes._new.*;
+import org.usfirst.frc.team1731.robot.auto.modes.spacey.*;
 import org.usfirst.frc.team1731.robot.loops.JevoisVisionProcessor;
 import org.usfirst.frc.team1731.robot.loops.Looper;
 import org.usfirst.frc.team1731.robot.loops.RobotStateEstimator;
@@ -87,10 +44,12 @@ import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.VideoSink;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.RobotState;
+//import edu.wpi.first.wpilibj.RobotState;
+import org.usfirst.frc.team1731.robot.RobotState;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
@@ -114,7 +73,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 
 //original code was 2018 -- I brought in 2019 chunks as indicated...
-public class Robot extends TimedRobot {
+public class RobotNew extends TimedRobot {
 	//2019
     private DigitalOutput leftRightCameraControl;
     private DigitalOutput greenLEDRingLight;
@@ -125,15 +84,18 @@ public class Robot extends TimedRobot {
 	}
 	public static AutoScheme CHOSEN_AUTO_SCHEME = AutoScheme.NEW_SCHEME; // or, AutoScheme.OLD_SCHEME
 		
+	private static final String AUTO_CODE = "AutoCode";
 	private static final String AUTO_CODES = "AutoCodes";
     private static Map<Integer, AutoModeBase> AUTO_MODES; // 35 modes defined in Mark's "BIBLE"
+    private static Map<String, AutoModeBase> AUTO_MODES_2019; // 35 modes defined in Mark's "BIBLE"
     private static Map<String, String[]> ALLOWABLE_AUTO_MODES; //  as defined in Mark's "BIBLE"
     
 	static {
-		initAutoModes();
+		initAutoModes2018();
         initAllowableAutoModes();
 	}
-	
+    
+    
 	// example from 2019:
 	private static AutoModeBase newLeftRocketRearToFeedStationMode  = new LeftRocketRearToFeedStationMode();
 
@@ -177,7 +139,8 @@ public class Robot extends TimedRobot {
     private Drive mDrive = Drive.getInstance();
     private Climber mClimber = Climber.getInstance();
     private Superstructure mSuperstructure = Superstructure.getInstance();
-    private RobotState mRobotState = RobotState.getInstance();
+    private org.usfirst.frc.team1731.robot.RobotState mRobotState = org.usfirst.frc.team1731.robot.RobotState
+            .getInstance();
     private AutoModeExecuter mAutoModeExecuter = null;
     private RobotStateEstimator mRobotStateEstimator = RobotStateEstimator.getInstance();
     private JevoisVisionProcessor mVisionCamProcessor = JevoisVisionProcessor.getInstance();
@@ -266,7 +229,7 @@ public class Robot extends TimedRobot {
 	
 	
 	
-    public Robot() {
+    public RobotNew() {
 		//2019
 		super(0.2);
 		
@@ -432,10 +395,10 @@ public class Robot extends TimedRobot {
 	            
             case NEW_SCHEME: // Maryland, Detroit
             	
-            	String gameData = Robot.getGameDataFromField(); //RRL for example
+            	String gameData = RobotNew.getGameDataFromField(); //RRL for example
             	String autoCodes = SmartDashboard.getString("AutoCodes", "3  8 12 15");// JUSTIN's numbers
 
-                autoModeToExecute = determineAutoModeToExecute(gameData, autoCodes);
+                autoModeToExecute = determineAutoModeToExecute2018(gameData, autoCodes);
             	break;
             }
             
@@ -571,30 +534,30 @@ public class Robot extends TimedRobot {
     }
 	
 		private static void initAutoModes2019() {
-        AUTO_MODES = new HashMap<String, AutoModeBase>(); //THESE ARE FROM MARK'S "BIBLE"
+        AUTO_MODES_2019 = new HashMap<String, AutoModeBase>(); //THESE ARE FROM MARK'S "BIBLE"
         
-        AUTO_MODES.put("LeftRocketRearToFeedStationMode",  new LeftRocketRearToFeedStationMode());
+        AUTO_MODES_2019.put("LeftRocketRearToFeedStationMode",  new LeftRocketRearToFeedStationMode());
 
-        AUTO_MODES.put("1",  new Mode_1());
-        AUTO_MODES.put("2",  new Mode_2());
-        AUTO_MODES.put("3",  new Mode_3());
-        AUTO_MODES.put("4",  new Mode_4());
-        AUTO_MODES.put("5",  new Mode_5());
-        AUTO_MODES.put("6",  new Mode_6());
-        AUTO_MODES.put("7",  new Mode_7());
-        AUTO_MODES.put("8",  new Mode_8());
-        AUTO_MODES.put("9",  new Mode_9());
-        AUTO_MODES.put("10", new Mode_10());
-        AUTO_MODES.put("A",  new Mode_A());
-        AUTO_MODES.put("B",  new Mode_B());
-        AUTO_MODES.put("C",  new Mode_C());
-        AUTO_MODES.put("D",  new Mode_D());
-        AUTO_MODES.put("E",  new Mode_E());
-        AUTO_MODES.put("F",  new Mode_F());
-        AUTO_MODES.put("G",  new Mode_G());
-        AUTO_MODES.put("H",  new Mode_H());
-        AUTO_MODES.put("I",  new Mode_I());
-        AUTO_MODES.put("J",  new Mode_J());
+        AUTO_MODES_2019.put("1",  new Mode_1());
+        AUTO_MODES_2019.put("2",  new Mode_2());
+        AUTO_MODES_2019.put("3",  new Mode_3());
+        AUTO_MODES_2019.put("4",  new Mode_4());
+        AUTO_MODES_2019.put("5",  new Mode_5());
+        AUTO_MODES_2019.put("6",  new Mode_6());
+        AUTO_MODES_2019.put("7",  new Mode_7());
+        AUTO_MODES_2019.put("8",  new Mode_8());
+        AUTO_MODES_2019.put("9",  new Mode_9());
+        AUTO_MODES_2019.put("10", new Mode_10());
+        AUTO_MODES_2019.put("A",  new Mode_A());
+        AUTO_MODES_2019.put("B",  new Mode_B());
+        AUTO_MODES_2019.put("C",  new Mode_C());
+        AUTO_MODES_2019.put("D",  new Mode_D());
+        AUTO_MODES_2019.put("E",  new Mode_E());
+        AUTO_MODES_2019.put("F",  new Mode_F());
+        AUTO_MODES_2019.put("G",  new Mode_G());
+        AUTO_MODES_2019.put("H",  new Mode_H());
+        AUTO_MODES_2019.put("I",  new Mode_I());
+        AUTO_MODES_2019.put("J",  new Mode_J());
         
     }
 
@@ -755,11 +718,11 @@ public class Robot extends TimedRobot {
 			
 			//2019
 			boolean inTractorBeam = false;
-            boolean grabCube = mControlBoard.getGrabCubeButton();
-            boolean calibrateDown = mControlBoard.getCalibrateDown();
-            boolean calibrateUp = mControlBoard.getCalibrateUp();
-            boolean spitting = mControlBoard.getSpit();
-            boolean pickUp = mControlBoard.getAutoPickUp();
+            // boolean grabCube = mControlBoard.getGrabCubeButton();
+            // boolean calibrateDown = mControlBoard.getCalibrateDown();
+            // boolean calibrateUp = mControlBoard.getCalibrateUp();
+            // boolean spitting = mControlBoard.getSpit();
+            // boolean pickUp = mControlBoard.getAutoPickUp();
             boolean pickupHatch = mControlBoard.getPickupPanel();
             boolean ejectHatch = mControlBoard.getShootPanel();
             boolean pickupCargo = mControlBoard.getPickupBall();
@@ -807,21 +770,21 @@ public class Robot extends TimedRobot {
             }
             	
 			//2018
-            if (flipUp) {
-                mSuperstructure.setOverTheTop(GRABBER_POSITION.FLIP_UP);
-            } else if (flipDown) {
-                mSuperstructure.setOverTheTop(GRABBER_POSITION.FLIP_DOWN);
-            } else {
-                mSuperstructure.setOverTheTop(GRABBER_POSITION.FLIP_NONE);
-            }
+            // if (flipUp) {
+            //     mSuperstructure.setOverTheTop(GRABBER_POSITION.FLIP_UP);
+            // } else if (flipDown) {
+            //     mSuperstructure.setOverTheTop(GRABBER_POSITION.FLIP_DOWN);
+            // } else {
+            //     mSuperstructure.setOverTheTop(GRABBER_POSITION.FLIP_NONE);
+            // }
 
 			//[]TODO: modify for 2019 swerve
             // Drive base
             double throttle = mControlBoard.getThrottle();
             double turn = mControlBoard.getTurn();
             
-            mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, //mControlBoard.getQuickTurn(),
-            //        !mControlBoard.getLowGear()));
+            mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, mControlBoard.getQuickTurn(),
+                    !mControlBoard.getLowGear()));
             //boolean wantLowGear = mControlBoard.getLowGear();
             //mDrive.setHighGear(!wantLowGear);
             
@@ -913,35 +876,35 @@ public class Robot extends TimedRobot {
             else if(mControlBoard.getAutoFeederStationToRear()){ //2
                 if(mAutoModeExecuter == null){
                     mAutoModeExecuter = new AutoModeExecuter();
-                    mAutoModeExecuter.setAutoMode( newLeftFeedStationToRocketRearMode );
+                    //mAutoModeExecuter.setAutoMode( newLeftFeedStationToRocketRearMode );
                     mAutoModeExecuter.start();
                 }
             }
             else if(mControlBoard.getAutoFrontToFeederStation()){ //3
                 if(mAutoModeExecuter == null){
                     mAutoModeExecuter = new AutoModeExecuter();
-                    mAutoModeExecuter.setAutoMode( newLeftRocketFrontToFeedStationMode );
+                    //mAutoModeExecuter.setAutoMode( newLeftRocketFrontToFeedStationMode );
                     mAutoModeExecuter.start();
                 }
             }
             else if(mControlBoard.getAutoFeederStationToFront()){ //4
                 if(mAutoModeExecuter == null){
                     mAutoModeExecuter = new AutoModeExecuter();
-                    mAutoModeExecuter.setAutoMode( newLeftFeedStationToRocketFrontMode );
+                    //mAutoModeExecuter.setAutoMode( newLeftFeedStationToRocketFrontMode );
                     mAutoModeExecuter.start();
                 }
             }
             else if(mControlBoard.getAutoLevel1ToCargoL1()){ //5
                 if(mAutoModeExecuter == null){
                     mAutoModeExecuter = new AutoModeExecuter();
-                    mAutoModeExecuter.setAutoMode( newLeftLevel1ToCargoL1Mode );
+                    //mAutoModeExecuter.setAutoMode( newLeftLevel1ToCargoL1Mode );
                     mAutoModeExecuter.start();
                 }
             }          
              else if(mControlBoard.getAutoCargoL1ToFeederStation()){ //6
                 if(mAutoModeExecuter == null){
                     mAutoModeExecuter = new AutoModeExecuter();
-                    mAutoModeExecuter.setAutoMode( newLeftCargoL1ToFeederStationMode );
+                    //mAutoModeExecuter.setAutoMode( newLeftCargoL1ToFeederStationMode );
                     mAutoModeExecuter.start();
                 }
             }
@@ -949,7 +912,7 @@ public class Robot extends TimedRobot {
             else if(mControlBoard.getAutoLevel1ToRear()){  //7
                 if(mAutoModeExecuter == null){
                     mAutoModeExecuter = new AutoModeExecuter();
-                    mAutoModeExecuter.setAutoMode( newLeftLevel1ToRocketRearMode );
+                    //mAutoModeExecuter.setAutoMode( newLeftLevel1ToRocketRearMode );
                     mAutoModeExecuter.start();
                 }
             }

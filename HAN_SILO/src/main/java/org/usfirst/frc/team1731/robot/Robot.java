@@ -793,4 +793,8 @@ public class Robot extends TimedRobot {
         //AutoSelectorSanityCheck();
         //UpdateAutoDriving();
     }
+
+	public static String getGameDataFromField() {
+		return null;
+	}
 }

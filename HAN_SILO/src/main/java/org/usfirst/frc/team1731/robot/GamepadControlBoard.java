@@ -331,4 +331,16 @@ public class GamepadControlBoard implements ControlBoardInterface {
         return mOperator.getRawButton(1);
     }
 
+    @Override
+    public boolean getClimbUp() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean getClimbDown() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }

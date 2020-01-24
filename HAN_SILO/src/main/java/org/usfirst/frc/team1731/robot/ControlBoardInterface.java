@@ -69,4 +69,8 @@ public interface ControlBoardInterface {
 
 		boolean getTractorDrivePickupHatch();
 		boolean getTractorDriveEjectHatch();
+
+		boolean getClimbUp();
+
+		boolean getClimbDown();
 }
