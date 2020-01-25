@@ -292,7 +292,7 @@ public class Constants extends ConstantsBase {
 	public static final int kFeederVictor = 1;
 
     // Intake
-	public static final int kIntakeVictor = 8;
+	public static final int kIntakeVictor = 9;
 
     // Shooter
 //	public static final int kShooterVictor = 4;
