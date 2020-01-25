@@ -1,7 +1,10 @@
 package org.strykeforce.thirdcoast.swerve;
 
 import com.kauailabs.navx.frc.AHRS;
+
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.TimedRobot;
+import frc.robot.Robot;
 
 public class SwerveDriveConfig {
 

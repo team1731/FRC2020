@@ -1,32 +1,55 @@
 package org.strykeforce.thirdcoast.swerve;
 
+import java.util.Optional;
+
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.Errors;
+import org.usfirst.frc.team1731.lib.util.ReflectingCSVWriter;
+import org.usfirst.frc.team1731.lib.util.Util;
+import org.usfirst.frc.team1731.lib.util.control.PathFollower;
+import org.usfirst.frc.team1731.lib.util.math.RigidTransform2d;
+import org.usfirst.frc.team1731.lib.util.math.Rotation2d;
+import org.usfirst.frc.team1731.lib.util.math.Twist2d;
+import org.usfirst.frc.team1731.robot.Constants;
+import org.usfirst.frc.team1731.robot.Kinematics;
+import org.usfirst.frc.team1731.robot.RobotState;
+import org.usfirst.frc.team1731.robot.ShooterAimingParameters;
+import org.usfirst.frc.team1731.robot.loops.Loop;
+import org.usfirst.frc.team1731.robot.loops.Looper;
+import org.usfirst.frc.team1731.robot.subsystems.Subsystem;
+import org.usfirst.frc.team1731.robot.subsystems.Drive.DriveControlState;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import frc.robot.Robot;
 import frc.robot.control.DriverControls;
+import frc.robot.subsystem.DriveSubsystem;
 
 /**
  * Control a Third Coast swerve drive.
  *
- * <p>Wheels are a array numbered 0-3 from front to back, with even numbers on the left side when
- * facing forward.
+ * <p>
+ * Wheels are a array numbered 0-3 from front to back, with even numbers on the
+ * left side when facing forward.
  *
- * <p>Derivation of inverse kinematic equations are from Ether's <a
- * href="https://www.chiefdelphi.com/media/papers/2426">Swerve Kinematics and Programming</a>.
+ * <p>
+ * Derivation of inverse kinematic equations are from Ether's
+ * <a href="https://www.chiefdelphi.com/media/papers/2426">Swerve Kinematics and
+ * Programming</a>.
  *
  * @see Wheel
  */
 @SuppressWarnings("unused")
-public class SwerveDrive {
+public class SwerveDrive extends Subsystem {
 
   public static final int DEFAULT_ABSOLUTE_AZIMUTH_OFFSET = 200;
   private static final Logger logger = LoggerFactory.getLogger(SwerveDrive.class);
@@ -41,8 +64,316 @@ public class SwerveDrive {
   private boolean isFieldOriented;
   private CANSparkMax m_motor;
 
+  private final ReflectingCSVWriter<PathFollower.DebugOutput> mCSVWriter = new ReflectingCSVWriter<PathFollower.DebugOutput>("/home/lvuser/PATH-FOLLOWER-LOGS.csv", PathFollower.DebugOutput.class);
+
+  private RobotState mRobotState = RobotState.getInstance();
+  private PathFollower mPathFollower;
+
+  private boolean mIsOnTarget = false;
+  private boolean mIsApproaching = false;
+  private Rotation2d mTargetHeading = new Rotation2d();
+
+  private DriveControlState mDriveControlState;
+
+  private Loop mLoop = new Loop(){
+    @Override
+    public void onStart(double timestamp) {
+      
+    }
+
+    @Override
+    public void onLoop(double timestamp) {
+      synchronized (SwerveDrive.this) {
+        switch (mDriveControlState) {
+        case OPEN_LOOP:
+            return;
+        case CLIMB_BACKUP:
+            return;
+        case VELOCITY_SETPOINT:
+            return;
+        case PATH_FOLLOWING:
+            if (mPathFollower != null) {
+                updatePathFollower(timestamp);
+                mCSVWriter.add(mPathFollower.getDebug());
+            }
+            return;
+        case AIM_TO_GOAL:
+//                   if (!Superstructure.getInstance().isShooting()) {
+                updateGoalHeading(timestamp);
+//                   }
+            // fallthrough intended
+        case TURN_TO_HEADING:
+            updateTurnToHeading(timestamp);
+            return;
+        case DRIVE_TOWARDS_GOAL_COARSE_ALIGN:
+            updateDriveTowardsGoalCoarseAlign(timestamp);
+            return;
+        case DRIVE_TOWARDS_GOAL_APPROACH:
+            updateDriveTowardsGoalApproach(timestamp);
+            return;
+            /*
+        case TRACTOR_BEAM:
+            updateTractorBeam(timestamp);
+            return;
+            */
+        default:
+            System.out.println("Unexpected drive control state: " + mDriveControlState);
+            break;
+        }
+      }
+    }
+
+/**
+     * Drives the robot straight forwards until it is at an optimal shooting distance. Then sends the robot into the
+     * AIM_TO_GOAL state for one final alignment
+     */
+    private void updateDriveTowardsGoalApproach(double timestamp) {
+      Optional<ShooterAimingParameters> aim = mRobotState.getAimingParameters();
+      mIsApproaching = true;
+      if (aim.isPresent()) {
+          final double distance = aim.get().getRange();
+          double error = 0.0;
+          if (distance < Constants.kShooterOptimalRangeFloor) {
+              error = distance - Constants.kShooterOptimalRangeFloor;
+          } else if (distance > Constants.kShooterOptimalRangeCeiling) {
+              error = distance - Constants.kShooterOptimalRangeCeiling;
+          }
+          final double kGoalPosTolerance = 1.0; // inches
+          if (Util.epsilonEquals(error, 0.0, kGoalPosTolerance)) {
+              // We are on target. Switch back to auto-aim.
+              mDriveControlState = DriveControlState.AIM_TO_GOAL;
+              RobotState.getInstance().resetVision();
+              mIsApproaching = false;
+              updatePositionSetpoint(getLeftDistanceInches(), getRightDistanceInches());
+              return;
+          }
+          updatePositionSetpoint(getLeftDistanceInches() + error, getRightDistanceInches() + error);
+      } else {
+          updatePositionSetpoint(getLeftDistanceInches(), getRightDistanceInches());
+      }
+  }
+
+    /**
+     * Essentially does the same thing as updateTurnToHeading but sends the robot into the DRIVE_TOWARDS_GOAL_APPROACH
+     * state if it detects we are not at an optimal shooting range
+     */
+    private void updateDriveTowardsGoalCoarseAlign(double timestamp) {
+      updateGoalHeading(timestamp);
+      updateTurnToHeading(timestamp);
+      mIsApproaching = true;
+      if (mIsOnTarget) {
+          // Done coarse alignment.
+
+          Optional<ShooterAimingParameters> aim = mRobotState.getAimingParameters();
+          if (aim.isPresent()) {
+              final double distance = aim.get().getRange();
+
+              if (distance < Constants.kShooterOptimalRangeCeiling &&
+                      distance > Constants.kShooterOptimalRangeFloor) {
+                  // Don't drive, just shoot.
+                  mDriveControlState = DriveControlState.AIM_TO_GOAL;
+                  mIsApproaching = false;
+                  mIsOnTarget = false;
+                  updatePositionSetpoint(getLeftDistanceInches(), getRightDistanceInches());
+                  return;
+              }
+          }
+
+          mDriveControlState = DriveControlState.DRIVE_TOWARDS_GOAL_APPROACH;
+          mIsOnTarget = false;
+      }
+  }
+
+    /**
+     * Update the heading at which the robot thinks the boiler is.
+     * 
+     * Is called periodically when the robot is auto-aiming towards the boiler.
+     */
+    private void updateGoalHeading(double timestamp) {
+      Optional<ShooterAimingParameters> aim = mRobotState.getAimingParameters();
+      if (aim.isPresent()) {
+          mTargetHeading = aim.get().getRobotToGoal();
+          
+      }
+  }
+
+  public double getLeftVelocityInchesPerSec() {
+    //TODO: AAAAAAAAAAAA THIS IS WRONG
+    return 1; //rpmToInchesPerSecond((mLeftMaster.getSelectedSensorVelocity(Constants.kPidIdx)*(600.0/4096.0)));
+  }
+
+  public double getRightVelocityInchesPerSec() {
+    //TODO: AAAAAAAAAA THIS IS ALSO WRONG
+    return 1; //rpmToInchesPerSecond((mRightMaster.getSelectedSensorVelocity(Constants.kPidIdx)*(600.0/4096.0)));
+  }
+
+  public double getLeftDistanceInches() {
+    //TODO: BBBBBBBBBBBB THIS IS BAD
+    return 1; //rotationsToInches(mLeftMaster.getSelectedSensorPosition(Constants.kPidIdx)/4096.0);
+}
+
+public double getRightDistanceInches() {
+  // TODO: BBBBBBBBBB THIS IS VERY BAD
+    return 1; //rotationsToInches(mRightMaster.getSelectedSensorPosition(Constants.kPidIdx)/4096.0);
+}
+
+  /**
+     * Turn the robot to a target heading.
+     * 
+     * Is called periodically when the robot is auto-aiming towards the boiler.
+     */
+    private void updateTurnToHeading(double timestamp) {
+      final Rotation2d field_to_robot = mRobotState.getLatestFieldToVehicle().getValue().getRotation();
+
+      // Figure out the rotation necessary to turn to face the goal.
+      final Rotation2d robot_to_target = field_to_robot.inverse().rotateBy(mTargetHeading);
+
+      // Check if we are on target
+      final double kGoalPosTolerance = 3.0; // degrees  254 had .75
+      final double kGoalVelTolerance = 5.0; // inches per second
+      if (Math.abs(robot_to_target.getDegrees()) < kGoalPosTolerance
+              && Math.abs(getLeftVelocityInchesPerSec()) < kGoalVelTolerance
+              && Math.abs(getRightVelocityInchesPerSec()) < kGoalVelTolerance) {
+          // Use the current setpoint and base lock.
+          mIsOnTarget = true;
+          updatePositionSetpoint(getLeftDistanceInches(), getRightDistanceInches());
+          return;
+      }
+
+      Kinematics.DriveVelocity wheel_delta = Kinematics
+              .inverseKinematics(new Twist2d(0, 0, robot_to_target.getRadians()));
+      updatePositionSetpoint(wheel_delta.left + getLeftDistanceInches(),
+              wheel_delta.right + getRightDistanceInches());
+  }
+
+    @Override
+    public void onStop(double timestamp) {
+
+    }
+  };
+
+/**
+     * Check if the drive talons are configured for position control
+     */
+    protected static boolean usesTalonPositionControl(DriveControlState state) {
+      if (state == DriveControlState.AIM_TO_GOAL ||
+              state == DriveControlState.TURN_TO_HEADING ||
+              state == DriveControlState.DRIVE_TOWARDS_GOAL_COARSE_ALIGN ||
+              state == DriveControlState.DRIVE_TOWARDS_GOAL_APPROACH ||
+              state == DriveControlState.CLIMB_BACKUP) {
+          return true;
+      }
+      return false;
+  }
+
+  /**
+     * Adjust position setpoint (if already in position mode)
+     * 
+     * @param left_inches_per_sec
+     * @param right_inches_per_sec
+     */
+    private synchronized void updatePositionSetpoint(double left_position_inches, double right_position_inches) {
+      //TODO: CCCCCCCCCCCCCC BAD
+      if (usesTalonPositionControl(mDriveControlState)) {
+        //mLeftMaster.set(ControlMode.MotionMagic, inchesToRotations(left_position_inches)*4096);
+        //mRightMaster.set(ControlMode.MotionMagic, inchesToRotations(right_position_inches)*4096);
+      } else {
+          System.out.println("Hit a bad position control state");
+          //mLeftMaster.set(ControlMode.MotionMagic,0);
+          //mRightMaster.set(ControlMode.MotionMagic,0);
+      }
+  }
+
+  /**
+     * Called periodically when the robot is in path following mode. Updates the path follower with the robots latest
+     * pose, distance driven, and velocity, the updates the wheel velocity setpoints.
+     */
+    private void updatePathFollower(double timestamp) {
+        RigidTransform2d robot_pose = mRobotState.getLatestFieldToVehicle().getValue();
+        Twist2d command = mPathFollower.update(timestamp, robot_pose,
+                RobotState.getInstance().getDistanceDriven(), RobotState.getInstance().getPredictedVelocity().dx);
+        if (!mPathFollower.isFinished()) {
+            Kinematics.DriveVelocity setpoint = Kinematics.inverseKinematics(command);
+            updateVelocitySetpoint(setpoint.left, setpoint.right);
+        } else {
+            updateVelocitySetpoint(0, 0);
+        }
+    }
+
+    /**
+     * Start up velocity mode. This sets the drive train in high gear as well.
+     * 
+     * @param left_inches_per_sec
+     * @param right_inches_per_sec
+     */
+    public synchronized void setVelocitySetpoint(double left_inches_per_sec, double right_inches_per_sec) {
+      configureTalonsForSpeedControl();
+      mDriveControlState = DriveControlState.VELOCITY_SETPOINT;
+      updateVelocitySetpoint(left_inches_per_sec, right_inches_per_sec);
+  }
+
+  private void configureTalonsForSpeedControl() {
+    if (!usesTalonVelocityControl(mDriveControlState)) {
+      /*
+      mLeftMaster.set(ControlMode.Velocity, 2);
+      mLeftMaster.configNominalOutputForward(Constants.kDriveHighGearNominalOutput,Constants.kTimeoutMs);
+      mLeftMaster.configNominalOutputReverse(-Constants.kDriveHighGearNominalOutput, Constants.kTimeoutMs);
+      mLeftMaster.selectProfileSlot(kHighGearVelocityControlSlot, Constants.kPidIdx);
+
+        mRightMaster.set(ControlMode.Velocity, 2);
+      mRightMaster.configNominalOutputForward(Constants.kDriveHighGearNominalOutput,Constants.kTimeoutMs);
+      mRightMaster.configNominalOutputReverse(-Constants.kDriveHighGearNominalOutput, Constants.kTimeoutMs);
+      mRightMaster.selectProfileSlot(kHighGearVelocityControlSlot, Constants.kPidIdx);
+        setBrakeMode(true);
+        */
+    }
+}
+
+  /**
+     * Adjust Velocity setpoint (if already in velocity mode)
+     * 
+     * @param left_inches_per_sec
+     * @param right_inches_per_sec
+     */
+    private synchronized void updateVelocitySetpoint(double left_inches_per_sec, double right_inches_per_sec) {
+      if (usesTalonVelocityControl(mDriveControlState)) {
+          final double max_desired = Math.max(Math.abs(left_inches_per_sec), Math.abs(right_inches_per_sec));
+          final double scale = max_desired > Constants.kDriveHighGearMaxSetpoint
+                  ? Constants.kDriveHighGearMaxSetpoint / max_desired : 1.0;
+            //mLeftMaster.set(ControlMode.Velocity, inchesPerSecondToUnitsPer100ms(left_inches_per_sec * scale));
+            //mRightMaster.set(ControlMode.Velocity, inchesPerSecondToUnitsPer100ms(right_inches_per_sec * scale));
+      } else {
+          System.out.println("Hit a bad velocity control state");
+          //mLeftMaster.set(ControlMode.Velocity,0);
+          //mRightMaster.set(ControlMode.Velocity,0);
+      }
+
+  }
+
+  private static double inchesPerSecondToUnitsPer100ms(double inches_per_second) {
+    return ((inchesPerSecondToRpm(inches_per_second))*(4096.0)/600.0);
+  }
+
+  private static double inchesPerSecondToRpm(double inches_per_second) {
+    return inchesToRotations(inches_per_second) * 60;
+}
+
+private static double inchesToRotations(double inches) {
+  return inches / (Constants.kDriveWheelDiameterInches * Math.PI);
+}
+
+  /**
+     * Check if the drive talons are configured for velocity control
+     */
+    protected static boolean usesTalonVelocityControl(DriveControlState state) {
+      if (state == DriveControlState.VELOCITY_SETPOINT || state == DriveControlState.PATH_FOLLOWING || state == DriveControlState.TRACTOR_BEAM) {
+          return true;
+      }
+      return false;
+  }
+
   public SwerveDrive(SwerveDriveConfig config) {
-    //logger.info("<b>SwerveDrive</b>: SwerveDrive starting");
+    // logger.info("<b>SwerveDrive</b>: SwerveDrive starting");
     m_motor = new CANSparkMax(0, MotorType.kBrushless);
     m_motor.disable();
 
@@ -52,7 +383,8 @@ public class SwerveDrive {
     final boolean summarizeErrors = config.summarizeTalonErrors;
     Errors.setSummarized(summarizeErrors);
     Errors.setCount(0);
-    //logger.debug("TalonSRX configuration errors summarized = {}", summarizeErrors);
+    // logger.debug("TalonSRX configuration errors summarized = {}",
+    // summarizeErrors);
 
     double length = config.length;
     double width = config.width;
@@ -83,7 +415,7 @@ public class SwerveDrive {
     logger.debug("enableGyroLogging = {}", config.gyroLoggingEnabled);
     logger.debug("gyroRateCorrection = {}", kGyroRateCorrection);
 
-    //logger.info("<b>SwerveDrive</b>: SwerveDrive constructed");
+    // logger.info("<b>SwerveDrive</b>: SwerveDrive constructed");
   }
 
   /**
@@ -102,7 +434,7 @@ public class SwerveDrive {
    * @param driveMode the drive mode
    */
   public void setDriveMode(DriveMode driveMode) {
-    //logger.info("<b>SwerveDrive</b>: setDriveMode starting");
+    // logger.info("<b>SwerveDrive</b>: setDriveMode starting");
     for (Wheel wheel : wheels) {
       wheel.setDriveMode(driveMode);
     }
@@ -112,35 +444,36 @@ public class SwerveDrive {
     if (isFieldOriented) {
       logger.info("ROBOT IS FIELD ORIENTED IN setDriveMode()");
     }
-    //logger.info("<b>SwerveDrive</b>: setDriveMode finished");
+    // logger.info("<b>SwerveDrive</b>: setDriveMode finished");
   }
 
   /**
    * Set all four wheels to specified values.
    *
-   * @param azimuth -0.5 to 0.5 rotations, measured clockwise with zero being the robot
-   *     straight-ahead position
-   * @param drive 0 to 1 in the direction of the wheel azimuth
+   * @param azimuth -0.5 to 0.5 rotations, measured clockwise with zero being the
+   *                robot straight-ahead position
+   * @param drive   0 to 1 in the direction of the wheel azimuth
    */
   public void set(double azimuth, double drive) {
-    //logger.info("<b>SwerveDrive</b>: set starting");
+    // logger.info("<b>SwerveDrive</b>: set starting");
     for (Wheel wheel : wheels) {
       wheel.set(azimuth, drive);
     }
-    //logger.info("<b>SwerveDrive</b>: set finished");
+    // logger.info("<b>SwerveDrive</b>: set finished");
   }
 
   /**
    * Drive the robot in given field-relative direction and with given rotation.
    *
    * @param forward Y-axis movement, from -1.0 (reverse) to 1.0 (forward)
-   * @param strafe X-axis movement, from -1.0 (left) to 1.0 (right)
+   * @param strafe  X-axis movement, from -1.0 (left) to 1.0 (right)
    * @param azimuth robot rotation, from -1.0 (CCW) to 1.0 (CW)
    */
   public void drive(double forward, double strafe, double azimuth) {
-    //logger.info("<b>SwerveDrive</b>: drive starting");
-    
-    // Use gyro for field-oriented drive. We use getAngle instead of getYaw to enable arbitrary
+    // logger.info("<b>SwerveDrive</b>: drive starting");
+
+    // Use gyro for field-oriented drive. We use getAngle instead of getYaw to
+    // enable arbitrary
     // autonomous starting positions.
     if (isFieldOriented) {
       logger.info("ROBOT IS FIELD ORIENTED");
@@ -185,31 +518,33 @@ public class SwerveDrive {
     for (int i = 0; i < WHEEL_COUNT; i++) {
       wheels[i].set(wa[i], ws[i]);
     }
-    //logger.info("<b>SwerveDrive</b>: drive finished");
+    // logger.info("<b>SwerveDrive</b>: drive finished");
   }
 
   /**
-   * Stops all wheels' azimuth and drive movement. Calling this in the robots {@code teleopInit} and
-   * {@code autonomousInit} will reset wheel azimuth relative encoders to the current position and
-   * thereby prevent wheel rotation if the wheels were moved manually while the robot was disabled.
+   * Stops all wheels' azimuth and drive movement. Calling this in the robots
+   * {@code teleopInit} and {@code autonomousInit} will reset wheel azimuth
+   * relative encoders to the current position and thereby prevent wheel rotation
+   * if the wheels were moved manually while the robot was disabled.
    */
   public void stop() {
-    //logger.info("<b>SwerveDrive</b>: stop starting");
+    // logger.info("<b>SwerveDrive</b>: stop starting");
     for (Wheel wheel : wheels) {
       wheel.stop();
     }
     logger.info("stopped all wheels");
 
-    //logger.info("<b>SwerveDrive</b>: stop finished");
+    // logger.info("<b>SwerveDrive</b>: stop finished");
   }
 
   /**
-   * Save the wheels' azimuth current position as read by absolute encoder. These values are saved
-   * persistently on the roboRIO and are normally used to calculate the relative encoder offset
-   * during wheel initialization.
+   * Save the wheels' azimuth current position as read by absolute encoder. These
+   * values are saved persistently on the roboRIO and are normally used to
+   * calculate the relative encoder offset during wheel initialization.
    *
-   * <p>The wheel alignment data is saved in the WPI preferences data store and may be viewed using
-   * a network tables viewer.
+   * <p>
+   * The wheel alignment data is saved in the WPI preferences data store and may
+   * be viewed using a network tables viewer.
    *
    * @see #zeroAzimuthEncoders()
    */
@@ -218,19 +553,19 @@ public class SwerveDrive {
   }
 
   void saveAzimuthPositions(Preferences prefs) {
-    //logger.info("<b>SwerveDrive</b>: saveAzimuthPositions starting");
+    // logger.info("<b>SwerveDrive</b>: saveAzimuthPositions starting");
     for (int i = 0; i < WHEEL_COUNT; i++) {
       int position = wheels[i].getAzimuthAbsolutePosition();
       prefs.putInt(getPreferenceKeyForWheel(i), position);
       logger.info("azimuth {}: saved zero = {}", i, position);
     }
-    //logger.info("<b>SwerveDrive</b>: saveAzimuthPositions finished");
+    // logger.info("<b>SwerveDrive</b>: saveAzimuthPositions finished");
   }
 
   /**
-   * Set wheels' azimuth relative offset from zero based on the current absolute position. This uses
-   * the physical zero position as read by the absolute encoder and saved during the wheel alignment
-   * process.
+   * Set wheels' azimuth relative offset from zero based on the current absolute
+   * position. This uses the physical zero position as read by the absolute
+   * encoder and saved during the wheel alignment process.
    *
    * @see #saveAzimuthPositions()
    */
@@ -239,7 +574,7 @@ public class SwerveDrive {
   }
 
   void zeroAzimuthEncoders(Preferences prefs) {
-    //logger.info("<b>SwerveDrive</b>: zeroAzimuthEncoders starting");
+    // logger.info("<b>SwerveDrive</b>: zeroAzimuthEncoders starting");
     Errors.setCount(0);
     for (int i = 0; i < WHEEL_COUNT; i++) {
       int position = prefs.getInt(getPreferenceKeyForWheel(i), DEFAULT_ABSOLUTE_AZIMUTH_OFFSET);
@@ -247,9 +582,10 @@ public class SwerveDrive {
       logger.info("azimuth {}: loaded zero = {}", i, position);
     }
     int errorCount = Errors.getCount();
-    if (errorCount > 0) logger.error("TalonSRX set azimuth zero error count = {}", errorCount);
+    if (errorCount > 0)
+      logger.error("TalonSRX set azimuth zero error count = {}", errorCount);
 
-    //logger.info("<b>SwerveDrive</b>: zeroAzimuthEncoders finished");
+    // logger.info("<b>SwerveDrive</b>: zeroAzimuthEncoders finished");
   }
 
   /**
@@ -280,8 +616,8 @@ public class SwerveDrive {
   }
 
   /**
-   * Enable or disable field-oriented driving. Enabled by default if connected gyro is passed in via
-   * {@code SwerveDriveConfig} during construction.
+   * Enable or disable field-oriented driving. Enabled by default if connected
+   * gyro is passed in via {@code SwerveDriveConfig} during construction.
    *
    * @param enabled true to enable field-oriented driving.
    */
@@ -310,10 +646,24 @@ public class SwerveDrive {
 
   /** Swerve Drive drive mode */
   public enum DriveMode {
-    OPEN_LOOP,
-    CLOSED_LOOP,
-    TELEOP,
-    TRAJECTORY,
-    AZIMUTH
+    OPEN_LOOP, CLOSED_LOOP, TELEOP, TRAJECTORY, AZIMUTH
+  }
+
+  @Override
+  public void outputToSmartDashboard() {
+    // TODO Auto-generated method stub
+    SmartDashboard.putString("SwerveStatus", "AASSHZHIAAA");
+  }
+
+  @Override
+  public void zeroSensors() {
+    // TODO Auto-generated method stub
+    zeroAzimuthEncoders();
+  }
+
+  @Override
+  public void registerEnabledLoops(Looper enabledLooper) {
+    // TODO Auto-generated method stub
+    enabledLooper.register(mLoop);
   }
 }

@@ -42,6 +42,10 @@ public class DriveSubsystem extends Subsystem {
     //logger.info("<b>DriveSubsystem</b>: initDefaultCommand finished");
   }
 
+  public SwerveDrive getSwerveInstance(){
+    return swerve;
+  }
+
   public void setDriveMode(DriveMode mode) {
     //logger.info("<b>DriveSubsystem</b>: setDriveMode started");
     swerve.setDriveMode(mode);
@@ -78,14 +82,14 @@ public class DriveSubsystem extends Subsystem {
     config.gyro = new AHRS(SPI.Port.kMXP);
     //config.length = ROBOT_LENGTH;
     //config.width = ROBOT_WIDTH;
-    config.gyroLoggingEnabled = true;
-    config.summarizeTalonErrors = false;
+    //config.gyroLoggingEnabled = true;
+    //config.summarizeTalonErrors = false;
 
     //logger.info("<b>DriveSubsystem</b>: getSwerve returning");
-    return new SwerveDrive(config);
+    return new SwerveDrive(config); //SwerveDrive.getInstance(this);
   }
 
-  private Wheel[] getWheels() {
+  public Wheel[] getWheels() {
     //logger.info("<b>DriveSubsystem</b>: getWheels starting");
     Wheel[] wheels = new Wheel[4];
     int smartMotionSlot = 0;

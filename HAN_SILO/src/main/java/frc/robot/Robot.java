@@ -19,7 +19,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.strykeforce.thirdcoast.swerve.SwerveDrive;
 import org.strykeforce.thirdcoast.swerve.Wheel;
 import org.usfirst.frc.team1731.lib.util.CrashTracker;
 import org.usfirst.frc.team1731.lib.util.math.RigidTransform2d;
@@ -29,8 +29,11 @@ import org.usfirst.frc.team1731.robot.auto.AutoModeExecuter;
 import org.usfirst.frc.team1731.robot.auto.modes.StandStillMode;
 import org.usfirst.frc.team1731.robot.auto.modes.TestAuto;
 import org.usfirst.frc.team1731.robot.loops.Looper;
+import org.usfirst.frc.team1731.robot.loops.RobotStateEstimator;
 import org.usfirst.frc.team1731.robot.paths.TestPath;
+import org.usfirst.frc.team1731.robot.paths.profiles.PathAdapter;
 import org.usfirst.frc.team1731.robot.subsystems.Climber;
+import org.usfirst.frc.team1731.robot.subsystems.ConnectionMonitor;
 import org.usfirst.frc.team1731.robot.subsystems.Drive;
 import org.usfirst.frc.team1731.robot.subsystems.Intake;
 import org.usfirst.frc.team1731.robot.subsystems.Superstructure;
@@ -58,16 +61,19 @@ public class Robot extends TimedRobot {
 
   private AutoModeBase autoModeToExecute;
   private static HashMap<Integer, AutoModeBase> AUTO_MODES; // 35 modes defined in Mark's "BIBLE"
-  
+
   private AutoModeExecuter mAutoModeExecuter = null;
   private Superstructure mSuperstructure = Superstructure.getInstance();
   private RobotState mRobotState = RobotState.getInstance();
   private Drive mDrive = Drive.getInstance();
+  private RobotStateEstimator mRobotStateEstimator = RobotStateEstimator.getInstance();
+  private ConnectionMonitor mConnectionMonitor = ConnectionMonitor.getInstance();
   private Looper mEnabledLooper = new Looper();
   
   private final SubsystemManager mSubsystemManager = new SubsystemManager(
                            Arrays.asList(
-                                         Drive.getInstance(),
+                                         DRIVE.getSwerveInstance(),
+                                         //Drive.getInstance(),
                                          Superstructure.getInstance(),
                                          //Elevator.getInstance(),
                                          Intake.getInstance(),
@@ -102,13 +108,16 @@ public class Robot extends TimedRobot {
 
     //#region ROBOTNEW
 
-    
+    mSubsystemManager.registerEnabledLoops(mEnabledLooper);
+    mEnabledLooper.register(mRobotStateEstimator);    
 
     //#endregion
   }
 
   @Override
   public void teleopPeriodic() {
+    allPeriodic();
+
     //logger.info("<b>Robot</b>: teleopPeriodic started");
     Scheduler.getInstance().run();
     //logger.info("<b>Robot</b>: teleopPeriodic finished");
@@ -116,6 +125,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic(){
+    allPeriodic();
+
     if(wheelObjects == null){
       wheelObjects = DRIVE.getWheelObjects();
     } else if(wheelObjects.length == 4) {
@@ -130,6 +141,19 @@ public class Robot extends TimedRobot {
   }
 
   //#region ROBOTNEW
+
+    @Override
+    public void teleopInit() {
+      mEnabledLooper.start();
+    }
+
+    @Override
+    public void disabledInit() {
+      mEnabledLooper.stop();
+      mSubsystemManager.stop();
+      PathAdapter.calculatePaths();
+    }
+
 
    /**
      * Initializes the robot for the beginning of autonomous mode (set drivebase, intake and superstructure to correct
@@ -184,6 +208,11 @@ public class Robot extends TimedRobot {
         }
     }
 
+    @Override
+    public void autonomousPeriodic(){
+      allPeriodic();
+    }
+
     private AutoModeBase determineAutoModeToExecute2018(String autoCode) {
     	System.out.println("Got this auto mode from the dashboard: " + autoCode);
     	
@@ -212,10 +241,21 @@ public class Robot extends TimedRobot {
     AUTO_MODES.put(404, new TestAuto()); //Test Auto Mode
   }
 
-    public void zeroAllSensors() {
-      mSubsystemManager.zeroSensors();
-      mRobotState.reset(Timer.getFPGATimestamp(), new RigidTransform2d());
-     // mDrive.zeroSensors(); subsystem manager does this
-    }
-    //#endregion
+  public void zeroAllSensors() {
+    mSubsystemManager.zeroSensors();
+    mRobotState.reset(Timer.getFPGATimestamp(), new RigidTransform2d());
+    // mDrive.zeroSensors(); subsystem manager does this
+  }
+
+
+  private void allPeriodic(){
+    mRobotState.outputToSmartDashboard();
+    mSubsystemManager.outputToSmartDashboard();
+    mSubsystemManager.writeToLog();
+    mEnabledLooper.outputToSmartDashboard();
+
+    mConnectionMonitor.setLastPacketTime(Timer.getFPGATimestamp());
+  }
+
+  //#endregion
 }
