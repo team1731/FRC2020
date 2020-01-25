@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.strykeforce.thirdcoast.swerve.Wheel;
+import org.usfirst.frc.team1731.robot.loops.Looper;
 import org.usfirst.frc.team1731.robot.subsystems.Superstructure;
 import org.usfirst.frc.team1731.robot.SubsystemManager;
 import org.usfirst.frc.team1731.robot.ControlBoardInterface;
@@ -44,6 +45,9 @@ public class Robot extends TimedRobot {
   private CANEncoder m_encoder;
   private static final int deviceID = 1;
   private Wheel[] wheelObjects;
+  private boolean mLoopersAreRunning = false;
+
+  private Looper mEnabledLooper = new Looper();
 
   @Override
   public void robotInit() {
@@ -57,6 +61,7 @@ public class Robot extends TimedRobot {
     // just some example lines i used to prove that code completion still works!
     // m_motor = new CANSparkMax(deviceID, MotorType.kBrushless);
     // m_motor.disable();
+    mSubsystemManager.registerEnabledLoops(mEnabledLooper);
   }
 
   /**
@@ -69,6 +74,9 @@ public class Robot extends TimedRobot {
       // commented out below!!!!!!!!!!!!!!!!!!!!!!!!!!!
       // Start loopers
       mSuperstructure.reloadConstants();
+      mEnabledLooper.start();
+      mLoopersAreRunning = true;
+
       //mSuperstructure.setOverrideCompressor(false);
     } catch (final Throwable t) {
       // CrashTracker.logThrowableCrash(t);
@@ -111,6 +119,7 @@ public class Robot extends TimedRobot {
   */
   SmartDashboard.putBoolean("PowerCell Pickup", pickupPowerCell);
   SmartDashboard.putBoolean("PowerCell Spit", spitPowerCell);
+  mSuperstructure.outputToSmartDashboard();
 }
 
   @Override

@@ -180,7 +180,7 @@ public class Superstructure extends Subsystem {
                     newState = handleStartingConfiguration();
                     break;
                 case SPITTING:
-                    newState = handleSpitting();
+                    newState = handlePowerCellSpitting();
                     break;
                 case WAITING_FOR_ROTATE:
                     newState = handleWaitingForRotate(timestamp);
@@ -195,8 +195,10 @@ public class Superstructure extends Subsystem {
                     newState = handleReturningHome();
                     break;
                 case POWERCELL_INTAKING:
-                    newState = handleCargoCapture();
+                    newState = handlePowerCellIntaking();
                     break;
+                case POWERCELL_SPITTING:
+                    newState = handlePowerCellSpitting();
                 case HATCH_CAPTURED:
                     newState = handleHatchCapture();
                     break;
@@ -302,7 +304,7 @@ public class Superstructure extends Subsystem {
             }
         }
 
-        private SystemState handleCargoCapture() {
+        private SystemState handlePowerCellIntaking() {
             //mBeakSwinger.set(DoubleSolenoid.Value.kReverse);
             //mBeakLips.set(DoubleSolenoid.Value.kReverse);
             //mTopRoller.set(DoubleSolenoid.Value.kForward);
@@ -579,9 +581,9 @@ public class Superstructure extends Subsystem {
             }
         }
 
-		private SystemState handleSpitting() {
+		private SystemState handlePowerCellSpitting() {
         	//mElevator.setWantedPosition(Constants.kElevatorHomeEncoderValue);
-        	mElevator.setWantedState(Elevator.WantedState.ELEVATORTRACKING);
+        	//mElevator.setWantedState(Elevator.WantedState.ELEVATORTRACKING);
         	mIntake.setWantedState(Intake.WantedState.SPITTING);
         	
             switch (mWantedState) {

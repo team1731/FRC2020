@@ -16,8 +16,8 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.wpilibj.DriverStation;
 
 //import com.ctre.CANTalon;
-
-import edu.wpi.first.wpilibj.Solenoid;
+//Getting rid of all solenoid for testing!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 //import edu.wpi.first.wpilibj.VictorSP;
 
@@ -78,7 +78,7 @@ public class Intake extends Subsystem {
     private SystemState mSystemState = SystemState.IDLE;
     private WantedState mWantedState = WantedState.IDLE;
 
-    DoubleSolenoid IntakeHood = new DoubleSolenoid(Constants.kIntakeHoodSolenoid1, Constants.kIntakeHoodSolenoid2);
+    //DoubleSolenoid IntakeHood = new DoubleSolenoid(Constants.kIntakeHoodSolenoid1, Constants.kIntakeHoodSolenoid2);
 
     private double mCurrentStateStartTime;
     // private double mWantedPosition = 0;
@@ -130,7 +130,7 @@ public class Intake extends Subsystem {
 
         private SystemState handleSpitting() {
             if (mStateChanged) {
-                IntakeHood.set(Value.kForward);
+                //IntakeHood.set(Value.kForward);
                 mTalonFX.set(ControlMode.PercentOutput, 1);
             }
             return defaultStateTransfer();
@@ -138,7 +138,7 @@ public class Intake extends Subsystem {
 
         private SystemState handleIntaking() {
             if (mStateChanged) {
-                IntakeHood.set(Value.kForward);
+                //IntakeHood.set(Value.kForward);
                 mTalonFX.set(ControlMode.PercentOutput, -1);
             }
             return defaultStateTransfer();
@@ -167,7 +167,7 @@ public class Intake extends Subsystem {
         // if motor is not off, turn motor off
         if (mStateChanged) {
             mTalonFX.set(ControlMode.PercentOutput, 0);
-            IntakeHood.set(Value.kReverse);
+            //IntakeHood.set(Value.kReverse);
         }
         return defaultStateTransfer();
     }
