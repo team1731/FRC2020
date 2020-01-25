@@ -15,8 +15,9 @@ import org.usfirst.frc.team1731.robot.loops.Loop;
 import org.usfirst.frc.team1731.robot.loops.Looper;
 
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
+//TODO: Make 2020 implementation
+//import edu.wpi.first.wpilibj.Solenoid;
+//import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -61,17 +62,17 @@ public class Superstructure extends Subsystem {
 
     private final Intake mIntake = Intake.getInstance();
 
-    private final DoubleSolenoid mTopRoller = Constants.makeDoubleSolenoidForIds(1, Constants.kTopRoller1, Constants.kTopRoller2);
-    private final DoubleSolenoid mBeakSwinger = Constants.makeDoubleSolenoidForIds(0, Constants.kBeakSwinger1, Constants.kBeakSwinger2);
+    //private final DoubleSolenoid mTopRoller = Constants.makeDoubleSolenoidForIds(1, Constants.kTopRoller1, Constants.kTopRoller2);
+    //private final DoubleSolenoid mBeakSwinger = Constants.makeDoubleSolenoidForIds(0, Constants.kBeakSwinger1, Constants.kBeakSwinger2);
 
 //DEBUG ONLY - NOT FOR COMPETITION - PUT THIS BACK IN!!!!!!!!!
-    private final DoubleSolenoid mBeakLips = Constants.makeDoubleSolenoidForIds(1, Constants.kBeakOpener1, Constants.kBeakOpener2);
+    //private final DoubleSolenoid mBeakLips = Constants.makeDoubleSolenoidForIds(1, Constants.kBeakOpener1, Constants.kBeakOpener2);
    // private final DoubleSolenoid mBeakLips = Constants.makeDoubleSolenoidForIds(0, 3, 2);
     
     
-    private final DoubleSolenoid mMustache = Constants.makeDoubleSolenoidForIds(0, Constants.kMustache1, Constants.kMustache2);
-    private final DoubleSolenoid mRotateWristShort = Constants.makeDoubleSolenoidForIds(1, Constants.kRotateWristShort1, Constants.kRotateWristShort2);
-    private final DoubleSolenoid mRotateWristLong = Constants.makeDoubleSolenoidForIds(1, Constants.kRotateWristLong1, Constants.kRotateWristLong2); 
+    //private final DoubleSolenoid mMustache = Constants.makeDoubleSolenoidForIds(0, Constants.kMustache1, Constants.kMustache2);
+    //private final DoubleSolenoid mRotateWristShort = Constants.makeDoubleSolenoidForIds(1, Constants.kRotateWristShort1, Constants.kRotateWristShort2);
+    //private final DoubleSolenoid mRotateWristLong = Constants.makeDoubleSolenoidForIds(1, Constants.kRotateWristLong1, Constants.kRotateWristLong2); 
 
     //private final Compressor mCompressor = new Compressor(0);
     //private final RevRoboticsAirPressureSensor mAirPressureSensor = new RevRoboticsAirPressureSensor(3);
@@ -222,10 +223,13 @@ public class Superstructure extends Subsystem {
         }
 
         private SystemState handleEjectingCargo() {
+            //TODO: Make 2020 implementation
+            /*
             mBeakSwinger.set(DoubleSolenoid.Value.kReverse);
             mBeakLips.set(DoubleSolenoid.Value.kReverse);
             mTopRoller.set(DoubleSolenoid.Value.kReverse);
             mMustache.set(DoubleSolenoid.Value.kReverse);
+            */
             mIntake.setWantedState(Intake.WantedState.SPITTING);
         	
             switch (mWantedState) {
@@ -261,10 +265,13 @@ public class Superstructure extends Subsystem {
         }
 
         private SystemState handleStartingConfiguration(){
+            //TODO: Make 2020 implementation
+            /*
             mBeakSwinger.set(DoubleSolenoid.Value.kForward);
             mBeakLips.set(DoubleSolenoid.Value.kReverse);
             mTopRoller.set(DoubleSolenoid.Value.kForward);
             mMustache.set(DoubleSolenoid.Value.kReverse);
+            */
             mClimber.setWantedState(Climber.WantedState.IDLE);
            // mWrist.setWantedPosition(WristPositions.STARTINGPOSITION);
             seWristtWantedPosition(WantedWristPosition.STARTINGPOSITION);
@@ -302,10 +309,13 @@ public class Superstructure extends Subsystem {
         }
 
         private SystemState handleCargoCapture() {
+            //TODO: Make 2020 implementation
+            /*
             mBeakSwinger.set(DoubleSolenoid.Value.kReverse);
             mBeakLips.set(DoubleSolenoid.Value.kReverse);
             mTopRoller.set(DoubleSolenoid.Value.kForward);
             mMustache.set(DoubleSolenoid.Value.kReverse);
+            */
             mIntake.setWantedState(Intake.WantedState.INTAKING);
             seWristtWantedPosition(WantedWristPosition.CARGOPICKUP);
             setWantedElevatorPosition(ELEVATOR_POSITION.ELEVATOR_CARGO_PICKUP);
@@ -329,7 +339,8 @@ public class Superstructure extends Subsystem {
             case OVERTHETOP:
                 return SystemState.WAITING_FOR_HIGH_POSITION;
             case ELEVATOR_TRACKING:
-                mTopRoller.set(DoubleSolenoid.Value.kReverse);
+                //TODO: Make 2020 implementation
+                //mTopRoller.set(DoubleSolenoid.Value.kReverse);
                 seWristtWantedPosition(WantedWristPosition.STRAIGHTAHEAD);
                 return SystemState.ELEVATOR_TRACKING;
             case HATCH_CAPTURED:
@@ -346,11 +357,13 @@ public class Superstructure extends Subsystem {
         }
 
         private SystemState handleEjectingHatch() {
+            //TODO: Make 2020 implementation
+            /*
             mBeakSwinger.set(DoubleSolenoid.Value.kForward);
             mBeakLips.set(DoubleSolenoid.Value.kReverse);
             mTopRoller.set(DoubleSolenoid.Value.kReverse);
             mMustache.set(DoubleSolenoid.Value.kForward);
-
+*/
             switch (mWantedState) {
             case CLIMBINGUP:
                 return SystemState.CLIMBING;
@@ -384,10 +397,13 @@ public class Superstructure extends Subsystem {
         }
 
         private SystemState handleHatchCapture() {            
+            //TODO: Make 2020 implementation
+            /*
             mBeakSwinger.set(DoubleSolenoid.Value.kForward);
             mBeakLips.set(DoubleSolenoid.Value.kReverse);
             mTopRoller.set(DoubleSolenoid.Value.kReverse);
             mMustache.set(DoubleSolenoid.Value.kReverse);
+            */
         	
             switch (mWantedState) {
             case CLIMBINGUP:
@@ -411,8 +427,8 @@ public class Superstructure extends Subsystem {
             case EJECTING_HATCH:
                 return SystemState.EJECTING_HATCH;
             case ELEVATOR_TRACKING:
-            
-                mBeakLips.set(DoubleSolenoid.Value.kForward);
+            //TODO: Make 2020 implementation
+                //mBeakLips.set(DoubleSolenoid.Value.kForward);
                 return SystemState.ELEVATOR_TRACKING;
             case CARGO_CAPTURED:
                 return SystemState.CARGO_CAPTURED;
@@ -431,7 +447,8 @@ public class Superstructure extends Subsystem {
             }
             mClimber.setWantedState(Climber.WantedState.IDLE);
             if ((timestamp - mCurrentStateStartTime  > 1.0)) {
-                mMustache.set(DoubleSolenoid.Value.kReverse);
+                //TODO: Make 2020 implementation
+                //mMustache.set(DoubleSolenoid.Value.kReverse);
             }
             
             
@@ -806,7 +823,8 @@ public class Superstructure extends Subsystem {
     private SystemState handleIdle(boolean stateChanged) {
         if (stateChanged) {
             stop();
-            mMustache.set(DoubleSolenoid.Value.kReverse);
+            //TODO: Make 2020 implementation
+            //mMustache.set(DoubleSolenoid.Value.kReverse);
             mElevator.setWantedState(Elevator.WantedState.IDLE);
             mIntake.setWantedState(Intake.WantedState.IDLE);
             mClimber.setWantedState(Climber.WantedState.IDLE);
@@ -923,54 +941,78 @@ public class Superstructure extends Subsystem {
 
         switch (position) {
             case CARGOPICKUP:
+            //TODO: Make 2020 implementation
+            /*
                 mRotateWristShort.set(DoubleSolenoid.Value.kReverse);
                 mRotateWristLong.set(DoubleSolenoid.Value.kReverse);
+                */
                 break;
             case STRAIGHTAHEAD:
+            //TODO: Make 2020 implementation
+            /*
                 mRotateWristShort.set(DoubleSolenoid.Value.kForward);
                 mRotateWristLong.set(DoubleSolenoid.Value.kReverse);
+                */
                 break;
              case SHOOTHIGH:
+             //TODO: Make 2020 implementation
+            /*
                 mRotateWristShort.set(DoubleSolenoid.Value.kReverse);
                 mRotateWristLong.set(DoubleSolenoid.Value.kForward);
+                */
                 break;
              case STARTINGPOSITION:
+             //TODO: Make 2020 implementation
+            /*
                 mRotateWristShort.set(DoubleSolenoid.Value.kForward);
                 mRotateWristLong.set(DoubleSolenoid.Value.kForward);
+                */
                 break;
             default:
+            //TODO: Make 2020 implementation
+            /*
                 mRotateWristShort.set(DoubleSolenoid.Value.kForward);
                 mRotateWristLong.set(DoubleSolenoid.Value.kForward);
+                */
         }
 
     }
 
     public void closeBeak() {
-        mBeakLips.set(DoubleSolenoid.Value.kReverse);
+        //TODO: Make 2020 implementation
+        //mBeakLips.set(DoubleSolenoid.Value.kReverse);
 
     }
     public void openBeak() {
-        mBeakLips.set(DoubleSolenoid.Value.kForward);
+        //TODO: Make 2020 implementation
+        //mBeakLips.set(DoubleSolenoid.Value.kForward);
 
     }
 
     public void prepareToPickupHatch() {
+        //TODO: Make 2020 implementation
+            /*
         mBeakSwinger.set(DoubleSolenoid.Value.kForward);
         mBeakLips.set(DoubleSolenoid.Value.kReverse);
         mTopRoller.set(DoubleSolenoid.Value.kReverse);
         mMustache.set(DoubleSolenoid.Value.kReverse);
+        */
     }
    
 
     public void ejectHatch() {
+        //TODO: Make 2020 implementation
+            /*
         mBeakSwinger.set(DoubleSolenoid.Value.kForward);
         mBeakLips.set(DoubleSolenoid.Value.kReverse);
         mTopRoller.set(DoubleSolenoid.Value.kReverse);
         mMustache.set(DoubleSolenoid.Value.kForward);
+        */
     }
 
     public void uproller() {
-        mTopRoller.set(DoubleSolenoid.Value.kReverse);
+        //TODO: Make 2020 implementation
+        //mTopRoller.set(DoubleSolenoid.Value.kReverse);
         seWristtWantedPosition(WantedWristPosition.STRAIGHTAHEAD);
     }
 
