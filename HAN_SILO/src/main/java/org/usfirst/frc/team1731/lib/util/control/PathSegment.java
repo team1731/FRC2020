@@ -26,6 +26,9 @@ public class PathSegment {
     private MotionProfile speedController;
     private boolean extrapolateLookahead;
     private String marker;
+    private double startAzimuth;
+    private double midAzimuth;
+    private double endAzimuth;
 
     /**
      * Constructor for a linear segment
@@ -42,7 +45,7 @@ public class PathSegment {
      *            maximum speed allowed on the segment
      */
     public PathSegment(double x1, double y1, double x2, double y2, double maxSpeed, MotionState startState,
-            double endSpeed) {
+            double endSpeed, double startAzimuth, double endAzimuth) {
         this.start = new Translation2d(x1, y1);
         this.end = new Translation2d(x2, y2);
 
@@ -52,10 +55,13 @@ public class PathSegment {
         extrapolateLookahead = false;
         isLine = true;
         createMotionProfiler(startState, endSpeed);
+
+        this.startAzimuth = startAzimuth;
+        this.endAzimuth = endAzimuth;
     }
 
     public PathSegment(double x1, double y1, double x2, double y2, double maxSpeed, MotionState startState,
-            double endSpeed, String marker) {
+            double endSpeed, double startAzimuth, double endAzimuth, String marker) {
         this.start = new Translation2d(x1, y1);
         this.end = new Translation2d(x2, y2);
 
@@ -66,6 +72,9 @@ public class PathSegment {
         isLine = true;
         this.marker = marker;
         createMotionProfiler(startState, endSpeed);
+
+        this.startAzimuth = startAzimuth;
+        this.endAzimuth = endAzimuth;
     }
 
     /**
@@ -87,7 +96,7 @@ public class PathSegment {
      *            maximum speed allowed on the segment
      */
     public PathSegment(double x1, double y1, double x2, double y2, double cx, double cy, double maxSpeed,
-            MotionState startState, double endSpeed) {
+            MotionState startState, double endSpeed, double startAzimuth, double midAzimuth, double endAzimuth) {
         this.start = new Translation2d(x1, y1);
         this.end = new Translation2d(x2, y2);
         this.center = new Translation2d(cx, cy);
@@ -99,10 +108,14 @@ public class PathSegment {
         extrapolateLookahead = false;
         isLine = false;
         createMotionProfiler(startState, endSpeed);
+
+        this.startAzimuth = startAzimuth;
+        this.midAzimuth = midAzimuth;
+        this.endAzimuth = endAzimuth;
     }
 
     public PathSegment(double x1, double y1, double x2, double y2, double cx, double cy, double maxSpeed,
-            MotionState startState, double endSpeed, String marker) {
+            MotionState startState, double endSpeed, double startAzimuth, double midAzimuth, double endAzimuth, String marker) {
         this.start = new Translation2d(x1, y1);
         this.end = new Translation2d(x2, y2);
         this.center = new Translation2d(cx, cy);
@@ -115,6 +128,10 @@ public class PathSegment {
         isLine = false;
         this.marker = marker;
         createMotionProfiler(startState, endSpeed);
+
+        this.startAzimuth = startAzimuth;
+        this.midAzimuth = midAzimuth;
+        this.endAzimuth = endAzimuth;
     }
 
     /**

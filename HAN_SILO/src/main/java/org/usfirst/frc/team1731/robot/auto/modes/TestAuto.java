@@ -31,6 +31,9 @@ public class TestAuto extends AutoModeBase {
     @Override
     protected void routine() throws AutoModeEndedException {
         System.out.println("Executing TestAuto");
-        runAction(new TurnToHeadingAction(Rotation2d.fromDegrees(180.0)));
+        PathContainer Path = new TestPath();
+    	runAction(new ResetPoseFromPathAction(Path));
+        runAction(new DrivePathAction(Path));
+        //runAction(new TurnToHeadingAction(Rotation2d.fromDegrees(180.0)));
     }
 }

@@ -57,6 +57,7 @@ public class PathBuilder {
         double radius;
         double speed;
         String marker;
+        double azimuth;
 
         public Waypoint(Waypoint other) {
             this(other.position.x(), other.position.y(), other.radius, other.speed, other.marker);
@@ -68,16 +69,38 @@ public class PathBuilder {
             speed = s;
         }
 
+        public Waypoint(double x, double y, double r, double s, double a){
+            position = new Translation2d(x, y);
+            radius = r;
+            speed = s;
+            azimuth = a;
+        }
+
         public Waypoint(Translation2d pos, double r, double s) {
             position = pos;
             radius = r;
             speed = s;
         }
 
+        public Waypoint(Translation2d pos, double r, double s, double a){
+            position = pos;
+            radius = r;
+            speed = s;
+            azimuth = a;
+        }
+
         public Waypoint(double x, double y, double r, double s, String m) {
             position = new Translation2d(x, y);
             radius = r;
             speed = s;
+            marker = m;
+        }
+
+        public Waypoint(double x, double y, double r, double s, double a, String m){
+            position = new Translation2d(x, y);
+            radius = r;
+            speed = s;
+            azimuth = a;
             marker = m;
         }
     }
@@ -92,6 +115,8 @@ public class PathBuilder {
         Translation2d end;
         Translation2d slope;
         double speed;
+        double startAzimuth;
+        double endAzimuth;
 
         public Line(Waypoint a, Waypoint b) {
             this.a = a;
@@ -100,6 +125,8 @@ public class PathBuilder {
             speed = b.speed;
             start = a.position.translateBy(slope.scale(a.radius / slope.norm()));
             end = b.position.translateBy(slope.scale(-b.radius / slope.norm()));
+            startAzimuth = a.azimuth;
+            endAzimuth = b.azimuth;
         }
 
         private void addToPath(Path p, double endSpeed) {
@@ -107,10 +134,10 @@ public class PathBuilder {
             if (pathLength > kEpsilon) {
                 if (b.marker != null) {
                     p.addSegment(new PathSegment(start.x(), start.y(), end.x(), end.y(), b.speed,
-                            p.getLastMotionState(), endSpeed, b.marker));
+                            p.getLastMotionState(), endSpeed, a.azimuth, b.azimuth, b.marker));
                 } else {
                     p.addSegment(new PathSegment(start.x(), start.y(), end.x(), end.y(), b.speed,
-                            p.getLastMotionState(), endSpeed));
+                            p.getLastMotionState(), endSpeed,  a.azimuth, b.azimuth));
                 }
             }
 
@@ -126,6 +153,9 @@ public class PathBuilder {
         Translation2d center;
         double radius;
         double speed;
+        double startAzimuth;
+        double midAzimuth;
+        double endAzimuth;
 
         public Arc(Waypoint a, Waypoint b, Waypoint c) {
             this(new Line(a, b), new Line(b, c));
@@ -137,13 +167,16 @@ public class PathBuilder {
             this.speed = (a.speed + b.speed) / 2;
             this.center = intersect(a, b);
             this.radius = new Translation2d(center, a.end).norm();
+            this.startAzimuth = a.startAzimuth;
+            this.midAzimuth = a.endAzimuth;
+            this.endAzimuth = b.endAzimuth;
         }
 
         private void addToPath(Path p) {
             a.addToPath(p, speed);
             if (radius > kEpsilon && radius < kReallyBigNumber) {
                 p.addSegment(new PathSegment(a.end.x(), a.end.y(), b.start.x(), b.start.y(), center.x(), center.y(),
-                        speed, p.getLastMotionState(), b.speed));
+                        speed, p.getLastMotionState(), b.speed, startAzimuth, midAzimuth, endAzimuth));
             }
         }
 
