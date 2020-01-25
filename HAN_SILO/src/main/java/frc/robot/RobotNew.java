@@ -725,7 +725,8 @@ public class RobotNew extends TimedRobot {
             // boolean pickUp = mControlBoard.getAutoPickUp();
             boolean pickupHatch = mControlBoard.getPickupPanel();
             boolean ejectHatch = mControlBoard.getShootPanel();
-            boolean pickupCargo = mControlBoard.getPickupBall();
+            boolean pickupPowerCell = mControlBoard.getPickupBall();
+            boolean spitPowerCell = mControlBoard.getPickupBall();
             boolean ejectCargo = mControlBoard.getShootBall();
             boolean elevCargoShipPos = mControlBoard.getCargoShipBall();
             boolean startingConfiguration = mControlBoard.getStartingConfiguration();       
@@ -745,9 +746,6 @@ public class RobotNew extends TimedRobot {
             	mSuperstructure.setWantedState(Superstructure.WantedState.CALIBRATINGDOWN);
             } else if (calibrateUp) {
             	mSuperstructure.setWantedState(Superstructure.WantedState.CALIBRATINGUP);
-				
-				
-			//2019
             } else if (startingConfiguration){
                 mSuperstructure.setWantedState(Superstructure.WantedState.STARTINGCONFIGURATION);
             } else if (pickUp) {
@@ -758,15 +756,12 @@ public class RobotNew extends TimedRobot {
                 mSuperstructure.setWantedState(Superstructure.WantedState.HATCH_CAPTURED); 
             } else if (ejectCargo) {
                 mSuperstructure.setWantedState(Superstructure.WantedState.EJECTING_CARGO);
-            } else if (pickupCargo) {
-                mSuperstructure.setWantedState(Superstructure.WantedState.CARGO_CAPTURED);
-			
-				
-				
-            } else if (pickUp) {
-            	mSuperstructure.setWantedState(Superstructure.WantedState.AUTOINTAKING);
+            } else if (spitPowerCell) {
+                mSuperstructure.setWantedState(Superstructure.WantedState.POWERCELL_INTAKING);
+            } else if (pickupPowerCell) {
+            	mSuperstructure.setWantedState(Superstructure.WantedState.POWERCELL_INTAKING);
             } else {
-            	mSuperstructure.setWantedState(Superstructure.WantedState.ELEVATOR_TRACKING);
+            	mSuperstructure.setWantedState(Superstructure.WantedState.IDLE);
             }
             	
 			//2018

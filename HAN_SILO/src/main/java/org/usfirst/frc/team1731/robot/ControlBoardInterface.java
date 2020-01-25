@@ -63,6 +63,7 @@ public interface ControlBoardInterface {
 		boolean getPickupPanel();
 		boolean getShootPanel();
 		boolean getPickupBall();
+		boolean getSpitBall();
 		boolean getShootBall();
 		boolean getCargoShipBall();
 		boolean getStartingConfiguration();

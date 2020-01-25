@@ -421,6 +421,7 @@ public class Robot extends TimedRobot {
             boolean pickupHatch = mControlBoard.getPickupPanel();
             boolean ejectHatch = mControlBoard.getShootPanel();
             boolean pickupPowerCell = mControlBoard.getPickupBall();
+            boolean spitPowerCell = mControlBoard.getSpitBall();
             boolean ejectCargo = mControlBoard.getShootBall();
             boolean elevCargoShipPos = mControlBoard.getCargoShipBall();
             boolean startingConfiguration = mControlBoard.getStartingConfiguration();       
@@ -463,6 +464,8 @@ public class Robot extends TimedRobot {
                 mSuperstructure.setWantedState(Superstructure.WantedState.EJECTING_CARGO);
             } else if (pickupPowerCell) {
                 mSuperstructure.setWantedState(Superstructure.WantedState.POWERCELL_INTAKING);
+            } else if (spitPowerCell) {
+                mSuperstructure.setWantedState(Superstructure.WantedState.POWERCELL_SPITTING);
             } else {
             	mSuperstructure.setWantedState(Superstructure.WantedState.IDLE);
             }

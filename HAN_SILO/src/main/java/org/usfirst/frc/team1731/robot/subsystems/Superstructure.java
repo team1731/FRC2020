@@ -97,8 +97,8 @@ public class Superstructure extends Subsystem {
         RETURNINGFROMINTAKE,
         RETURNING_HOME,
         ELEVATOR_TRACKING,
-        CARGO_CAPTURED,
-        CAPTURING_CARGO,
+        POWERCELL_INTAKING,
+        POWERCELL_SPITTING,
         EJECTING_HATCH,
         EJECTING_CARGO,
         CAPTURING_HATCH,
@@ -122,6 +122,7 @@ public class Superstructure extends Subsystem {
         EJECTING_CARGO,
         EJECTING_HATCH,
         POWERCELL_INTAKING,
+        POWERCELL_SPITTING,
         STARTINGCONFIGURATION
     }
 
@@ -193,7 +194,7 @@ public class Superstructure extends Subsystem {
                 case RETURNING_HOME:
                     newState = handleReturningHome();
                     break;
-                case CARGO_CAPTURED:
+                case POWERCELL_INTAKING:
                     newState = handleCargoCapture();
                     break;
                 case HATCH_CAPTURED:
@@ -252,9 +253,9 @@ public class Superstructure extends Subsystem {
             case EJECTING_HATCH:
                 return SystemState.EJECTING_HATCH;
             case POWERCELL_INTAKING:
-                return SystemState.CARGO_CAPTURED;
-            case EJECTING_CARGO:
-                return SystemState.EJECTING_CARGO;
+                return SystemState.POWERCELL_INTAKING;
+            case POWERCELL_SPITTING:
+                return SystemState.POWERCELL_SPITTING;
             default:
                 return SystemState.IDLE;
             }
@@ -293,9 +294,9 @@ public class Superstructure extends Subsystem {
             case EJECTING_HATCH:
                 return SystemState.EJECTING_HATCH;
             case POWERCELL_INTAKING:
-                return SystemState.CARGO_CAPTURED;
-            case EJECTING_CARGO:
-                return SystemState.EJECTING_CARGO;
+                return SystemState.POWERCELL_INTAKING;
+            case POWERCELL_SPITTING:
+                return SystemState.POWERCELL_SPITTING;
             default:
                 return SystemState.IDLE;
             }
@@ -337,9 +338,9 @@ public class Superstructure extends Subsystem {
             case EJECTING_HATCH:
                 return SystemState.EJECTING_HATCH;
             case POWERCELL_INTAKING:
-                return SystemState.CARGO_CAPTURED;
-            case EJECTING_CARGO:
-                return SystemState.EJECTING_CARGO;
+                return SystemState.POWERCELL_INTAKING;
+            case POWERCELL_SPITTING:
+                return SystemState.POWERCELL_SPITTING;
             default:
                 return SystemState.IDLE;
             }
@@ -375,9 +376,9 @@ public class Superstructure extends Subsystem {
             case EJECTING_HATCH:
                 return SystemState.EJECTING_HATCH;
             case POWERCELL_INTAKING:
-                return SystemState.CARGO_CAPTURED;
-            case EJECTING_CARGO:
-                return SystemState.EJECTING_CARGO;
+                return SystemState.POWERCELL_INTAKING;
+            case POWERCELL_SPITTING:
+                return SystemState.POWERCELL_SPITTING;
             default:
                 return SystemState.IDLE;
             }
@@ -410,14 +411,13 @@ public class Superstructure extends Subsystem {
                 return SystemState.HATCH_CAPTURED;
             case EJECTING_HATCH:
                 return SystemState.EJECTING_HATCH;
-            case ELEVATOR_TRACKING:
-            
+            case ELEVATOR_TRACKING:            
                 mBeakLips.set(DoubleSolenoid.Value.kForward);
                 return SystemState.ELEVATOR_TRACKING;
             case POWERCELL_INTAKING:
-                return SystemState.CARGO_CAPTURED;
-            case EJECTING_CARGO:
-                return SystemState.EJECTING_CARGO;
+                return SystemState.POWERCELL_INTAKING;
+            case POWERCELL_SPITTING:
+                return SystemState.POWERCELL_SPITTING;
             default:
                 return SystemState.IDLE;
             }
@@ -460,9 +460,9 @@ public class Superstructure extends Subsystem {
             case EJECTING_HATCH:
                 return SystemState.EJECTING_HATCH;
             case POWERCELL_INTAKING:
-                return SystemState.CARGO_CAPTURED;
-            case EJECTING_CARGO:
-                return SystemState.EJECTING_CARGO;
+                return SystemState.POWERCELL_INTAKING;
+            case POWERCELL_SPITTING:
+                return SystemState.POWERCELL_SPITTING;
             default:
                 return SystemState.IDLE;
             }
@@ -497,9 +497,9 @@ public class Superstructure extends Subsystem {
             case EJECTING_HATCH:
                 return SystemState.EJECTING_HATCH;
             case POWERCELL_INTAKING:
-                return SystemState.CARGO_CAPTURED;
-            case EJECTING_CARGO:
-                return SystemState.EJECTING_CARGO;    
+                return SystemState.POWERCELL_INTAKING;
+            case POWERCELL_SPITTING:
+                return SystemState.POWERCELL_SPITTING;
             default:
                 return SystemState.IDLE;
             }
@@ -533,9 +533,9 @@ public class Superstructure extends Subsystem {
             case EJECTING_HATCH:
                 return SystemState.EJECTING_HATCH;
             case POWERCELL_INTAKING:
-                return SystemState.CARGO_CAPTURED;
-            case EJECTING_CARGO:
-                return SystemState.EJECTING_CARGO;
+                return SystemState.POWERCELL_INTAKING;
+            case POWERCELL_SPITTING:
+                return SystemState.POWERCELL_SPITTING;
             default:
                 return SystemState.IDLE;
             }
@@ -571,9 +571,9 @@ public class Superstructure extends Subsystem {
             case EJECTING_HATCH:
                 return SystemState.EJECTING_HATCH;
             case POWERCELL_INTAKING:
-                return SystemState.CARGO_CAPTURED;
-            case EJECTING_CARGO:
-                return SystemState.EJECTING_CARGO;
+                return SystemState.POWERCELL_INTAKING;
+            case POWERCELL_SPITTING:
+                return SystemState.POWERCELL_SPITTING;
             default:
                 return SystemState.IDLE;
             }
@@ -608,9 +608,9 @@ public class Superstructure extends Subsystem {
             case EJECTING_HATCH:
                 return SystemState.EJECTING_HATCH;
              case POWERCELL_INTAKING:
-                return SystemState.CARGO_CAPTURED;
-            case EJECTING_CARGO:
-                return SystemState.EJECTING_CARGO;    
+                return SystemState.POWERCELL_INTAKING;
+            case POWERCELL_SPITTING:
+                return SystemState.POWERCELL_SPITTING;
             default:
                 return SystemState.IDLE;
             }
@@ -644,9 +644,9 @@ public class Superstructure extends Subsystem {
             case EJECTING_HATCH:
                 return SystemState.EJECTING_HATCH;
             case POWERCELL_INTAKING:
-                return SystemState.CARGO_CAPTURED;
-            case EJECTING_CARGO:
-                return SystemState.EJECTING_CARGO;
+                return SystemState.POWERCELL_INTAKING;
+            case POWERCELL_SPITTING:
+                return SystemState.POWERCELL_SPITTING;
             default:
                 return SystemState.IDLE;
             }
@@ -680,9 +680,9 @@ public class Superstructure extends Subsystem {
             case EJECTING_HATCH:
                 return SystemState.EJECTING_HATCH;
             case POWERCELL_INTAKING:
-                return SystemState.CARGO_CAPTURED;
-            case EJECTING_CARGO:
-                return SystemState.EJECTING_CARGO;    
+                return SystemState.POWERCELL_INTAKING;
+            case POWERCELL_SPITTING:
+                return SystemState.POWERCELL_SPITTING;
             default:
                 return SystemState.IDLE;
             }
@@ -719,9 +719,9 @@ public class Superstructure extends Subsystem {
             case EJECTING_HATCH:
                 return SystemState.EJECTING_HATCH;
             case POWERCELL_INTAKING:
-                return SystemState.CARGO_CAPTURED;
-            case EJECTING_CARGO:
-                return SystemState.EJECTING_CARGO;    
+                return SystemState.POWERCELL_INTAKING;
+            case POWERCELL_SPITTING:
+                return SystemState.POWERCELL_SPITTING;
             default:
                 return SystemState.IDLE;
             }
@@ -764,9 +764,9 @@ public class Superstructure extends Subsystem {
             case EJECTING_HATCH:
                 return SystemState.EJECTING_HATCH;
             case POWERCELL_INTAKING:
-                return SystemState.CARGO_CAPTURED;
-            case EJECTING_CARGO:
-                return SystemState.EJECTING_CARGO;      
+                return SystemState.POWERCELL_INTAKING;
+            case POWERCELL_SPITTING:
+                return SystemState.POWERCELL_SPITTING;
             default:
                 return SystemState.IDLE;
             }
@@ -837,9 +837,9 @@ public class Superstructure extends Subsystem {
         case EJECTING_HATCH:
             return SystemState.EJECTING_HATCH; 
         case POWERCELL_INTAKING:
-            return SystemState.CARGO_CAPTURED;
-        case EJECTING_CARGO:
-            return SystemState.EJECTING_CARGO;     
+            return SystemState.POWERCELL_INTAKING;
+        case POWERCELL_SPITTING:
+            return SystemState.POWERCELL_SPITTING;
         default:
             return SystemState.IDLE;
         }

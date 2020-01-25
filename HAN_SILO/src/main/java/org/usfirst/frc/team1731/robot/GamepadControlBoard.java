@@ -311,7 +311,11 @@ public class GamepadControlBoard implements ControlBoardInterface {
 	@Override
     public boolean getPickupBall(){
         return Math.abs(mOperator.getRawAxis(3)) > .9;
+    }
 
+	@Override
+    public boolean getSpitBall(){
+        return mOperator.getRawButton(6);
     }
 
 	@Override
