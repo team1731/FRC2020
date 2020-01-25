@@ -26,16 +26,16 @@ public final class TeleOpDriveCommand extends Command {
 
   private static final double DEADBAND = 0.09;
 
-  private static final DriveSubsystem swerve = Robot.DRIVE;
+  //private static final DriveSubsystem swerve = Robot.DRIVE;
   private static final DriverControls controls = Robot.CONTROLS.getDriverControls();
 
   public TeleOpDriveCommand() {
-    requires(swerve);
+    //requires(swerve);
   }
 
   @Override
   protected void initialize() {
-    swerve.setDriveMode(TELEOP);
+    //swerve.setDriveMode(TELEOP);
   }
 
   @Override
@@ -44,7 +44,7 @@ public final class TeleOpDriveCommand extends Command {
     double strafe = deadband(controls.getStrafe());
     double azimuth = deadband(controls.getYaw());
 
-    swerve.drive(forward, strafe, azimuth);
+    //swerve.drive(forward, strafe, azimuth);
     SmartDashboard.putNumber("FORWARD", forward);
     SmartDashboard.putNumber("FORWARD_RAW", controls.getForward());
     SmartDashboard.putNumber("STRAFE", strafe);
@@ -60,7 +60,7 @@ public final class TeleOpDriveCommand extends Command {
 
   @Override
   protected void end() {
-    swerve.drive(0.0, 0.0, 0.0);
+    //swerve.drive(0.0, 0.0, 0.0);
   }
 
   private double deadband(double value) {

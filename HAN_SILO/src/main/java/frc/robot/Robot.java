@@ -21,7 +21,7 @@ import org.strykeforce.thirdcoast.swerve.Wheel;
 
 public class Robot extends TimedRobot {
   private static final Logger logger = LoggerFactory.getLogger(Robot.class);
-  public static final DriveSubsystem DRIVE = new DriveSubsystem();
+  //public static final DriveSubsystem DRIVE = new DriveSubsystem();
 
   // Controls initialize Commands so this should be instantiated last to prevent
   // NullPointerExceptions in commands that require() Subsystems above.
@@ -37,8 +37,8 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     //logger.info("<b>Robot</b>: robotInit Started");
     System.out.println("Today is " + new Date().toString());
-    DRIVE.zeroAzimuthEncoders();
-    DRIVE.zeroGyro();
+    //DRIVE.zeroAzimuthEncoders();
+    //DRIVE.zeroGyro();
 
     //logger.info("<b>Robot</b>: robotInit Finished");
     //just some example lines i used to prove that code completion still works!
@@ -49,14 +49,14 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     //logger.info("<b>Robot</b>: teleopPeriodic started");
-    Scheduler.getInstance().run();
+    //Scheduler.getInstance().run();
     //logger.info("<b>Robot</b>: teleopPeriodic finished");
   }
 
   @Override
   public void disabledPeriodic(){
     if(wheelObjects == null){
-      wheelObjects = DRIVE.getWheelObjects();
+      //wheelObjects = DRIVE.getWheelObjects();
     } else if(wheelObjects.length == 4) {
       for (int i = 0; i < wheelObjects.length; i++) {
         Wheel wheel = wheelObjects[i];
