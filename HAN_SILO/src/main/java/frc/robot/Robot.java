@@ -60,7 +60,7 @@ public class Robot extends TimedRobot {
     } else if(wheelObjects.length == 4) {
       for (int i = 0; i < wheelObjects.length; i++) {
         Wheel wheel = wheelObjects[i];
-        if(wheel.m_encoder != null){
+        if(wheel != null && wheel.m_encoder != null){
           SmartDashboard.putNumber("Wheel"+wheel.wheelID+" Encoder Pos", wheel.m_encoder.getPosition());
           SmartDashboard.putNumber("Wheel"+wheel.wheelID+" Encoder Get Abs", wheel.getAzimuthAbsolutePosition());
         }

@@ -2,6 +2,7 @@ package org.strykeforce.thirdcoast.swerve;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -43,8 +44,10 @@ public class SwerveDrive {
 
   public SwerveDrive(SwerveDriveConfig config) {
     //logger.info("<b>SwerveDrive</b>: SwerveDrive starting");
-    m_motor = new CANSparkMax(0, MotorType.kBrushless);
-    m_motor.disable();
+    if (RobotBase.isReal()) {
+      m_motor = new CANSparkMax(0, MotorType.kBrushless);
+      m_motor.disable();
+    }
 
     gyro = config.gyro;
     wheels = config.wheels;
@@ -103,8 +106,10 @@ public class SwerveDrive {
    */
   public void setDriveMode(DriveMode driveMode) {
     //logger.info("<b>SwerveDrive</b>: setDriveMode starting");
-    for (Wheel wheel : wheels) {
-      wheel.setDriveMode(driveMode);
+    if (RobotBase.isReal()) {
+      for (Wheel wheel : wheels) {
+        wheel.setDriveMode(driveMode);
+      }
     }
     logger.info("drive mode = {}", driveMode);
     logger.info("gyro is configured: {}", gyro != null);
@@ -182,8 +187,10 @@ public class SwerveDrive {
     }
 
     // set wheels
-    for (int i = 0; i < WHEEL_COUNT; i++) {
-      wheels[i].set(wa[i], ws[i]);
+    if (RobotBase.isReal()) {
+      for (int i = 0; i < WHEEL_COUNT; i++) {
+        wheels[i].set(wa[i], ws[i]);
+      }
     }
     //logger.info("<b>SwerveDrive</b>: drive finished");
   }

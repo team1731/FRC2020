@@ -12,6 +12,8 @@ import com.revrobotics.ControlType;
 
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.kauailabs.navx.frc.AHRS;
+
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.command.TeleOpDriveCommand;
@@ -50,7 +52,9 @@ public class DriveSubsystem extends Subsystem {
 
   public void zeroAzimuthEncoders() {
     //logger.info("<b>DriveSubsystem</b>: zeroAzimuthEncoders started");
-    swerve.zeroAzimuthEncoders();
+    if (RobotBase.isReal()) {
+      swerve.zeroAzimuthEncoders();
+    }
     //logger.info("<b>DriveSubsystem</b>: zeroAzimuthEncoders finished");
   }
 
@@ -61,12 +65,14 @@ public class DriveSubsystem extends Subsystem {
   }
 
   public void zeroGyro() {
-    //logger.info("<b>DriveSubsystem</b>: zeroGyro started");
-    AHRS gyro = swerve.getGyro();
-    gyro.setAngleAdjustment(0);
-    double adj = gyro.getAngle() % 360;
-    gyro.setAngleAdjustment(-adj);
-    //logger.info("<b>DriveSubsystem</b>: zeroGyro finished");
+    if (RobotBase.isReal()) {
+      //logger.info("<b>DriveSubsystem</b>: zeroGyro started");
+      AHRS gyro = swerve.getGyro();
+      gyro.setAngleAdjustment(0);
+      double adj = gyro.getAngle() % 360;
+      gyro.setAngleAdjustment(-adj);
+      //logger.info("<b>DriveSubsystem</b>: zeroGyro finished");
+    }      
   }
 
   // Swerve configuration
@@ -75,7 +81,9 @@ public class DriveSubsystem extends Subsystem {
     //logger.info("<b>DriveSubsystem</b>: getSwerve started");
     SwerveDriveConfig config = new SwerveDriveConfig();
     config.wheels = getWheels();
-    config.gyro = new AHRS(SPI.Port.kMXP);
+    if (RobotBase.isReal()) {
+      config.gyro = new AHRS(SPI.Port.kMXP);
+    }
     //config.length = ROBOT_LENGTH;
     //config.width = ROBOT_WIDTH;
     config.gyroLoggingEnabled = true;
@@ -90,42 +98,43 @@ public class DriveSubsystem extends Subsystem {
     Wheel[] wheels = new Wheel[4];
     int smartMotionSlot = 0;
     for (int i = 1; i < 5; i++) {
-
-      CANSparkMax azimuthSpark = new CANSparkMax(i + 10, MotorType.kBrushless);
-      azimuthSpark.restoreFactoryDefaults();
-      CANPIDController azimuth_pidController = azimuthSpark.getPIDController();
-      CANEncoder azimuth_encoder = azimuthSpark.getEncoder();
-      azimuthSpark.setInverted(true);
-      azimuth_pidController.setP(5e-5);
-      azimuth_pidController.setI(1e-6);
-      azimuth_pidController.setD(0);
-      azimuth_pidController.setIZone(0);
-      azimuth_pidController.setFF(0.000156);
-      azimuth_pidController.setOutputRange(-1, 1);
- 
-      azimuth_pidController.setSmartMotionMaxVelocity(2000, smartMotionSlot);
-      azimuth_pidController.setSmartMotionMinOutputVelocity(0, smartMotionSlot);
-      azimuth_pidController.setSmartMotionMaxAccel(1500, smartMotionSlot);
-      azimuth_pidController.setSmartMotionAllowedClosedLoopError(0, smartMotionSlot);
-
-      CANSparkMax driveSpark = new CANSparkMax(i, MotorType.kBrushless);
-      driveSpark.restoreFactoryDefaults();
-      CANPIDController drive_pidController = driveSpark.getPIDController();
-      CANEncoder drive_encoder = driveSpark.getEncoder();
-      drive_pidController.setP(5e-5);
-      drive_pidController.setI(1e-6);
-      drive_pidController.setD(0);
-      drive_pidController.setFF(0.000156);
-      drive_pidController.setOutputRange(-1, 1);
-      drive_pidController.setSmartMotionMaxVelocity(2000, smartMotionSlot);
-      drive_pidController.setSmartMotionMinOutputVelocity(0, smartMotionSlot);
-      drive_pidController.setSmartMotionMaxAccel(1500, smartMotionSlot);
-      drive_pidController.setSmartMotionAllowedClosedLoopError(50, smartMotionSlot);
-
-      Wheel wheel = new Wheel(azimuthSpark, driveSpark, DRIVE_SETPOINT_MAX);
-      wheel.wheelID = i-1;
-
-      wheels[i-1] = wheel;
+      if (RobotBase.isReal()) {
+        CANSparkMax azimuthSpark = new CANSparkMax(i + 10, MotorType.kBrushless);
+        azimuthSpark.restoreFactoryDefaults();
+        CANPIDController azimuth_pidController = azimuthSpark.getPIDController();
+        CANEncoder azimuth_encoder = azimuthSpark.getEncoder();
+        azimuthSpark.setInverted(true);
+        azimuth_pidController.setP(5e-5);
+        azimuth_pidController.setI(1e-6);
+        azimuth_pidController.setD(0);
+        azimuth_pidController.setIZone(0);
+        azimuth_pidController.setFF(0.000156);
+        azimuth_pidController.setOutputRange(-1, 1);
+   
+        azimuth_pidController.setSmartMotionMaxVelocity(2000, smartMotionSlot);
+        azimuth_pidController.setSmartMotionMinOutputVelocity(0, smartMotionSlot);
+        azimuth_pidController.setSmartMotionMaxAccel(1500, smartMotionSlot);
+        azimuth_pidController.setSmartMotionAllowedClosedLoopError(0, smartMotionSlot);
+  
+        CANSparkMax driveSpark = new CANSparkMax(i, MotorType.kBrushless);
+        driveSpark.restoreFactoryDefaults();
+        CANPIDController drive_pidController = driveSpark.getPIDController();
+        CANEncoder drive_encoder = driveSpark.getEncoder();
+        drive_pidController.setP(5e-5);
+        drive_pidController.setI(1e-6);
+        drive_pidController.setD(0);
+        drive_pidController.setFF(0.000156);
+        drive_pidController.setOutputRange(-1, 1);
+        drive_pidController.setSmartMotionMaxVelocity(2000, smartMotionSlot);
+        drive_pidController.setSmartMotionMinOutputVelocity(0, smartMotionSlot);
+        drive_pidController.setSmartMotionMaxAccel(1500, smartMotionSlot);
+        drive_pidController.setSmartMotionAllowedClosedLoopError(50, smartMotionSlot);
+  
+        Wheel wheel = new Wheel(azimuthSpark, driveSpark, DRIVE_SETPOINT_MAX);
+        wheel.wheelID = i-1;
+  
+        wheels[i-1] = wheel;
+        }
 
     }
      

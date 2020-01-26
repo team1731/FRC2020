@@ -120,10 +120,10 @@ public class DriverControls {
 
   public enum Button {
     RESET(3),
-    HAMBURGER(14),
-    X(15),
-    UP(16),
-    DOWN(17);
+    HAMBURGER(10),
+    X(10),
+    UP(10),
+    DOWN(10);
 
     private final int id;
 
@@ -138,9 +138,9 @@ public class DriverControls {
     LEFT_X_POS(8),
     LEFT_X_NEG(9),
     RIGHT_X_POS(10),
-    RIGHT_X_NEG(11),
-    RIGHT_Y_POS(12),
-    RIGHT_Y_NEG(13);
+    RIGHT_X_NEG(10),
+    RIGHT_Y_POS(10),
+    RIGHT_Y_NEG(10);
 
     private final int id;
 
