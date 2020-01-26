@@ -16,6 +16,9 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.ColorSensorV3;
+import com.revrobotics.ColorMatchResult;
+import com.revrobotics.ColorMatch;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,6 +63,7 @@ public class Robot extends TimedRobot {
    * parameters.
    */
   private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
+  private final ColorMatch m_colorMatcher = new ColorMatch();
 
   @Override
   public void robotInit() {
@@ -74,6 +78,11 @@ public class Robot extends TimedRobot {
     // m_motor = new CANSparkMax(deviceID, MotorType.kBrushless);
     // m_motor.disable();
     mSubsystemManager.registerEnabledLoops(mEnabledLooper);
+
+    m_colorMatcher.addColorMatch(Constants.kBlueTarget);
+    m_colorMatcher.addColorMatch(Constants.kGreenTarget);
+    m_colorMatcher.addColorMatch(Constants.kRedTarget);
+    m_colorMatcher.addColorMatch(Constants.kYellowTarget);
   }
 
   /**
@@ -121,7 +130,22 @@ public class Robot extends TimedRobot {
      * The sensor returns a raw IR value of the infrared light detected.
      */
     double IR = m_colorSensor.getIR();
-    
+
+    /* Run the color match algorithm on our detected color */
+    String colorString;
+    ColorMatchResult match = m_colorMatcher.matchClosestColor(detectedColor);
+
+    if (match.color == Constants.kBlueTarget) {
+      colorString = "Blue";
+    } else if (match.color == Constants.kRedTarget) {
+      colorString = "Red";
+    } else if (match.color == Constants.kGreenTarget) {
+      colorString = "Green";
+    } else if (match.color == Constants.kYellowTarget) {
+      colorString = "Yellow";
+    } else {
+      colorString = "Unknown";
+    }
 
   if (pickupPowerCell) {
     mSuperstructure.setWantedState(Superstructure.WantedState.POWERCELL_INTAKING);
@@ -130,15 +154,17 @@ public class Robot extends TimedRobot {
   } else {
   	mSuperstructure.setWantedState(Superstructure.WantedState.IDLE);
   }
-  /*
-    try {
-      //Scheduler.getInstance().run();
-      //logger.info("<b>Robot</b>: teleopPeriodic finished");
-      SmartDashboard.putNumber("Periodic", 1);
-    }
-  */
+
   SmartDashboard.putBoolean("PowerCell Pickup", pickupPowerCell);
   SmartDashboard.putBoolean("PowerCell Spit", spitPowerCell);
+  /* Open Smart Dashboard or Shuffleboard to see the color detected by the sensor. */
+  SmartDashboard.putNumber("IR", IR);
+  SmartDashboard.putNumber("Red", detectedColor.red);
+  SmartDashboard.putNumber("Green", detectedColor.green);
+  SmartDashboard.putNumber("Blue", detectedColor.blue);
+  SmartDashboard.putNumber("Confidence", match.confidence);
+  SmartDashboard.putString("Detected Color", colorString);
+
   mSuperstructure.outputToSmartDashboard();
 }
 

@@ -11,6 +11,9 @@ import org.usfirst.frc.team1731.lib.util.math.PolynomialRegression;
 
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.util.Color;
+
+import com.revrobotics.ColorMatch;
 
 /**
  * A list of constants used by the rest of the robot code. This include physics constants as well as constants
@@ -166,6 +169,15 @@ public class Constants extends ConstantsBase {
     public static double kFeederFeedSpeedRpm = 5400.0;
     public static double kFeederSensorGearReduction = 3.0;
     
+    /**
+    * Note: Any example colors should be calibrated as the user needs, these
+    * are here as a basic example.
+    */
+    public static Color kBlueTarget = ColorMatch.makeColor(0.143, 0.427, 0.429);
+    public static Color kGreenTarget = ColorMatch.makeColor(0.197, 0.561, 0.240);
+    public static Color kRedTarget = ColorMatch.makeColor(0.561, 0.232, 0.114);
+    public static Color kYellowTarget = ColorMatch.makeColor(0.361, 0.524, 0.113);
+
    //Elevator
     public static enum GRABBER_POSITION {
     	FLIP_DOWN,
