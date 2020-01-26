@@ -46,14 +46,14 @@ public class Intake extends Subsystem {
 
 
     //private final TalonFX mTalonFX;
-    private final PWMTalonFX m_TalonFX;
+    private final PWMTalonFX mTalonFX;
     // sensors used for old intake. New intake doesn't need them.
    // private final AnalogInput mIRSensor1;
     //private final AnalogInput mIRSensor2;
 
     private Intake() {
         //mTalonFX = new TalonFX(Constants.kIntakeVictor);
-        m_TalonFX = new PWMTalonFX(Constants.kIntakePWM);
+        mTalonFX = new PWMTalonFX(Constants.kIntakePWM);
         //mIRSensor1 = new AnalogInput(1);
         //mIRSensor2 = new AnalogInput(4);
     }
@@ -135,7 +135,7 @@ public class Intake extends Subsystem {
             if (mStateChanged) {
                 //IntakeHood.set(Value.kForward);
                 //mTalonFX.set(ControlMode.PercentOutput, 1);
-                m_TalonFX.setSpeed(0.5);
+                mTalonFX.setSpeed(Constants.kIntakeSpitSpeed);
             }
             return defaultStateTransfer();
         }
@@ -144,7 +144,7 @@ public class Intake extends Subsystem {
             if (mStateChanged) {
                 //IntakeHood.set(Value.kForward);
                 //mTalonFX.set(ControlMode.PercentOutput, -1);
-                m_TalonFX.setSpeed(-0.5);
+                mTalonFX.setSpeed(-Constants.kIntakeFeedSpeed);
             }
             return defaultStateTransfer();
         }
@@ -172,7 +172,7 @@ public class Intake extends Subsystem {
         // if motor is not off, turn motor off
         if (mStateChanged) {
             //mTalonFX.set(ControlMode.PercentOutput, 0);
-            m_TalonFX.setSpeed(0);
+            mTalonFX.setSpeed(0);
             //IntakeHood.set(Value.kReverse);
         }
         return defaultStateTransfer();

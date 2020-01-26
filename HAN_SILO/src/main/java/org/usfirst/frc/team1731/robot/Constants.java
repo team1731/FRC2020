@@ -144,6 +144,10 @@ public class Constants extends ConstantsBase {
 
     public static double kShooterSetpointDeadbandRpm = 1.0;
 
+    // Intake
+    public static double kIntakeFeedSpeed = 0.2;
+    public static double kIntakeSpitSpeed = 0.2;
+    
     // Used to determine when to switch to hold profile.
     public static double kShooterMinTrackStability = 0.25;
     public static double kShooterStartOnTargetRpm = 50.0;
