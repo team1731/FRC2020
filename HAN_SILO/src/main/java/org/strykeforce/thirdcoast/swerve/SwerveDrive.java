@@ -12,12 +12,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.Errors;
+import org.usfirst.frc.team1731.lib.util.DriveSignal;
 import org.usfirst.frc.team1731.lib.util.ReflectingCSVWriter;
 import org.usfirst.frc.team1731.lib.util.Util;
+import org.usfirst.frc.team1731.lib.util.control.Lookahead;
+import org.usfirst.frc.team1731.lib.util.control.Path;
 import org.usfirst.frc.team1731.lib.util.control.PathFollower;
+import org.usfirst.frc.team1731.lib.util.drivers.NavX;
 import org.usfirst.frc.team1731.lib.util.math.RigidTransform2d;
 import org.usfirst.frc.team1731.lib.util.math.Rotation2d;
 import org.usfirst.frc.team1731.lib.util.math.Twist2d;
+import org.usfirst.frc.team1731.lib.util.motion.SetpointGenerator.Setpoint;
 import org.usfirst.frc.team1731.robot.Constants;
 import org.usfirst.frc.team1731.robot.Kinematics;
 import org.usfirst.frc.team1731.robot.RobotState;
@@ -67,7 +72,9 @@ public class SwerveDrive extends Subsystem {
   private final ReflectingCSVWriter<PathFollower.DebugOutput> mCSVWriter = new ReflectingCSVWriter<PathFollower.DebugOutput>("/home/lvuser/PATH-FOLLOWER-LOGS.csv", PathFollower.DebugOutput.class);
 
   private RobotState mRobotState = RobotState.getInstance();
+  private Path mCurrentPath = null;
   private PathFollower mPathFollower;
+  private final NavX mNavXBoard;
 
   private boolean mIsOnTarget = false;
   private boolean mIsApproaching = false;
@@ -76,9 +83,15 @@ public class SwerveDrive extends Subsystem {
   private DriveControlState mDriveControlState;
 
   private Loop mLoop = new Loop(){
+
     @Override
     public void onStart(double timestamp) {
-      
+      synchronized(SwerveDrive.this){
+        setOpenLoop(DriveSignal.NEUTRAL);
+        //setBrakeMode(false);
+        setVelocitySetpoint(0, 0);
+        //mNavXBoard.reset();
+      }
     }
 
     @Override
@@ -122,6 +135,16 @@ public class SwerveDrive extends Subsystem {
         }
       }
     }
+
+    
+    @Override
+    public void onStop(double timestamp) {
+      synchronized(SwerveDrive.this){
+        stop();
+        mCSVWriter.flush();
+      }
+    }
+  };
 
 /**
      * Drives the robot straight forwards until it is at an optimal shooting distance. Then sends the robot into the
@@ -197,24 +220,37 @@ public class SwerveDrive extends Subsystem {
       }
   }
 
+  private static double rotationsToInches(double rotations) {
+    return rotations * (Constants.kDriveWheelDiameterInches * Math.PI);
+
+}
+
+private static double rpmToInchesPerSecond(double rpm) {
+    return rotationsToInches(rpm) / 60;
+}
+
   public double getLeftVelocityInchesPerSec() {
     //TODO: AAAAAAAAAAAA THIS IS WRONG
-    return 1; //rpmToInchesPerSecond((mLeftMaster.getSelectedSensorVelocity(Constants.kPidIdx)*(600.0/4096.0)));
+    return rpmToInchesPerSecond((wheels[0].getDriveEncoderVelocity()+wheels[2].getDriveEncoderVelocity())/2);
+    //return 1; //rpmToInchesPerSecond((mLeftMaster.getSelectedSensorVelocity(Constants.kPidIdx)*(600.0/4096.0)));
   }
 
   public double getRightVelocityInchesPerSec() {
     //TODO: AAAAAAAAAA THIS IS ALSO WRONG
-    return 1; //rpmToInchesPerSecond((mRightMaster.getSelectedSensorVelocity(Constants.kPidIdx)*(600.0/4096.0)));
+    return rpmToInchesPerSecond((wheels[1].getDriveEncoderVelocity()+wheels[3].getDriveEncoderVelocity())/2);
+    //return 1; //rpmToInchesPerSecond((mRightMaster.getSelectedSensorVelocity(Constants.kPidIdx)*(600.0/4096.0)));
   }
 
   public double getLeftDistanceInches() {
     //TODO: BBBBBBBBBBBB THIS IS BAD
-    return 1; //rotationsToInches(mLeftMaster.getSelectedSensorPosition(Constants.kPidIdx)/4096.0);
+    return rpmToInchesPerSecond((wheels[0].getDriveEncoderPos()+wheels[2].getDriveEncoderPos())/2);
+    //return 1; //rotationsToInches(mLeftMaster.getSelectedSensorPosition(Constants.kPidIdx)/4096.0);
 }
 
 public double getRightDistanceInches() {
   // TODO: BBBBBBBBBB THIS IS VERY BAD
-    return 1; //rotationsToInches(mRightMaster.getSelectedSensorPosition(Constants.kPidIdx)/4096.0);
+  return rpmToInchesPerSecond((wheels[1].getDriveEncoderPos()+wheels[3].getDriveEncoderPos())/2);
+    //return 1; //rotationsToInches(mRightMaster.getSelectedSensorPosition(Constants.kPidIdx)/4096.0);
 }
 
   /**
@@ -245,12 +281,6 @@ public double getRightDistanceInches() {
       updatePositionSetpoint(wheel_delta.left + getLeftDistanceInches(),
               wheel_delta.right + getRightDistanceInches());
   }
-
-    @Override
-    public void onStop(double timestamp) {
-
-    }
-  };
 
 /**
      * Check if the drive talons are configured for position control
@@ -293,12 +323,89 @@ public double getRightDistanceInches() {
         Twist2d command = mPathFollower.update(timestamp, robot_pose,
                 RobotState.getInstance().getDistanceDriven(), RobotState.getInstance().getPredictedVelocity().dx);
         if (!mPathFollower.isFinished()) {
+
+            SmartDashboard.putNumber("Auto Drive dx", command.dx);
+            SmartDashboard.putNumber("Auto Drive dtheta", command.dtheta);
+            
+            //Convert polar to coordinates. Supposedly dtheta is an angle and dx is a magnitude.
+            //Easily could be wrong...
+            //Source: https://www.analyzemath.com/polarcoordinates/polar_rectangular.html
+            double R = command.dx;
+            double t = Math.toDegrees(command.dtheta);
+            //x = R * cos(t)
+            //y = R * sin(t)
+
+            SmartDashboard.putNumber("R (dx)", R);
+            SmartDashboard.putNumber("t (dtheta)", t);
+
+            double autoforward = R * Math.cos(t);
+            double autostrafe = R * Math.sin(t);
+
+            SmartDashboard.putNumber("Auto Drive Forward", autoforward);
+            SmartDashboard.putNumber("Auto Drive Strafe", autostrafe);
+
+            drive(autoforward, autostrafe, 0);
+
             Kinematics.DriveVelocity setpoint = Kinematics.inverseKinematics(command);
             updateVelocitySetpoint(setpoint.left, setpoint.right);
         } else {
             updateVelocitySetpoint(0, 0);
         }
     }
+
+    public synchronized boolean isDoneWithPath() {
+      if (mDriveControlState == DriveControlState.PATH_FOLLOWING && mPathFollower != null) {
+          return mPathFollower.isFinished();
+      } else {
+         // System.out.println("Robot is not in path following mode");
+          return true;
+      }
+  }
+
+
+  public synchronized void forceDoneWithPath() {
+      if (mDriveControlState == DriveControlState.PATH_FOLLOWING && mPathFollower != null) {
+          mPathFollower.forceFinish();
+      } else {
+          //System.out.println("Robot is not in path following mode");
+      }
+  }
+
+  /**
+     * Configures the drivebase to turn to a desired heading
+     */
+    public synchronized void setWantTurnToHeading(Rotation2d heading) {
+      if (mDriveControlState != DriveControlState.TURN_TO_HEADING) {
+          configureTalonsForPositionControl();
+          mDriveControlState = DriveControlState.TURN_TO_HEADING;
+          updatePositionSetpoint(getLeftDistanceInches(), getRightDistanceInches());
+      }
+   //   if (Math.abs(heading.inverse().rotateBy(mTargetHeading).getDegrees()) > 1E-3) {
+          mTargetHeading = heading;
+          mIsOnTarget = false;
+   //   }
+   //   setHighGear(false);
+  }
+
+  /**
+     * Configures talons for position control
+     */
+    private void configureTalonsForPositionControl() {
+      //TODO: EEEEEEEEEEEEEEEEE That's not right!
+      if (!usesTalonPositionControl(mDriveControlState)) {
+        /*
+        mLeftMaster.set(ControlMode.MotionMagic, 0);
+        mLeftMaster.configNominalOutputForward(Constants.kDriveLowGearNominalOutput,Constants.kTimeoutMs);
+        mLeftMaster.configNominalOutputReverse(-Constants.kDriveLowGearNominalOutput, Constants.kTimeoutMs);
+        mLeftMaster.selectProfileSlot(kLowGearPositionControlSlot, Constants.kPidIdx);
+        mRightMaster.set(ControlMode.MotionMagic, 0);
+        mRightMaster.configNominalOutputForward(Constants.kDriveLowGearNominalOutput,Constants.kTimeoutMs);
+        mRightMaster.configNominalOutputReverse(-Constants.kDriveLowGearNominalOutput, Constants.kTimeoutMs);
+        mRightMaster.selectProfileSlot(kLowGearPositionControlSlot, Constants.kPidIdx);
+          setBrakeMode(true);
+          */
+      }
+  }
 
     /**
      * Start up velocity mode. This sets the drive train in high gear as well.
@@ -340,6 +447,57 @@ public double getRightDistanceInches() {
           final double max_desired = Math.max(Math.abs(left_inches_per_sec), Math.abs(right_inches_per_sec));
           final double scale = max_desired > Constants.kDriveHighGearMaxSetpoint
                   ? Constants.kDriveHighGearMaxSetpoint / max_desired : 1.0;
+
+              /*
+              if(left_inches_per_sec / right_inches_per_sec == 1 ){
+                  drive(1 * scale, 0, 0);
+              }
+              */
+
+              //drive(max_desired * scale, left_inches_per_sec, right_inches_per_sec);
+
+              //TODO: Drive math
+              /*
+                So this code was written for tank drive. Turning is defined by decreasing a side. Of course, we don't
+                want to do this, turning will be defined by an azimuth parameter. We want to just translate along the path instead
+                To do this, we must split the two side direction variables into a forward and strafe direction...
+
+                First thing's first, we need to follow the path. We can fix up azimuth direction later.
+
+                The robot faces the positive X direction. Positive Y is to the left of the robot. So therefore
+
+                Forward is X
+                Strafe is Y
+
+                This is especially true when we are field oriented. No matter which direction the robot is facing, forward
+                is always X and strafe is always Y.
+
+                Perhaps a ratio? Say we need to turn left...
+
+                left = 0.5
+                right = 1
+                
+                left/right = 0.5/1 = 0.5
+
+                right/left = 1/0.5 = 2
+
+                or say we turn right... should just be the obverse
+
+                left = 1
+                right = 0.5
+
+                left/right = 1/0.5 = 2
+
+                right/left = 0.5/1 = 0.5
+
+                Yeah... so I'm going to run with left/right. 
+
+                This means that a number larger than 1 is turning right, while a number smaller than 1 but larger than 0 is turning left.
+
+                So... max_desired * left/right would be the strafe?
+              */
+
+
             //mLeftMaster.set(ControlMode.Velocity, inchesPerSecondToUnitsPer100ms(left_inches_per_sec * scale));
             //mRightMaster.set(ControlMode.Velocity, inchesPerSecondToUnitsPer100ms(right_inches_per_sec * scale));
       } else {
@@ -415,6 +573,8 @@ private static double inchesToRotations(double inches) {
     logger.debug("enableGyroLogging = {}", config.gyroLoggingEnabled);
     logger.debug("gyroRateCorrection = {}", kGyroRateCorrection);
 
+    mNavXBoard = new NavX(Port.kMXP);
+
     // logger.info("<b>SwerveDrive</b>: SwerveDrive constructed");
   }
 
@@ -461,6 +621,23 @@ private static double inchesToRotations(double inches) {
     }
     // logger.info("<b>SwerveDrive</b>: set finished");
   }
+
+  public synchronized Rotation2d getGyroAngle() {
+    return mNavXBoard.getYaw();
+}
+
+public synchronized NavX getNavXBoard() {
+  return mNavXBoard;
+}
+
+public synchronized void setGyroAngle(Rotation2d angle) {
+  mNavXBoard.reset();
+  mNavXBoard.setAngleAdjustment(angle);
+}
+
+public synchronized double getGyroVelocityDegreesPerSec() {
+  return mNavXBoard.getYawRateDegreesPerSec();
+}
 
   /**
    * Drive the robot in given field-relative direction and with given rotation.
@@ -527,7 +704,7 @@ private static double inchesToRotations(double inches) {
    * relative encoders to the current position and thereby prevent wheel rotation
    * if the wheels were moved manually while the robot was disabled.
    */
-  public void stop() {
+  public void stopWheels() {
     // logger.info("<b>SwerveDrive</b>: stop starting");
     for (Wheel wheel : wheels) {
       wheel.stop();
@@ -535,6 +712,38 @@ private static double inchesToRotations(double inches) {
     logger.info("stopped all wheels");
 
     // logger.info("<b>SwerveDrive</b>: stop finished");
+  }
+
+/**
+     * Configure talons for open loop control
+     */
+    public synchronized void setOpenLoop(DriveSignal signal) {
+      //TODO: DDDDDDDDD VHERE DID VWE GOE SOOOOO VWRONGGG
+      if (mDriveControlState != DriveControlState.OPEN_LOOP) {
+        /*
+          mLeftMaster.set(ControlMode.PercentOutput, signal.getLeft());
+          mRightMaster.set(ControlMode.PercentOutput, signal.getRight());
+          mLeftMaster.configNominalOutputForward(0, 0);
+          mLeftMaster.configNominalOutputReverse(0, 0);
+          mRightMaster.configNominalOutputForward(0, 0);
+          mRightMaster.configNominalOutputReverse(0, 0);
+          */
+          mDriveControlState = DriveControlState.OPEN_LOOP;
+          //setBrakeMode(false);
+      }
+      // Right side is reversed, but reverseOutput doesn't invert PercentVBus.
+      // So set negative on the right master.
+
+   // DriverStation.reportError("setOpenLoop" + signal, false);
+      //mRightMaster.set(ControlMode.PercentOutput, signal.getRight());
+      //mLeftMaster.set(ControlMode.PercentOutput, signal.getLeft());
+  }
+
+  @Override
+  public synchronized void stop(){
+    stopWheels();
+
+    setOpenLoop(DriveSignal.NEUTRAL);
   }
 
   /**
@@ -649,6 +858,32 @@ private static double inchesToRotations(double inches) {
     OPEN_LOOP, CLOSED_LOOP, TELEOP, TRAJECTORY, AZIMUTH
   }
 
+/**
+     * Configures the drivebase to drive a path. Used for autonomous driving
+     * 
+     * @see Path
+     */
+    public synchronized void setWantDrivePath(Path path, boolean reversed) {
+      if (mCurrentPath != path || mDriveControlState != DriveControlState.PATH_FOLLOWING) {
+          configureTalonsForSpeedControl();
+          RobotState.getInstance().resetDistanceDriven();
+          mPathFollower = new PathFollower(path, reversed,
+                  new PathFollower.Parameters(
+                          new Lookahead(Constants.kMinLookAhead, Constants.kMaxLookAhead,
+                                  Constants.kMinLookAheadSpeed, Constants.kMaxLookAheadSpeed),
+                          Constants.kInertiaSteeringGain, Constants.kPathFollowingProfileKp,
+                          Constants.kPathFollowingProfileKi, Constants.kPathFollowingProfileKv,
+                          Constants.kPathFollowingProfileKffv, Constants.kPathFollowingProfileKffa,
+                          Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel,
+                          Constants.kPathFollowingGoalPosTolerance, Constants.kPathFollowingGoalVelTolerance,
+                          Constants.kPathStopSteeringDistance));
+          mDriveControlState = DriveControlState.PATH_FOLLOWING;
+          mCurrentPath = path;
+      } else {
+          setVelocitySetpoint(0, 0);
+      }
+  }
+
   @Override
   public void outputToSmartDashboard() {
     // TODO Auto-generated method stub
@@ -659,6 +894,8 @@ private static double inchesToRotations(double inches) {
   public void zeroSensors() {
     // TODO Auto-generated method stub
     zeroAzimuthEncoders();
+    mNavXBoard.reset();
+    mNavXBoard.setAngleAdjustment( Rotation2d.fromDegrees(0.0));
   }
 
   @Override

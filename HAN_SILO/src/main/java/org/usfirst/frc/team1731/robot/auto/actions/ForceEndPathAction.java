@@ -2,6 +2,8 @@ package org.usfirst.frc.team1731.robot.auto.actions;
 
 import org.usfirst.frc.team1731.robot.subsystems.Drive;
 
+import frc.robot.Robot;
+
 /**
  * Forces the current path the robot is driving on to end early
  * 
@@ -13,6 +15,6 @@ public class ForceEndPathAction extends RunOnceAction {
 
     @Override
     public synchronized void runOnce() {
-        Drive.getInstance().forceDoneWithPath();
+        Robot.DRIVE.getSwerveInstance().forceDoneWithPath();
     }
 }

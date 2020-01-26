@@ -1,7 +1,10 @@
 package org.usfirst.frc.team1731.robot.auto.actions;
 
+import org.strykeforce.thirdcoast.swerve.SwerveDrive;
 import org.usfirst.frc.team1731.lib.util.math.Rotation2d;
 import org.usfirst.frc.team1731.robot.subsystems.Drive;
+
+import frc.robot.Robot;
 
 /**
  * Turns the robot to a specified heading
@@ -12,6 +15,7 @@ public class TurnToHeadingAction implements Action {
 
     private Rotation2d mTargetHeading;
     private Drive mDrive = Drive.getInstance();
+    private SwerveDrive mSwerveDrive = Robot.DRIVE.getSwerveInstance();
 
     public TurnToHeadingAction(Rotation2d heading) {
         mTargetHeading = heading;
@@ -33,6 +37,7 @@ public class TurnToHeadingAction implements Action {
 
     @Override
     public void start() {
-        mDrive.setWantTurnToHeading(mTargetHeading);
+        //mDrive.setWantTurnToHeading(mTargetHeading);
+        mSwerveDrive.setWantTurnToHeading(mTargetHeading);
     }
 }

@@ -15,6 +15,7 @@ import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.ControlType;
 //import com.sun.java.swing.plaf.windows.TMSchema.Control;
+import com.revrobotics.EncoderType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -135,6 +136,18 @@ public class Wheel {
     //m_pidController.setReference(5, ControlType.kSmartMotion);
     driver.accept(drive);
   //  logger.info("<b>Wheel</b>: set finished");
+  }
+
+  public CANEncoder getDriveEncoder(){
+      return driveSpark.getEncoder(EncoderType.kQuadrature, TICKS);
+  }
+
+  public double getDriveEncoderPos(){
+      return getDriveEncoder().getPosition();
+  }
+
+  public double getDriveEncoderVelocity(){
+      return getDriveEncoder().getVelocity();
   }
 
   /**
