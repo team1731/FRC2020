@@ -61,6 +61,7 @@ public class Superstructure extends Subsystem {
 
     private final Intake mIntake = Intake.getInstance();
 
+    private final Sequencer mSequencer = Sequencer.getInstance();
     private final DoubleSolenoid mTopRoller = Constants.makeDoubleSolenoidForIds(1, Constants.kTopRoller1, Constants.kTopRoller2);
     private final DoubleSolenoid mBeakSwinger = Constants.makeDoubleSolenoidForIds(0, Constants.kBeakSwinger1, Constants.kBeakSwinger2);
 
@@ -89,7 +90,7 @@ public class Superstructure extends Subsystem {
         WAITING_FOR_HIGH_POSITION,
         WAITING_FOR_POWERCELL_INTAKE,
         CLIMBING,
-        CALIBRATINGUP,
+        EJECT_POWERCELL,
         CALIBRATINGDOWN,
         SPITTING,
         WAITING_FOR_ROTATE,
@@ -115,7 +116,7 @@ public class Superstructure extends Subsystem {
         AUTOINTAKING,
         SPITTING,
         CALIBRATINGDOWN, 
-        CALIBRATINGUP,
+        EJECT_POWERCELL,
         OVERTHETOP,
         ELEVATOR_TRACKING,
         HATCH_CAPTURED,
@@ -170,8 +171,8 @@ public class Superstructure extends Subsystem {
                 case WAITING_FOR_POWERCELL_INTAKE:
                     newState = waitingForPowerCubeIntake();
                     break;
-                case CALIBRATINGUP:
-                    newState = handleCalibrationUp();
+                case EJECT_POWERCELL:
+                    newState = handleEjectPowerCell();
                     break;
                 case CALIBRATINGDOWN:
                     newState = handleCalibrationDown();
@@ -244,8 +245,8 @@ public class Superstructure extends Subsystem {
                 return SystemState.CALIBRATINGDOWN;
             case STARTINGCONFIGURATION:
                 return SystemState.STARTINGCONFIGURATION;
-            case CALIBRATINGUP:
-                return SystemState.CALIBRATINGUP;
+            case EJECT_POWERCELL:
+                return SystemState.EJECT_POWERCELL;
             case OVERTHETOP:
                 return SystemState.WAITING_FOR_HIGH_POSITION;
             case ELEVATOR_TRACKING:
@@ -285,8 +286,8 @@ public class Superstructure extends Subsystem {
                 return SystemState.CALIBRATINGDOWN;
             case STARTINGCONFIGURATION:
                 return SystemState.STARTINGCONFIGURATION;
-            case CALIBRATINGUP:
-                return SystemState.CALIBRATINGUP;
+            case EJECT_POWERCELL:
+                return SystemState.EJECT_POWERCELL;
             case OVERTHETOP:
                 return SystemState.WAITING_FOR_HIGH_POSITION;
             case ELEVATOR_TRACKING:
@@ -327,8 +328,8 @@ public class Superstructure extends Subsystem {
                 return SystemState.CALIBRATINGDOWN;
             case STARTINGCONFIGURATION:
                 return SystemState.STARTINGCONFIGURATION;
-            case CALIBRATINGUP:
-                return SystemState.CALIBRATINGUP;
+            case EJECT_POWERCELL:
+                return SystemState.EJECT_POWERCELL;
             case OVERTHETOP:
                 return SystemState.WAITING_FOR_HIGH_POSITION;
             case ELEVATOR_TRACKING:
@@ -367,8 +368,8 @@ public class Superstructure extends Subsystem {
                 return SystemState.CALIBRATINGDOWN;
             case STARTINGCONFIGURATION:
                 return SystemState.STARTINGCONFIGURATION;
-            case CALIBRATINGUP:
-                return SystemState.CALIBRATINGUP;
+            case EJECT_POWERCELL:
+                return SystemState.EJECT_POWERCELL;
             case OVERTHETOP:
                 return SystemState.WAITING_FOR_HIGH_POSITION;
             case ELEVATOR_TRACKING:
@@ -405,8 +406,8 @@ public class Superstructure extends Subsystem {
                 return SystemState.CALIBRATINGDOWN;
             case STARTINGCONFIGURATION:
                 return SystemState.STARTINGCONFIGURATION;
-            case CALIBRATINGUP:
-                return SystemState.CALIBRATINGUP;
+            case EJECT_POWERCELL:
+                return SystemState.EJECT_POWERCELL;
             case OVERTHETOP:
                 return SystemState.WAITING_FOR_HIGH_POSITION;
             case HATCH_CAPTURED:
@@ -451,8 +452,8 @@ public class Superstructure extends Subsystem {
                 return SystemState.CALIBRATINGDOWN;
             case STARTINGCONFIGURATION:
                 return SystemState.STARTINGCONFIGURATION;
-            case CALIBRATINGUP:
-                return SystemState.CALIBRATINGUP;
+            case EJECT_POWERCELL:
+                return SystemState.EJECT_POWERCELL;
             case OVERTHETOP:
                 return SystemState.WAITING_FOR_HIGH_POSITION;
             case ELEVATOR_TRACKING:
@@ -488,8 +489,8 @@ public class Superstructure extends Subsystem {
                 return SystemState.CALIBRATINGDOWN;
             case STARTINGCONFIGURATION:
                 return SystemState.STARTINGCONFIGURATION;
-            case CALIBRATINGUP:
-                return SystemState.CALIBRATINGUP;
+            case EJECT_POWERCELL:
+                return SystemState.EJECT_POWERCELL;
             case OVERTHETOP:
                 return SystemState.WAITING_FOR_HIGH_POSITION;
             case ELEVATOR_TRACKING:
@@ -524,8 +525,8 @@ public class Superstructure extends Subsystem {
                 return SystemState.CALIBRATINGDOWN;
             case STARTINGCONFIGURATION:
                 return SystemState.STARTINGCONFIGURATION;
-            case CALIBRATINGUP:
-                return SystemState.CALIBRATINGUP;
+            case EJECT_POWERCELL:
+                return SystemState.EJECT_POWERCELL;
             case OVERTHETOP:
                 return SystemState.SPITTING_OUT_TOP;
             case ELEVATOR_TRACKING:
@@ -560,8 +561,8 @@ public class Superstructure extends Subsystem {
                 return SystemState.CALIBRATINGDOWN;
             case STARTINGCONFIGURATION:
                 return SystemState.STARTINGCONFIGURATION;
-            case CALIBRATINGUP:
-                return SystemState.CALIBRATINGUP;
+            case EJECT_POWERCELL:
+                return SystemState.EJECT_POWERCELL;
             case OVERTHETOP:
                 if ((timestamp - mCurrentStateStartTime < Constants.kRotateTime)) {
                 	return SystemState.SPITTING_OUT_TOP;
@@ -599,8 +600,8 @@ public class Superstructure extends Subsystem {
                 return SystemState.CALIBRATINGDOWN;
             case STARTINGCONFIGURATION:
                 return SystemState.STARTINGCONFIGURATION;
-            case CALIBRATINGUP:
-                return SystemState.CALIBRATINGUP;
+            case EJECT_POWERCELL:
+                return SystemState.EJECT_POWERCELL;
             case OVERTHETOP:
                 return SystemState.SPITTING_OUT_TOP;
             case ELEVATOR_TRACKING:
@@ -635,8 +636,8 @@ public class Superstructure extends Subsystem {
                 return SystemState.CALIBRATINGDOWN;
             case STARTINGCONFIGURATION:
                 return SystemState.STARTINGCONFIGURATION;
-            case CALIBRATINGUP:
-                return SystemState.CALIBRATINGUP;
+            case EJECT_POWERCELL:
+                return SystemState.EJECT_POWERCELL;
             case OVERTHETOP:
                 return SystemState.SPITTING_OUT_TOP;
             case ELEVATOR_TRACKING:
@@ -654,9 +655,8 @@ public class Superstructure extends Subsystem {
             }
         }
 
-		private SystemState handleCalibrationUp() {
-            mElevator.setWantedState(Elevator.WantedState.CALIBRATINGUP);
-            mWantedElevatorPosition = Constants.kElevatorHomeEncoderValue;
+		private SystemState handleEjectPowerCell() {
+            mSequencer.setWantedState(Sequencer.WantedState.EJECT);
         	
             switch (mWantedState) {
             case CLIMBINGUP:
@@ -671,8 +671,8 @@ public class Superstructure extends Subsystem {
                 return SystemState.CALIBRATINGDOWN;
             case STARTINGCONFIGURATION:
                 return SystemState.STARTINGCONFIGURATION;
-            case CALIBRATINGUP:
-                return SystemState.CALIBRATINGUP;
+            case EJECT_POWERCELL:
+                return SystemState.EJECT_POWERCELL;
             case OVERTHETOP:
                 return SystemState.SPITTING_OUT_TOP;
             case ELEVATOR_TRACKING:
@@ -710,8 +710,8 @@ public class Superstructure extends Subsystem {
                 return SystemState.CALIBRATINGDOWN;
             case STARTINGCONFIGURATION:
                 return SystemState.STARTINGCONFIGURATION;
-            case CALIBRATINGUP:
-                return SystemState.CALIBRATINGUP;
+            case EJECT_POWERCELL:
+                return SystemState.EJECT_POWERCELL;
             case OVERTHETOP:
                 return SystemState.SPITTING_OUT_TOP;
             case ELEVATOR_TRACKING:
@@ -755,8 +755,8 @@ public class Superstructure extends Subsystem {
                 return SystemState.CALIBRATINGDOWN;
             case STARTINGCONFIGURATION:
                 return SystemState.STARTINGCONFIGURATION;
-            case CALIBRATINGUP:
-                return SystemState.CALIBRATINGUP;
+            case EJECT_POWERCELL:
+                return SystemState.EJECT_POWERCELL;
             case OVERTHETOP:
                 return SystemState.SPITTING_OUT_TOP;
             case ELEVATOR_TRACKING:
@@ -790,8 +790,8 @@ public class Superstructure extends Subsystem {
                 return SystemState.CALIBRATINGDOWN;
             case STARTINGCONFIGURATION:
                 return SystemState.STARTINGCONFIGURATION;
-            case CALIBRATINGUP:
-                return SystemState.CALIBRATINGUP;
+            case EJECT_POWERCELL:
+                return SystemState.EJECT_POWERCELL;
             case ELEVATOR_TRACKING:
                 return SystemState.ELEVATOR_TRACKING;
             default:
@@ -828,8 +828,8 @@ public class Superstructure extends Subsystem {
             return SystemState.CALIBRATINGDOWN;
         case STARTINGCONFIGURATION:
             return SystemState.STARTINGCONFIGURATION;
-        case CALIBRATINGUP:
-            return SystemState.CALIBRATINGUP;
+        case EJECT_POWERCELL:
+            return SystemState.EJECT_POWERCELL;
         case OVERTHETOP:
             return SystemState.WAITING_FOR_HIGH_POSITION;
         case ELEVATOR_TRACKING:

@@ -415,7 +415,7 @@ public class Robot extends TimedRobot {
             boolean inTractorBeam = false;
             boolean grabCube = mControlBoard.getGrabCubeButton();
             boolean calibrateDown = mControlBoard.getCalibrateDown();
-            boolean calibrateUp = mControlBoard.getCalibrateUp();
+            boolean ejectPowerCell = mControlBoard. getEjectPowerCell();
             boolean spitting = mControlBoard.getSpit();
             boolean pickUp = mControlBoard.getAutoPickUp();
             boolean pickupHatch = mControlBoard.getPickupPanel();
@@ -450,8 +450,8 @@ public class Robot extends TimedRobot {
             	mSuperstructure.setWantedState(Superstructure.WantedState.SPITTING);
             } else if (calibrateDown) {
             	mSuperstructure.setWantedState(Superstructure.WantedState.CALIBRATINGDOWN);
-            } else if (calibrateUp) {
-            	mSuperstructure.setWantedState(Superstructure.WantedState.CALIBRATINGUP);
+            } else if (ejectPowerCell) {
+            	mSuperstructure.setWantedState(Superstructure.WantedState.EJECT_POWERCELL);
             } else if (startingConfiguration){
                 mSuperstructure.setWantedState(Superstructure.WantedState.STARTINGCONFIGURATION);
             } else if (pickUp) {

@@ -711,7 +711,7 @@ public class RobotNew extends TimedRobot {
             boolean flipDown = mControlBoard.getFlipDownButton();
             boolean grabCube = mControlBoard.getGrabCubeButton();
             boolean calibrateDown = mControlBoard.getCalibrateDown();
-            boolean calibrateUp = mControlBoard.getCalibrateUp();
+            boolean calibrateUp = mControlBoard.getEjectPowerCell();
             boolean spitting = mControlBoard.getSpit();
             boolean pickUp = mControlBoard.getAutoPickUp();
             
@@ -745,7 +745,7 @@ public class RobotNew extends TimedRobot {
             } else if (calibrateDown) {
             	mSuperstructure.setWantedState(Superstructure.WantedState.CALIBRATINGDOWN);
             } else if (calibrateUp) {
-            	mSuperstructure.setWantedState(Superstructure.WantedState.CALIBRATINGUP);
+            	mSuperstructure.setWantedState(Superstructure.WantedState.EJECT_POWERCELL);
             } else if (startingConfiguration){
                 mSuperstructure.setWantedState(Superstructure.WantedState.STARTINGCONFIGURATION);
             } else if (pickUp) {

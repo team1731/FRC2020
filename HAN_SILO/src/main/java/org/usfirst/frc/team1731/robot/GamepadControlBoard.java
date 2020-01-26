@@ -65,7 +65,7 @@ public class GamepadControlBoard implements ControlBoardInterface {
     }
     
     @Override
-    public boolean getCalibrateUp() {
+    public boolean getEjectPowerCell() {
         return mOperator.getRawButton(8);
     }
 

@@ -11,21 +11,20 @@ import org.usfirst.frc.team1731.robot.subsystems.Elevator.SystemState;
 import org.usfirst.frc.team1731.robot.subsystems.Elevator.WantedState;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import edu.wpi.first.wpilibj.PWMTalonFX;
 
 import edu.wpi.first.wpilibj.DriverStation;
 
 //import com.ctre.CANTalon;
-//Getting rid of all solenoid for testing!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 //import edu.wpi.first.wpilibj.VictorSP;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+//import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import org.usfirst.frc.team1731.robot.subsystems.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
+//import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 /**
  * 1731 the intake picks up cubes and ejects them
@@ -44,13 +43,13 @@ public class Intake extends Subsystem {
     }
 
 
-    private final TalonFX mTalonFX;
+    private final PWMTalonFX mTalonFX;
     // sensors used for old intake. New intake doesn't need them.
    // private final AnalogInput mIRSensor1;
     //private final AnalogInput mIRSensor2;
 
     private Intake() {
-        mTalonFX = new TalonFX(Constants.kIntakeVictor);
+        mTalonFX = new PWMTalonFX(Constants.kIntakeVictor);
         //mIRSensor1 = new AnalogInput(1);
         //mIRSensor2 = new AnalogInput(4);
     }
@@ -131,7 +130,7 @@ public class Intake extends Subsystem {
         private SystemState handleSpitting() {
             if (mStateChanged) {
                 //IntakeHood.set(Value.kForward);
-                mTalonFX.set(ControlMode.PercentOutput, 1);
+                mTalonFX.setSpeed(.2);
             }
             return defaultStateTransfer();
         }
@@ -139,7 +138,7 @@ public class Intake extends Subsystem {
         private SystemState handleIntaking() {
             if (mStateChanged) {
                 //IntakeHood.set(Value.kForward);
-                mTalonFX.set(ControlMode.PercentOutput, -1);
+                mTalonFX.setSpeed(-.2);
             }
             return defaultStateTransfer();
         }
@@ -166,7 +165,7 @@ public class Intake extends Subsystem {
         // setOpenLoop(0.0f);
         // if motor is not off, turn motor off
         if (mStateChanged) {
-            mTalonFX.set(ControlMode.PercentOutput, 0);
+            mTalonFX.setSpeed(0);
             //IntakeHood.set(Value.kReverse);
         }
         return defaultStateTransfer();

@@ -292,7 +292,10 @@ public class Constants extends ConstantsBase {
 	public static final int kFeederVictor = 1;
 
     // Intake
-	public static final int kIntakeVictor = 9;
+    public static final int kIntakeVictor = 1;
+    
+    //Sequencer
+    public static final int kSequencerVictor = 0;
 
     // Shooter
 //	public static final int kShooterVictor = 4;
@@ -333,12 +336,15 @@ public class Constants extends ConstantsBase {
 
     // Analog Inputs
     public static int kLEDOnId = 2;
+    public static int kColorSensor = 0x52; // I2C addr for Color Sensor V3
 
     // Digital Outputs
     public static int kArduinoLed0 = 7;
     public static int kArduinoLed1 = 8;
     public static int kArduinoLed2 = 9;
-    public static int kArduino_TEAM  = 0; // blue/yellow 1731 team wheel
+    public static int kArduino_TEAM  = 0;
+    public static int kLowSequencer = 10;
+    public static int kHighSequencer = 11; // blue/yellow 1731 team wheel
     public static int kArduino_RED   = 1; // solid red
     public static int kArduino_GREEN = 2; // solid green
     public static int kArduino_BLUE  = 3; // solid blue

@@ -13,7 +13,7 @@ import org.usfirst.frc.team1731.robot.subsystems.Elevator.SystemState;
 import org.usfirst.frc.team1731.robot.subsystems.Elevator.WantedState;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import edu.wpi.first.wpilibj.PWMTalonFX;
 
 import edu.wpi.first.wpilibj.DriverStation;
 
@@ -43,13 +43,13 @@ public class Sequencer extends Subsystem {
         return sInstance;
     }
 
-    private final TalonFX mTalonFX;
+    private final PWMTalonFX mTalonFX;
     private DigitalInput sequencerSensorLow = new DigitalInput(Constants.kLowSequencer);
     private DigitalInput sequencerSensorHigh = new DigitalInput(Constants.kHighSequencer);
 
 
     private Sequencer() {
-        mTalonFX = new TalonFX(Constants.kSequencerVictor);
+        mTalonFX = new PWMTalonFX(Constants.kSequencerVictor);
         //mIRSensor1 = new AnalogInput(1);
         //mIRSensor2 = new AnalogInput(4);
     }
@@ -133,13 +133,13 @@ public class Sequencer extends Subsystem {
         private SystemState handleIntaking() {
             if (mStateChanged) {
                 if (!sequencerSensorLow.get()){
-                    mTalonFX.set(ControlMode.PercentOutput, 1);
+                    mTalonFX.setSpeed(.2);
                 } 
                 if (sequencerSensorLow.get()) {
-                    mTalonFX.set(ControlMode.PercentOutput, 0);
+                    mTalonFX.setSpeed(0);
                 }
                 if (!sequencerSensorHigh.get()){
-                    mTalonFX.set(ControlMode.PercentOutput, 0);
+                    mTalonFX.setSpeed(0);
                 }
             }
             return defaultStateTransfer();
@@ -147,14 +147,14 @@ public class Sequencer extends Subsystem {
 
         private SystemState handleEjecting() {
             if (mStateChanged) {
-                mTalonFX.set(ControlMode.PercentOutput, -1);
+                mTalonFX.setSpeed(-.2);
             }
             return defaultStateTransfer();
         }
 
         private SystemState handleShooting() {
             if (mStateChanged) {
-                mTalonFX.set(ControlMode.PercentOutput, 1);
+                mTalonFX.setSpeed(.2);
             }
             return defaultStateTransfer();
         }
@@ -182,7 +182,7 @@ public class Sequencer extends Subsystem {
     private SystemState handleIdle() {
         // if motor is not off, turn motor off
         if (mStateChanged) {
-            mTalonFX.set(ControlMode.PercentOutput, 0);
+            mTalonFX.setSpeed(0);
         }
         return defaultStateTransfer();
     }

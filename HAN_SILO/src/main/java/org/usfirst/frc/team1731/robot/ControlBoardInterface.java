@@ -27,7 +27,7 @@ public interface ControlBoardInterface {
 
 		boolean getGrabCubeButton();
 
-		boolean getCalibrateUp();
+		boolean getEjectPowerCell();
 
 		boolean getCalibrateDown();
 

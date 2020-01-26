@@ -2,8 +2,11 @@ package frc.robot;
 import java.util.Arrays;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.control.Controls;
 import frc.robot.subsystem.DriveSubsystem;
 import java.util.Date;
@@ -13,6 +16,7 @@ import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.ColorSensorV3;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,8 +50,12 @@ public class Robot extends TimedRobot {
   private static final int deviceID = 1;
   private Wheel[] wheelObjects;
   private boolean mLoopersAreRunning = false;
+  private DigitalInput sequencerLowSensor;
 
   private Looper mEnabledLooper = new Looper();
+  
+  private final I2C.Port i2cPort = I2C.Port.kOnboard; //Constants.kColorSensor;
+  private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
 
   @Override
   public void robotInit() {
@@ -62,6 +70,7 @@ public class Robot extends TimedRobot {
     // m_motor = new CANSparkMax(deviceID, MotorType.kBrushless);
     // m_motor.disable();
     mSubsystemManager.registerEnabledLoops(mEnabledLooper);
+    sequencerLowSensor = new DigitalInput(Constants.kArduino_TEAM);
   }
 
   /**
@@ -103,6 +112,12 @@ public class Robot extends TimedRobot {
     boolean pickupPowerCell = mControlBoard.getPickupBall();
     boolean spitPowerCell = mControlBoard.getSpitBall();
 
+    Color detectedColor = m_colorSensor.getColor();
+    /**
+     * The sensor returns a raw IR value of the infrared light detected.
+     */
+    double IR = m_colorSensor.getIR();
+
   if (pickupPowerCell) {
     mSuperstructure.setWantedState(Superstructure.WantedState.POWERCELL_INTAKING);
   } else if (spitPowerCell) {
@@ -119,6 +134,13 @@ public class Robot extends TimedRobot {
   */
   SmartDashboard.putBoolean("PowerCell Pickup", pickupPowerCell);
   SmartDashboard.putBoolean("PowerCell Spit", spitPowerCell);
+  SmartDashboard.putBoolean("Sequencer Low Sensor", sequencerLowSensor.get());
+
+  SmartDashboard.putNumber("Red", detectedColor.red);
+  SmartDashboard.putNumber("Green", detectedColor.green);
+  SmartDashboard.putNumber("Blue", detectedColor.blue);
+  SmartDashboard.putNumber("IR", IR);
+
   mSuperstructure.outputToSmartDashboard();
 }
 
