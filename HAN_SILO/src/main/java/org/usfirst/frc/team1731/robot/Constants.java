@@ -334,6 +334,9 @@ public class Constants extends ConstantsBase {
     // Analog Inputs
     public static int kLEDOnId = 2;
 
+    // PWM Slots
+    public static int kIntakePWM = 0;
+
     // Digital Outputs
     public static int kArduinoLed0 = 7;
     public static int kArduinoLed1 = 8;

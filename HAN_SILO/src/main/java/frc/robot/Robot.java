@@ -2,6 +2,8 @@ package frc.robot;
 import java.util.Arrays;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.control.Controls;
@@ -11,6 +13,7 @@ import java.util.Date;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.ColorSensorV3;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -48,6 +51,15 @@ public class Robot extends TimedRobot {
   private boolean mLoopersAreRunning = false;
 
   private Looper mEnabledLooper = new Looper();
+
+  /** Change the I2C port below to match the connection of your color sensor */
+  private final I2C.Port i2cPort = I2C.Port.kOnboard;
+  /**
+   * A Rev Color Sensor V3 object is constructed with an I2C port as a 
+   * parameter. The device will be automatically initialized with default 
+   * parameters.
+   */
+  private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
 
   @Override
   public void robotInit() {
@@ -102,6 +114,14 @@ public class Robot extends TimedRobot {
   public void periodic() {
     boolean pickupPowerCell = mControlBoard.getPickupBall();
     boolean spitPowerCell = mControlBoard.getSpitBall();
+
+    Color detectedColor = m_colorSensor.getColor();
+
+    /**
+     * The sensor returns a raw IR value of the infrared light detected.
+     */
+    double IR = m_colorSensor.getIR();
+    
 
   if (pickupPowerCell) {
     mSuperstructure.setWantedState(Superstructure.WantedState.POWERCELL_INTAKING);
