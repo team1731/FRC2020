@@ -2,8 +2,6 @@ package frc.robot;
 import java.util.Arrays;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.I2C;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.control.Controls;
@@ -55,15 +53,6 @@ public class Robot extends TimedRobot {
 
   private Looper mEnabledLooper = new Looper();
 
-  /** Change the I2C port below to match the connection of your color sensor */
-  private final I2C.Port i2cPort = I2C.Port.kOnboard;
-  /**
-   * A Rev Color Sensor V3 object is constructed with an I2C port as a 
-   * parameter. The device will be automatically initialized with default 
-   * parameters.
-   */
-  private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
-  private final ColorMatch m_colorMatcher = new ColorMatch();
 
   @Override
   public void robotInit() {
@@ -78,11 +67,6 @@ public class Robot extends TimedRobot {
     // m_motor = new CANSparkMax(deviceID, MotorType.kBrushless);
     // m_motor.disable();
     mSubsystemManager.registerEnabledLoops(mEnabledLooper);
-
-    m_colorMatcher.addColorMatch(Constants.kBlueTarget);
-    m_colorMatcher.addColorMatch(Constants.kGreenTarget);
-    m_colorMatcher.addColorMatch(Constants.kRedTarget);
-    m_colorMatcher.addColorMatch(Constants.kYellowTarget);
   }
 
   /**
@@ -124,29 +108,6 @@ public class Robot extends TimedRobot {
     boolean pickupPowerCell = mControlBoard.getPickupBall();
     boolean spitPowerCell = mControlBoard.getSpitBall();
 
-    Color detectedColor = m_colorSensor.getColor();
-
-    /**
-     * The sensor returns a raw IR value of the infrared light detected.
-     */
-    double IR = m_colorSensor.getIR();
-
-    /* Run the color match algorithm on our detected color */
-    String colorString;
-    ColorMatchResult match = m_colorMatcher.matchClosestColor(detectedColor);
-
-    if (match.color == Constants.kBlueTarget) {
-      colorString = "Blue";
-    } else if (match.color == Constants.kRedTarget) {
-      colorString = "Red";
-    } else if (match.color == Constants.kGreenTarget) {
-      colorString = "Green";
-    } else if (match.color == Constants.kYellowTarget) {
-      colorString = "Yellow";
-    } else {
-      colorString = "Unknown";
-    }
-
   if (pickupPowerCell) {
     mSuperstructure.setWantedState(Superstructure.WantedState.POWERCELL_INTAKING);
   } else if (spitPowerCell) {
@@ -157,13 +118,8 @@ public class Robot extends TimedRobot {
 
   SmartDashboard.putBoolean("PowerCell Pickup", pickupPowerCell);
   SmartDashboard.putBoolean("PowerCell Spit", spitPowerCell);
+  //SmartDashboard.putBoolean("Sequencer Low Sensor", sequencerLowSensor.get());
   /* Open Smart Dashboard or Shuffleboard to see the color detected by the sensor. */
-  SmartDashboard.putNumber("IR", IR);
-  SmartDashboard.putNumber("Red", detectedColor.red);
-  SmartDashboard.putNumber("Green", detectedColor.green);
-  SmartDashboard.putNumber("Blue", detectedColor.blue);
-  SmartDashboard.putNumber("Confidence", match.confidence);
-  SmartDashboard.putString("Detected Color", colorString);
 
   mSuperstructure.outputToSmartDashboard();
 }
