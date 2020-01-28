@@ -310,6 +310,9 @@ public class Constants extends ConstantsBase {
     // Intake
 	public static final int kIntakeVictor = 9;
 
+    // Intake
+	public static final int kColorWheelTalonFX = 8;
+
     // Shooter
 //	public static final int kShooterVictor = 4;
 
