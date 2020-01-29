@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.SlewRateLimiter;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 
 public class Robot extends TimedRobot {
   private final XboxController m_controller = new XboxController(0);
@@ -35,23 +36,39 @@ public class Robot extends TimedRobot {
   private void driveWithJoystick(boolean fieldRelative) {
     // Get the x speed. We are inverting this because Xbox controllers return
     // negative values when we push forward.
+    double leftY = m_controller.getY(GenericHID.Hand.kLeft);
+    if(Math.abs(leftY) < 0.1){
+        leftY = 0;
+    }
+
     double xSpeed =
-        -m_xspeedLimiter.calculate(m_controller.getY(GenericHID.Hand.kLeft))
+        -m_xspeedLimiter.calculate(leftY)
             * Drivetrain.kMaxSpeed;
 
     // Get the y speed or sideways/strafe speed. We are inverting this because
     // we want a positive value when we pull to the left. Xbox controllers
     // return positive values when you pull to the right by default.
+    double leftX = m_controller.getX(Hand.kLeft);
+    if(Math.abs(leftX) < 0.1){
+        leftX = 0;
+    }
+
     double ySpeed =
-        -m_yspeedLimiter.calculate(m_controller.getX(GenericHID.Hand.kLeft))
+        -m_yspeedLimiter.calculate(leftX)
             * Drivetrain.kMaxSpeed;
 
     // Get the rate of angular rotation. We are inverting this because we want a
     // positive value when we pull to the left (remember, CCW is positive in
     // mathematics). Xbox controllers return positive values when you pull to
     // the right by default.
+
+    double rightX = m_controller.getX(GenericHID.Hand.kRight);
+    if(Math.abs(rightX) < 0.1){
+      rightX = 0;
+    }
+    
     double rot =
-        -m_rotLimiter.calculate(m_controller.getX(GenericHID.Hand.kRight))
+        -m_rotLimiter.calculate(rightX)
             * Drivetrain.kMaxAngularSpeed;
 
     m_swerve.drive(xSpeed, ySpeed, rot, fieldRelative);
