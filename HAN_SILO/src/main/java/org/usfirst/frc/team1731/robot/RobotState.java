@@ -200,10 +200,13 @@ public class RobotState {
 
     public synchronized Twist2d generateOdometryFromSensors(double left_encoder_delta_distance,
             double right_encoder_delta_distance, Rotation2d current_gyro_angle) {
+
         final RigidTransform2d last_measurement = getLatestFieldToVehicle().getValue();
         final Twist2d delta = Kinematics.forwardKinematics(last_measurement.getRotation(),
                 left_encoder_delta_distance, right_encoder_delta_distance, current_gyro_angle);
+
         distance_driven_ += delta.dx;
+
         return delta;
     }
 

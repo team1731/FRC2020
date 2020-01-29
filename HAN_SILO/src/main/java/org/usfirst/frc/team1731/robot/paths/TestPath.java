@@ -27,7 +27,7 @@ public class TestPath implements PathContainer {
 		//[PATHINIT]
         sWaypoints.add(new Waypoint(50,50,0,0,0));
         sWaypoints.add(new Waypoint(60,50,0,60,0));
-        sWaypoints.add(new Waypoint(60,60,0,60,0));
+        //sWaypoints.add(new Waypoint(60,60,0,60,0));
         //sWaypoints.add(new Waypoint(100,50,0,60,0));
         //sWaypoints.add(new Waypoint(100,100,0,60,90));
 

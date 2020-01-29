@@ -229,24 +229,44 @@ private static double rpmToInchesPerSecond(double rpm) {
     return rotationsToInches(rpm) / 60;
 }
 
+  /**
+   * 
+   * @deprecated This was used for the old tank drive. We need to make new functions for the new swerve drive
+   */
+  @Deprecated
   public double getLeftVelocityInchesPerSec() {
     //TODO: AAAAAAAAAAAA THIS IS WRONG
     return rpmToInchesPerSecond((wheels[0].getDriveEncoderVelocity()+wheels[2].getDriveEncoderVelocity())/2);
     //return 1; //rpmToInchesPerSecond((mLeftMaster.getSelectedSensorVelocity(Constants.kPidIdx)*(600.0/4096.0)));
   }
 
+  /**
+   * 
+   * @deprecated This was used for the old tank drive. We need to make new functions for the new swerve drive
+   */
+  @Deprecated
   public double getRightVelocityInchesPerSec() {
     //TODO: AAAAAAAAAA THIS IS ALSO WRONG
     return rpmToInchesPerSecond((wheels[1].getDriveEncoderVelocity()+wheels[3].getDriveEncoderVelocity())/2);
     //return 1; //rpmToInchesPerSecond((mRightMaster.getSelectedSensorVelocity(Constants.kPidIdx)*(600.0/4096.0)));
   }
 
+/**
+   * 
+   * @deprecated This was used for the old tank drive. We need to make new functions for the new swerve drive
+   */
+  @Deprecated
   public double getLeftDistanceInches() {
     //TODO: BBBBBBBBBBBB THIS IS BAD
     return rpmToInchesPerSecond((wheels[0].getDriveEncoderPos()+wheels[2].getDriveEncoderPos())/2);
     //return 1; //rotationsToInches(mLeftMaster.getSelectedSensorPosition(Constants.kPidIdx)/4096.0);
 }
 
+/**
+   * 
+   * @deprecated This was used for the old tank drive. We need to make new functions for the new swerve drive
+   */
+  @Deprecated
 public double getRightDistanceInches() {
   // TODO: BBBBBBBBBB THIS IS VERY BAD
   return rpmToInchesPerSecond((wheels[1].getDriveEncoderPos()+wheels[3].getDriveEncoderPos())/2);
@@ -447,14 +467,6 @@ public double getRightDistanceInches() {
           final double max_desired = Math.max(Math.abs(left_inches_per_sec), Math.abs(right_inches_per_sec));
           final double scale = max_desired > Constants.kDriveHighGearMaxSetpoint
                   ? Constants.kDriveHighGearMaxSetpoint / max_desired : 1.0;
-
-              /*
-              if(left_inches_per_sec / right_inches_per_sec == 1 ){
-                  drive(1 * scale, 0, 0);
-              }
-              */
-
-              //drive(max_desired * scale, left_inches_per_sec, right_inches_per_sec);
 
               //TODO: Drive math
               /*
