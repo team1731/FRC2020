@@ -87,6 +87,7 @@ public class ColorWheel extends Subsystem {
         ENGAGE,     // set solenoid (if any)
         START,      // 1) read color 2) determine next color set as sample 3) start motor
         COUNT,      // 1) read color 2) incr count if color == sample 3) check if count is >= 6, 4) signal led strip 
+        NEXT,       // 1) read color 2) hold here until color != sample 
         STOP,       // stop motor
         DISENGAGE   // unset solenoid 
     }
@@ -195,7 +196,16 @@ public class ColorWheel extends Subsystem {
                         if (zColor == colorSample) {
                             if (++colorCount >= 6) {    // increment count and check if reached 3 or more rotations
                                 newState = RotateState.STOP;
+                                // SIGNAL led strip that we are successful
+                            } else {
+                                newState = RotateState.NEXT;
                             }
+                        }
+                        break;
+                    case NEXT: // 1) read color 2) hold here until color doesn't equal our sample
+                        zColor = getMatch();
+                        if (zColor != colorSample) {
+                            newState = RotateState.COUNT; // go back to counting
                         }
                         break;
                     case STOP:  // stop motor
