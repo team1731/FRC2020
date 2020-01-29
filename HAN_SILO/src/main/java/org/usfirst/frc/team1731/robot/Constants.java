@@ -188,6 +188,12 @@ public class Constants extends ConstantsBase {
     public static final int kWheelYellow= 3;
     public static final int kWheelRed = 4;
 
+    public static final int kWheelCountRotate = 7;
+    public static final int kWheelCountMatch = 1;
+
+    public static double kWheelRotateSpeed = 0.5;
+    public static double kWheelMatchFwdSpeed = 0.2;
+    public static double kWheelMatchRevSpeed = -0.2;
 
     //Elevator
     public static enum GRABBER_POSITION {

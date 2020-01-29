@@ -80,7 +80,7 @@ public class ColorWheel extends Subsystem {
         MATCH,
     }
 
-    public enum RotateState {
+    public enum WheelState {
         IDLE,       // doing nothing ... waiting
         PREPARE,    // verify we are reading the color wheel, i.e. motor is close enough to engage wheel
         OVERRIDE,   // don't care if PREPARE is satisfied, engage anyway
@@ -92,10 +92,16 @@ public class ColorWheel extends Subsystem {
         DISENGAGE   // unset solenoid 
     }
 
+    public enum WheelMode {
+        IDLE,       // doing nothing 
+        ROTATE,     // rotate 3-5 times
+        MATCH       // match color and stay for 5 seconds
+    }
+
 
     private SystemState mSystemState = SystemState.IDLE;
     private WantedState mWantedState = WantedState.IDLE;
-    private RotateState mRotateState = RotateState.IDLE;
+    private WheelState mRotateState = WheelState.IDLE;
 
     //Solenoid sColorWheel = new Solenoid(Constants.kColorWheelSolenoid);
 
@@ -104,6 +110,7 @@ public class ColorWheel extends Subsystem {
     private boolean mStateChanged = false;
     private int colorCount;
     private int colorSample;
+    private int wheelCount;
     private double matchConfidence;
 
     public static final int[] colorSeq = {
@@ -160,83 +167,102 @@ public class ColorWheel extends Subsystem {
         }
 
         private SystemState handleRotating() {
-            int zColor;
             if (mStateChanged) {
                 //ColorWheelHood.set(Value.kForward);
-                mRotateState = RotateState.PREPARE;
+                mRotateState = WheelState.PREPARE;
             } else {
-                RotateState newState = mRotateState; // set new state to current state; idea is to look for changes
-                switch (mRotateState) {
-                    case IDLE:
-                        break;
-                    case PREPARE: // verify we are reading the color wheel, i.e. motor is close enough to engage wheel
-                        if (checkSensor()) {
-                            newState = RotateState.ENGAGE;
-                        }
-                        colorSample = Constants.kWheelUnknown;    
-                        break;
-                    case OVERRIDE:
-                        // check override button if any is used, otherwise this is of no consequence
-                        break;
-                    case ENGAGE:
-                        // SET Solenoid
-                        newState = RotateState.START;
-                        break;
-                    case START: // 1) read color 2) determine next color set as sample 3) start motor
-                        colorCount = 0;
-                        zColor = getMatch();
-                        if (zColor > Constants.kWheelUnknown) {
-                            colorSample = colorSeq[zColor + 1]; // our sample color is the next one after our match
-                            mTalonFX.setSpeed(.5);
-                            newState = RotateState.COUNT;
-                        }
-                        break;
-                    case COUNT: // 1) read color 2) incr count if color == sample 3) check if count is >= 6, 4) signal led strip
-                        zColor = getMatch();
-                        if (zColor == colorSample) {
-                            if (++colorCount >= 6) {    // increment count and check if reached 3 or more rotations
-                                newState = RotateState.STOP;
-                                // SIGNAL led strip that we are successful
-                            } else {
-                                newState = RotateState.NEXT;
-                            }
-                        }
-                        break;
-                    case NEXT: // 1) read color 2) hold here until color doesn't equal our sample
-                        zColor = getMatch();
-                        if (zColor != colorSample) {
-                            newState = RotateState.COUNT; // go back to counting
-                        }
-                        break;
-                    case STOP:  // stop motor
-                        mTalonFX.setSpeed(0);
-                        newState = RotateState.COUNT;
-                        break;
-                    case DISENGAGE:
-                        // UNSET solonoid
-                        newState = RotateState.IDLE;
-                        mWantedState = WantedState.IDLE;  // return to IDLEing
-                        break;
-                    default:
-                        newState = RotateState.IDLE;
-                        mWantedState = WantedState.IDLE;  // return to IDLEing
-                }
-
-                if (newState != mRotateState) {
-                    // System.out.println("ColorWheel state " + mSystemState + " to " + newState);
-                    mRotateState = newState;
-                }
+                handleColorWheel(WheelMode.ROTATE);
             }
-
             return defaultStateTransfer();
         }
 
         private SystemState handleMatching() {
             if (mStateChanged) {
-                //ColorWheelHood.set(Value.kForward);
-                mTalonFX.setSpeed(-.2);
+                mRotateState = WheelState.PREPARE;
+            } else {
+                handleColorWheel(WheelMode.MATCH);
             }
             return defaultStateTransfer();
+        }
+
+        private void handleColorWheel(WheelMode mode) {
+            int zColor;
+            WheelState newState = mRotateState; // set new state to current state; idea is to look for changes
+            switch (mRotateState) {
+                case IDLE:
+                    break;
+                case PREPARE: // verify we are reading the color wheel, i.e. motor is close enough to engage wheel
+                    if (checkSensor()) {
+                        newState = WheelState.ENGAGE;
+                     } else {
+                         // SIGNAL led strip that don't see color wheel
+                     }
+                    colorSample = Constants.kWheelUnknown;    
+                    break;
+                case OVERRIDE:
+                    // check override button if any is used, otherwise this is of no consequence
+                    break;
+                case ENGAGE:
+                    // SET Solenoid
+                    newState = WheelState.START;
+                    break;
+                case START: // 1) read color 2) determine next color set as sample 3) start motor
+                    colorCount = 0;
+                    zColor = getMatch();
+                    if (zColor > Constants.kWheelUnknown) {
+                        switch (mode) {
+                            case ROTATE:
+                                colorSample = colorSeq[zColor + 1]; // our sample color is the next one after our match
+                                wheelCount = Constants.kWheelCountRotate;
+                                mTalonFX.setSpeed(Constants.kWheelRotateSpeed);
+                                break;
+                            case MATCH:
+                                // GET color to Match & determine direction
+                                colorSample = colorSeq[zColor + 2]; // our sample color is the next one after our match
+                                wheelCount = Constants.kWheelCountMatch;
+                                mTalonFX.setSpeed(Constants.kWheelMatchFwdSpeed);
+                                break;
+                            default:
+                                break;
+                        }
+                        newState = WheelState.COUNT;
+                    }
+                    break;
+                case COUNT: // 1) read color 2) incr count if color == sample 3) check if count is >= 6, 4) signal led strip
+                    zColor = getMatch();
+                    if (zColor == colorSample) {
+                        if (++colorCount >= wheelCount) {    // increment count and check if reached 3 or more rotations
+                            newState = WheelState.STOP;
+                            // SIGNAL led strip that we are successful
+                        } else {
+                            newState = WheelState.NEXT;
+                        }
+                    }
+                    break;
+                case NEXT: // 1) read color 2) hold here until color doesn't equal our sample
+                    zColor = getMatch();
+                    if (zColor != colorSample) {
+                        newState = WheelState.COUNT; // go back to counting
+                    }
+                    break;
+                case STOP:  // stop motor
+                    mTalonFX.setSpeed(0);
+                    newState = WheelState.COUNT;
+                    break;
+                case DISENGAGE:
+                    // UNSET solonoid
+                    newState = WheelState.IDLE;
+                    mWantedState = WantedState.IDLE;  // return to IDLEing
+                    break;
+                default:
+                    newState = WheelState.IDLE;
+                    mWantedState = WantedState.IDLE;  // return to IDLEing
+            }
+
+            if (newState != mRotateState) {
+                // System.out.println("ColorWheel state " + mSystemState + " to " + newState);
+                mRotateState = newState;
+            }
         }
 
         @Override
