@@ -182,7 +182,14 @@ public class Constants extends ConstantsBase {
     public static Color kRedTarget = ColorMatch.makeColor(0.561, 0.232, 0.114);
     public static Color kYellowTarget = ColorMatch.makeColor(0.361, 0.524, 0.113);
 
-   //Elevator
+    public static final int kWheelUnknown = 0;
+    public static final int kWheelGreen = 1;
+    public static final int kWheelBlue = 2;
+    public static final int kWheelYellow= 3;
+    public static final int kWheelRed = 4;
+
+
+    //Elevator
     public static enum GRABBER_POSITION {
     	FLIP_DOWN,
     	FLIP_NONE,
