@@ -10,7 +10,7 @@ import org.usfirst.frc.team1731.robot.loops.Looper;
 //import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.PWMTalonFX;
 
-//import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation;
 
 //import com.ctre.CANTalon;
 //import edu.wpi.first.wpilibj.Solenoid;
@@ -217,15 +217,17 @@ public class ColorWheel extends Subsystem {
                                 mTalonFX.setSpeed(Constants.kWheelRotateSpeed);
                                 break;
                             case MATCH:
-                                // GET color to Match & determine direction
-                                colorSample = colorSeq[zColor + 2]; // our sample color is the next one after our match
+                                colorSample = getGameColor();   // GET color to Match & determine direction
                                 wheelCount = Constants.kWheelCountMatch;
                                 mTalonFX.setSpeed(Constants.kWheelMatchFwdSpeed);
                                 break;
                             default:
                                 break;
                         }
-                        newState = WheelState.COUNT;
+                        if (colorSample > Constants.kWheelUnknown) {
+                            newState = WheelState.COUNT;  // only move on if a valid colorSample
+                            // SIGNAL led strip that can't get game color data
+                        }
                     }
                     break;
                 case COUNT: // 1) read color 2) incr count if color == sample 3) check if count is >= 6, 4) signal led strip
@@ -320,6 +322,26 @@ public class ColorWheel extends Subsystem {
         }
 
         return colorId;
+    }
+
+    private int getGameColor() {
+        String gameData;
+        int color = Constants.kWheelUnknown;
+        gameData = DriverStation.getInstance().getGameSpecificMessage();
+        if(gameData.length() > 0)
+        {
+            switch (gameData.charAt(0))
+            {
+                case 'B' : color = Constants.kWheelBlue; break; //Blue case code
+                case 'G' : color = Constants.kWheelGreen; break; //Green case code
+                case 'R' : color = Constants.kWheelRed; break; //Red case code
+                case 'Y' : color = Constants.kWheelYellow; break; //Yellow case code
+                default :  color = Constants.kWheelUnknown; break; //This is corrupt data
+            }
+        } else {
+          color = Constants.kWheelUnknown; //Code for no data received yet
+        }
+        return color;
     }
 
     public synchronized void setWantedState(final WantedState state) {
