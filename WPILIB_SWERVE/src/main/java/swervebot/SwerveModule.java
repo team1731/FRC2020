@@ -139,6 +139,6 @@ public class SwerveModule {
     //m_driveMotor.setVoltage(driveOutput + driveFeedforward);
     //m_turningMotor.setVoltage(turnOutput + turnFeedforward);
 
-    wheel.set(state.angle.getDegrees(), state.speedMetersPerSecond/39.37); //FIXME: is this supposed to be inches per second???
+    wheel.set(state.angle.getDegrees(), state.speedMetersPerSecond * 39.37); //FIXME: is this supposed to be inches or feet per second???
   }
 }
