@@ -26,7 +26,7 @@ import org.strykeforce.thirdcoast.swerve.Wheel;
 public class DriveSubsystem extends Subsystem {
 
   //private static final Logger logger = LoggerFactory.getLogger(DriveSubsystem.class);
-  private static final double DRIVE_SETPOINT_MAX = 0.0;
+  public static final double DRIVE_SETPOINT_MAX = 0.0;
   //private static final double ROBOT_LENGTH = 1.0;
   //private static final double ROBOT_WIDTH = 1.0;
   private static Wheel[] wheelObjects;
