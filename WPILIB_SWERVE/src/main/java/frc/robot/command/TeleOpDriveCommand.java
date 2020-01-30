@@ -5,6 +5,7 @@ import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.TELEOP;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
+import frc.robot.RobotPrev;
 import frc.robot.control.DriverControls;
 import frc.robot.subsystem.DriveSubsystem;
 
@@ -13,8 +14,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public final class TeleOpDriveCommand extends Command {
   private static final double DEADBAND = 0.075;
 
-  private static final DriveSubsystem swerve = Robot.DRIVE;
-  private static final DriverControls controls = Robot.CONTROLS.getDriverControls();
+  private static final DriveSubsystem swerve = RobotPrev.DRIVE;
+  private static final DriverControls controls = RobotPrev.CONTROLS.getDriverControls();
 
   public TeleOpDriveCommand() {
     requires(swerve);
