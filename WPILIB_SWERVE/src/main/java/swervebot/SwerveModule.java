@@ -10,6 +10,7 @@ package swervebot;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import org.strykeforce.thirdcoast.swerve.Wheel;
@@ -145,5 +146,6 @@ public class SwerveModule {
     double angleDegrees = state.angle.getDegrees();
     double speedMetersPerSecond = state.speedMetersPerSecond;
     wheel.set(angleDegrees, speedMetersPerSecond * 39.37); //FIXME: is this supposed to be inches or feet per second???
+    //wheel.setAzimuthPosition(angleDegrees);
   }
 }
