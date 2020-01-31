@@ -119,7 +119,11 @@ public class SwerveModule {
    */
   public SwerveModuleState getState() {
     //return new SwerveModuleState(m_driveEncoder.getRate(), new Rotation2d(m_turningEncoder.get()));
-    return new SwerveModuleState(m_driveEncoder.getVelocity(), new Rotation2d(m_turningEncoder.getPosition()));
+
+    //FIXME: apply any needed unit convertion here...
+    double velocity = m_driveEncoder.getVelocity();
+    double azimuth = m_turningEncoder.getPosition();
+    return new SwerveModuleState(velocity, new Rotation2d(azimuth));
   }
 
   /**
@@ -138,7 +142,8 @@ public class SwerveModule {
 
     //m_driveMotor.setVoltage(driveOutput + driveFeedforward);
     //m_turningMotor.setVoltage(turnOutput + turnFeedforward);
-
-    wheel.set(state.angle.getDegrees(), state.speedMetersPerSecond * 39.37); //FIXME: is this supposed to be inches or feet per second???
+    double angleDegrees = state.angle.getDegrees();
+    double speedMetersPerSecond = state.speedMetersPerSecond;
+    wheel.set(angleDegrees, speedMetersPerSecond * 39.37); //FIXME: is this supposed to be inches or feet per second???
   }
 }
