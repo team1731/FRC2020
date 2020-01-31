@@ -110,7 +110,7 @@ public class SwerveModule {
     // to be continuous.
     //m_turningPIDController.enableContinuousInput(-Math.PI, Math.PI);
 
-    wheel = new Wheel(m_driveMotor, m_turningMotor, DriveSubsystem.DRIVE_SETPOINT_MAX);
+    wheel = new Wheel(m_turningMotor, m_driveMotor, DriveSubsystem.DRIVE_SETPOINT_MAX);
   }
 
   /**
