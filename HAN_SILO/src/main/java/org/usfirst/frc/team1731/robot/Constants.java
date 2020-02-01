@@ -289,16 +289,19 @@ public class Constants extends ConstantsBase {
 
     /* VICTORS */
     // Feeder
-	public static final int kFeederVictor = 1;
+	public static final int kFeederVictor = 2;
 
     // Intake
-    public static final int kIntakeVictor = 1;
-    
-    //Sequencer
-    public static final int kSequencerVictor = 0;
+    public static final int kMotorPWMIntake = 1;      // Intake
+    public static final int kMotorPWMSeq = 0;         //Sequencer
+    public static final double kMotorSeqFwdSpeed = 0.1;   // forward or backward
+    public static final double kMotorSeqRevSpeed = -0.1;   // forward or backward
+    public static final double kMotorIntakeFwdSpeed = 0.2;   // forward or backward
+    public static final double kMotorIntakeRevSpeed = -0.2;   // forward or backward
+    public static final double kMotorShootSpeed = 0.5;   // forward or backward
 
     // Shooter
-//	public static final int kShooterVictor = 4;
+    public static final int kShooterVictor = 3;
 
     //
     // PCM 0 SOLENOIDS
@@ -330,21 +333,26 @@ public class Constants extends ConstantsBase {
 	public static  double kRotateTime = 500;
     public static  double kUnlockClimberTime = 500;
 
+    public static int kShooterToClimberSolenoid1 = 3;
+    public static int kShooterToClimberSolenoid2 = 4;
+
+    public static int kClimberSolenoid1 = 5;
+    public static int kClimberSolenoid2 = 6;
+
     // Intake solenoid
     public static final int kIntakeHoodSolenoid1 = 1;
     public static final int kIntakeHoodSolenoid2 = 2;
 
     // Analog Inputs
     public static int kLEDOnId = 2;
-    public static int kColorSensor = 0x52; // I2C addr for Color Sensor V3
 
     // Digital Outputs
     public static int kArduinoLed0 = 7;
     public static int kArduinoLed1 = 8;
     public static int kArduinoLed2 = 9;
     public static int kArduino_TEAM  = 0;
-    public static int kLowSequencer = 10;
-    public static int kHighSequencer = 11; // blue/yellow 1731 team wheel
+    public static int kLowSequencer = 0;
+    public static int kHighSequencer = 2; // blue/yellow 1731 team wheel
     public static int kArduino_RED   = 1; // solid red
     public static int kArduino_GREEN = 2; // solid green
     public static int kArduino_BLUE  = 3; // solid blue

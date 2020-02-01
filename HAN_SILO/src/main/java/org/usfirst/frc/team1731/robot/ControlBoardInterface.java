@@ -27,13 +27,13 @@ public interface ControlBoardInterface {
 
 		boolean getGrabCubeButton();
 
-		boolean getEjectPowerCell();
-
-		boolean getCalibrateDown();
+		boolean getEjectBall();
 
 		boolean getSpit();
 
-		int getClimber();
+		boolean getClimberExtend();
+
+		boolean getClimberRetract();
 
 		boolean getAutoPickUp();
 
@@ -63,7 +63,6 @@ public interface ControlBoardInterface {
 		boolean getPickupPanel();
 		boolean getShootPanel();
 		boolean getPickupBall();
-		boolean getSpitBall();
 		boolean getShootBall();
 		boolean getCargoShipBall();
 		boolean getStartingConfiguration();

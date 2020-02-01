@@ -1,12 +1,10 @@
 package frc.robot;
+
 import java.util.Arrays;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.I2C;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.control.Controls;
 import frc.robot.subsystem.DriveSubsystem;
 import java.util.Date;
@@ -16,7 +14,6 @@ import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.ColorSensorV3;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,9 +24,8 @@ import org.usfirst.frc.team1731.robot.subsystems.Superstructure;
 import org.usfirst.frc.team1731.robot.SubsystemManager;
 import org.usfirst.frc.team1731.robot.ControlBoardInterface;
 import org.usfirst.frc.team1731.robot.GamepadControlBoard;
-import org.usfirst.frc.team1731.robot.subsystems.Intake;
+import org.usfirst.frc.team1731.robot.subsystems.PowerCell;
 import org.usfirst.frc.team1731.robot.Constants;
-
 
 public class Robot extends TimedRobot {
   private final Superstructure mSuperstructure = Superstructure.getInstance();
@@ -38,8 +34,8 @@ public class Robot extends TimedRobot {
 
   // Controls initialize Commands so this should be instantiated last to prevent
 
-  private final SubsystemManager mSubsystemManager = new SubsystemManager(Arrays.asList(
-      Superstructure.getInstance(), Intake.getInstance()));
+  private final SubsystemManager mSubsystemManager = new SubsystemManager(
+      Arrays.asList(Superstructure.getInstance(), PowerCell.getInstance()));
   // NullPointerExceptions in commands that require() Subsystems above.
   private final ControlBoardInterface mControlBoard = GamepadControlBoard.getInstance();
   public static final Controls CONTROLS = new Controls();
@@ -50,17 +46,14 @@ public class Robot extends TimedRobot {
   private static final int deviceID = 1;
   private Wheel[] wheelObjects;
   private boolean mLoopersAreRunning = false;
-  private DigitalInput sequencerLowSensor;
 
   private Looper mEnabledLooper = new Looper();
-  
-  private final I2C.Port i2cPort = I2C.Port.kOnboard; //Constants.kColorSensor;
-  private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
 
   @Override
   public void robotInit() {
     // logger.info("<b>Robot</b>: robotInit Started");
-    //autoCode = SmartDashboard.getString("AutoCode", Constants.kDefaultAutoMode); // or R
+    // autoCode = SmartDashboard.getString("AutoCode", Constants.kDefaultAutoMode);
+    // // or R
     System.out.println("Today is " + new Date().toString());
     // DRIVE.zeroAzimuthEncoders();
     // DRIVE.zeroGyro();
@@ -70,7 +63,6 @@ public class Robot extends TimedRobot {
     // m_motor = new CANSparkMax(deviceID, MotorType.kBrushless);
     // m_motor.disable();
     mSubsystemManager.registerEnabledLoops(mEnabledLooper);
-    sequencerLowSensor = new DigitalInput(Constants.kArduino_TEAM);
   }
 
   /**
@@ -86,7 +78,7 @@ public class Robot extends TimedRobot {
       mEnabledLooper.start();
       mLoopersAreRunning = true;
 
-      //mSuperstructure.setOverrideCompressor(false);
+      // mSuperstructure.setOverrideCompressor(false);
     } catch (final Throwable t) {
       // CrashTracker.logThrowableCrash(t);
       // throw t;
@@ -110,60 +102,58 @@ public class Robot extends TimedRobot {
 
   public void periodic() {
     boolean pickupPowerCell = mControlBoard.getPickupBall();
-    boolean spitPowerCell = mControlBoard.getSpitBall();
+    boolean ejectPowerCell = mControlBoard.getEjectBall();
+    boolean shoot = mControlBoard.getShootBall();
+    boolean climbExtend = mControlBoard.getClimberExtend();
+    boolean climbRetract = mControlBoard.getClimberRetract();
 
-    Color detectedColor = m_colorSensor.getColor();
-    /**
-     * The sensor returns a raw IR value of the infrared light detected.
-     */
-    double IR = m_colorSensor.getIR();
-
-  if (pickupPowerCell) {
-    mSuperstructure.setWantedState(Superstructure.WantedState.POWERCELL_INTAKING);
-  } else if (spitPowerCell) {
-    mSuperstructure.setWantedState(Superstructure.WantedState.POWERCELL_SPITTING);
-  } else {
-  	mSuperstructure.setWantedState(Superstructure.WantedState.IDLE);
-  }
-  /*
-    try {
-      //Scheduler.getInstance().run();
-      //logger.info("<b>Robot</b>: teleopPeriodic finished");
-      SmartDashboard.putNumber("Periodic", 1);
+    if (pickupPowerCell) {
+      mSuperstructure.setWantedState(Superstructure.WantedState.POWERCELL_INTAKE);
+    } else if (ejectPowerCell) {
+      mSuperstructure.setWantedState(Superstructure.WantedState.POWERCELL_EJECT);
+    } else if (shoot) {
+      mSuperstructure.setWantedState(Superstructure.WantedState.SHOOT);
+    } else if (climbExtend) {
+      mSuperstructure.setWantedState(Superstructure.WantedState.CLIMBING_EXTEND);
+    } else if (climbRetract) {
+      mSuperstructure.setWantedState(Superstructure.WantedState.CLIMBING_RETRACT);
+    } else {
+      mSuperstructure.setWantedState(Superstructure.WantedState.IDLE);
     }
-  */
-  SmartDashboard.putBoolean("PowerCell Pickup", pickupPowerCell);
-  SmartDashboard.putBoolean("PowerCell Spit", spitPowerCell);
-  SmartDashboard.putBoolean("Sequencer Low Sensor", sequencerLowSensor.get());
-
-  SmartDashboard.putNumber("Red", detectedColor.red);
-  SmartDashboard.putNumber("Green", detectedColor.green);
-  SmartDashboard.putNumber("Blue", detectedColor.blue);
-  SmartDashboard.putNumber("IR", IR);
-
-  mSuperstructure.outputToSmartDashboard();
-}
+    /*
+     * try { //Scheduler.getInstance().run();
+     * //logger.info("<b>Robot</b>: teleopPeriodic finished");
+     * SmartDashboard.putNumber("Periodic", 1); }
+     */
+    SmartDashboard.putBoolean("PowerCell Pickup", pickupPowerCell);
+    SmartDashboard.putBoolean("PowerCell Eject", ejectPowerCell);
+    SmartDashboard.putBoolean("Shoot", shoot);
+    // SmartDashboard.putBoolean("Sequencer Low Sensor", sequencerLowSensor.get());
+    mSuperstructure.outputToSmartDashboard();
+  }
 
   @Override
   public void disabledPeriodic() {
+
     if (wheelObjects == null) {
       // wheelObjects = DRIVE.getWheelObjects();
     } else if (wheelObjects.length == 4) {
       for (int i = 0; i < wheelObjects.length; i++) {
         final Wheel wheel = wheelObjects[i];
-        if(wheel.m_encoder != null){
-          SmartDashboard.putNumber("Wheel"+wheel.wheelID+" Encoder Pos", wheel.m_encoder.getPosition());
-          SmartDashboard.putNumber("Wheel"+wheel.wheelID+" Encoder Get Abs", wheel.getAzimuthAbsolutePosition());
+        if (wheel.m_encoder != null) {
+          SmartDashboard.putNumber("Wheel" + wheel.wheelID + " Encoder Pos", wheel.m_encoder.getPosition());
+          SmartDashboard.putNumber("Wheel" + wheel.wheelID + " Encoder Get Abs", wheel.getAzimuthAbsolutePosition());
         }
       }
     }
   }
-    /**
-     * Helper function that is called in all periodic functions
-     */
-    public void allPeriodic() {
-      mSubsystemManager.outputToSmartDashboard();
-      mSubsystemManager.writeToLog();
-      SmartDashboard.putString("allPeriodic", "Patrick");
-    }
+
+  /**
+   * Helper function that is called in all periodic functions
+   */
+  public void allPeriodic() {
+    mSubsystemManager.outputToSmartDashboard();
+    mSubsystemManager.writeToLog();
+    SmartDashboard.putString("allPeriodic", "Patrick");
+  }
 }

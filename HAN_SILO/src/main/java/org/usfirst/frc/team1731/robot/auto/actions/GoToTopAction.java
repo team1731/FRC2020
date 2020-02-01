@@ -2,8 +2,8 @@ package org.usfirst.frc.team1731.robot.auto.actions;
 
 import org.usfirst.frc.team1731.robot.Constants;
 import org.usfirst.frc.team1731.robot.subsystems.Elevator;
-import org.usfirst.frc.team1731.robot.subsystems.Intake;
-import org.usfirst.frc.team1731.robot.subsystems.Intake.WantedState;
+import org.usfirst.frc.team1731.robot.subsystems.PowerCell;
+import org.usfirst.frc.team1731.robot.subsystems.PowerCell.WantedState;
 import org.usfirst.frc.team1731.robot.subsystems.Superstructure;
 import org.usfirst.frc.team1731.robot.Constants.ELEVATOR_POSITION;
 
@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.Timer;
  */
 public class GoToTopAction implements Action {
 
-    Intake mIntake = Intake.getInstance();
+    PowerCell mIntake = PowerCell.getInstance();
     Elevator mElevator = Elevator.getInstance();
     Superstructure mSuperstructure = Superstructure.getInstance();
     double startTime;

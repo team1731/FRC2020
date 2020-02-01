@@ -50,7 +50,7 @@ import org.usfirst.frc.team1731.robot.subsystems.ConnectionMonitor;
 import org.usfirst.frc.team1731.robot.subsystems.Drive;
 import org.usfirst.frc.team1731.robot.subsystems.Elevator;
 
-import org.usfirst.frc.team1731.robot.subsystems.Intake;
+import org.usfirst.frc.team1731.robot.subsystems.PowerCell;
 import org.usfirst.frc.team1731.robot.subsystems.Superstructure;
 import org.usfirst.frc.team1731.robot.vision.JevoisVisionServer;
 import org.usfirst.frc.team1731.robot.subsystems.Climber;
@@ -138,7 +138,7 @@ public class Robot extends TimedRobot {
                                          Drive.getInstance(),
                                          Superstructure.getInstance(),
                                          Elevator.getInstance(),
-                                         Intake.getInstance(),
+                                         PowerCell.getInstance(),
                                          Climber.getInstance()
                                          ));
 
@@ -368,7 +368,7 @@ public class Robot extends TimedRobot {
     public void teleopInit() {
         try {
             CrashTracker.logTeleopInit();
-            mClimber.resetLift();
+           // mClimber.resetLift();
 
             // IF TELEOP DOESN"T WORK PUT THESE LINES BACK IN that are shifted to right and commented out below!!!!!!!!!!!!!!!!!!!!!!!!!!!
             // Start loopers
@@ -414,18 +414,17 @@ public class Robot extends TimedRobot {
             double timestamp = Timer.getFPGATimestamp();
             boolean inTractorBeam = false;
             boolean grabCube = mControlBoard.getGrabCubeButton();
-            boolean calibrateDown = mControlBoard.getCalibrateDown();
-            boolean ejectPowerCell = mControlBoard. getEjectPowerCell();
+            boolean shoot = mControlBoard.getShootBall();
+            boolean ejectPowerCell = mControlBoard.getEjectBall();
             boolean spitting = mControlBoard.getSpit();
             boolean pickUp = mControlBoard.getAutoPickUp();
             boolean pickupHatch = mControlBoard.getPickupPanel();
             boolean ejectHatch = mControlBoard.getShootPanel();
             boolean pickupPowerCell = mControlBoard.getPickupBall();
-            boolean spitPowerCell = mControlBoard.getSpitBall();
             boolean ejectCargo = mControlBoard.getShootBall();
             boolean elevCargoShipPos = mControlBoard.getCargoShipBall();
             boolean startingConfiguration = mControlBoard.getStartingConfiguration();       
-            int climber = mControlBoard.getClimber();           
+            boolean climber = mControlBoard.getClimberExtend();           
            // boolean tractorDrive = mControlBoard.getTractorDrive();
 
             double elevatorPOV = mControlBoard.getElevatorControl();
@@ -442,16 +441,16 @@ public class Robot extends TimedRobot {
                 mSuperstructure.setWantedElevatorPosition(ELEVATOR_POSITION.ELEVATOR_SHIP);
             }
 
-            if (climber == 1) {
-                mSuperstructure.setWantedState(Superstructure.WantedState.CLIMBINGUP);
+            if (climber) {
+                mSuperstructure.setWantedState(Superstructure.WantedState.CLIMBING_EXTEND);
             } else if (grabCube) {
             	mSuperstructure.setWantedState(Superstructure.WantedState.INTAKING);
             } else if (spitting) {
             	mSuperstructure.setWantedState(Superstructure.WantedState.SPITTING);
-            } else if (calibrateDown) {
-            	mSuperstructure.setWantedState(Superstructure.WantedState.CALIBRATINGDOWN);
+            } else if (shoot) {
+            	mSuperstructure.setWantedState(Superstructure.WantedState.SHOOT);
             } else if (ejectPowerCell) {
-            	mSuperstructure.setWantedState(Superstructure.WantedState.EJECT_POWERCELL);
+            	mSuperstructure.setWantedState(Superstructure.WantedState.POWERCELL_EJECT);
             } else if (startingConfiguration){
                 mSuperstructure.setWantedState(Superstructure.WantedState.STARTINGCONFIGURATION);
             } else if (pickUp) {
@@ -463,9 +462,7 @@ public class Robot extends TimedRobot {
             } else if (ejectCargo) {
                 mSuperstructure.setWantedState(Superstructure.WantedState.EJECTING_CARGO);
             } else if (pickupPowerCell) {
-                mSuperstructure.setWantedState(Superstructure.WantedState.POWERCELL_INTAKING);
-            } else if (spitPowerCell) {
-                mSuperstructure.setWantedState(Superstructure.WantedState.POWERCELL_SPITTING);
+                mSuperstructure.setWantedState(Superstructure.WantedState.POWERCELL_INTAKE);
             } else {
             	mSuperstructure.setWantedState(Superstructure.WantedState.IDLE);
             }
@@ -616,7 +613,7 @@ public class Robot extends TimedRobot {
             }
             */
 
-            else if((climber != 1) && !mDrive.isDrivingTractorBeam()){
+            else if((!climber) && !mDrive.isDrivingTractorBeam()){
                 stopAuto(); // if none of the above 4 auto buttons is being held down and we're not climbing
 
                 // if(tractorDrive && mVisionCamProcessor.getVisionCamHasTarget()){
@@ -763,7 +760,7 @@ public class Robot extends TimedRobot {
 
         boolean results = Elevator.getInstance().checkSystem();
         results &= Drive.getInstance().checkSystem();
-        results &= Intake.getInstance().checkSystem();
+        results &= PowerCell.getInstance().checkSystem();
 
 
         if (!results) {
