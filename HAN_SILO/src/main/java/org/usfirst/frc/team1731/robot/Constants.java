@@ -296,12 +296,15 @@ public class Constants extends ConstantsBase {
     public static final int kMotorPWMSeq = 1;         // Sequencer
     public static final int kMotorPWMShoot1 = 2;       // Shooter Motor One
     public static final int kMotorPWMShoot2 = 3;       // Shooter Motor Two
+    public static final int kMotorCANShoot1 = 5;
+    public static final int kMotorCANShoot2 = 6;
     public static final double kMotorSeqFwdSpeed = 0.1;   // forward or backward
     public static final double kMotorSeqRevSpeed = -0.1;   // forward or backward
     public static final double kMotorIntakeFwdSpeed = 0.2;   // forward or backward
     public static final double kMotorIntakeRevSpeed = -0.2;   // forward or backward
     public static final double kMotorShootSpeed = 0.5;   // forward or backward
     public static final double kMotorShootPercent = 0.90;   // check shooting motor percent
+    public static final double kMotorClimbPercent = 0.3;
 
     // Shooter
     public static final int kShooterVictor = 3;
