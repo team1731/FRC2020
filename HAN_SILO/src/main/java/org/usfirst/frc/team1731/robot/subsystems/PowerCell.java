@@ -39,6 +39,7 @@ public class PowerCell extends Subsystem {
 
     private final PWMTalonFX mTalonIntake;
     private final PWMTalonFX mTalonSeq;
+    private final PWMTalonFX mTalonShoot;
     private SystemState mSystemState = SystemState.IDLE;
     private WantedState mWantedState = WantedState.IDLE;
     private DigitalInput mLowSensor;
@@ -54,6 +55,7 @@ public class PowerCell extends Subsystem {
     private PowerCell() {
         mTalonIntake = new PWMTalonFX(Constants.kMotorPWMIntake);
         mTalonSeq = new PWMTalonFX(Constants.kMotorPWMSeq);
+        mTalonShoot = new PWMTalonFX(Constants.kMotorPWMShoot);
         mLowSensor = new DigitalInput(Constants.kLowSequencer);
         // DoubleSolenoid IntakeHood = new
         // DoubleSolenoid(Constants.kIntakeHoodSolenoid1, Constants.kIntakeHoodSolenoid2);
@@ -150,12 +152,11 @@ public class PowerCell extends Subsystem {
 
         private SystemState handleShooting() {
             if (mStateChanged) {
-                //mTalonShoot.setSpeed(Constants.kMotorShootSpeed);
+                mTalonShoot.setSpeed(Constants.kMotorShootSpeed);
                 mPowerCellCount = 0;
-            } else { // can be elif statement
+            } else if (mTalonShoot.getSpeed() >= (Constants.kMotorShootSpeed * Constants.kMotorShootPercent)) {
                 //test if shooting motor is up to speed 
-                //if pass above test then mTalonSeq.setSpeed(Constants.kMotorSeqFwdSpeed);
-
+                mTalonSeq.setSpeed(Constants.kMotorSeqFwdSpeed);
             }
             return defaultStateTransfer();
         }
@@ -165,7 +166,7 @@ public class PowerCell extends Subsystem {
                 // IntakeHood.set(Value.kForward);
                 mTalonIntake.setSpeed(Constants.kMotorIntakeRevSpeed);
                 mTalonSeq.setSpeed(Constants.kMotorSeqRevSpeed);
-                //mTalonShoot.setSpeed(0);
+                mTalonShoot.setSpeed(0);
                 mPowerCellCount = 0;
             }
             return defaultStateTransfer();
@@ -196,7 +197,7 @@ public class PowerCell extends Subsystem {
         if (mStateChanged) {
             mTalonIntake.setSpeed(0);
             mTalonSeq.setSpeed(0);
-            //mTalonShoot.setSpeed(0);
+            mTalonShoot.setSpeed(0);
             // IntakeHood.set(Value.kReverse);
         }
         return defaultStateTransfer();
