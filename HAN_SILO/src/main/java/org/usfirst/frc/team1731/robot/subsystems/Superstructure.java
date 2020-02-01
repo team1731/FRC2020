@@ -210,8 +210,8 @@ public class Superstructure extends Subsystem {
                 }
 
                 if (newState != mSystemState) {
-                    System.out.println("Superstructure state " + mSystemState + " to " + newState + " Timestamp: "
-                            + Timer.getFPGATimestamp());
+                    //System.out.println("Superstructure state " + mSystemState + " to " + newState + " Timestamp: "
+                    //        + Timer.getFPGATimestamp());
                     mSystemState = newState;
                     mCurrentStateStartTime = timestamp;
                     mStateChanged = true;

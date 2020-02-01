@@ -133,14 +133,14 @@ public class Intake extends Subsystem {
         }
         
         private SystemState handleSpitting() {
-            if (mStateChanged) {
+            if (mStateChanged && mTalon != null) {
                 mTalon.set(ControlMode.PercentOutput, -1);
             }
     		return defaultStateTransfer();
 		}
 
 		private SystemState handleIntaking() {
-            if (mStateChanged) {
+            if (mStateChanged && mTalon != null) {
                 mTalon.set(ControlMode.PercentOutput, 1);
             }
             if (hasCargo()) {
@@ -150,7 +150,7 @@ public class Intake extends Subsystem {
         }
         
         private SystemState handleHolding() {
-            if (!hasCargo()) {
+            if (!hasCargo() && mTalon != null) {
                 mTalon.set(ControlMode.PercentOutput, 1); 
             }
     		return defaultStateTransfer();

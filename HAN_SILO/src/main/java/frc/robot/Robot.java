@@ -354,14 +354,14 @@ public class Robot extends TimedRobot {
 	    // negative values when we push forward.
 	    double joystickY = m_controller.getY(GenericHID.Hand.kLeft);
 	    //double xSpeed = -m_xspeedLimiter.calculate(joystickY) * Drivetrain.kMaxSpeed;
-	    double xSpeed = -joystickY;
+	    double xSpeed = Math.abs(joystickY) < 0.09 ? 0 : -joystickY;
 	
 	    // Get the y speed or sideways/strafe speed. We are inverting this because
 	    // we want a positive value when we pull to the left. Xbox controllers
 	    // return positive values when you pull to the right by default.
 	    double joystickXLeft = m_controller.getX(GenericHID.Hand.kLeft);
 	    //double ySpeed = -m_yspeedLimiter.calculate(joystickXLeft) * Drivetrain.kMaxSpeed;
-	    double ySpeed = -joystickXLeft;
+	    double ySpeed = Math.abs(joystickXLeft) < 0.09 ? 0 : -joystickXLeft;
 	
 	    // Get the rate of angular rotation. We are inverting this because we want a
 	    // positive value when we pull to the left (remember, CCW is positive in
@@ -369,7 +369,7 @@ public class Robot extends TimedRobot {
 	    // the right by default.
 	    double joystickXRight = m_controller.getX(GenericHID.Hand.kRight);
 	    //double rot = -m_rotLimiter.calculate(joystickXRight) * Drivetrain.kMaxAngularSpeed;
-	    double rot = -joystickXRight;
+	    double rot = Math.abs(joystickXRight) < 0.09 ? 0 : -joystickXRight;
 	
 	    SmartDashboard.putNumber("Joystick Y  value", joystickY);
 	    SmartDashboard.putNumber("Joystick XL value", joystickXLeft);

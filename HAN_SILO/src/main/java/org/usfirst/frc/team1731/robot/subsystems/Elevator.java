@@ -165,7 +165,9 @@ public class Elevator extends Subsystem {
                 mWantedPosition = 0;
                 mCurrentStateStartTime = timestamp;
                 if(!isReset){
-                    mTalon.setSelectedSensorPosition(1000, 0, 10);                
+                    if(mTalon != null){
+                        mTalon.setSelectedSensorPosition(1000, 0, 10);      
+                    }          
                     isReset = true;
                 }
               //  DriverStation.reportError("Elevator SystemState: " + mSystemState, false);
@@ -227,7 +229,7 @@ public class Elevator extends Subsystem {
     }
     
     private SystemState handleIdle() {
-        if (mStateChanged) {
+        if (mStateChanged && mTalon != null) {
   //          System.out.println("ININDLE@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
             mTalon.set(ControlMode.PercentOutput, 0);
         }
@@ -240,7 +242,9 @@ public class Elevator extends Subsystem {
             zeroSensors();
         }
         if (mPositionChanged) {
-            mTalon.set(ControlMode.MotionMagic, mWantedPosition);
+            if(mTalon != null){
+                mTalon.set(ControlMode.MotionMagic, mWantedPosition);
+            }
             mPositionChanged = false;
         }
     	
@@ -257,23 +261,27 @@ public class Elevator extends Subsystem {
     }
 
     private SystemState handleCalibratingDown() {
-        if (mStateChanged) {
+        if (mStateChanged && mTalon != null) {
             mTalon.set(ControlMode.PercentOutput, Constants.kElevatorCalibrateDown);
         }
         mPositionChanged = true;
         mWantedPosition = Constants.kElevatorHomeEncoderValue;
-        mTalon.setSelectedSensorPosition(-3000, 0, 0);
+        if(mTalon != null){
+            mTalon.setSelectedSensorPosition(-3000, 0, 0);
+        }
         wasCalibrated = true;
         return defaultStateTransfer();
     }
 
     private SystemState handleCalibratingUp() {
-        if (mStateChanged) {
+        if (mStateChanged && mTalon != null) {
             mTalon.set(ControlMode.PercentOutput, Constants.kElevatorCalibrateUp);
         }
         mPositionChanged = true;
         mWantedPosition = Constants.kElevatorHomeEncoderValue;
-        mTalon.setSelectedSensorPosition(Constants.kElevatorHomeEncoderValue, 0, 0);
+        if(mTalon != null){
+            mTalon.setSelectedSensorPosition(Constants.kElevatorHomeEncoderValue, 0, 0);
+        }
         wasCalibrated = true;
         return defaultStateTransfer();
     }
@@ -303,8 +311,10 @@ public class Elevator extends Subsystem {
         SmartDashboard.putString("ElevWantState", mWantedState.name());
         //SmartDashboard.putNumber("ElevWantState", (double)mWantedState.ordinal());
         SmartDashboard.putNumber("ElevWantPos", mWantedPosition);
-        SmartDashboard.putNumber("ElevCurPos", mTalon.getSelectedSensorPosition(0));
-        SmartDashboard.putNumber("ElevQuadPos", mTalon.getSensorCollection().getQuadraturePosition());
+        if(mTalon != null){
+            SmartDashboard.putNumber("ElevCurPos", mTalon.getSelectedSensorPosition(0));
+            SmartDashboard.putNumber("ElevQuadPos", mTalon.getSensorCollection().getQuadraturePosition());
+        }
         SmartDashboard.putBoolean("ElevPosChange", mPositionChanged);
         //SmartDashboard.putBoolean("ElevLastRevSw", mRevSwitchSet);
     }
@@ -316,21 +326,21 @@ public class Elevator extends Subsystem {
     }
 
     public synchronized int getCurrentPosition() {
-    	return mTalon.getSelectedSensorPosition(0);
+    	return mTalon != null ? mTalon.getSelectedSensorPosition(0) : 0;
     }
     
 	public boolean atTop() {
-		int position = mTalon.getSelectedSensorPosition(0); 
+		int position = mTalon != null ? mTalon.getSelectedSensorPosition(0) : 0; 
     	return (position >= (Constants.kElevatorCargo3rd_EncoderValue - 120));
     }
         
     public boolean atBottom() {
-        int position = mTalon.getSelectedSensorPosition(0); 
+        int position = mTalon != null ? mTalon.getSelectedSensorPosition(0) : 0; 
     	return (position <= (Constants.kElevatorHomeEncoderValue + Constants.kElevatorEncoderRange));
     }
 
     public boolean atDesired() {
-        int position = mTalon.getSelectedSensorPosition(0);
+        int position = mTalon != null ? mTalon.getSelectedSensorPosition(0) : 0;
         int hi = (int) mWantedPosition + Constants.kElevatorEncoderRange;
         int lo = (int) mWantedPosition - Constants.kElevatorEncoderRange;
         boolean result = false;

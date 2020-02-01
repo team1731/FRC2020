@@ -281,8 +281,12 @@ public class Climber extends Subsystem {
         mDartLatch.set(Value.kReverse);
        //System.out.println("Climber is running");
         //if (mStateChanged) {
+        if(mTalonLeft != null){
             mTalonLeft.set(ControlMode.MotionMagic, Constants.kClimberRetractedPositionLeft);
+        }
+        if(mTalonRight != null){
             mTalonRight.set(ControlMode.MotionMagic, Constants.kClimberRetractedPositionRight);
+        }
         //}
        // SmartDashboard.putBoolean("Latch",latchSensor.get());
         switch (mWantedState) {
@@ -314,7 +318,7 @@ public class Climber extends Subsystem {
         if (mDartsHaveDetached) {
             return SystemState.LIFTINGWITHWHEELS;
         }
-        else {
+        else if(mTalonLeft != null && mTalonRight != null) {
             if (mStateChanged) {
                 mTalonLeft.set(ControlMode.MotionMagic, Constants.kClimberExtendedPositionLeft);
                 mTalonRight.set(ControlMode.MotionMagic, Constants.kClimberExtendedPositionRight);
@@ -331,6 +335,8 @@ public class Climber extends Subsystem {
                 return SystemState.LIFTINGWITHWHEELS;
             }
             return defaultStateTransfer(mSystemState);
+         } else {
+             return SystemState.IDLE;
          }
 }
 
@@ -348,7 +354,7 @@ public class Climber extends Subsystem {
 
     private SystemState handleRetracting() {
        // System.out.println("RETRACTING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        if (mStateChanged) {
+        if (mStateChanged && mTalonLeft != null && mTalonRight != null) {
             mTalonLeft.configMotionCruiseVelocity(Constants.kClimberFastCruiseVelocity, Constants.kTimeoutMs);
             mTalonRight.configMotionCruiseVelocity(Constants.kClimberFastCruiseVelocity, Constants.kTimeoutMs);
             mTalonLeft.set(ControlMode.MotionMagic, Constants.kClimberRetractedPositionLeft);
