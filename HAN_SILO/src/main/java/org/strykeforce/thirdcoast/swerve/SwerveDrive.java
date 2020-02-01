@@ -364,7 +364,7 @@ public double getRightDistanceInches() {
             SmartDashboard.putNumber("Auto Drive Forward", autoforward);
             SmartDashboard.putNumber("Auto Drive Strafe", autostrafe);
 
-            drive(autoforward, autostrafe, 0);
+            //drive(autoforward, autostrafe, 0);
 
             Kinematics.DriveVelocity setpoint = Kinematics.inverseKinematics(command);
             updateVelocitySetpoint(setpoint.left, setpoint.right);
@@ -467,47 +467,6 @@ public double getRightDistanceInches() {
           final double max_desired = Math.max(Math.abs(left_inches_per_sec), Math.abs(right_inches_per_sec));
           final double scale = max_desired > Constants.kDriveHighGearMaxSetpoint
                   ? Constants.kDriveHighGearMaxSetpoint / max_desired : 1.0;
-
-              //TODO: Drive math
-              /*
-                So this code was written for tank drive. Turning is defined by decreasing a side. Of course, we don't
-                want to do this, turning will be defined by an azimuth parameter. We want to just translate along the path instead
-                To do this, we must split the two side direction variables into a forward and strafe direction...
-
-                First thing's first, we need to follow the path. We can fix up azimuth direction later.
-
-                The robot faces the positive X direction. Positive Y is to the left of the robot. So therefore
-
-                Forward is X
-                Strafe is Y
-
-                This is especially true when we are field oriented. No matter which direction the robot is facing, forward
-                is always X and strafe is always Y.
-
-                Perhaps a ratio? Say we need to turn left...
-
-                left = 0.5
-                right = 1
-                
-                left/right = 0.5/1 = 0.5
-
-                right/left = 1/0.5 = 2
-
-                or say we turn right... should just be the obverse
-
-                left = 1
-                right = 0.5
-
-                left/right = 1/0.5 = 2
-
-                right/left = 0.5/1 = 0.5
-
-                Yeah... so I'm going to run with left/right. 
-
-                This means that a number larger than 1 is turning right, while a number smaller than 1 but larger than 0 is turning left.
-
-                So... max_desired * left/right would be the strafe?
-              */
 
 
             //mLeftMaster.set(ControlMode.Velocity, inchesPerSecondToUnitsPer100ms(left_inches_per_sec * scale));

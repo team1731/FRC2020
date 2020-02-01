@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.strykeforce.thirdcoast.swerve.Wheel;
 import org.usfirst.frc.team1731.lib.util.InterpolatingDouble;
 import org.usfirst.frc.team1731.lib.util.InterpolatingTreeMap;
 import org.usfirst.frc.team1731.lib.util.math.RigidTransform2d;
@@ -122,8 +123,7 @@ public class RobotState {
         field_to_vehicle_.put(new InterpolatingDouble(timestamp), observation);
     }
 
-    public synchronized void addObservations(double timestamp, Twist2d measured_velocity,
-            Twist2d predicted_velocity) {
+    public synchronized void addObservations(double timestamp, Twist2d measured_velocity, Twist2d predicted_velocity) {
         addFieldToVehicleObservation(timestamp,
                 Kinematics.integrateForwardKinematics(getLatestFieldToVehicle().getValue(), measured_velocity));
         vehicle_velocity_measured_ = measured_velocity;
@@ -198,6 +198,11 @@ public class RobotState {
         cached_shooter_aiming_params_ = null;
     }
 
+
+    /**
+     * @deprecated use the built-in WPILib method for generating odometry from the swerve modules
+     */
+    @Deprecated
     public synchronized Twist2d generateOdometryFromSensors(double left_encoder_delta_distance,
             double right_encoder_delta_distance, Rotation2d current_gyro_angle) {
 

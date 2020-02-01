@@ -40,6 +40,7 @@ public class RobotStateEstimator implements Loop {
     @Override
     public synchronized void onLoop(double timestamp) {
         //#region Original Estimator Code
+
         final double left_distance = swerveDrive_.getLeftDistanceInches();
         final double right_distance = swerveDrive_.getRightDistanceInches();
         final Rotation2d gyro_angle = swerveDrive_.getGyroAngle();
@@ -50,6 +51,12 @@ public class RobotStateEstimator implements Loop {
         robot_state_.addObservations(timestamp, odometry_velocity, predicted_velocity);
         left_encoder_prev_distance_ = left_distance;
         right_encoder_prev_distance_ = right_distance;
+
+        //#endregion
+
+        //#region SwerveDrive Estimator
+
+        
 
         //#endregion
     }
