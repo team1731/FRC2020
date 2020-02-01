@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode;
 import org.strykeforce.thirdcoast.talon.Errors;
 
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -134,7 +133,8 @@ public class Wheel {
     SmartDashboard.putNumber("Wheel"+wheelID+" BDL Commanded Position",(azimuthPosition + azimuthError));
     m_pidController.setReference((azimuthPosition + azimuthError), ControlType.kSmartMotion);
     //m_pidController.setReference(5, ControlType.kSmartMotion);
-    driver.accept(drive);
+    //driver.accept(drive);
+    driveSpark.getPIDController().setReference(drive, ControlType.kVelocity);
   //  logger.info("<b>Wheel</b>: set finished");
   }
 
@@ -225,9 +225,7 @@ public class Wheel {
     //azimuthTalon.set(MotionMagic, azimuthSetpoint);
     //azimuthSpark.set(azimuthSetpoint);
     //m_pidController.setReference(azimuthSetpoint, ControlType.kSmartMotion);
-    if (RobotBase.isReal()) {
-      m_encoder.setPosition(0);  //TODO change whith 221 encoder
-    }
+    m_encoder.setPosition(0);  //TODO change whith 221 encoder
     //logger.info("<b>Wheel</b>: setAzimuthZero finished");
   }
 

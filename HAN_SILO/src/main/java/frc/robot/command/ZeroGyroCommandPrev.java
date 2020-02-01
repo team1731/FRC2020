@@ -8,12 +8,12 @@ import frc.robot.subsystem.DriveSubsystem;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 
-public final class ZeroGyroCommand extends InstantCommand {
+public final class ZeroGyroCommandPrev extends InstantCommand {
 
   //private static final Logger logger = LoggerFactory.getLogger(ZeroGyroCommand.class);
   private static final DriveSubsystem swerve = RobotPrev.DRIVE;
 
-  public ZeroGyroCommand() {
+  public ZeroGyroCommandPrev() {
     requires(swerve);
   }
 
