@@ -86,12 +86,12 @@ public class GamepadControlBoard implements ControlBoardInterface {
 
     @Override
     public boolean getClimberExtend() {
-        return mOperator.getRawButton(5); // extend climber
+        return mOperator.getRawButton(1); // extend climber
     }
 
         @Override
     public boolean getClimberRetract() {
-        return mOperator.getRawButton(6); // retract climber
+        return mOperator.getRawButton(2); // retract climber
     }  
 
     @Override

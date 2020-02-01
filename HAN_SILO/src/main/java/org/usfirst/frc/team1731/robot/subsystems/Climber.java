@@ -44,14 +44,14 @@ public class Climber extends Subsystem {
     }
 
 
-    private final PWMTalonFX mTalonFX;
+    //private final PWMTalonFX mTalonFX;
     // sensors used for old intake. New intake doesn't need them.
    // private final AnalogInput mIRSensor1;
     //private final AnalogInput mIRSensor2;
 
     private Climber() {
         //did randome numbor for testing. Line 55 is what we want. ignore 5.
-        mTalonFX = new PWMTalonFX(5);
+        //mTalonFX = new PWMTalonFX(5);
         //mTalonFX = new PWMTalonFX(Constants.kShooterVictor);
         //mIRSensor1 = new AnalogInput(1);
         //mIRSensor2 = new AnalogInput(4);
@@ -135,7 +135,7 @@ public class Climber extends Subsystem {
             if (mStateChanged) {
                 //ShooterGearShift.set(Value.kForward);
                 //ClimberSolenoid.set(Value.kForward);
-                mTalonFX.setSpeed(0.2);
+                //mTalonFX.setSpeed(0.2);
             }
             return defaultStateTransfer();
         }
@@ -144,7 +144,7 @@ public class Climber extends Subsystem {
             if (mStateChanged) {
                 //ShooterGearShift.set(Value.kForward);
                 //ClimberSolenoid.set(Value.kOff);
-                mTalonFX.setSpeed(-.2);
+                //mTalonFX.setSpeed(-.2);
             }
             return defaultStateTransfer();
         }
@@ -171,10 +171,10 @@ public class Climber extends Subsystem {
         // setOpenLoop(0.0f);
         // if motor is not off, turn motor off
         if (mStateChanged) {
-            if (mTalonFX.getSpeed() > 0) {
-            mTalonFX.setSpeed(0);
+            //if (mTalonFX.getSpeed() > 0) {
+            //mTalonFX.setSpeed(0);
             //ShooterGearShift.set(Value.kReverse);
-            } 
+           // } 
             /*
             if (ShooterGearShift.getValue() == kForward) {
             ShooterGearShift.set(Value.kReverse);

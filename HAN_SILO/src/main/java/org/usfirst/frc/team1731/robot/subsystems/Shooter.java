@@ -40,10 +40,10 @@ public class Shooter extends Subsystem {
     }
 
 
-    private final PWMTalonFX mTalonFX;
+    //private final PWMTalonFX mTalonFX;
 
     private Shooter() {
-        mTalonFX = new PWMTalonFX(Constants.kShooterVictor);
+        //mTalonFX = new PWMTalonFX(Constants.kShooterVictor);
 
     }
 
@@ -116,7 +116,7 @@ public class Shooter extends Subsystem {
 
         private SystemState handleShooting() {
             if (mStateChanged) {
-                mTalonFX.setSpeed(.2);
+                //mTalonFX.setSpeed(.2);
             }
             return defaultStateTransfer();
         }
@@ -141,7 +141,7 @@ public class Shooter extends Subsystem {
         // setOpenLoop(0.0f);
         // if motor is not off, turn motor off
         if (mStateChanged) {
-            mTalonFX.setSpeed(0);
+            //mTalonFX.setSpeed(0);
         }
         return defaultStateTransfer();
     }

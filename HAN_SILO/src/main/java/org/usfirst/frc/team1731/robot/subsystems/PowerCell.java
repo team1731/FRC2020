@@ -75,14 +75,22 @@ public class PowerCell extends Subsystem {
         IDLE, // stop all motors
         INTAKING,
         SHOOTING,
-        EJECTING
+        EJECTING,
+        CLIMB_ENGAGING,
+        CLIMB_EXTENDING,
+        CLIMB_ALIGNING,
+        CLIMB_RETRACTING
     }
 
     public enum WantedState {
         IDLE,
         INTAKE,
         SHOOT,
-        EJECT
+        EJECT,
+        CLIMB_ENGAGE,
+        CLIMB_EXTEND,
+        CLIMB_ALIGN,
+        CLIMB_RETRACT
     }
 
     private final Loop mLoop = new Loop() {
@@ -115,6 +123,18 @@ public class PowerCell extends Subsystem {
                         break;
                     case EJECTING:
                         newState = handleEjecting();
+                        break;
+                    case CLIMB_ENGAGING:
+                        newState = handleClimbEngaging();
+                        break;
+                    case CLIMB_EXTENDING:
+                        newState = handleClimbExtending();
+                        break;
+                    case CLIMB_ALIGNING:
+                        newState = handleClimbAligning();
+                        break;
+                    case CLIMB_RETRACTING:
+                        newState = handleClimbRetracting();
                         break;
                     default:
                         newState = SystemState.IDLE;
@@ -174,8 +194,41 @@ public class PowerCell extends Subsystem {
                 mTalonIntake.setSpeed(Constants.kMotorIntakeRevSpeed);
                 mTalonSeq.setSpeed(Constants.kMotorSeqRevSpeed);
                 mTalonShoot1.setSpeed(0);
-                mTalonShoot1.setSpeed(0);
+                mTalonShoot2.setSpeed(0);
                 mPowerCellCount = 0;
+            }
+            return defaultStateTransfer();
+        }
+
+        private SystemState handleClimbEngaging() {
+            if (mStateChanged) {
+                // IntakeHood.set(Value.kForward);
+                
+            }
+            return defaultStateTransfer();
+        }
+
+        private SystemState handleClimbExtending() {
+            if (mStateChanged) {
+                // IntakeHood.set(Value.kForward);
+
+            }
+            return defaultStateTransfer();
+        }
+
+        private SystemState handleClimbAligning() {
+            if (mStateChanged) {
+                // IntakeHood.set(Value.kForward);
+
+            }
+            return defaultStateTransfer();
+        }
+
+        private SystemState handleClimbRetracting() {
+            if (mStateChanged) {
+                // IntakeHood.set(Value.kForward);
+                mTalonShoot1.setSpeed(0);
+
             }
             return defaultStateTransfer();
         }
@@ -194,6 +247,14 @@ public class PowerCell extends Subsystem {
                 return SystemState.SHOOTING;
             case EJECT:
                 return SystemState.EJECTING;
+            case CLIMB_ENGAGE:
+                return SystemState.CLIMB_ENGAGING;
+            case CLIMB_EXTEND:
+                return SystemState.CLIMB_EXTENDING;
+            case CLIMB_ALIGN:
+                return SystemState.CLIMB_ALIGNING;
+            case CLIMB_RETRACT:
+                return SystemState.CLIMB_RETRACTING;
             default:
                 return SystemState.IDLE;
         }
