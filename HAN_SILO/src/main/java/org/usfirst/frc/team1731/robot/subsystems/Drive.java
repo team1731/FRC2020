@@ -211,7 +211,7 @@ public class Drive extends Subsystem {
         int leftSensorPresent = mLeftMaster.getSensorCollection().getPulseWidthRiseToRiseUs();
 
         if (leftSensorPresent == 0) {
-            DriverStation.reportError("Could not detect left encoder: " + leftSensorPresent, false);
+            //DriverStation.reportError("Could not detect left encoder: " + leftSensorPresent, false);
         }
 
         mLeftSlave = TalonSRXFactory.createPermanentSlaveTalon(Constants.kLeftDriveSlaveId,
@@ -232,7 +232,7 @@ public class Drive extends Subsystem {
         
         int rightSensorPresent = mLeftMaster.getSensorCollection().getPulseWidthRiseToRiseUs();
         if (rightSensorPresent == 0) {
-            DriverStation.reportError("Could not detect right encoder: " + rightSensorPresent, false);
+            //DriverStation.reportError("Could not detect right encoder: " + rightSensorPresent, false);
         }
 
         mRightSlave = TalonSRXFactory.createPermanentSlaveTalon(Constants.kRightDriverSlaveId,

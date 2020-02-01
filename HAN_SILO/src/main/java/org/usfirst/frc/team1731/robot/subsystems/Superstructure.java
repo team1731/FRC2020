@@ -188,7 +188,7 @@ public class Superstructure extends Subsystem {
                     newState = handleSpittingOutTop();
                     break;
                 case ELEVATOR_TRACKING:
-                    newState = handleElevatorTracking(timestamp);
+                    newState = SystemState.IDLE; //handleElevatorTracking(timestamp);
                     break;
                 case RETURNING_HOME:
                     newState = handleReturningHome();
@@ -806,10 +806,10 @@ public class Superstructure extends Subsystem {
     private SystemState handleIdle(boolean stateChanged) {
         if (stateChanged) {
             stop();
-            mMustache.set(DoubleSolenoid.Value.kReverse);
-            mElevator.setWantedState(Elevator.WantedState.IDLE);
-            mIntake.setWantedState(Intake.WantedState.IDLE);
-            mClimber.setWantedState(Climber.WantedState.IDLE);
+            //mMustache.set(DoubleSolenoid.Value.kReverse);
+            //mElevator.setWantedState(Elevator.WantedState.IDLE);
+            //mIntake.setWantedState(Intake.WantedState.IDLE);
+            //mClimber.setWantedState(Climber.WantedState.IDLE);
         }
         
         switch (mWantedState) {

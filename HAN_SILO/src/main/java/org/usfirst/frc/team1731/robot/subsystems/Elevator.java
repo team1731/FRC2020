@@ -54,46 +54,48 @@ public class Elevator extends Subsystem {
     private final TalonSRX mTalon;
     
     public Elevator() {
-        mTalon = new TalonSRX(Constants.kElevatorTalon);
-		/* Factory default hardware to prevent unexpected behavior */
-		mTalon.configFactoryDefault();
+        mTalon = null; //FIXME!!! new TalonSRX(Constants.kElevatorTalon);
+        /* Factory default hardware to prevent unexpected behavior */
+        if(mTalon != null){
+            mTalon.configFactoryDefault();
 
-		/* Configure Sensor Source for Pirmary PID */
-     //   mTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
-        mTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+            /* Configure Sensor Source for Pirmary PID */
+        //   mTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+            mTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
 
-		/**
-		 * Configure Talon SRX Output and Sesnor direction accordingly
-		 * Invert Motor to have green LEDs when driving Talon Forward / Requesting Postiive Output
-		 * Phase sensor to have positive increment when driving Talon Forward (Green LED)
-		 */
-		mTalon.setSensorPhase(Constants.kSensorPhase);
-		mTalon.setInverted(true);  //old was true
+            /**
+             * Configure Talon SRX Output and Sesnor direction accordingly
+             * Invert Motor to have green LEDs when driving Talon Forward / Requesting Postiive Output
+             * Phase sensor to have positive increment when driving Talon Forward (Green LED)
+             */
+            mTalon.setSensorPhase(Constants.kSensorPhase);
+            mTalon.setInverted(true);  //old was true
 
-		/* Set relevant frame periods to be at least as fast as periodic rate */
-		mTalon.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kTimeoutMs);
-		mTalon.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kTimeoutMs);
+            /* Set relevant frame periods to be at least as fast as periodic rate */
+            mTalon.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kTimeoutMs);
+            mTalon.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kTimeoutMs);
 
-		/* Set the peak and nominal outputs */
-		mTalon.configNominalOutputForward(0, Constants.kTimeoutMs);
-		mTalon.configNominalOutputReverse(0, Constants.kTimeoutMs);
-		mTalon.configPeakOutputForward(1, Constants.kTimeoutMs);
-		mTalon.configPeakOutputReverse(-1, Constants.kTimeoutMs);
+            /* Set the peak and nominal outputs */
+            mTalon.configNominalOutputForward(0, Constants.kTimeoutMs);
+            mTalon.configNominalOutputReverse(0, Constants.kTimeoutMs);
+            mTalon.configPeakOutputForward(1, Constants.kTimeoutMs);
+            mTalon.configPeakOutputReverse(-1, Constants.kTimeoutMs);
 
-		/* Set Motion Magic gains in slot0 - see documentation */
-		mTalon.selectProfileSlot(Constants.kSlotIdx, Constants.kPIDLoopIdx);
-		mTalon.config_kF(Constants.kSlotIdx, Constants.kElevatorTalonKF, Constants.kTimeoutMs);
-		mTalon.config_kP(Constants.kSlotIdx, Constants.kElevatorTalonKP, Constants.kTimeoutMs);
-		mTalon.config_kI(Constants.kSlotIdx, Constants.kElevatorTalonKI, Constants.kTimeoutMs);
-		mTalon.config_kD(Constants.kSlotIdx, Constants.kElevatorTalonKD, Constants.kTimeoutMs);
+            /* Set Motion Magic gains in slot0 - see documentation */
+            mTalon.selectProfileSlot(Constants.kSlotIdx, Constants.kPIDLoopIdx);
+            mTalon.config_kF(Constants.kSlotIdx, Constants.kElevatorTalonKF, Constants.kTimeoutMs);
+            mTalon.config_kP(Constants.kSlotIdx, Constants.kElevatorTalonKP, Constants.kTimeoutMs);
+            mTalon.config_kI(Constants.kSlotIdx, Constants.kElevatorTalonKI, Constants.kTimeoutMs);
+            mTalon.config_kD(Constants.kSlotIdx, Constants.kElevatorTalonKD, Constants.kTimeoutMs);
 
-		/* Set acceleration and vcruise velocity - see documentation */
-		mTalon.configMotionCruiseVelocity(Constants.kElevatorCruiseVelocity, Constants.kTimeoutMs);
-		mTalon.configMotionAcceleration(Constants.kElevatorAcceleration, Constants.kTimeoutMs);
-        mTalon.configAllowableClosedloopError(Constants.kPIDLoopIdx, 1000, Constants.kTimeoutMs);
-		/* Zero the sensor */
-        mTalon.setSelectedSensorPosition(Constants.kElevatorHomeEncoderValue, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
-        //mTalon.set(ControlMode.PercentOutput, 0);
+            /* Set acceleration and vcruise velocity - see documentation */
+            mTalon.configMotionCruiseVelocity(Constants.kElevatorCruiseVelocity, Constants.kTimeoutMs);
+            mTalon.configMotionAcceleration(Constants.kElevatorAcceleration, Constants.kTimeoutMs);
+            mTalon.configAllowableClosedloopError(Constants.kPIDLoopIdx, 1000, Constants.kTimeoutMs);
+            /* Zero the sensor */
+            mTalon.setSelectedSensorPosition(Constants.kElevatorHomeEncoderValue, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+            //mTalon.set(ControlMode.PercentOutput, 0);
+        }
     }
     /*
     public xElevator() {

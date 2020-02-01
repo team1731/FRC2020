@@ -74,6 +74,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 //original code was 2018 -- I brought in 2019 chunks as indicated...
 public class RobotNew extends TimedRobot {
+	//2020
+	private final XboxController m_controller = new XboxController(0);
+    private final Drivetrain m_swerve = new Drivetrain();
+
 	//2019
     private DigitalOutput leftRightCameraControl;
     private DigitalOutput greenLEDRingLight;
@@ -653,12 +657,17 @@ public class RobotNew extends TimedRobot {
      */
     @Override
     public void autonomousPeriodic() {
-        allPeriodic();
+    	//2020
+        driveWithJoystick(false);
+    	m_swerve.updateOdometry();
+
+        allPeriodic(); //TODO FIXME -- evaluate still calling this
         
         //WPILIB WAY TO RUN AUTONOMOUS...
         //
         //
         //Scheduler.getInstance().run();
+        
     }
 
     /**
@@ -952,6 +961,11 @@ public class RobotNew extends TimedRobot {
 			////////////////////  2019 //////////////////////////////
 
             allPeriodic();
+            
+            //2020
+            driveWithJoystick(true);
+		    m_swerve.updateOdometry();
+
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
@@ -1012,6 +1026,9 @@ public class RobotNew extends TimedRobot {
             //mLED.setLEDOff();
         }
 
+		//2020
+		m_swerve.zeroGyro();
+		    
 		//2018
         zeroAllSensors();
 		
