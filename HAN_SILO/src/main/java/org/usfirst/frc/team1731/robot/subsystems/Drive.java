@@ -254,7 +254,7 @@ public class Drive extends Subsystem {
         setOpenLoop(DriveSignal.NEUTRAL);
 
         // Path Following stuff
-        mNavXBoard = new NavX(SPI.Port.kMXP);
+        mNavXBoard = new NavX();
 
         // Force a CAN message across.
         mIsBrakeMode = true;

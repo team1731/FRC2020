@@ -29,7 +29,14 @@ public class NavX {
         }
     }
 
-    protected AHRS mAHRS;
+    protected static AHRS mAHRS = null;
+
+    public static AHRS getAHRS(){
+        if(mAHRS == null){
+            mAHRS = new AHRS(SPI.Port.kMXP, (byte) 200);
+        } 
+        return mAHRS;
+    }
 
     protected Rotation2d mAngleAdjustment = Rotation2d.identity();
     protected double mYawDegrees;
@@ -37,9 +44,9 @@ public class NavX {
     protected final long kInvalidTimestamp = -1;
     protected long mLastSensorTimestampMs;
 
-    public NavX(SPI.Port spi_port_id) {
-        mAHRS = new AHRS(spi_port_id, (byte) 200);
-       mAHRS.enableBoardlevelYawReset(true); // bdl -added this because sw reset didnt seem to work
+    public NavX() {
+        mAHRS = getAHRS();
+        mAHRS.enableBoardlevelYawReset(true); // bdl -added this because sw reset didnt seem to work
         resetState();
         mAHRS.registerCallback(new Callback(), null);
     }

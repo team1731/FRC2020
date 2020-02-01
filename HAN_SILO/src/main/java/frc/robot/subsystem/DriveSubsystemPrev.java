@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.command.TeleOpDriveCommand;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode;
+import org.usfirst.frc.team1731.lib.util.drivers.NavX;
 import org.strykeforce.thirdcoast.swerve.SwerveDriveConfig;
 import org.strykeforce.thirdcoast.swerve.Wheel;
 
@@ -82,7 +83,7 @@ public class DriveSubsystemPrev extends Subsystem {
     SwerveDriveConfig config = new SwerveDriveConfig();
     config.wheels = getWheels();
     if (RobotBase.isReal()) {
-      config.gyro = new AHRS(SPI.Port.kMXP);
+      config.gyro = NavX.getAHRS();
     }
     //config.length = ROBOT_LENGTH;
     //config.width = ROBOT_WIDTH;

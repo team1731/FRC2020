@@ -10,6 +10,7 @@ package swervebot;
 import com.kauailabs.navx.frc.AHRS;
 
 import org.strykeforce.thirdcoast.swerve.SwerveDrive;
+import org.usfirst.frc.team1731.lib.util.drivers.NavX;
 
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.SPI;
@@ -39,7 +40,7 @@ public class Drivetrain {
   private final SwerveModule m_backRight = new SwerveModule(4, 14);
 
   //private final AnalogGyro m_gyro = new AnalogGyro(0);
-  AHRS m_gyro  = new AHRS(SPI.Port.kMXP);
+  AHRS m_gyro  = NavX.getAHRS();
 
   public void zeroGyro() {
     //logger.info("<b>DriveSubsystem</b>: zeroGyro started");
@@ -105,8 +106,10 @@ public class Drivetrain {
     );
     SmartDashboard.putNumber("pose x", m_odometry.getPoseMeters().getTranslation().getX());
     SmartDashboard.putNumber("pose y", m_odometry.getPoseMeters().getTranslation().getY());
-    SmartDashboard.putNumber("rot", m_odometry.getPoseMeters().getRotation().getDegrees());
-    SmartDashboard.putNumber("raw gyro", m_gyro.getAngle());
+    double rot = m_odometry.getPoseMeters().getRotation().getDegrees();
+    SmartDashboard.putNumber("rot", rot);
+    double angle = m_gyro.getAngle();
+    SmartDashboard.putNumber("raw gyro", angle);
 
   }
 }
