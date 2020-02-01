@@ -106,6 +106,6 @@ public class Drivetrain {
     SmartDashboard.putNumber("pose x", m_odometry.getPoseMeters().getTranslation().getX());
     SmartDashboard.putNumber("pose y", m_odometry.getPoseMeters().getTranslation().getY());
     SmartDashboard.putNumber("rot", m_odometry.getPoseMeters().getRotation().getDegrees());
-
+    SmartDashboard.putNumber("raw gyro", m_gyro.getAngle());
   }
 }
