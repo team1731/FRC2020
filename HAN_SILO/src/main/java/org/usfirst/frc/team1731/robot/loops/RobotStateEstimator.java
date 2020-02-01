@@ -1,6 +1,5 @@
 package org.usfirst.frc.team1731.robot.loops;
 
-import org.strykeforce.thirdcoast.swerve.SwerveDrive;
 import org.usfirst.frc.team1731.lib.util.math.Rotation2d;
 import org.usfirst.frc.team1731.lib.util.math.Twist2d;
 import org.usfirst.frc.team1731.robot.Kinematics;
@@ -8,6 +7,7 @@ import org.usfirst.frc.team1731.robot.RobotState;
 import org.usfirst.frc.team1731.robot.subsystems.Drive;
 
 import frc.robot.Robot;
+import swervebot.Drivetrain;
 
 /**
  * Periodically estimates the state of the robot using the robot's distance traveled (compares two waypoints), gyroscope
@@ -25,22 +25,24 @@ public class RobotStateEstimator implements Loop {
 
     RobotState robot_state_ = RobotState.getInstance();
     Drive drive_ = Drive.getInstance();
-    SwerveDrive swerveDrive_ = Robot.DRIVE.getSwerveInstance();
+    Drivetrain swerveDrive_ = Robot.m_swerve;
     double left_encoder_prev_distance_ = 0;
     double right_encoder_prev_distance_ = 0;
 
     @Override
-    public synchronized void onStart(double timestamp) {
-        left_encoder_prev_distance_ = swerveDrive_.getLeftDistanceInches();
-        right_encoder_prev_distance_ = swerveDrive_.getRightDistanceInches();
+    public synchronized void onStart(double timestamp) throws RuntimeException {
+        throw new RuntimeException("Not implemented");
+        //left_encoder_prev_distance_ = swerveDrive_.getLeftDistanceInches();
+        //right_encoder_prev_distance_ = swerveDrive_.getRightDistanceInches();
     }
 
    // private ControlBoardInterface mControlBoard = GamepadControlBoard.getInstance();
 
     @Override
-    public synchronized void onLoop(double timestamp) {
+    public synchronized void onLoop(double timestamp) throws RuntimeException {
         //#region Original Estimator Code
-
+        throw new RuntimeException("Not implemented");
+        /*
         final double left_distance = swerveDrive_.getLeftDistanceInches();
         final double right_distance = swerveDrive_.getRightDistanceInches();
         final Rotation2d gyro_angle = swerveDrive_.getGyroAngle();
@@ -51,7 +53,7 @@ public class RobotStateEstimator implements Loop {
         robot_state_.addObservations(timestamp, odometry_velocity, predicted_velocity);
         left_encoder_prev_distance_ = left_distance;
         right_encoder_prev_distance_ = right_distance;
-
+*/
         //#endregion
 
         //#region SwerveDrive Estimator

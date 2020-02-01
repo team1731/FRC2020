@@ -14,7 +14,8 @@ import frc.robot.Robot;
 public class ForceEndPathAction extends RunOnceAction {
 
     @Override
-    public synchronized void runOnce() {
-        Robot.DRIVE.getSwerveInstance().forceDoneWithPath();
+    public synchronized void runOnce() throws RuntimeException {
+        throw new RuntimeException("Not implemented");
+        //Robot.m_swerve.forceDoneWithPath();
     }
 }

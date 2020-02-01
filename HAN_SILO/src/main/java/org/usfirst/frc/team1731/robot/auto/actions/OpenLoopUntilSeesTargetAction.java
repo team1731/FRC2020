@@ -49,9 +49,10 @@ public class OpenLoopUntilSeesTargetAction implements Action {
     }
 
     @Override
-    public void start() {
+    public void start() throws RuntimeException {
         //LED.getInstance().setWantedState(LED.WantedState.FIND_RANGE);
-        Robot.DRIVE.getSwerveInstance().setOpenLoop(new DriveSignal(left, right));
+        throw new RuntimeException("Not implemented");
+        //Robot.m_swerve.setOpenLoop(new DriveSignal(left, right));
         //Drive.getInstance().setOpenLoop(new DriveSignal(left, right));
     }
 
