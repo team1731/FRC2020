@@ -189,7 +189,7 @@ public class Superstructure extends Subsystem {
                     newState = handleSpittingOutTop();
                     break;
                 case ELEVATOR_TRACKING:
-                    newState = handleElevatorTracking(timestamp);
+                    newState = SystemState.IDLE; //handleElevatorTracking(timestamp);
                     break;
                 case RETURNING_HOME:
                     newState = handleReturningHome();
@@ -211,8 +211,8 @@ public class Superstructure extends Subsystem {
                 }
 
                 if (newState != mSystemState) {
-                    System.out.println("Superstructure state " + mSystemState + " to " + newState + " Timestamp: "
-                            + Timer.getFPGATimestamp());
+                    //System.out.println("Superstructure state " + mSystemState + " to " + newState + " Timestamp: "
+                    //        + Timer.getFPGATimestamp());
                     mSystemState = newState;
                     mCurrentStateStartTime = timestamp;
                     mStateChanged = true;
@@ -823,11 +823,10 @@ public class Superstructure extends Subsystem {
     private SystemState handleIdle(boolean stateChanged) {
         if (stateChanged) {
             stop();
-            //TODO: Make 2020 implementation
             //mMustache.set(DoubleSolenoid.Value.kReverse);
-            mElevator.setWantedState(Elevator.WantedState.IDLE);
-            mIntake.setWantedState(Intake.WantedState.IDLE);
-            mClimber.setWantedState(Climber.WantedState.IDLE);
+            //mElevator.setWantedState(Elevator.WantedState.IDLE);
+            //mIntake.setWantedState(Intake.WantedState.IDLE);
+            //mClimber.setWantedState(Climber.WantedState.IDLE);
         }
         
         switch (mWantedState) {

@@ -238,9 +238,9 @@ public class Robot extends TimedRobot {
             //http://roborio-1731-frc.local:1181/?action=stream
             //   /CameraPublisher/<camera name>/streams=["mjpeg:http://roborio-1731-frc.local:1181/?action=stream", "mjpeg:http://10.17.31.2:1181/?action=stream"]
             try {
-                cameraFront = CameraServer.getInstance().startAutomaticCapture(0);
+                //cameraFront = CameraServer.getInstance().startAutomaticCapture(0);
                 //cameraBack = CameraServer.getInstance().startAutomaticCapture(1);
-                videoSink = CameraServer.getInstance().getServer();
+                //videoSink = CameraServer.getInstance().getServer();
                 //selectedCamera = cameraFront;
             }
             catch (Throwable t) {

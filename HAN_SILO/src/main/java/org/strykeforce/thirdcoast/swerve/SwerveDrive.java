@@ -5,7 +5,7 @@ import java.util.Optional;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.Preferences;
-import edu.wpi.first.wpilibj.SPI.Port;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -279,7 +279,7 @@ public double getRightDistanceInches() {
      * Is called periodically when the robot is auto-aiming towards the boiler.
      */
     private void updateTurnToHeading(double timestamp) {
-      final Rotation2d field_to_robot = mRobotState.getLatestFieldToVehicle().getValue().getRotation();
+      final Rotation2d field_to_robot = mRobotState.getLatestFieldToVehicle().getRotation();
 
       // Figure out the rotation necessary to turn to face the goal.
       final Rotation2d robot_to_target = field_to_robot.inverse().rotateBy(mTargetHeading);
@@ -339,7 +339,7 @@ public double getRightDistanceInches() {
      * pose, distance driven, and velocity, the updates the wheel velocity setpoints.
      */
     private void updatePathFollower(double timestamp) {
-        RigidTransform2d robot_pose = mRobotState.getLatestFieldToVehicle().getValue();
+        RigidTransform2d robot_pose = mRobotState.getLatestFieldToVehicle();
         Twist2d command = mPathFollower.update(timestamp, robot_pose,
                 RobotState.getInstance().getDistanceDriven(), RobotState.getInstance().getPredictedVelocity().dx);
         if (!mPathFollower.isFinished()) {
@@ -502,9 +502,11 @@ private static double inchesToRotations(double inches) {
   }
 
   public SwerveDrive(SwerveDriveConfig config) {
-    // logger.info("<b>SwerveDrive</b>: SwerveDrive starting");
-    m_motor = new CANSparkMax(0, MotorType.kBrushless);
-    m_motor.disable();
+    //logger.info("<b>SwerveDrive</b>: SwerveDrive starting");
+    if (RobotBase.isReal()) {
+      m_motor = new CANSparkMax(0, MotorType.kBrushless);
+      m_motor.disable();
+    }
 
     gyro = config.gyro;
     wheels = config.wheels;
@@ -544,7 +546,7 @@ private static double inchesToRotations(double inches) {
     logger.debug("enableGyroLogging = {}", config.gyroLoggingEnabled);
     logger.debug("gyroRateCorrection = {}", kGyroRateCorrection);
 
-    mNavXBoard = new NavX(Port.kMXP);
+    mNavXBoard = new NavX();
 
     // logger.info("<b>SwerveDrive</b>: SwerveDrive constructed");
   }
@@ -565,9 +567,11 @@ private static double inchesToRotations(double inches) {
    * @param driveMode the drive mode
    */
   public void setDriveMode(DriveMode driveMode) {
-    // logger.info("<b>SwerveDrive</b>: setDriveMode starting");
-    for (Wheel wheel : wheels) {
-      wheel.setDriveMode(driveMode);
+    //logger.info("<b>SwerveDrive</b>: setDriveMode starting");
+    if (RobotBase.isReal()) {
+      for (Wheel wheel : wheels) {
+        wheel.setDriveMode(driveMode);
+      }
     }
     logger.info("drive mode = {}", driveMode);
     logger.info("gyro is configured: {}", gyro != null);
@@ -663,8 +667,10 @@ public synchronized double getGyroVelocityDegreesPerSec() {
     }
 
     // set wheels
-    for (int i = 0; i < WHEEL_COUNT; i++) {
-      wheels[i].set(wa[i], ws[i]);
+    if (RobotBase.isReal()) {
+      for (int i = 0; i < WHEEL_COUNT; i++) {
+        wheels[i].set(wa[i], ws[i]);
+      }
     }
     // logger.info("<b>SwerveDrive</b>: drive finished");
   }

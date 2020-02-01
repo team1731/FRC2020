@@ -47,7 +47,7 @@ public class PlacePanel extends AutoModeBase {
     protected void routine() throws AutoModeEndedException {
         System.out.println("Executing PlacePanel");
 
-        RigidTransform2d odometry = mRobotState.getLatestFieldToVehicle().getValue();
+        RigidTransform2d odometry = mRobotState.getLatestFieldToVehicle();
         startx = odometry.getTranslation().x();
         starty = odometry.getTranslation().y();
         start = new Waypoint(startx, starty, 0, 20);
@@ -66,7 +66,7 @@ public class PlacePanel extends AutoModeBase {
         //eject panel
 
         //backup
-        odometry = mRobotState.getLatestFieldToVehicle().getValue();
+        odometry = mRobotState.getLatestFieldToVehicle();
         startx = odometry.getTranslation().x();
         starty = odometry.getTranslation().y();
         start = new Waypoint(startx, starty, 0, 20);

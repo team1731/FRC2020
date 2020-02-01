@@ -22,6 +22,8 @@ public class Constants extends ConstantsBase {
     
     public static double kLooperDt = 0.005;
 
+    public static final double INCHES_PER_METER = 39.37008;
+
     // Target parameters
     // Source of current values: https://firstfrc.blob.core.windows.net/frc2017/Manual/2017FRCGameSeasonManual.pdf
     // Section 3.13
@@ -451,12 +453,12 @@ public class Constants extends ConstantsBase {
      */
     public static Solenoid makeSolenoidForId(int pcmChannel, int solenoidId) {
     	System.out.println("creating solenoid id " + solenoidId + " PCM " + pcmChannel + " CHAN " + solenoidId);
-        return new Solenoid(pcmChannel, solenoidId);
+        return null; //TODO FIXME!!! new Solenoid(pcmChannel, solenoidId);
     }
 
     public static DoubleSolenoid makeDoubleSolenoidForIds(int pcmChannel, int forward_solenoidId, int reverse_solenoidId) {
     	System.out.println("creating solenoid ids " + forward_solenoidId + "-" + reverse_solenoidId + " PCM " + pcmChannel + " CHAN ");
-        return new DoubleSolenoid(pcmChannel, forward_solenoidId, reverse_solenoidId);
+        return null; //TODO FIXME!!! new DoubleSolenoid(pcmChannel, forward_solenoidId, reverse_solenoidId);
     }
 
     @Override

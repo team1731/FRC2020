@@ -47,8 +47,10 @@ public class Intake extends Subsystem {
 
 
     private Intake() {
-        mTalon = new TalonSRX(Constants.kIntakeTalon);
-        mTalon.setInverted(false); //Constants.kMotorInvert);
+        mTalon = null; //FIXME!!! new TalonSRX(Constants.kIntakeTalon);
+        if(mTalon != null){
+            mTalon.setInverted(false); //Constants.kMotorInvert);
+        }
     	//mIRSensor1 = new AnalogInput(1);
     	//mIRSensor2 = new AnalogInput(4);
     }
@@ -131,14 +133,14 @@ public class Intake extends Subsystem {
         }
         
         private SystemState handleSpitting() {
-            if (mStateChanged) {
+            if (mStateChanged && mTalon != null) {
                 mTalon.set(ControlMode.PercentOutput, -1);
             }
     		return defaultStateTransfer();
 		}
 
 		private SystemState handleIntaking() {
-            if (mStateChanged) {
+            if (mStateChanged && mTalon != null) {
                 mTalon.set(ControlMode.PercentOutput, 1);
             }
             if (hasCargo()) {
@@ -148,7 +150,7 @@ public class Intake extends Subsystem {
         }
         
         private SystemState handleHolding() {
-            if (!hasCargo()) {
+            if (!hasCargo() && mTalon != null) {
                 mTalon.set(ControlMode.PercentOutput, 1); 
             }
     		return defaultStateTransfer();

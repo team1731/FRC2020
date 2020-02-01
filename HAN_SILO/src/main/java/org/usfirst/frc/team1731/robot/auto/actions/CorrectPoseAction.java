@@ -22,7 +22,7 @@ public class CorrectPoseAction extends RunOnceAction {
     @Override
     public void runOnce() {
         RobotState rs = RobotState.getInstance();
-        rs.reset(Timer.getFPGATimestamp(), rs.getLatestFieldToVehicle().getValue().transformBy(mCorrection));
+        rs.reset(Timer.getFPGATimestamp(), rs.getLatestFieldToVehicle().transformBy(mCorrection));
     }
 
 }

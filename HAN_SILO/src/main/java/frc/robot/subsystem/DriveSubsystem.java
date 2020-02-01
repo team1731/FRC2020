@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.command.TeleOpDriveCommand;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode;
+import org.usfirst.frc.team1731.lib.util.drivers.NavX;
 import org.strykeforce.thirdcoast.swerve.SwerveDriveConfig;
 import org.strykeforce.thirdcoast.swerve.Wheel;
 
@@ -26,7 +27,7 @@ import org.strykeforce.thirdcoast.swerve.Wheel;
 public class DriveSubsystem extends Subsystem {
 
   //private static final Logger logger = LoggerFactory.getLogger(DriveSubsystem.class);
-  private static final double DRIVE_SETPOINT_MAX = 0.0;
+  public static final double DRIVE_SETPOINT_MAX = 0.0;
   //private static final double ROBOT_LENGTH = 1.0;
   //private static final double ROBOT_WIDTH = 1.0;
   private static Wheel[] wheelObjects;
@@ -79,7 +80,7 @@ public class DriveSubsystem extends Subsystem {
     //logger.info("<b>DriveSubsystem</b>: getSwerve started");
     SwerveDriveConfig config = new SwerveDriveConfig();
     config.wheels = getWheels();
-    config.gyro = new AHRS(SPI.Port.kMXP);
+    config.gyro = NavX.getAHRS();
     //config.length = ROBOT_LENGTH;
     //config.width = ROBOT_WIDTH;
     //config.gyroLoggingEnabled = true;
