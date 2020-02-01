@@ -81,7 +81,7 @@ import swervebot.Drivetrain;
 public class Robot extends TimedRobot {
 	//2020
 	private final XboxController m_controller = new XboxController(0);
-    private final Drivetrain m_swerve = new Drivetrain();
+    public static final Drivetrain m_swerve = new Drivetrain();
 
 	//2019
     private DigitalOutput leftRightCameraControl;
@@ -151,7 +151,7 @@ public class Robot extends TimedRobot {
     private org.usfirst.frc.team1731.robot.RobotState mRobotState = org.usfirst.frc.team1731.robot.RobotState
             .getInstance();
     private AutoModeExecuter mAutoModeExecuter = null;
-    private RobotStateEstimator mRobotStateEstimator = RobotStateEstimator.getInstance();
+    //private RobotStateEstimator mRobotStateEstimator = RobotStateEstimator.getInstance();
     private JevoisVisionProcessor mVisionCamProcessor = JevoisVisionProcessor.getInstance();
 
 	//2019
@@ -281,7 +281,7 @@ public class Robot extends TimedRobot {
 
 
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
-            mEnabledLooper.register(mRobotStateEstimator);
+            //mEnabledLooper.register(mRobotStateEstimator);
             mEnabledLooper.register(mVisionCamProcessor); 
             
             //http://roborio-1731-frc.local:1181/?action=stream

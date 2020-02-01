@@ -27,9 +27,9 @@ public class Rotation2d implements Interpolable<Rotation2d> {
         this(1, 0, false);
     }
 
-    public Rotation2d(double x, double y, boolean normalize) {
-        cos_angle_ = x;
-        sin_angle_ = y;
+    public Rotation2d(double cosangle, double sinangle, boolean normalize) {
+        cos_angle_ = cosangle;
+        sin_angle_ = sinangle;
         if (normalize) {
             normalize();
         }

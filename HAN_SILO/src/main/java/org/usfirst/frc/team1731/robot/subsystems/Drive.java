@@ -588,7 +588,7 @@ public class Drive extends Subsystem {
      * Is called periodically when the robot is auto-aiming towards the boiler.
      */
     private void updateTurnToHeading(double timestamp) {
-        final Rotation2d field_to_robot = mRobotState.getLatestFieldToVehicle().getValue().getRotation();
+        final Rotation2d field_to_robot = mRobotState.getLatestFieldToVehicle().getRotation();
 
         // Figure out the rotation necessary to turn to face the goal.
         final Rotation2d robot_to_target = field_to_robot.inverse().rotateBy(mTargetHeading);
@@ -677,7 +677,7 @@ public class Drive extends Subsystem {
      * pose, distance driven, and velocity, the updates the wheel velocity setpoints.
      */
     private void updatePathFollower(double timestamp) {
-        RigidTransform2d robot_pose = mRobotState.getLatestFieldToVehicle().getValue();
+        RigidTransform2d robot_pose = mRobotState.getLatestFieldToVehicle();
         Twist2d command = mPathFollower.update(timestamp, robot_pose,
                 RobotState.getInstance().getDistanceDriven(), RobotState.getInstance().getPredictedVelocity().dx);
         if (!mPathFollower.isFinished()) {
@@ -724,7 +724,7 @@ public class Drive extends Subsystem {
                 }
 
 
-        final Rotation2d field_to_robot = mRobotState.getLatestFieldToVehicle().getValue().getRotation();
+        final Rotation2d field_to_robot = mRobotState.getLatestFieldToVehicle().getRotation();
 
         // Figure out the rotation necessary to turn to face the goal.
       //  final Rotation2d robot_to_target = field_to_robot.inverse().rotateBy(mTargetHeading);

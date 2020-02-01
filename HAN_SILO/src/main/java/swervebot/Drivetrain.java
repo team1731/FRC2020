@@ -11,6 +11,7 @@ import com.kauailabs.navx.frc.AHRS;
 
 import org.strykeforce.thirdcoast.swerve.SwerveDrive;
 import org.usfirst.frc.team1731.lib.util.drivers.NavX;
+import org.usfirst.frc.team1731.robot.Constants;
 
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.SPI;
@@ -26,6 +27,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * Represents a swerve drive style drivetrain.
  */
 public class Drivetrain {
+
   public static final double kMaxSpeed = 1.0; // 3 meters per second
   public static final double kMaxAngularSpeed = Math.PI; // 1/2 rotation per second
 
@@ -56,6 +58,10 @@ public class Drivetrain {
   );
 
   private final SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(m_kinematics, getAngle());
+
+  public synchronized SwerveDriveOdometry getWPILibOdometry(){
+      return m_odometry;
+  }
 
   public Drivetrain() {
     m_gyro.reset();
@@ -104,12 +110,10 @@ public class Drivetrain {
         m_backLeft.getState(),
         m_backRight.getState()
     );
-    SmartDashboard.putNumber("pose x", m_odometry.getPoseMeters().getTranslation().getX());
-    SmartDashboard.putNumber("pose y", m_odometry.getPoseMeters().getTranslation().getY());
-    double rot = m_odometry.getPoseMeters().getRotation().getDegrees();
-    SmartDashboard.putNumber("rot", rot);
-    double angle = m_gyro.getAngle();
-    SmartDashboard.putNumber("raw gyro", angle);
+    SmartDashboard.putNumber("pose x", m_odometry.getPoseMeters().getTranslation().getX() * Constants.INCHES_PER_METER);
+    SmartDashboard.putNumber("pose y", m_odometry.getPoseMeters().getTranslation().getY() * Constants.INCHES_PER_METER);
+    SmartDashboard.putNumber("rot", m_odometry.getPoseMeters().getRotation().getDegrees());
+    SmartDashboard.putNumber("raw gyro", m_gyro.getAngle());
 
   }
 }

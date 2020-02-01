@@ -22,6 +22,8 @@ public class Constants extends ConstantsBase {
     
     public static double kLooperDt = 0.005;
 
+    public static final double INCHES_PER_METER = 39.37008;
+
     // Target parameters
     // Source of current values: https://firstfrc.blob.core.windows.net/frc2017/Manual/2017FRCGameSeasonManual.pdf
     // Section 3.13

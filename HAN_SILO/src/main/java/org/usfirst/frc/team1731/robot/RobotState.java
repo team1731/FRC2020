@@ -15,7 +15,9 @@ import org.usfirst.frc.team1731.robot.GoalTracker.TrackReport;
 import org.usfirst.frc.team1731.robot.vision.TargetInfo;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Robot;
 
 /**
  * RobotState keeps track of the poses of various coordinate frames throughout the match. A coordinate frame is simply a
@@ -89,21 +91,48 @@ public class RobotState {
         distance_driven_ = 0.0;
     }
 
+    private synchronized Translation2d WPITransToCheesyTrans(edu.wpi.first.wpilibj.geometry.Translation2d wpiTrans){
+        return new Translation2d(wpiTrans.getX() * Constants.INCHES_PER_METER, wpiTrans.getY() * Constants.INCHES_PER_METER);
+    }
+    
+    private synchronized Rotation2d WPIRotToCheesyRot(edu.wpi.first.wpilibj.geometry.Rotation2d wpiRot){
+        return new Rotation2d(wpiRot.getCos(), wpiRot.getSin(), true);
+    }
+
     /**
      * Returns the robot's position on the field at a certain time. Linearly interpolates between stored robot positions
      * to fill in the gaps.
      */
     public synchronized RigidTransform2d getFieldToVehicle(double timestamp) {
-        return field_to_vehicle_.getInterpolated(new InterpolatingDouble(timestamp));
+        return getLatestFieldToVehicle();
+        //return field_to_vehicle_.getInterpolated(new InterpolatingDouble(timestamp));
     }
 
+    public synchronized RigidTransform2d getLatestFieldToVehicle(){
+        RigidTransform2d transform = new RigidTransform2d();
+        Pose2d wpiPose = Robot.m_swerve.getWPILibOdometry().getPoseMeters();
+        transform.setTranslation(WPITransToCheesyTrans(wpiPose.getTranslation()));
+        transform.setRotation(WPIRotToCheesyRot(wpiPose.getRotation()));
+        return transform;
+    }
+
+    /*
+    /**
+     * @deprecated Use {@link Robot.m_swerve.getWPILibOdometry()} instead
+    @Deprecated
     public synchronized Map.Entry<InterpolatingDouble, RigidTransform2d> getLatestFieldToVehicle() {
         return field_to_vehicle_.lastEntry();
     }
+    */
 
+    /**
+     * @deprecated Use {@link Robot.m_swerve.getWPILibOdometry()} instead
+     */
+    @Deprecated
     public synchronized RigidTransform2d getPredictedFieldToVehicle(double lookahead_time) {
-        return getLatestFieldToVehicle().getValue()
-                .transformBy(RigidTransform2d.exp(vehicle_velocity_predicted_.scaled(lookahead_time)));
+        
+
+        return getLatestFieldToVehicle().transformBy(RigidTransform2d.exp(vehicle_velocity_predicted_.scaled(lookahead_time)));
     }
 
     public synchronized RigidTransform2d getFieldToCamera(double timestamp) {
@@ -118,14 +147,22 @@ public class RobotState {
         return rv;
     }
 
+    /**
+     * @deprecated Use {@link Robot.m_swerve.getWPILibOdometry()} instead
+     */
+    @Deprecated
     public synchronized void addFieldToVehicleObservation(double timestamp, RigidTransform2d observation) {
         field_to_vehicle_.put(new InterpolatingDouble(timestamp), observation);
     }
 
+    /**
+     * @deprecated Use {@link Robot.m_swerve.getWPILibOdometry()} instead
+     */
+    @Deprecated
     public synchronized void addObservations(double timestamp, Twist2d measured_velocity,
             Twist2d predicted_velocity) {
         addFieldToVehicleObservation(timestamp,
-                Kinematics.integrateForwardKinematics(getLatestFieldToVehicle().getValue(), measured_velocity));
+                Kinematics.integrateForwardKinematics(getLatestFieldToVehicle(), measured_velocity));
         vehicle_velocity_measured_ = measured_velocity;
         vehicle_velocity_predicted_ = predicted_velocity;
     }
@@ -178,7 +215,7 @@ public class RobotState {
         List<TrackReport> reports = goal_tracker_.getTracks();
         if (!reports.isEmpty()) {
             TrackReport report = reports.get(0);
-            Translation2d robot_to_goal = getLatestFieldToVehicle().getValue().getTranslation().inverse()
+            Translation2d robot_to_goal = getLatestFieldToVehicle().getTranslation().inverse()
                     .translateBy(report.field_to_goal);
             Rotation2d robot_to_goal_rotation = Rotation2d
                     .fromRadians(Math.atan2(robot_to_goal.y(), robot_to_goal.x()));
@@ -200,7 +237,7 @@ public class RobotState {
 
     public synchronized Twist2d generateOdometryFromSensors(double left_encoder_delta_distance,
             double right_encoder_delta_distance, Rotation2d current_gyro_angle) {
-        final RigidTransform2d last_measurement = getLatestFieldToVehicle().getValue();
+        final RigidTransform2d last_measurement = getLatestFieldToVehicle();
         final Twist2d delta = Kinematics.forwardKinematics(last_measurement.getRotation(),
                 left_encoder_delta_distance, right_encoder_delta_distance, current_gyro_angle);
         distance_driven_ += delta.dx;
@@ -220,7 +257,7 @@ public class RobotState {
     }
 
     public void outputToSmartDashboard() {
-        RigidTransform2d odometry = getLatestFieldToVehicle().getValue();
+        RigidTransform2d odometry = getLatestFieldToVehicle();
         SmartDashboard.putNumber("robot_pose_x", odometry.getTranslation().x());
         SmartDashboard.putNumber("robot_pose_y", odometry.getTranslation().y());
         SmartDashboard.putNumber("robot_pose_theta", odometry.getRotation().getDegrees());
@@ -238,7 +275,7 @@ public class RobotState {
         if (aiming_params.isPresent()) {
             SmartDashboard.putNumber("goal_range", aiming_params.get().getRange());
           //  SmartDashboard.putNumber("goal_theta", aiming_params.get().getRobotToGoal().getDegrees());
-            final Rotation2d field_to_robot = getLatestFieldToVehicle().getValue().getRotation();
+            final Rotation2d field_to_robot = getLatestFieldToVehicle().getRotation();
             Rotation2d mTargetHeading = aiming_params.get().getRobotToGoal();
  // Figure out the rotation necessary to turn to face the goal.
             final Rotation2d robot_to_target = field_to_robot.inverse().rotateBy(mTargetHeading);
