@@ -32,6 +32,7 @@ public class SwerveModule {
 
   private static final double kModuleMaxAngularVelocity = Drivetrain.kMaxAngularSpeed;
   private static final double kModuleMaxAngularAcceleration = 2 * Math.PI; // radians per second squared
+  private static final double TICKS = 16;
 
   //private final SpeedController m_driveMotor;
   //private final SpeedController m_turningMotor;
@@ -111,6 +112,7 @@ public class SwerveModule {
     //m_turningPIDController.enableContinuousInput(-Math.PI, Math.PI);
 
     wheel = new Wheel(m_turningMotor, m_driveMotor, DriveSubsystem.DRIVE_SETPOINT_MAX);
+    wheel.setAzimuthZero(0);
   }
 
   /**
@@ -122,9 +124,11 @@ public class SwerveModule {
     //return new SwerveModuleState(m_driveEncoder.getRate(), new Rotation2d(m_turningEncoder.get()));
 
     //FIXME: apply any needed unit convertion here...
-    double velocity = m_driveEncoder.getVelocity();
+    double velocity = m_driveEncoder.getVelocity() * Math.PI * 3.0 / 39.37 / 60.0 / 16.0;
     double azimuth = m_turningEncoder.getPosition();
-    return new SwerveModuleState(velocity, new Rotation2d(azimuth));
+    double azimuthPercent = Math.IEEEremainder(azimuth, TICKS);
+
+    return new SwerveModuleState(velocity, new Rotation2d(azimuthPercent * 2.0 * Math.PI));
   }
 
   /**
@@ -145,7 +149,7 @@ public class SwerveModule {
     //m_turningMotor.setVoltage(turnOutput + turnFeedforward);
     double angleDegrees = state.angle.getDegrees();
     double speedMetersPerSecond = state.speedMetersPerSecond;
-    wheel.set(angleDegrees, speedMetersPerSecond * 39.37); //FIXME: is this supposed to be inches or feet per second???
+    wheel.set(-angleDegrees/360, speedMetersPerSecond * 16.0 * 39.37  * 60.0 / 3.0 / Math.PI); //FIXME: is this supposed to be inches or feet per second???
     //wheel.setAzimuthPosition(angleDegrees);
   }
 }

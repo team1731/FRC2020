@@ -7,19 +7,25 @@
 
 package swervebot;
 
+import com.kauailabs.navx.frc.AHRS;
+
+import org.strykeforce.thirdcoast.swerve.SwerveDrive;
+
 import edu.wpi.first.wpilibj.AnalogGyro;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Represents a swerve drive style drivetrain.
  */
 public class Drivetrain {
-  public static final double kMaxSpeed = 3.0; // 3 meters per second
+  public static final double kMaxSpeed = 1.0; // 3 meters per second
   public static final double kMaxAngularSpeed = Math.PI; // 1/2 rotation per second
 
   private final Translation2d m_frontLeftLocation = new Translation2d(0.381, 0.381);
@@ -32,8 +38,18 @@ public class Drivetrain {
   private final SwerveModule m_backLeft = new SwerveModule(3, 13);
   private final SwerveModule m_backRight = new SwerveModule(4, 14);
 
-  private final AnalogGyro m_gyro = new AnalogGyro(0);
+  //private final AnalogGyro m_gyro = new AnalogGyro(0);
+  AHRS m_gyro  = new AHRS(SPI.Port.kMXP);
 
+  public void zeroGyro() {
+    //logger.info("<b>DriveSubsystem</b>: zeroGyro started");
+    m_gyro.setAngleAdjustment(0);
+    double adj = m_gyro.getAngle() % 360;
+    m_gyro.setAngleAdjustment(-adj);
+    //logger.info("<b>DriveSubsystem</b>: zeroGyro finished");
+  }
+
+  // Swerve configuration
   private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
       m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation
   );
@@ -87,5 +103,9 @@ public class Drivetrain {
         m_backLeft.getState(),
         m_backRight.getState()
     );
+    SmartDashboard.putNumber("pose x", m_odometry.getPoseMeters().getTranslation().getX());
+    SmartDashboard.putNumber("pose y", m_odometry.getPoseMeters().getTranslation().getY());
+    SmartDashboard.putNumber("rot", m_odometry.getPoseMeters().getRotation().getDegrees());
+
   }
 }

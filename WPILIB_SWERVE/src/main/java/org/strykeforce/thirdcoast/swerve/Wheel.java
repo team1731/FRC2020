@@ -133,7 +133,8 @@ public class Wheel {
     SmartDashboard.putNumber("Wheel"+wheelID+" BDL Commanded Position",(azimuthPosition + azimuthError));
     m_pidController.setReference((azimuthPosition + azimuthError), ControlType.kSmartMotion);
     //m_pidController.setReference(5, ControlType.kSmartMotion);
-    driver.accept(drive);
+    //driver.accept(drive);
+    driveSpark.getPIDController().setReference(drive, ControlType.kVelocity);
   //  logger.info("<b>Wheel</b>: set finished");
   }
 

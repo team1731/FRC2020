@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.SlewRateLimiter;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import swervebot.Drivetrain;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends TimedRobot {
@@ -25,6 +24,13 @@ public class Robot extends TimedRobot {
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
 
   @Override
+  public void disabledPeriodic() {
+    // TODO Auto-generated method stub
+    super.disabledPeriodic();
+    m_swerve.zeroGyro();
+  }
+
+  @Override
   public void autonomousPeriodic() {
     driveWithJoystick(false);
     m_swerve.updateOdometry();
@@ -33,13 +39,15 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     driveWithJoystick(true);
+    m_swerve.updateOdometry();
   }
 
   private void driveWithJoystick(boolean fieldRelative) {
     // Get the x speed. We are inverting this because Xbox controllers return
     // negative values when we push forward.
     double joystickY = m_controller.getY(GenericHID.Hand.kLeft);
-    double xSpeed = -m_xspeedLimiter.calculate(joystickY) * Drivetrain.kMaxSpeed;
+    //double xSpeed = -m_xspeedLimiter.calculate(joystickY) * Drivetrain.kMaxSpeed;
+    double xSpeed = -joystickY;
 
     // Get the y speed or sideways/strafe speed. We are inverting this because
     // we want a positive value when we pull to the left. Xbox controllers
