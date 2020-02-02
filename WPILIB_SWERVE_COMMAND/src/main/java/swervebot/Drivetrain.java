@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
  * Represents a swerve drive style drivetrain.
  */
+@Deprecated
 public class Drivetrain {
   public static final double kMaxSpeed = 1.0; // 3 meters per second
   public static final double kMaxAngularSpeed = Math.PI; // 1/2 rotation per second

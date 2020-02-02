@@ -55,9 +55,22 @@ public class RobotContainer {
         // A split-stick arcade command, with forward/backward controlled by the left
         // hand, and turning controlled by the right.
         new RunCommand(() -> m_robotDrive.drive(
-            m_driverController.getY(GenericHID.Hand.kLeft),
-            m_driverController.getX(GenericHID.Hand.kRight),
-            m_driverController.getX(GenericHID.Hand.kLeft), false)));
+            // Get the x speed. We are inverting this because Xbox controllers return
+            // negative values when we push forward.
+            -m_driverController.getY(GenericHID.Hand.kLeft),
+
+            // Get the y speed or sideways/strafe speed. We are inverting this because
+            // we want a positive value when we pull to the left. Xbox controllers
+            // return positive values when you pull to the right by default.
+            -m_driverController.getX(GenericHID.Hand.kRight),
+
+            // Get the rate of angular rotation. We are inverting this because we want a
+            // positive value when we pull to the left (remember, CCW is positive in
+            // mathematics). Xbox controllers return positive values when you pull to
+            // the right by default.
+            -m_driverController.getX(GenericHID.Hand.kLeft), false), m_robotDrive) // <------- RDB2020 I added m_robotDrive here to get rid of
+                                                                                  //                  "Default Command must require subsytem"
+            );
 
   }
 

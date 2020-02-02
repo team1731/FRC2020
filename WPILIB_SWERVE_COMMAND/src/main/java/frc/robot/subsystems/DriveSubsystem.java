@@ -7,6 +7,8 @@
 
 package frc.robot.subsystems;
 
+import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
@@ -58,7 +60,8 @@ public class DriveSubsystem extends SubsystemBase {
                        //DriveConstants.kRearRightTurningEncoderReversed);
 
   // The gyro sensor
-  private final Gyro m_gyro = new ADXRS450_Gyro();
+  //private final Gyro m_gyro = new ADXRS450_Gyro();
+  private final AHRS m_gyro = new AHRS(SPI.Port.kMXP);
 
   // Odometry class for tracking robot pose
   SwerveDriveOdometry m_odometry =
@@ -119,10 +122,23 @@ public class DriveSubsystem extends SubsystemBase {
    */
   @SuppressWarnings("ParameterName")
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+    double xSpeedAdjusted = xSpeed;
+    double ySpeedAdjusted = ySpeed;
+    double rotAdjusted = rot;
+    // DEADBAND
+    if(xSpeedAdjusted < 0.05){
+      xSpeedAdjusted = 0;
+    }
+    if(ySpeedAdjusted < 0.05){
+      ySpeedAdjusted = 0;
+    }
+    if(rotAdjusted < 0.05){
+      rotAdjusted = 0;
+    }
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
-            xSpeed, ySpeed, rot, getAngle())
-            : new ChassisSpeeds(xSpeed, ySpeed, rot)
+          xSpeedAdjusted, ySpeedAdjusted, rotAdjusted, getAngle())
+            : new ChassisSpeeds(xSpeedAdjusted, ySpeedAdjusted, rotAdjusted)
     );
     SwerveDriveKinematics.normalizeWheelSpeeds(swerveModuleStates,
                                                DriveConstants.kMaxSpeedMetersPerSecond);
