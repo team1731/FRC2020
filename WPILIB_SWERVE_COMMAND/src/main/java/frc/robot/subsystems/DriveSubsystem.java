@@ -126,13 +126,13 @@ public class DriveSubsystem extends SubsystemBase {
     double ySpeedAdjusted = ySpeed;
     double rotAdjusted = rot;
     // DEADBAND
-    if(xSpeedAdjusted < 0.05){
+    if(Math.abs(xSpeedAdjusted) < 0.05){
       xSpeedAdjusted = 0;
     }
-    if(ySpeedAdjusted < 0.05){
+    if(Math.abs(ySpeedAdjusted) < 0.05){
       ySpeedAdjusted = 0;
     }
-    if(rotAdjusted < 0.05){
+    if(Math.abs(rotAdjusted) < 0.05){
       rotAdjusted = 0;
     }
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
@@ -176,7 +176,14 @@ public class DriveSubsystem extends SubsystemBase {
    * Zeroes the heading of the robot.
    */
   public void zeroHeading() {
-    m_gyro.reset();
+    //m_gyro.reset(); // RDB2020 - I replace this call with the below 5 lines...
+
+    //logger.info("<b>DriveSubsystem</b>: zeroGyro started");
+    m_gyro.setAngleAdjustment(0);
+    double adj = m_gyro.getAngle() % 360;
+    m_gyro.setAngleAdjustment(-adj);
+    //logger.info("<b>DriveSubsystem</b>: zeroGyro finished");
+    
   }
 
   /**
