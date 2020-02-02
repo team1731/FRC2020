@@ -189,10 +189,10 @@ public class PowerCell extends Subsystem {
                 //test if shooting motor is up to speed 
                 //mTalonSeq.setSpeed(Constants.kMotorSeqFwdSpeed);
                 //}
-                if ((mTalonShoot1.getMotorOutputPercent() >= (Constants.kMotorShootSpeed5 * Constants.kMotorShootPercent))
-                    && (mTalonShoot2.getMotorOutputPercent() >= (Constants.kMotorShootSpeed6 * Constants.kMotorShootPercent))) {
+                //if ((mTalonShoot1.getMotorOutputPercent() >= (Constants.kMotorShootSpeed5 * Constants.kMotorShootPercent))
+                   // && (mTalonShoot2.getMotorOutputPercent() >= (Constants.kMotorShootSpeed6 * Constants.kMotorShootPercent))) {
                     mTalonSeq.setSpeed(Constants.kMotorSeqFwdSpeed);
-                }
+                //}
             }
             return defaultStateTransfer();
         }
