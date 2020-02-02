@@ -1,7 +1,7 @@
 package org.usfirst.frc.team1731.robot.auto.actions;
 
 import org.usfirst.frc.team1731.robot.subsystems.Elevator;
-import org.usfirst.frc.team1731.robot.subsystems.PowerCell.WantedState;
+import org.usfirst.frc.team1731.robot.subsystems.Intake.WantedState;
 import org.usfirst.frc.team1731.robot.subsystems.Superstructure;
 import org.usfirst.frc.team1731.robot.Constants.ELEVATOR_POSITION;
 

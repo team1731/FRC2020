@@ -24,7 +24,8 @@ import org.usfirst.frc.team1731.robot.subsystems.Superstructure;
 import org.usfirst.frc.team1731.robot.SubsystemManager;
 import org.usfirst.frc.team1731.robot.ControlBoardInterface;
 import org.usfirst.frc.team1731.robot.GamepadControlBoard;
-import org.usfirst.frc.team1731.robot.subsystems.PowerCell;
+import org.usfirst.frc.team1731.robot.subsystems.Intake;
+import org.usfirst.frc.team1731.robot.subsystems.Shooter;
 import org.usfirst.frc.team1731.robot.Constants;
 
 public class Robot extends TimedRobot {
@@ -35,7 +36,7 @@ public class Robot extends TimedRobot {
   // Controls initialize Commands so this should be instantiated last to prevent
 
   private final SubsystemManager mSubsystemManager = new SubsystemManager(
-      Arrays.asList(Superstructure.getInstance(), PowerCell.getInstance()));
+      Arrays.asList(Superstructure.getInstance(), Intake.getInstance(), Shooter.getInstance()));
   // NullPointerExceptions in commands that require() Subsystems above.
   private final ControlBoardInterface mControlBoard = GamepadControlBoard.getInstance();
   public static final Controls CONTROLS = new Controls();

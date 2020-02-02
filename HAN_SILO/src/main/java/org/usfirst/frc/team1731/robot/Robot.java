@@ -50,7 +50,7 @@ import org.usfirst.frc.team1731.robot.subsystems.ConnectionMonitor;
 import org.usfirst.frc.team1731.robot.subsystems.Drive;
 import org.usfirst.frc.team1731.robot.subsystems.Elevator;
 
-import org.usfirst.frc.team1731.robot.subsystems.PowerCell;
+import org.usfirst.frc.team1731.robot.subsystems.Intake;
 import org.usfirst.frc.team1731.robot.subsystems.Superstructure;
 import org.usfirst.frc.team1731.robot.vision.JevoisVisionServer;
 import org.usfirst.frc.team1731.robot.subsystems.Climber;
@@ -138,7 +138,7 @@ public class Robot extends TimedRobot {
                                          Drive.getInstance(),
                                          Superstructure.getInstance(),
                                          Elevator.getInstance(),
-                                         PowerCell.getInstance(),
+                                         Intake.getInstance(),
                                          Climber.getInstance()
                                          ));
 
@@ -760,7 +760,7 @@ public class Robot extends TimedRobot {
 
         boolean results = Elevator.getInstance().checkSystem();
         results &= Drive.getInstance().checkSystem();
-        results &= PowerCell.getInstance().checkSystem();
+        results &= Intake.getInstance().checkSystem();
 
 
         if (!results) {

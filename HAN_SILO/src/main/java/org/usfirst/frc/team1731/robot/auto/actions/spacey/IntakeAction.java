@@ -2,22 +2,22 @@ package org.usfirst.frc.team1731.robot.auto.actions.spacey;
 
 import edu.wpi.first.wpilibj.Timer;
 import org.usfirst.frc.team1731.robot.auto.actions.Action;
-import org.usfirst.frc.team1731.robot.subsystems.PowerCell;
+import org.usfirst.frc.team1731.robot.subsystems.Intake;
 
 /**
  * Controls LEDs, can take an LED.WantedState
  */
 public class IntakeAction implements Action {
 
-    private PowerCell mPowerCell = PowerCell.getInstance();
+    private Intake mIntake = Intake.getInstance();
     private double mStartTime;
-    private PowerCell.WantedState myDesiredState;
+    private Intake.WantedState myDesiredState;
 
     public IntakeAction() {
-        myDesiredState = PowerCell.WantedState.INTAKE;
+        myDesiredState = Intake.WantedState.INTAKE;
     }
 
-    public IntakeAction(PowerCell.WantedState desiredState) {
+    public IntakeAction(Intake.WantedState desiredState) {
         myDesiredState = desiredState;
         
     }
@@ -34,14 +34,14 @@ public class IntakeAction implements Action {
 
     @Override
     public void done() {
-        mPowerCell.setWantedState(PowerCell.WantedState.IDLE);
+        mIntake.setWantedState(Intake.WantedState.IDLE);
 
     }
 
     @Override
     public void start() {
         mStartTime = Timer.getFPGATimestamp();
-        mPowerCell.setWantedState(myDesiredState);
+        mIntake.setWantedState(myDesiredState);
 
     }
 }

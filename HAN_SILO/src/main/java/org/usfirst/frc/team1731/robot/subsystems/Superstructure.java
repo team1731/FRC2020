@@ -33,7 +33,7 @@ import edu.wpi.first.wpilibj.DriverStation;
  * 
  * The superstructure also coordinates actions between different subsystems like the feeder and shooter.
  * 
- * @see PowerCell
+ * @see Intake
  * @see Hopper
  * @see Elevator
  * @see LED
@@ -59,7 +59,7 @@ public class Superstructure extends Subsystem {
 
     private final Elevator mElevator = Elevator.getInstance();
 
-    private final PowerCell mPowerCell = PowerCell.getInstance();
+    private final Intake mIntake = Intake.getInstance();
 
     private final Shooter mShooter = Shooter.getInstance();
     
@@ -92,7 +92,7 @@ public class Superstructure extends Subsystem {
         WAITING_FOR_POWERCELL_INTAKE,
         CLIMBING_EXTEND,
         CLIMBING_RETRACT,
-        SHOOT,
+        SHOOTING,
         SPITTING,
         WAITING_FOR_ROTATE,
         SPITTING_OUT_TOP, 
@@ -100,7 +100,6 @@ public class Superstructure extends Subsystem {
         RETURNING_HOME,
         ELEVATOR_TRACKING,
         POWERCELL_INTAKING,
-        POWERCELL_SPITTING,
         POWERCELL_EJECTING,
         EJECTING_HATCH,
         EJECTING_CARGO,
@@ -176,10 +175,10 @@ public class Superstructure extends Subsystem {
                     newState = waitingForPowerCubeIntake();
                     break;
                 case POWERCELL_EJECTING:
-                    newState = handlePowerCellEjecting();
+                    newState = handleEjecting();
                     break;
-                case SHOOT:
-                    newState = handleShoot();
+                case SHOOTING:
+                    newState = handleShooting();
                     break;
                 case STARTINGCONFIGURATION:
                     newState = handleStartingConfiguration();
@@ -197,7 +196,7 @@ public class Superstructure extends Subsystem {
                     newState = handleReturningHome();
                     break;
                 case POWERCELL_INTAKING:
-                    newState = handlePowerCellIntaking();
+                    newState = handleIntaking();
                     break;
                 case HATCH_CAPTURED:
                     newState = handleHatchCapture();
@@ -229,7 +228,7 @@ public class Superstructure extends Subsystem {
             mBeakLips.set(DoubleSolenoid.Value.kReverse);
             mTopRoller.set(DoubleSolenoid.Value.kReverse);
             mMustache.set(DoubleSolenoid.Value.kReverse);
-            mPowerCell.setWantedState(PowerCell.WantedState.EJECT);
+            mIntake.setWantedState(Intake.WantedState.EJECT);
         	
             switch (mWantedState) {
             case CLIMBING_EXTEND:
@@ -243,7 +242,7 @@ public class Superstructure extends Subsystem {
             case SPITTING:
                 return SystemState.SPITTING;
             case SHOOT:
-                return SystemState.SHOOT;
+                return SystemState.SHOOTING;
             case STARTINGCONFIGURATION:
                 return SystemState.STARTINGCONFIGURATION;
             case OVERTHETOP:
@@ -284,7 +283,7 @@ public class Superstructure extends Subsystem {
             case SPITTING:
                 return SystemState.SPITTING;
             case SHOOT:
-                return SystemState.SHOOT;
+                return SystemState.SHOOTING;
             case STARTINGCONFIGURATION:
                 return SystemState.STARTINGCONFIGURATION;
             case POWERCELL_EJECT:
@@ -304,12 +303,12 @@ public class Superstructure extends Subsystem {
             }
         }
 
-        private SystemState handlePowerCellIntaking() {
+        private SystemState handleIntaking() {
             //mBeakSwinger.set(DoubleSolenoid.Value.kReverse);
             //mBeakLips.set(DoubleSolenoid.Value.kReverse);
             //mTopRoller.set(DoubleSolenoid.Value.kForward);
             //mMustache.set(DoubleSolenoid.Value.kReverse);
-            mPowerCell.setWantedState(PowerCell.WantedState.INTAKE);
+            mIntake.setWantedState(Intake.WantedState.INTAKE);
             //seWristtWantedPosition(WantedWristPosition.CARGOPICKUP);
             //setWantedElevatorPosition(ELEVATOR_POSITION.ELEVATOR_CARGO_PICKUP);
             //mElevator.setWantedPosition(Constants.kElevatorBallPickup_EncoderValue);
@@ -326,7 +325,7 @@ public class Superstructure extends Subsystem {
             case SPITTING:
                 return SystemState.SPITTING;
             case SHOOT:
-                return SystemState.SHOOT;
+                return SystemState.SHOOTING;
             case STARTINGCONFIGURATION:
                 return SystemState.STARTINGCONFIGURATION;
             case POWERCELL_EJECT:
@@ -366,7 +365,7 @@ public class Superstructure extends Subsystem {
             case SPITTING:
                 return SystemState.SPITTING;
             case SHOOT:
-                return SystemState.SHOOT;
+                return SystemState.SHOOTING;
             case STARTINGCONFIGURATION:
                 return SystemState.STARTINGCONFIGURATION;
             case POWERCELL_EJECT:
@@ -404,7 +403,7 @@ public class Superstructure extends Subsystem {
             case SPITTING:
                 return SystemState.SPITTING;
             case SHOOT:
-                return SystemState.SHOOT;
+                return SystemState.SHOOTING;
             case STARTINGCONFIGURATION:
                 return SystemState.STARTINGCONFIGURATION;
             case POWERCELL_EJECT:
@@ -429,8 +428,8 @@ public class Superstructure extends Subsystem {
         	mElevator.setWantedPosition(mWantedElevatorPosition);
             mElevator.setWantedState(Elevator.WantedState.ELEVATORTRACKING);
             //ORIGONALY WAS NOT INTAKING BUT HOLDING
-            if (mPowerCell.getSystemState() != PowerCell.SystemState.INTAKING) {
-                mPowerCell.setWantedState(PowerCell.WantedState.IDLE);
+            if (mIntake.getSystemState() != Intake.SystemState.INTAKING) {
+                mIntake.setWantedState(Intake.WantedState.IDLE);
             }
             mClimber.setWantedState(Climber.WantedState.IDLE);
             if ((timestamp - mCurrentStateStartTime  > 1.0)) {
@@ -450,7 +449,7 @@ public class Superstructure extends Subsystem {
             case SPITTING:
                 return SystemState.SPITTING;
             case SHOOT:
-                return SystemState.SHOOT;
+                return SystemState.SHOOTING;
             case STARTINGCONFIGURATION:
                 return SystemState.STARTINGCONFIGURATION;
             case POWERCELL_EJECT:
@@ -473,7 +472,7 @@ public class Superstructure extends Subsystem {
         private SystemState handleReturningHome() {
         	//mElevator.setWantedPosition(0);
         	mElevator.setWantedState(Elevator.WantedState.ELEVATORTRACKING);
-            mPowerCell.setWantedState(PowerCell.WantedState.IDLE);
+            mIntake.setWantedState(Intake.WantedState.IDLE);
         	
             switch (mWantedState) {
             case CLIMBING_EXTEND:
@@ -487,7 +486,7 @@ public class Superstructure extends Subsystem {
             case SPITTING:
                 return SystemState.SPITTING;
             case SHOOT:
-                return SystemState.SHOOT;
+                return SystemState.SHOOTING;
             case STARTINGCONFIGURATION:
                 return SystemState.STARTINGCONFIGURATION;
             case POWERCELL_EJECT:
@@ -509,7 +508,7 @@ public class Superstructure extends Subsystem {
 
 		private SystemState handleSpittingOutTop() {
         	mElevator.setWantedState(Elevator.WantedState.ELEVATORTRACKING);
-        	mPowerCell.setWantedState(PowerCell.WantedState.EJECT);
+        	mIntake.setWantedState(Intake.WantedState.EJECT);
         	
             switch (mWantedState) {
             case CLIMBING_EXTEND:
@@ -523,7 +522,7 @@ public class Superstructure extends Subsystem {
             case SPITTING:
                 return SystemState.SPITTING;
             case SHOOT:
-                return SystemState.SHOOT;
+                return SystemState.SHOOTING;
             case STARTINGCONFIGURATION:
                 return SystemState.STARTINGCONFIGURATION;
             case POWERCELL_EJECT:
@@ -545,7 +544,7 @@ public class Superstructure extends Subsystem {
 
 		private SystemState handleWaitingForRotate(double timestamp) {
         	mElevator.setWantedState(Elevator.WantedState.ELEVATORTRACKING);
-        	mPowerCell.setIdle();      
+        	mIntake.setIdle();      
        
             switch (mWantedState) {
             case CLIMBING_EXTEND:
@@ -559,7 +558,7 @@ public class Superstructure extends Subsystem {
             case SPITTING:
                 return SystemState.SPITTING;
             case SHOOT:
-                return SystemState.SHOOT;
+                return SystemState.SHOOTING;
             case STARTINGCONFIGURATION:
                 return SystemState.STARTINGCONFIGURATION;
             case POWERCELL_EJECT:
@@ -582,9 +581,9 @@ public class Superstructure extends Subsystem {
         }
 
 
-		private SystemState handleShoot() {
-            //mShooter.setWantedState(Shooter.WantedState.SHOOTING);  USE same INTAKE task
-            mPowerCell.setWantedState(PowerCell.WantedState.SHOOT);
+		private SystemState handleShooting() {
+            mShooter.setWantedState(Shooter.WantedState.SHOOT);
+            mIntake.setWantedState(Intake.WantedState.SHOOT);
         	
             switch (mWantedState) {
             case CLIMBING_EXTEND:
@@ -598,7 +597,7 @@ public class Superstructure extends Subsystem {
             case SPITTING:
                 return SystemState.SPITTING;
             case SHOOT:
-                return SystemState.SHOOT;
+                return SystemState.SHOOTING;
             case STARTINGCONFIGURATION:
                 return SystemState.STARTINGCONFIGURATION;
             case POWERCELL_EJECT:
@@ -618,8 +617,8 @@ public class Superstructure extends Subsystem {
             }
         }
 
-		private SystemState handlePowerCellEjecting() {
-            mPowerCell.setWantedState(PowerCell.WantedState.EJECT);
+		private SystemState handleEjecting() {
+            mIntake.setWantedState(Intake.WantedState.EJECT);
         	
             switch (mWantedState) {
             case CLIMBING_EXTEND:
@@ -633,7 +632,7 @@ public class Superstructure extends Subsystem {
             case SPITTING:
                 return SystemState.SPITTING;
             case SHOOT:
-                return SystemState.SHOOT;
+                return SystemState.SHOOTING;
             case STARTINGCONFIGURATION:
                 return SystemState.STARTINGCONFIGURATION;
             case POWERCELL_EJECT:
@@ -655,7 +654,7 @@ public class Superstructure extends Subsystem {
 
 		private SystemState waitingForPowerCubeIntake() {
 
-       	    mPowerCell.setWantedState(PowerCell.WantedState.INTAKE);
+       	    mIntake.setWantedState(Intake.WantedState.INTAKE);
         	
             switch (mWantedState) {
             case CLIMBING_EXTEND:
@@ -672,7 +671,7 @@ public class Superstructure extends Subsystem {
             case SPITTING:
                 return SystemState.SPITTING;
             case SHOOT:
-                return SystemState.SHOOT;
+                return SystemState.SHOOTING;
             case STARTINGCONFIGURATION:
                 return SystemState.STARTINGCONFIGURATION;
             case POWERCELL_EJECT:
@@ -698,7 +697,7 @@ public class Superstructure extends Subsystem {
 
 		private SystemState handleWaitingForLowPosition() {
         	mElevator.setWantedState(Elevator.WantedState.ELEVATORTRACKING);
-        	mPowerCell.setWantedState(PowerCell.WantedState.INTAKE);
+        	mIntake.setWantedState(Intake.WantedState.INTAKE);
         	
             switch (mWantedState) {
             case CLIMBING_EXTEND:
@@ -717,7 +716,7 @@ public class Superstructure extends Subsystem {
             case SPITTING:
                 return SystemState.SPITTING;
             case SHOOT:
-                return SystemState.SHOOT;
+                return SystemState.SHOOTING;
             case STARTINGCONFIGURATION:
                 return SystemState.STARTINGCONFIGURATION;
             case POWERCELL_EJECT:
@@ -752,7 +751,7 @@ public class Superstructure extends Subsystem {
             case SPITTING:
                 return SystemState.SPITTING;
             case SHOOT:
-                return SystemState.SHOOT;
+                return SystemState.SHOOTING;
             case STARTINGCONFIGURATION:
                 return SystemState.STARTINGCONFIGURATION;
             case POWERCELL_EJECT:
@@ -779,7 +778,7 @@ public class Superstructure extends Subsystem {
             case SPITTING:
                 return SystemState.SPITTING;
             case SHOOT:
-                return SystemState.SHOOT;
+                return SystemState.SHOOTING;
             case STARTINGCONFIGURATION:
                 return SystemState.STARTINGCONFIGURATION;
             case POWERCELL_EJECT:
@@ -804,7 +803,7 @@ public class Superstructure extends Subsystem {
             stop();
             //mMustache.set(DoubleSolenoid.Value.kReverse);
             //mElevator.setWantedState(Elevator.WantedState.IDLE);
-            mPowerCell.setWantedState(PowerCell.WantedState.IDLE);
+            mIntake.setWantedState(Intake.WantedState.IDLE);
             mClimber.setWantedState(Climber.WantedState.IDLE);
         }
         
@@ -820,7 +819,7 @@ public class Superstructure extends Subsystem {
         case SPITTING:
             return SystemState.SPITTING;
         case SHOOT:
-            return SystemState.SHOOT;
+            return SystemState.SHOOTING;
         case STARTINGCONFIGURATION:
             return SystemState.STARTINGCONFIGURATION;
         case OVERTHETOP:
@@ -849,7 +848,8 @@ public class Superstructure extends Subsystem {
         //SmartDashboard.putNumber("Air Pressure psi", mAirPressureSensor.getAirPressurePsi());
         SmartDashboard.putString("Sys State", mSystemState.name());
         //SmartDashboard.putNumber("IntakeOutput", mIntakeOutput);
-        mPowerCell.outputToSmartDashboard();
+        mIntake.outputToSmartDashboard();
+        mShooter.outputToSmartDashboard();
     }
 
     @Override
