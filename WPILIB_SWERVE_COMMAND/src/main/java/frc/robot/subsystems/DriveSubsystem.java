@@ -21,7 +21,9 @@ import frc.robot.Constants.DriveConstants;
 
 @SuppressWarnings("PMD.ExcessiveImports")
 public class DriveSubsystem extends SubsystemBase {
-  //Robot swerve modules
+  public static final double DRIVE_SETPOINT_MAX = 0;
+
+//Robot swerve modules
   private final SwerveModule m_frontLeft
       = new SwerveModule(DriveConstants.kFrontLeftDriveMotorPort,
                          DriveConstants.kFrontLeftTurningMotorPort,
