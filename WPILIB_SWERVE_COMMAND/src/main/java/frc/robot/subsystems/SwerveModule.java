@@ -179,8 +179,8 @@ public class SwerveModule {
    */
 
   public void resetEncoders() {
-    //TODO FIXME <----------------------------------- how to reset these encoders???? are they absolute?
     //m_driveEncoder.reset();
     //m_turningEncoder.reset();
+    wheel.setAzimuthZero(0);
   }
 }
