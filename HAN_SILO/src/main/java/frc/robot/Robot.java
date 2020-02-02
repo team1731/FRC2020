@@ -184,15 +184,15 @@ public class Robot extends TimedRobot {
     };
 
 	//2018
-    private final SubsystemManager mSubsystemManager2018 = new SubsystemManager(
-                            Arrays.asList(
-								//Drive.getInstance(),
-								Superstructure.getInstance(),
-                                //Elevator.getInstance(),
-								//Intake.getInstance(),
-								//Climber.getInstance(),
-                                ConnectionMonitor.getInstance(),
-								LED.getInstance() ));
+    // private final SubsystemManager mSubsystemManager2018 = new SubsystemManager(
+    //                         Arrays.asList(
+	// 							//Drive.getInstance(),
+	// 							Superstructure.getInstance(),
+    //                             //Elevator.getInstance(),
+	// 							//Intake.getInstance(),
+	// 							//Climber.getInstance(),
+    //                             ConnectionMonitor.getInstance(),
+	// 							LED.getInstance() ));
 
 	//2019
     private final SubsystemManager mSubsystemManager = new SubsystemManager(
@@ -281,7 +281,11 @@ public class Robot extends TimedRobot {
 
 
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
-            //mEnabledLooper.register(mRobotStateEstimator);
+
+            //mEnabledLooper.register(mRobotStateEstimator);              //TODO RDB2020 should this be commented out?
+            //mEnabledLooper.register(RobotStateEstimator.getInstance()); //(2018 had this)
+
+            //2020
             mEnabledLooper.register(mVisionCamProcessor); 
             mEnabledLooper.register(m_swerve);
             
@@ -577,7 +581,7 @@ public class Robot extends TimedRobot {
         AUTO_MODES.put(55, /* 	Drive Forward			 */ new _55_LeftDriveForward());
     }
 	
-		private static void initAutoModes2019() {
+	private static void initAutoModes2019() {
         AUTO_MODES_2019 = new HashMap<String, AutoModeBase>(); //THESE ARE FROM MARK'S "BIBLE"
         
         AUTO_MODES_2019.put("LeftRocketRearToFeedStationMode",  new LeftRocketRearToFeedStationMode());
@@ -698,10 +702,10 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
     	//2020
-        driveWithJoystick(false);
-    	m_swerve.updateOdometry();
+        //driveWithJoystick(false); // <----------------------------------------------- RDB2020 I commented-out this line!
+    	m_swerve.updateOdometry();  // <----------------------------------------------- RDB2020 is it appropriate to do this here?
 
-        allPeriodic(); //TODO FIXME -- evaluate still calling this
+        allPeriodic();
         
         //WPILIB WAY TO RUN AUTONOMOUS...
         //
