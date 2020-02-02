@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.subsystems;
+package swervebot;
 
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
@@ -15,18 +15,11 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import org.strykeforce.thirdcoast.swerve.Wheel;
 
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.PWMVictorSPX;
-import edu.wpi.first.wpilibj.SpeedController;
-import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
-import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class SwerveModuleWpilibSwerve {
+public class SwerveModule {
   private static final double kWheelRadius = 0.0508;
   private static final int kEncoderResolution = 4096;
 
@@ -63,7 +56,7 @@ public class SwerveModuleWpilibSwerve {
    * @param driveMotorChannel   ID for the drive motor.
    * @param turningMotorChannel ID for the turning motor.
    */
-  public SwerveModuleWpilibSwerve(int driveMotorChannel, int turningMotorChannel) {
+  public SwerveModule(int driveMotorChannel, int turningMotorChannel) {
     int smartMotionSlot = 0;
 
     m_driveMotor = new CANSparkMax(driveMotorChannel, MotorType.kBrushless);

@@ -5,13 +5,10 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.subsystems;
+package swervebot;
 
 import com.kauailabs.navx.frc.AHRS;
 
-import org.strykeforce.thirdcoast.swerve.SwerveDrive;
-
-import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
@@ -33,10 +30,10 @@ public class Drivetrain {
   private final Translation2d m_backLeftLocation = new Translation2d(-0.381, 0.381);
   private final Translation2d m_backRightLocation = new Translation2d(-0.381, -0.381);
 
-  private final SwerveModuleWpilibSwerve m_frontLeft = new SwerveModuleWpilibSwerve(1, 11);
-  private final SwerveModuleWpilibSwerve m_frontRight = new SwerveModuleWpilibSwerve(2, 12);
-  private final SwerveModuleWpilibSwerve m_backLeft = new SwerveModuleWpilibSwerve(3, 13);
-  private final SwerveModuleWpilibSwerve m_backRight = new SwerveModuleWpilibSwerve(4, 14);
+  private final SwerveModule m_frontLeft = new SwerveModule(1, 11);
+  private final SwerveModule m_frontRight = new SwerveModule(2, 12);
+  private final SwerveModule m_backLeft = new SwerveModule(3, 13);
+  private final SwerveModule m_backRight = new SwerveModule(4, 14);
 
   //private final AnalogGyro m_gyro = new AnalogGyro(0);
   AHRS m_gyro  = new AHRS(SPI.Port.kMXP);
