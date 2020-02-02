@@ -29,7 +29,7 @@ public class DrivePathAction implements Action {
 
     @Override
     public boolean isFinished() {
-        return (mDrive.isDoneWithPath() || mDrive.isTBFinished());
+        return mSwerveDrive.isDoneWithPath();
     }
 
     @Override
@@ -45,8 +45,7 @@ public class DrivePathAction implements Action {
     @Override
     public void start() throws RuntimeException {
         mDrive.resetTractorBeam();
-        throw new java.lang.RuntimeException("Not implemented");
-        //mSwerveDrive.setWantDrivePath(mPath, mPathContainer.isReversed());
+        mSwerveDrive.setWantDrivePath(mPath, mPathContainer.isReversed());
         //mDrive.setWantDrivePath(mPath, mPathContainer.isReversed());
     }
 }

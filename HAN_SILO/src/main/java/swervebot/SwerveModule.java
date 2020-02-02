@@ -152,4 +152,8 @@ public class SwerveModule {
     wheel.set(-angleDegrees/360, speedMetersPerSecond * 16.0 * 39.37  * 60.0 / 3.0 / Math.PI); //FIXME: is this supposed to be inches or feet per second???
     //wheel.setAzimuthPosition(angleDegrees);
   }
+
+  public void setBrakeMode(boolean on){
+    wheel.setBrakeMode(on);
+  }
 }

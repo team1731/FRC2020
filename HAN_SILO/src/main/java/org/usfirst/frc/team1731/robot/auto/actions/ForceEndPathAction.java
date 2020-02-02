@@ -15,7 +15,6 @@ public class ForceEndPathAction extends RunOnceAction {
 
     @Override
     public synchronized void runOnce() throws RuntimeException {
-        throw new RuntimeException("Not implemented");
-        //Robot.m_swerve.forceDoneWithPath();
+        Robot.m_swerve.forceDoneWithPath();
     }
 }

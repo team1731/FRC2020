@@ -1,5 +1,7 @@
 package org.usfirst.frc.team1731.lib.util.control;
 
+import org.usfirst.frc.team1731.robot.Constants;
+
 /**
  * A utility class for interpolating lookahead distance based on current speed.
  */
@@ -19,6 +21,10 @@ public class Lookahead {
         this.max_speed = max_speed;
         delta_distance = max_distance - min_distance;
         delta_speed = max_speed - min_speed;
+    }
+
+    public Lookahead(){
+        this(Constants.kMinLookAhead, Constants.kMaxLookAhead, Constants.kMinLookAheadSpeed, Constants.kMaxLookAheadSpeed);
     }
 
     public double getLookaheadForSpeed(double speed) {

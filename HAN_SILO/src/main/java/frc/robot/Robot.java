@@ -283,6 +283,7 @@ public class Robot extends TimedRobot {
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
             //mEnabledLooper.register(mRobotStateEstimator);
             mEnabledLooper.register(mVisionCamProcessor); 
+            mEnabledLooper.register(m_swerve);
             
             //http://roborio-1731-frc.local:1181/?action=stream
             //   /CameraPublisher/<camera name>/streams=["mjpeg:http://roborio-1731-frc.local:1181/?action=stream", "mjpeg:http://10.17.31.2:1181/?action=stream"]
@@ -416,6 +417,7 @@ public class Robot extends TimedRobot {
 			mSuperstructure.openBeak();
             mSuperstructure.uproller();
 
+            /*
             switch(CHOSEN_AUTO_SCHEME) {
             
             case OLD_SCHEME: // Haymarket, Alexandria
@@ -441,6 +443,7 @@ public class Robot extends TimedRobot {
                 autoModeToExecute = determineAutoModeToExecute2018(gameData, autoCodes);
             	break;
             }
+            */
             
             autoModeToExecute = new TestAuto();
             mAutoModeExecuter = new AutoModeExecuter();

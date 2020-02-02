@@ -38,7 +38,6 @@ public class TurnToHeadingAction implements Action {
     @Override
     public void start() throws RuntimeException {
         //mDrive.setWantTurnToHeading(mTargetHeading);
-        throw new RuntimeException("Not implemented");
-        //mSwerveDrive.setWantTurnToHeading(mTargetHeading);
+        mSwerveDrive.setWantTurnToHeading(mTargetHeading);
     }
 }

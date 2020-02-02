@@ -16,6 +16,7 @@ import com.revrobotics.CANPIDController;
 import com.revrobotics.ControlType;
 //import com.sun.java.swing.plaf.windows.TMSchema.Control;
 import com.revrobotics.EncoderType;
+import com.revrobotics.CANSparkMax.IdleMode;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -252,6 +253,10 @@ public class Wheel {
     //return (int)azimuthSpark.get() & 0xFFF;
     //TODO - need to return azimuth from the 221 encoder
     return 0;
+  }
+
+  public void setBrakeMode(boolean on){
+    driveSpark.setIdleMode(on ? IdleMode.kBrake : IdleMode.kCoast);
   }
 
   /**
