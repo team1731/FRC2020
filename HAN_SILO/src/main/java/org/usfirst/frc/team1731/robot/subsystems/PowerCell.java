@@ -180,8 +180,8 @@ public class PowerCell extends Subsystem {
             if (mStateChanged) {
                 //mTalonShoot1.setSpeed(Constants.kMotorShootSpeed);
                 //mTalonShoot2.setSpeed(Constants.kMotorShootSpeed);
-                mTalonShoot1.set(ControlMode.PercentOutput,Constants.kMotorShootSpeed);
-                mTalonShoot2.set(ControlMode.PercentOutput,Constants.kMotorShootSpeed);
+                mTalonShoot1.set(ControlMode.PercentOutput,Constants.kMotorShootSpeed5);
+                mTalonShoot2.set(ControlMode.PercentOutput,Constants.kMotorShootSpeed6);
                 mPowerCellCount = 0;
             } else {
                 //if ((mTalonShoot1.getSpeed() >= (Constants.kMotorShootSpeed * Constants.kMotorShootPercent))
@@ -189,8 +189,8 @@ public class PowerCell extends Subsystem {
                 //test if shooting motor is up to speed 
                 //mTalonSeq.setSpeed(Constants.kMotorSeqFwdSpeed);
                 //}
-                if ((mTalonShoot1.getMotorOutputPercent() >= (Constants.kMotorShootSpeed * Constants.kMotorShootPercent))
-                    && (mTalonShoot2.getMotorOutputPercent() >= (Constants.kMotorShootSpeed * Constants.kMotorShootPercent))) {
+                if ((mTalonShoot1.getMotorOutputPercent() >= (Constants.kMotorShootSpeed5 * Constants.kMotorShootPercent))
+                    && (mTalonShoot2.getMotorOutputPercent() >= (Constants.kMotorShootSpeed6 * Constants.kMotorShootPercent))) {
                     mTalonSeq.setSpeed(Constants.kMotorSeqFwdSpeed);
                 }
             }
@@ -302,11 +302,13 @@ public class PowerCell extends Subsystem {
          * SmartDashboard.putBoolean("ElevRevSw",
          * mTalon.getSensorCollection().isRevLimitSwitchClosed());
          */
-        SmartDashboard.putString("IntakeWantState", mWantedState.name());
-        SmartDashboard.putString("IntakeSysState", mSystemState.name());
-        SmartDashboard.putBoolean("IntakeTalonAlive", mTalonIntake.isAlive());
-        SmartDashboard.putBoolean("IntakeLowSensor", mLowSensor.get());
+        SmartDashboard.putString("OpWantState", mWantedState.name());
+        SmartDashboard.putString("OpSysState", mSystemState.name());
+        SmartDashboard.putBoolean("OpTalonAlive", mTalonIntake.isAlive());
+        SmartDashboard.putBoolean("SeqLowSensor", mLowSensor.get());
         SmartDashboard.putNumber("PCellCount", mPowerCellCount);
+        SmartDashboard.putNumber("ShootSpd1", mTalonShoot1.getMotorOutputPercent());
+        SmartDashboard.putNumber("ShootSpd2", mTalonShoot2.getMotorOutputPercent());
     }
 
     @Override
