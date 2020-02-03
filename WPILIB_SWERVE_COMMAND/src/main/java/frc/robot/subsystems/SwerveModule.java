@@ -13,25 +13,13 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-
-//import edu.wpi.first.wpilibj.Encoder;
-//import edu.wpi.first.wpilibj.Spark;
-//import edu.wpi.first.wpilibj.controller.PIDController;
-//import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
-//import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
-
-import frc.robot.Constants.ModuleConstants;
 
 
 public class SwerveModule {
   private static final int TICKS = 16;
   public static final double kMaxAngularSpeed = Math.PI;
-  private static final double kWheelRadius = 0.0508;
-  private static final int kEncoderResolution = 4096;
-  private static final double kModuleMaxAngularVelocity = kMaxAngularSpeed;
-  private static final double kModuleMaxAngularAcceleration = 2 * Math.PI; // radians per second squared
   private final CANSparkMax m_driveMotor;
   private final CANSparkMax m_turningMotor;
   public CANEncoder m_driveEncoder;
@@ -39,23 +27,6 @@ public class SwerveModule {
   private CANPIDController m_drivePIDController;
   private CANPIDController m_turningPIDController;
     
-  //private final Spark m_driveMotor;
-  //private final Spark m_turningMotor;
-
-  //private final Encoder m_driveEncoder;
-  //private final Encoder m_turningEncoder;
-
-  //private final PIDController m_drivePIDController =
-  //    new PIDController(ModuleConstants.kPModuleDriveController, 0, 0);
-
-  //Using a TrapezoidProfile PIDController to allow for smooth turning
-  //private final ProfiledPIDController m_turningPIDController
-  //    = new ProfiledPIDController(
-  //        ModuleConstants.kPModuleTurningController, 0, 0,
-  //        new TrapezoidProfile.Constraints(
-  //            ModuleConstants.kMaxModuleAngularSpeedRadiansPerSecond,
-  //            ModuleConstants.kMaxModuleAngularAccelerationRadiansPerSecondSquared));
-
   /**
    * Constructs a SwerveModule.
    *
@@ -94,42 +65,8 @@ public class SwerveModule {
     m_turningPIDController.setSmartMotionMaxAccel(1500, smartMotionSlot);
     m_turningPIDController.setSmartMotionAllowedClosedLoopError(0, smartMotionSlot);
 
-    //wheel = new Wheel(m_turningMotor, m_driveMotor, DriveSubsystem.DRIVE_SETPOINT_MAX);
     setAzimuthZero(0);
 
-  //public SwerveModule(int driveMotorChannel,
-  //                    int turningMotorChannel,
-  //                    int[] driveEncoderPorts,
-  //                    int[] turningEncoderPorts,
-  //                    boolean driveEncoderReversed,
-  //                    boolean turningEncoderReversed) {
-
-  //  m_driveMotor = new Spark(driveMotorChannel);
-  //  m_turningMotor = new Spark(turningMotorChannel);
-
-  //  this.m_driveEncoder = new Encoder(driveEncoderPorts[0], driveEncoderPorts[1]);
-
-  //  this.m_turningEncoder = new Encoder(turningEncoderPorts[0], turningEncoderPorts[1]);
-
-    // Set the distance per pulse for the drive encoder. We can simply use the
-    // distance traveled for one rotation of the wheel divided by the encoder
-    // resolution.
-    //m_driveEncoder.setDistancePerPulse(ModuleConstants.kDriveEncoderDistancePerPulse);
-
-    //Set whether drive encoder should be reversed or not
-    //m_driveEncoder.setReverseDirection(driveEncoderReversed);
-
-    // Set the distance (in this case, angle) per pulse for the turning encoder.
-    // This is the the angle through an entire rotation (2 * wpi::math::pi)
-    // divided by the encoder resolution.
-    //m_turningEncoder.setDistancePerPulse(ModuleConstants.kTurningEncoderDistancePerPulse);
-
-    //Set whether turning encoder should be reversed or not
-    //m_turningEncoder.setReverseDirection(turningEncoderReversed);
-
-    // Limit the PID Controller's input range between -pi and pi and set the input
-    // to be continuous.
-    //m_turningPIDController.enableContinuousInput(-Math.PI, Math.PI);
   }
 
 
@@ -217,7 +154,6 @@ public class SwerveModule {
       drive = -drive;
     }
     m_turningPIDController.setReference((azimuthPosition + azimuthError), ControlType.kSmartMotion);
-
   }
 
   /**

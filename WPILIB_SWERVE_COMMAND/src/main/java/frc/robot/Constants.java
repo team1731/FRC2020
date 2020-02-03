@@ -31,28 +31,7 @@ public final class Constants {
     public static final int kFrontRightTurningMotorPort = 12;
     public static final int kRearRightTurningMotorPort = 14;
 
-    public static final int[] kFrontLeftTurningEncoderPorts = new int[]{0, 1};
-    public static final int[] kRearLeftTurningEncoderPorts = new int[]{2, 3};
-    public static final int[] kFrontRightTurningEncoderPorts = new int[]{4, 5};
-    public static final int[] kRearRightTurningEncoderPorts = new int[]{5, 6};
-
-    public static final boolean kFrontLeftTurningEncoderReversed = false;
-    public static final boolean kRearLeftTurningEncoderReversed = true;
-    public static final boolean kFrontRightTurningEncoderReversed = false;
-    public static final boolean kRearRightTurningEncoderReversed = true;
-
-    public static final int[] kFrontLeftDriveEncoderPorts = new int[]{7, 8};
-    public static final int[] kRearLeftDriveEncoderPorts = new int[]{9, 10};
-    public static final int[] kFrontRightDriveEncoderPorts = new int[]{11, 12};
-    public static final int[] kRearRightDriveEncoderPorts = new int[]{13, 14};
-
-    public static final boolean kFrontLeftDriveEncoderReversed = false;
-    public static final boolean kRearLeftDriveEncoderReversed = true;
-    public static final boolean kFrontRightDriveEncoderReversed = false;
-    public static final boolean kRearRightDriveEncoderReversed = true;
-
-
-    public static final double kTrackWidth = .7112;
+    public static final double kTrackWidth = 0.7112;
     //Distance between centers of right and left wheels on robot
     public static final double kWheelBase = 0.7;
     //Distance between front and back wheels on robot
