@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.DriveConstants;
@@ -73,6 +74,7 @@ public class DriveSubsystem extends SubsystemBase {
   public DriveSubsystem() {
   }
 
+  
   /**
    * Returns the angle of the robot as a Rotation2d.
    *
@@ -86,12 +88,18 @@ public class DriveSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // Update the odometry in the periodic block
+    double headingRadians = Math.toRadians(getHeading());
     m_odometry.update(
-        new Rotation2d(getHeading()),
+        new Rotation2d(headingRadians),
         m_frontLeft.getState(),
         m_rearLeft.getState(),
         m_frontRight.getState(),
         m_rearRight.getState());
+        SmartDashboard.putNumber("pose x", m_odometry.getPoseMeters().getTranslation().getX());
+        SmartDashboard.putNumber("pose y", m_odometry.getPoseMeters().getTranslation().getY());
+        SmartDashboard.putNumber("rot", m_odometry.getPoseMeters().getRotation().getDegrees());
+        SmartDashboard.putNumber("heading", headingRadians);    
+        SmartDashboard.putNumber("raw gyro", m_gyro.getAngle());    
   }
 
   /**
@@ -176,7 +184,7 @@ public class DriveSubsystem extends SubsystemBase {
    * Zeroes the heading of the robot.
    */
   public void zeroHeading() {
-    //m_gyro.reset(); // RDB2020 - I replace this call with the below 5 lines...
+    m_gyro.reset(); // RDB2020 - I replace this call with the below 5 lines...
 
     //logger.info("<b>DriveSubsystem</b>: zeroGyro started");
     m_gyro.setAngleAdjustment(0);

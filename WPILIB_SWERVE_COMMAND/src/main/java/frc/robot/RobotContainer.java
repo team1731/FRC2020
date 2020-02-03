@@ -37,7 +37,7 @@ import frc.robot.subsystems.DriveSubsystem;
  */
 public class RobotContainer {
   // The robot's subsystems
-  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  public final DriveSubsystem m_robotDrive = new DriveSubsystem();
 
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -62,14 +62,14 @@ public class RobotContainer {
             // Get the y speed or sideways/strafe speed. We are inverting this because
             // we want a positive value when we pull to the left. Xbox controllers
             // return positive values when you pull to the right by default.
-            -m_driverController.getX(GenericHID.Hand.kRight),
+            -m_driverController.getX(GenericHID.Hand.kLeft),
 
             // Get the rate of angular rotation. We are inverting this because we want a
             // positive value when we pull to the left (remember, CCW is positive in
             // mathematics). Xbox controllers return positive values when you pull to
             // the right by default.
-            -m_driverController.getX(GenericHID.Hand.kLeft), false), m_robotDrive) // <------- RDB2020 I added m_robotDrive here to get rid of
-                                                                                  //                  "Default Command must require subsytem"
+            -m_driverController.getX(GenericHID.Hand.kRight), true), m_robotDrive) // <------- RDB2020 I added m_robotDrive here to get rid of
+                                                                                   //                  "Default Command must require subsytem"
             );
 
   }
@@ -103,11 +103,11 @@ public class RobotContainer {
         new Pose2d(0, 0, new Rotation2d(0)),
         // Pass through these two interior waypoints, making an 's' curve path
         List.of(
-          //new Translation2d(1, 1),
-          //new Translation2d(2, -1)
+          new Translation2d(1, 1),
+          new Translation2d(2, -1)
           // RDB2020 for now, just go straight ahead in auto...
-          new Translation2d(1, 0),
-          new Translation2d(2, 0)
+          //new Translation2d(1, 0),
+          //new Translation2d(2, 0)
     ),
         // End 3 meters straight ahead of where we started, facing forward
         new Pose2d(3, 0, new Rotation2d(0)),

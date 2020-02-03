@@ -22,13 +22,13 @@ import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 public final class Constants {
   public static final class DriveConstants {
     public static final int kFrontLeftDriveMotorPort = 1;
-    public static final int kRearLeftDriveMotorPort = 2;
-    public static final int kFrontRightDriveMotorPort = 3;
+    public static final int kRearLeftDriveMotorPort = 3;
+    public static final int kFrontRightDriveMotorPort = 2;
     public static final int kRearRightDriveMotorPort = 4;
 
     public static final int kFrontLeftTurningMotorPort = 11;
-    public static final int kRearLeftTurningMotorPort = 12;
-    public static final int kFrontRightTurningMotorPort = 13;
+    public static final int kRearLeftTurningMotorPort = 13;
+    public static final int kFrontRightTurningMotorPort = 12;
     public static final int kRearRightTurningMotorPort = 14;
 
     public static final int[] kFrontLeftTurningEncoderPorts = new int[]{0, 1};
@@ -52,7 +52,7 @@ public final class Constants {
     public static final boolean kRearRightDriveEncoderReversed = true;
 
 
-    public static final double kTrackWidth = 0.5;
+    public static final double kTrackWidth = .7112;
     //Distance between centers of right and left wheels on robot
     public static final double kWheelBase = 0.7;
     //Distance between front and back wheels on robot
@@ -81,8 +81,8 @@ public final class Constants {
     public static final double kMaxModuleAngularSpeedRadiansPerSecond = 2 * Math.PI;
     public static final double kMaxModuleAngularAccelerationRadiansPerSecondSquared = 2 * Math.PI;
 
-    public static final int kEncoderCPR = 1024;
-    public static final double kWheelDiameterMeters = 0.15;
+    public static final int kEncoderCPR = 16;
+    public static final double kWheelDiameterMeters = 0.0762;
     public static final double kDriveEncoderDistancePerPulse =
         // Assumes the encoders are directly mounted on the wheel shafts
         (kWheelDiameterMeters * Math.PI) / (double) kEncoderCPR;
@@ -103,8 +103,8 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 3;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 3;
+    public static final double kMaxSpeedMetersPerSecond = 0.5; //3;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 1; //3;
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 

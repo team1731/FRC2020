@@ -1,6 +1,6 @@
-package org.strykeforce.thirdcoast.swerve;
+package frc.robot.subsystems;
 
-import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.TELEOP;
+//import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.TELEOP;
 
 import java.util.Objects;
 import java.util.function.DoubleConsumer;
@@ -13,8 +13,8 @@ import com.revrobotics.ControlType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode;
-import org.strykeforce.thirdcoast.talon.Errors;
+//import org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode;
+//import org.strykeforce.thirdcoast.talon.Errors;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -73,7 +73,7 @@ public class Wheel {
     m_pidController = azimuthSpark.getPIDController();
     m_encoder = azimuthSpark.getEncoder();
 
-    setDriveMode(TELEOP);
+    //setDriveMode(TELEOP);
 
     //logger.debug("azimuth = {} drive = {}", azimuthTalon.getDeviceID(), driveTalon.getDeviceID());
     logger.info("azimuth = {} drive = {}", azimuthSpark.getDeviceId(), driveSpark.getDeviceId());
@@ -166,25 +166,7 @@ public class Wheel {
    *
    * @param driveMode the desired drive mode
    */
-  public void setDriveMode(DriveMode driveMode) {
-    //logger.info("<b>Wheel</b>: setDriveMode starting");
-    switch (driveMode) {
-      case OPEN_LOOP:
-      case TELEOP:
-        //driver = (setpoint) -> driveTalon.set(PercentOutput, setpoint);
-        driver = (setpoint) -> driveSpark.set(setpoint);
-      break;
-      case CLOSED_LOOP:
-      case TRAJECTORY:
-      case AZIMUTH:
-        //driver = (setpoint) -> driveTalon.set(Velocity, setpoint * driveSetpointMax);
-        driver = (setpoint) -> m_pidController.setReference(setpoint * driveSetpointMax, ControlType.kSmartMotion);
-        //driver = (setpoint) -> driveSpark.set(setpoint * driveSetpointMax);
-        break;
-    }
-    //logger.info("<b>Wheel</b>: setDriveMode finished");
-  }
-
+ 
   /**
    * Stop azimuth and drive movement. This resets the azimuth setpoint and relative encoder to the
    * current position in case the wheel has been manually rotated away from its previous setpoint.

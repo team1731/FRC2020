@@ -13,7 +13,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import org.strykeforce.thirdcoast.swerve.Wheel;
+//import org.strykeforce.thirdcoast.swerve.Wheel;
 
 //import edu.wpi.first.wpilibj.Encoder;
 //import edu.wpi.first.wpilibj.Spark;
@@ -24,12 +24,13 @@ import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 //import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 
 import frc.robot.Constants.ModuleConstants;
-import swervebot.Drivetrain;
+
 
 public class SwerveModule {
+  public static final double kMaxAngularSpeed = Math.PI;
   private static final double kWheelRadius = 0.0508;
   private static final int kEncoderResolution = 4096;
-  private static final double kModuleMaxAngularVelocity = Drivetrain.kMaxAngularSpeed;
+  private static final double kModuleMaxAngularVelocity = kMaxAngularSpeed;
   private static final double kModuleMaxAngularAcceleration = 2 * Math.PI; // radians per second squared
   private static final double TICKS = 16;
   private final CANSparkMax m_driveMotor;
@@ -143,7 +144,7 @@ public class SwerveModule {
         //FIXME: apply any needed unit convertion here...
     double velocity = m_driveEncoder.getVelocity() * Math.PI * 3.0 / 39.37 / 60.0 / 16.0;
     double azimuth = m_turningEncoder.getPosition();
-    double azimuthPercent = Math.IEEEremainder(azimuth, TICKS);
+    double azimuthPercent = Math.IEEEremainder(azimuth, TICKS)/16.0;
 
     return new SwerveModuleState(velocity, new Rotation2d(azimuthPercent * 2.0 * Math.PI));
 
