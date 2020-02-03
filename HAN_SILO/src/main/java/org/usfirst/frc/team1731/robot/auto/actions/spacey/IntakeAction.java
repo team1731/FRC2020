@@ -14,7 +14,7 @@ public class IntakeAction implements Action {
     private Intake.WantedState myDesiredState;
 
     public IntakeAction() {
-        myDesiredState = Intake.WantedState.INTAKING;
+        myDesiredState = Intake.WantedState.INTAKE;
     }
 
     public IntakeAction(Intake.WantedState desiredState) {

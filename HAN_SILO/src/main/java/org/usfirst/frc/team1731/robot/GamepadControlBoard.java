@@ -58,17 +58,6 @@ public class GamepadControlBoard implements ControlBoardInterface {
     public boolean getSpit() {
         return false; // Math.abs(mOperator.getRawAxis(2)) > .8;
     }
-    
-    @Override
-    public boolean getCalibrateDown() {
-        return mOperator.getRawButton(7);
-    }
-    
-    @Override
-    public boolean getCalibrateUp() {
-        return mOperator.getRawButton(8);
-    }
-
 
     @Override
     public double getThrottle() {
@@ -96,24 +85,14 @@ public class GamepadControlBoard implements ControlBoardInterface {
     }
 
     @Override
-    public int getClimber() {
-        // A
-		//    	Get the angle in degrees of a POV on the HID. 
-		//
-		//    	The POV angles start at 0 in the up direction, and increase clockwise
-    	//		(eg right is 90, upper-left is 315).
-		//    	Parameters:pov The index of the POV to read (starting at 0)
-    	//		Returns:the angle of the POV in degrees, or -1 if the POV is not pressed.
-		//
-        //int pov = mOperator.getPOV(0);    	
-        //return ((pov != -1) && (pov > 315 || pov < 45)) &&  mOperator.getRawButton(1);
-        if (mDriver.getRawButton(7) && mDriver.getRawButton(8)
-                                    && mOperator.getRawButton(2)) { // SAFETY! button B on operator controller)
-            return 1; // extend climber/legolift
-        }
-        return 0; // pause/stop climber
+    public boolean getClimberExtend() {
+        return mOperator.getRawButton(1); // extend climber
     }
-      
+
+        @Override
+    public boolean getClimberRetract() {
+        return mOperator.getRawButton(2); // retract climber
+    }  
 
     @Override
 	public double getElevatorControl() {
@@ -310,17 +289,19 @@ public class GamepadControlBoard implements ControlBoardInterface {
 
 	@Override
     public boolean getPickupBall(){
+        //return Math.abs(mDriver.getRawAxis(3)) > .7;
         return Math.abs(mOperator.getRawAxis(3)) > .7;
-    }
-
-	@Override
-    public boolean getSpitBall(){
-        return mOperator.getRawButton(6);
+        //Intake controled by driver not operator 
     }
 
 	@Override
     public boolean getShootBall(){
         return mOperator.getRawButton(6);
+    }
+
+    @Override
+    public boolean getEjectBall() {
+        return mOperator.getRawButton(5);
     }
 
 	@Override

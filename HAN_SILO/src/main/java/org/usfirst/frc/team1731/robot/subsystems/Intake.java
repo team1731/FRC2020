@@ -1,35 +1,27 @@
 package org.usfirst.frc.team1731.robot.subsystems;
-import java.util.Arrays;
 
-import org.usfirst.frc.team1731.lib.util.MovingAverage;
-import org.usfirst.frc.team1731.lib.util.Util;
-import org.usfirst.frc.team1731.lib.util.drivers.TalonSRXFactory;
 import org.usfirst.frc.team1731.robot.Constants;
 import org.usfirst.frc.team1731.robot.loops.Loop;
 import org.usfirst.frc.team1731.robot.loops.Looper;
-import org.usfirst.frc.team1731.robot.subsystems.Elevator.SystemState;
-import org.usfirst.frc.team1731.robot.subsystems.Elevator.WantedState;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-//import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.wpilibj.PWMTalonFX;
 
 import edu.wpi.first.wpilibj.DriverStation;
 
-//import com.ctre.CANTalon;
-//Getting rid of all solenoid for testing!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 //import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.Timer;
-//import edu.wpi.first.wpilibj.VictorSP;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+
 import org.usfirst.frc.team1731.robot.subsystems.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DigitalInput;
+
+//import edu.wpi.first.wpilibj.DoubleSolenoid;
+//import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 /**
- * 1731 the intake picks up cubes and ejects them
+ * 1731 the intake picks up balls and sequences them
  * 
  * @see Subsystem.java
  */
@@ -44,48 +36,49 @@ public class Intake extends Subsystem {
         return sInstance;
     }
 
+    private final PWMTalonFX mTalonIntake;
+    private final PWMTalonFX mTalonSeq;
 
-    //private final TalonFX mTalonFX;
-    private final PWMTalonFX mTalonFX;
-    // sensors used for old intake. New intake doesn't need them.
-   // private final AnalogInput mIRSensor1;
-    //private final AnalogInput mIRSensor2;
+    private SystemState mSystemState = SystemState.IDLE;
+    private WantedState mWantedState = WantedState.IDLE;
+    private DigitalInput mLowSensor;
+    private int mPowerCellCount;
+    private boolean mLowSensorLast;
+    //private DoubleSolenoid IntakeHood;
+
+
+
+    private boolean mStateChanged = false;
 
     private Intake() {
-        //mTalonFX = new TalonFX(Constants.kIntakeVictor);
-        mTalonFX = new PWMTalonFX(Constants.kIntakePWM);
-        //mIRSensor1 = new AnalogInput(1);
-        //mIRSensor2 = new AnalogInput(4);
-    }
+        mTalonIntake = new PWMTalonFX(Constants.kMotorPWMIntake);
+        mTalonSeq = new PWMTalonFX(Constants.kMotorPWMSeq);
+        mLowSensor = new DigitalInput(Constants.kLowSequencer);
+        // DoubleSolenoid IntakeHood = new
+        // DoubleSolenoid(Constants.kIntakeHoodSolenoid1, Constants.kIntakeHoodSolenoid2);
+}
 
     public boolean checkSystem() {
-
         return true;
     }
 
     public void setIdle() {
         // TODO Auto-generated method stub
-
     }
 
     public enum SystemState {
         IDLE, // stop all motors
-        SPITTING, INTAKING,
+        INTAKING,
+        SHOOTING,
+        EJECTING
     }
 
     public enum WantedState {
-        IDLE, SPITTING, // moving
-        INTAKING,
+        IDLE,
+        INTAKE,
+        SHOOT,
+        EJECT
     }
-
-    private SystemState mSystemState = SystemState.IDLE;
-    private WantedState mWantedState = WantedState.IDLE;
-
-    //DoubleSolenoid IntakeHood = new DoubleSolenoid(Constants.kIntakeHoodSolenoid1, Constants.kIntakeHoodSolenoid2);
-
-    private double mCurrentStateStartTime;
-    // private double mWantedPosition = 0;
-    private boolean mStateChanged = false;
 
     private final Loop mLoop = new Loop() {
         @Override
@@ -94,10 +87,9 @@ public class Intake extends Subsystem {
             synchronized (Intake.this) {
                 mSystemState = SystemState.IDLE;
                 mStateChanged = true;
-                // mWantedPosition = 0;
-                mCurrentStateStartTime = timestamp;
-                // DriverStation.reportError("Elevator SystemState: " + mSystemState, false);
             }
+            mPowerCellCount = 0;
+            mLowSensorLast = mLowSensor.get();
         }
 
         @Override
@@ -106,24 +98,24 @@ public class Intake extends Subsystem {
             synchronized (Intake.this) {
                 SystemState newState;
                 switch (mSystemState) {
-                case IDLE:
-                    newState = handleIdle();
-                    break;
-                case SPITTING:
-                    newState = handleSpitting();
-                    break;
-                case INTAKING:
-                    newState = handleIntaking();
-                    break;
-                default:
-                    newState = SystemState.IDLE;
+                    case IDLE:
+                        newState = handleIdle();
+                        break;
+                    case INTAKING:
+                        newState = handleIntaking();
+                        break;
+                    case SHOOTING:
+                        newState = handleShooting();
+                        break;
+                    case EJECTING:
+                        newState = handleEjecting();
+                        break;
+                    default:
+                        newState = SystemState.IDLE;
                 }
 
                 if (newState != mSystemState) {
-                    // System.out.println("Elevator state " + mSystemState + " to " + newState);
                     mSystemState = newState;
-                    mCurrentStateStartTime = timestamp;
-                    // DriverStation.reportWarning("Intake SystemState: " + mSystemState, false);
                     mStateChanged = true;
                 } else {
                     mStateChanged = false;
@@ -131,20 +123,40 @@ public class Intake extends Subsystem {
             }
         }
 
-        private SystemState handleSpitting() {
+        private SystemState handleIntaking() {
             if (mStateChanged) {
-                //IntakeHood.set(Value.kForward);
-                //mTalonFX.set(ControlMode.PercentOutput, 1);
-                mTalonFX.setSpeed(Constants.kIntakeSpitSpeed);
+                // IntakeHood.set(Value.kForward);
+                mTalonIntake.setSpeed(Constants.kMotorIntakeFwdSpeed);
+            } else {
+                boolean sensor = mLowSensor.get();
+                if (sensor) {
+                    mTalonSeq.setSpeed(0);
+                } else {
+                    if (mPowerCellCount < 5) {
+                        mTalonSeq.setSpeed(Constants.kMotorSeqFwdSpeed);
+                        if (mLowSensorLast) {
+                            mPowerCellCount++;
+                        }
+                    }
+                }
+                mLowSensorLast = sensor;
             }
             return defaultStateTransfer();
         }
 
-        private SystemState handleIntaking() {
+        private SystemState handleShooting() {
             if (mStateChanged) {
-                //IntakeHood.set(Value.kForward);
-                //mTalonFX.set(ControlMode.PercentOutput, -1);
-                mTalonFX.setSpeed(-Constants.kIntakeFeedSpeed);
+                mTalonSeq.setSpeed(Constants.kMotorSeqFwdSpeed);
+            }
+            return defaultStateTransfer();
+        }
+
+        private SystemState handleEjecting() {
+            if (mStateChanged) {
+                // IntakeHood.set(Value.kForward);
+                mTalonIntake.setSpeed(Constants.kMotorIntakeRevSpeed);
+                mTalonSeq.setSpeed(Constants.kMotorSeqRevSpeed);
+                mPowerCellCount = 0;
             }
             return defaultStateTransfer();
         }
@@ -157,23 +169,24 @@ public class Intake extends Subsystem {
 
     private SystemState defaultStateTransfer() {
         switch (mWantedState) {
-        case SPITTING:
-            return SystemState.SPITTING;
-        case INTAKING:
-            return SystemState.INTAKING;
-
-        default:
-            return SystemState.IDLE;
+            case INTAKE:
+                return SystemState.INTAKING;
+            case SHOOT:
+                return SystemState.SHOOTING;
+            case EJECT:
+                return SystemState.EJECTING;
+            default:
+                return SystemState.IDLE;
         }
     }
 
     private SystemState handleIdle() {
         // setOpenLoop(0.0f);
-        // if motor is not off, turn motor off
+        // if motors are not off, turn motors off & retract intake mechanism/roller
         if (mStateChanged) {
-            //mTalonFX.set(ControlMode.PercentOutput, 0);
-            mTalonFX.setSpeed(0);
-            //IntakeHood.set(Value.kReverse);
+            mTalonIntake.setSpeed(0);
+            mTalonSeq.setSpeed(0);
+            // IntakeHood.set(Value.kReverse);
         }
         return defaultStateTransfer();
     }
@@ -187,16 +200,18 @@ public class Intake extends Subsystem {
 
     @Override
     public void outputToSmartDashboard() {
-       // SmartDashboard.putNumber("IRSensor1", mIRSensor1.getAverageValue());
-       // SmartDashboard.putNumber("IRSensor2", mIRSensor2.getAverageValue());
         /*
-         * SmartDashboard.putNumber("ElevWantPos", mWantedState);
          * SmartDashboard.putNumber("ElevCurPos", mTalon.getSelectedSensorPosition(0));
          * SmartDashboard.putNumber("ElevQuadPos",
          * mTalon.getSensorCollection().getQuadraturePosition());
          * SmartDashboard.putBoolean("ElevRevSw",
          * mTalon.getSensorCollection().isRevLimitSwitchClosed());
          */
+        SmartDashboard.putString("IntakeWantState", mWantedState.name());
+        SmartDashboard.putString("IntakeSysState", mSystemState.name());
+        SmartDashboard.putBoolean("IntakeTalonAlive", mTalonIntake.isAlive());
+        SmartDashboard.putBoolean("IntakeSeqLowSens", mLowSensor.get());
+        SmartDashboard.putNumber("PowCellCount", mPowerCellCount);
     }
 
     @Override
@@ -213,10 +228,6 @@ public class Intake extends Subsystem {
     public void registerEnabledLoops(final Looper in) {
         in.register(mLoop);
     }
-    
-    //public boolean gotCube() {
-    //	 return ((mIRSensor1.getAverageValue() > 300) && (mIRSensor2.getAverageValue() > 300)); 
-    //}
 
     public synchronized SystemState getSystemState() {
         return mSystemState;
