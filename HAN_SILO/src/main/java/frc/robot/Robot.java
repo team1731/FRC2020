@@ -12,12 +12,8 @@ import java.util.Date;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.ColorSensorV3;
-import com.revrobotics.ControlType;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.ColorSensorV3;
-import com.revrobotics.ColorMatchResult;
-import com.revrobotics.ColorMatch;
+//import com.revrobotics.ControlType;
+//import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +26,8 @@ import org.usfirst.frc.team1731.robot.ControlBoardInterface;
 import org.usfirst.frc.team1731.robot.GamepadControlBoard;
 import org.usfirst.frc.team1731.robot.subsystems.Intake;
 import org.usfirst.frc.team1731.robot.subsystems.Shooter;
-import org.usfirst.frc.team1731.robot.Constants;
+import org.usfirst.frc.team1731.robot.subsystems.ColorWheel;
+//import org.usfirst.frc.team1731.robot.Constants;
 
 public class Robot extends TimedRobot {
   private final Superstructure mSuperstructure = Superstructure.getInstance();
@@ -40,7 +37,7 @@ public class Robot extends TimedRobot {
   // Controls initialize Commands so this should be instantiated last to prevent
 
   private final SubsystemManager mSubsystemManager = new SubsystemManager(
-      Arrays.asList(Superstructure.getInstance(), Intake.getInstance(), Shooter.getInstance()));
+      Arrays.asList(Superstructure.getInstance(), Intake.getInstance(), Shooter.getInstance(), ColorWheel.getInstance()));
   // NullPointerExceptions in commands that require() Subsystems above.
   private final ControlBoardInterface mControlBoard = GamepadControlBoard.getInstance();
   public static final Controls CONTROLS = new Controls();

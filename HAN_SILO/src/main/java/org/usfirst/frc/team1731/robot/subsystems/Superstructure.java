@@ -60,8 +60,8 @@ public class Superstructure extends Subsystem {
     private final Elevator mElevator = Elevator.getInstance();
 
     private final Intake mIntake = Intake.getInstance();
-
     private final Shooter mShooter = Shooter.getInstance();
+    private final ColorWheel mColorWheel = ColorWheel.getInstance();
     
     private final DoubleSolenoid mTopRoller = Constants.makeDoubleSolenoidForIds(1, Constants.kTopRoller1, Constants.kTopRoller2);
     private final DoubleSolenoid mBeakSwinger = Constants.makeDoubleSolenoidForIds(0, Constants.kBeakSwinger1, Constants.kBeakSwinger2);
@@ -101,6 +101,8 @@ public class Superstructure extends Subsystem {
         ELEVATOR_TRACKING,
         POWERCELL_INTAKING,
         POWERCELL_EJECTING,
+        COLORWHEEL_ROTATING,
+        COLORWHEEL_MATCHING,
         EJECTING_HATCH,
         EJECTING_CARGO,
         CAPTURING_HATCH,
@@ -116,7 +118,9 @@ public class Superstructure extends Subsystem {
         INTAKING,
         AUTOINTAKING,
         SPITTING,
-        SHOOT, 
+        SHOOT,
+        COLORWHEEL_ROTATE,
+        COLORWHEEL_MATCH,
         OVERTHETOP,
         ELEVATOR_TRACKING,
         HATCH_CAPTURED,
@@ -197,6 +201,12 @@ public class Superstructure extends Subsystem {
                     break;
                 case POWERCELL_INTAKING:
                     newState = handleIntaking();
+                    break;
+                case COLORWHEEL_ROTATING:
+                    newState = handleColorWheelRotating();
+                    break;
+                case COLORWHEEL_MATCHING:
+                    newState = handleColorWheelMatching();
                     break;
                 case HATCH_CAPTURED:
                     newState = handleHatchCapture();
@@ -342,6 +352,66 @@ public class Superstructure extends Subsystem {
                 return SystemState.EJECTING_HATCH;
             case POWERCELL_INTAKE:
                 return SystemState.POWERCELL_INTAKING;
+            case COLORWHEEL_ROTATE:
+                return SystemState.COLORWHEEL_ROTATING;
+            case COLORWHEEL_MATCH:
+                return SystemState.COLORWHEEL_MATCHING;
+                default:
+                return SystemState.IDLE;
+            }
+        }
+
+        private SystemState handleColorWheelRotating() {
+            //mColorWheelPiston.set(DoubleSolenoid.Value.kReverse);
+            mColorWheel.setWantedState(ColorWheel.WantedState.ROTATE);
+
+            switch (mWantedState) {
+            case CLIMBING_EXTEND:
+                return SystemState.CLIMBING_EXTEND;
+            case CLIMBING_RETRACT:
+                return SystemState.CLIMBING_RETRACT;
+            case INTAKING:
+                return SystemState.WAITING_FOR_POWERCELL_INTAKE;
+            case SHOOT:
+                return SystemState.SHOOTING;
+            case STARTINGCONFIGURATION:
+                return SystemState.STARTINGCONFIGURATION;
+            case POWERCELL_EJECT:
+                return SystemState.POWERCELL_EJECTING;
+            case POWERCELL_INTAKE:
+                return SystemState.POWERCELL_INTAKING;
+            case COLORWHEEL_ROTATE:
+                return SystemState.COLORWHEEL_ROTATING;
+            case COLORWHEEL_MATCH:
+                return SystemState.COLORWHEEL_MATCHING;
+            default:
+                return SystemState.IDLE;
+            }
+        }
+
+        private SystemState handleColorWheelMatching() {
+            //mColorWheelPiston.set(DoubleSolenoid.Value.kReverse);
+            mColorWheel.setWantedState(ColorWheel.WantedState.MATCH);
+
+            switch (mWantedState) {
+            case CLIMBING_EXTEND:
+                return SystemState.CLIMBING_EXTEND;
+            case CLIMBING_RETRACT:
+                return SystemState.CLIMBING_RETRACT;
+            case INTAKING:
+                return SystemState.WAITING_FOR_POWERCELL_INTAKE;
+            case SHOOT:
+                return SystemState.SHOOTING;
+            case STARTINGCONFIGURATION:
+                return SystemState.STARTINGCONFIGURATION;
+            case POWERCELL_EJECT:
+                return SystemState.POWERCELL_EJECTING;
+            case POWERCELL_INTAKE:
+                return SystemState.POWERCELL_INTAKING;
+            case COLORWHEEL_ROTATE:
+                return SystemState.COLORWHEEL_ROTATING;
+            case COLORWHEEL_MATCH:
+                return SystemState.COLORWHEEL_MATCHING;
             default:
                 return SystemState.IDLE;
             }
@@ -612,7 +682,11 @@ public class Superstructure extends Subsystem {
                 return SystemState.EJECTING_HATCH;
             case POWERCELL_INTAKE:
                 return SystemState.POWERCELL_INTAKING;
-            default:
+            case COLORWHEEL_ROTATE:
+                return SystemState.COLORWHEEL_ROTATING;
+            case COLORWHEEL_MATCH:
+                return SystemState.COLORWHEEL_MATCHING;
+                default:
                 return SystemState.IDLE;
             }
         }
@@ -647,7 +721,11 @@ public class Superstructure extends Subsystem {
                 return SystemState.EJECTING_HATCH;
             case POWERCELL_INTAKE:
                 return SystemState.POWERCELL_INTAKING;
-            default:
+            case COLORWHEEL_ROTATE:
+                return SystemState.COLORWHEEL_ROTATING;
+            case COLORWHEEL_MATCH:
+                return SystemState.COLORWHEEL_MATCHING;
+                default:
                 return SystemState.IDLE;
             }
         }
@@ -834,6 +912,10 @@ public class Superstructure extends Subsystem {
             return SystemState.POWERCELL_INTAKING;
         case POWERCELL_EJECT:
             return SystemState.POWERCELL_EJECTING;
+        case COLORWHEEL_ROTATE:
+            return SystemState.COLORWHEEL_ROTATING;
+        case COLORWHEEL_MATCH:
+            return SystemState.COLORWHEEL_MATCHING;
         default:
             return SystemState.IDLE;
         }
