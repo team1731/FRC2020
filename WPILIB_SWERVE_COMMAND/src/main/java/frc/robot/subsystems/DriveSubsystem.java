@@ -9,10 +9,8 @@ package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveOdometry;
@@ -24,7 +22,6 @@ import frc.robot.Constants.DriveConstants;
 
 @SuppressWarnings("PMD.ExcessiveImports")
 public class DriveSubsystem extends SubsystemBase {
-  public static final double DRIVE_SETPOINT_MAX = 0;
 
 //Robot swerve modules
   private final SwerveModule m_frontLeft
@@ -95,11 +92,11 @@ public class DriveSubsystem extends SubsystemBase {
         m_rearLeft.getState(),
         m_frontRight.getState(),
         m_rearRight.getState());
-        SmartDashboard.putNumber("pose x", m_odometry.getPoseMeters().getTranslation().getX());
-        SmartDashboard.putNumber("pose y", m_odometry.getPoseMeters().getTranslation().getY());
-        SmartDashboard.putNumber("rot", m_odometry.getPoseMeters().getRotation().getDegrees());
-        SmartDashboard.putNumber("heading", headingRadians);    
-        SmartDashboard.putNumber("raw gyro", m_gyro.getAngle());    
+    SmartDashboard.putNumber("pose x", m_odometry.getPoseMeters().getTranslation().getX());
+    SmartDashboard.putNumber("pose y", m_odometry.getPoseMeters().getTranslation().getY());
+    SmartDashboard.putNumber("rot", m_odometry.getPoseMeters().getRotation().getDegrees());
+    SmartDashboard.putNumber("heading", headingRadians);    
+    SmartDashboard.putNumber("raw gyro", m_gyro.getAngle());    
   }
 
   /**

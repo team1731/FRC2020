@@ -13,7 +13,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-//import org.strykeforce.thirdcoast.swerve.Wheel;
 
 //import edu.wpi.first.wpilibj.Encoder;
 //import edu.wpi.first.wpilibj.Spark;
@@ -27,19 +26,18 @@ import frc.robot.Constants.ModuleConstants;
 
 
 public class SwerveModule {
+  private static final int TICKS = 16;
   public static final double kMaxAngularSpeed = Math.PI;
   private static final double kWheelRadius = 0.0508;
   private static final int kEncoderResolution = 4096;
   private static final double kModuleMaxAngularVelocity = kMaxAngularSpeed;
   private static final double kModuleMaxAngularAcceleration = 2 * Math.PI; // radians per second squared
-  private static final double TICKS = 16;
   private final CANSparkMax m_driveMotor;
   private final CANSparkMax m_turningMotor;
   public CANEncoder m_driveEncoder;
   public CANEncoder m_turningEncoder;
   private CANPIDController m_drivePIDController;
   private CANPIDController m_turningPIDController;
-  private final Wheel wheel;
     
   //private final Spark m_driveMotor;
   //private final Spark m_turningMotor;
@@ -96,8 +94,8 @@ public class SwerveModule {
     m_turningPIDController.setSmartMotionMaxAccel(1500, smartMotionSlot);
     m_turningPIDController.setSmartMotionAllowedClosedLoopError(0, smartMotionSlot);
 
-    wheel = new Wheel(m_turningMotor, m_driveMotor, DriveSubsystem.DRIVE_SETPOINT_MAX);
-    wheel.setAzimuthZero(0);
+    //wheel = new Wheel(m_turningMotor, m_driveMotor, DriveSubsystem.DRIVE_SETPOINT_MAX);
+    setAzimuthZero(0);
 
   //public SwerveModule(int driveMotorChannel,
   //                    int turningMotorChannel,
@@ -132,6 +130,42 @@ public class SwerveModule {
     // Limit the PID Controller's input range between -pi and pi and set the input
     // to be continuous.
     //m_turningPIDController.enableContinuousInput(-Math.PI, Math.PI);
+  }
+
+
+
+    /**
+   * Set the azimuthTalon encoder relative to wheel zero alignment position. For example, if current
+   * absolute encoder = 0 and zero setpoint = 2767, then current relative setpoint = -2767.
+   *
+   * <pre>
+   *
+   * relative:  -2767                               0
+   *           ---|---------------------------------|-------
+   * absolute:    0                               2767
+   *
+   * </pre>
+   *
+   * @param zero zero setpoint, absolute encoder position (in ticks) where wheel is zeroed.
+   */
+  private void setAzimuthZero(double zero) {
+    //logger.info("<b>Wheel</b>: setAzimuthZero starting");
+    double azimuthSetpoint = getAzimuthAbsolutePosition() - zero;
+    //ErrorCode err = azimuthTalon.setSelectedSensorPosition(azimuthSetpoint, 0, 10);
+    //Errors.check(err, logger);
+    //azimuthTalon.set(MotionMagic, azimuthSetpoint);
+    //azimuthSpark.set(azimuthSetpoint);
+    //m_pidController.setReference(azimuthSetpoint, ControlType.kSmartMotion);
+    m_turningEncoder.setPosition(0); // TODO change whith 221 encoder
+    //logger.info("<b>Wheel</b>: setAzimuthZero finished");
+
+  }
+
+  public double getAzimuthAbsolutePosition() {
+    //return azimuthTalon.getSensorCollection().getPulseWidthPosition() & 0xFFF;
+    //return (int)azimuthSpark.get() & 0xFFF;
+    //TODO - need to return azimuth from the 221 encoder
+    return m_turningEncoder.getPosition(); //TODO FIXME RDB2020
   }
 
   /**
@@ -169,9 +203,20 @@ public class SwerveModule {
     //m_driveMotor.set(driveOutput);
     //m_turningMotor.set(turnOutput);
     
-    double angleDegrees = state.angle.getDegrees();
+    double azimuth = -state.angle.getDegrees() * TICKS/360.0;
     double speedMetersPerSecond = state.speedMetersPerSecond;
-    wheel.set(-angleDegrees/360, speedMetersPerSecond * 16.0 * 39.37  * 60.0 / 3.0 / Math.PI);
+    double drive = speedMetersPerSecond * 16.0 * 39.37  * 60.0 / 3.0 / Math.PI;
+    //wheel.set(-angleDegrees/360, speedMetersPerSecond * 16.0 * 39.37  * 60.0 / 3.0 / Math.PI);
+    double azimuthPosition = m_turningEncoder.getPosition();
+    double azimuthError = Math.IEEEremainder(azimuth - azimuthPosition, TICKS);
+
+    // minimize azimuth rotation, reversing drive if necessary
+    boolean isInverted = Math.abs(azimuthError) > 0.25 * TICKS;
+    if (isInverted) {
+      azimuthError -= Math.copySign(0.5 * TICKS, azimuthError);
+      drive = -drive;
+    }
+    m_turningPIDController.setReference((azimuthPosition + azimuthError), ControlType.kSmartMotion);
 
   }
 
@@ -182,6 +227,6 @@ public class SwerveModule {
   public void resetEncoders() {
     //m_driveEncoder.reset();
     //m_turningEncoder.reset();
-    wheel.setAzimuthZero(0);
+    setAzimuthZero(0);
   }
 }
