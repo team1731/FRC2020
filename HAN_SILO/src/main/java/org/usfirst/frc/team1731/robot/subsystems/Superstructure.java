@@ -34,8 +34,9 @@ import edu.wpi.first.wpilibj.DriverStation;
  * The superstructure also coordinates actions between different subsystems like the feeder and shooter.
  * 
  * @see Intake
- * @see Hopper
- * @see Elevator
+ * @see Shooter
+ * @see Climber
+ * @see ColorWheel
  * @see LED
  * @see Subsystem
  */
