@@ -24,7 +24,7 @@ public class ElevatorHome implements Action {
 
     @Override
     public void update() {
-    	mSuperstructure.setWantedState(Superstructure.WantedState.ELEVATOR_TRACKING);
+    	//mSuperstructure.setWantedState(Superstructure.WantedState.ELEVATOR_TRACKING);
     }
 
     @Override
@@ -33,7 +33,7 @@ public class ElevatorHome implements Action {
 
     @Override
     public void start() {
-    	mSuperstructure.setWantedState(Superstructure.WantedState.ELEVATOR_TRACKING);
+    	//mSuperstructure.setWantedState(Superstructure.WantedState.ELEVATOR_TRACKING);
     	//mElevator.setWantedPosition(DESIRED_POSITION);
     }
 }

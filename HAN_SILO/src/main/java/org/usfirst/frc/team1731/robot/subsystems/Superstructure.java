@@ -58,8 +58,6 @@ public class Superstructure extends Subsystem {
         return mInstance;
     }
 
-    private final Elevator mElevator = Elevator.getInstance();
-
     private final Intake mIntake = Intake.getInstance();
     private final Shooter mShooter = Shooter.getInstance();
     private final ColorWheel mColorWheel = ColorWheel.getInstance();
@@ -73,17 +71,17 @@ public class Superstructure extends Subsystem {
     
     
     private final DoubleSolenoid mMustache = Constants.makeDoubleSolenoidForIds(0, Constants.kMustache1, Constants.kMustache2);
-    private final DoubleSolenoid mRotateWristShort = Constants.makeDoubleSolenoidForIds(1, Constants.kRotateWristShort1, Constants.kRotateWristShort2);
-    private final DoubleSolenoid mRotateWristLong = Constants.makeDoubleSolenoidForIds(1, Constants.kRotateWristLong1, Constants.kRotateWristLong2); 
+    //private final DoubleSolenoid mRotateWristShort = Constants.makeDoubleSolenoidForIds(1, Constants.kRotateWristShort1, Constants.kRotateWristShort2);
+    //private final DoubleSolenoid mRotateWristLong = Constants.makeDoubleSolenoidForIds(1, Constants.kRotateWristLong1, Constants.kRotateWristLong2); 
 
     //private final Compressor mCompressor = new Compressor(0);
     //private final RevRoboticsAirPressureSensor mAirPressureSensor = new RevRoboticsAirPressureSensor(3);
-    private final Climber mClimber = Climber.getInstance();
+    //private final Climber mClimber = Climber.getInstance();
     
    // private final Wrist mWrist = Wrist.getInstance();
 
     // Superstructure doesn't own the drive, but needs to access it
-    private final Drive mDrive = Drive.getInstance();
+    //private final Drive mDrive = Drive.getInstance();
 
     // Intenal state of the system
     public enum SystemState {
@@ -91,44 +89,46 @@ public class Superstructure extends Subsystem {
         WAITING_FOR_LOW_POSITION,
         WAITING_FOR_HIGH_POSITION,
         WAITING_FOR_POWERCELL_INTAKE,
-        CLIMBING_EXTEND,
-        CLIMBING_RETRACT,
+        POWERCELL_INTAKING,
+        POWERCELL_EJECTING,
         SHOOTING,
+        CLIMB_ENGAGING,
+        CLIMB_EXTENDING,
+        CLIMB_RETRACTING,
+        COLORWHEEL_ROTATING,
+        COLORWHEEL_MATCHING,
         SPITTING,
         WAITING_FOR_ROTATE,
         SPITTING_OUT_TOP, 
         RETURNINGFROMINTAKE,
         RETURNING_HOME,
-        ELEVATOR_TRACKING,
-        POWERCELL_INTAKING,
-        POWERCELL_EJECTING,
-        COLORWHEEL_ROTATING,
-        COLORWHEEL_MATCHING,
-        EJECTING_HATCH,
-        EJECTING_CARGO,
-        CAPTURING_HATCH,
-        HATCH_CAPTURED,
+        //ELEVATOR_TRACKING,
+        //EJECTING_HATCH,
+        //EJECTING_CARGO,
+        //CAPTURING_HATCH,
+        //HATCH_CAPTURED,
         STARTINGCONFIGURATION
     };
 
     // Desired function from user
     public enum WantedState {
         IDLE,
-        CLIMBING_EXTEND, 
-        CLIMBING_RETRACT, 
-        INTAKING,
-        AUTOINTAKING,
-        SPITTING,
-        SHOOT,
-        COLORWHEEL_ROTATE,
-        COLORWHEEL_MATCH,
-        OVERTHETOP,
-        ELEVATOR_TRACKING,
-        HATCH_CAPTURED,
-        EJECTING_CARGO,
-        EJECTING_HATCH,
         POWERCELL_INTAKE,
         POWERCELL_EJECT,
+        SHOOT,
+        CLIMB_ENGAGE, 
+        CLIMB_EXTEND, 
+        CLIMB_RETRACT, 
+        COLORWHEEL_ROTATE,
+        COLORWHEEL_MATCH,
+        //INTAKING,
+        AUTOINTAKING,
+        SPITTING,
+        //OVERTHETOP,
+        //ELEVATOR_TRACKING,
+        //HATCH_CAPTURED,
+        //EJECTING_CARGO,
+        //EJECTING_HATCH,
         STARTINGCONFIGURATION
     }
 
@@ -137,7 +137,7 @@ public class Superstructure extends Subsystem {
 
     private double mCurrentStateStartTime;
     private boolean mStateChanged;
-    private double mWantedElevatorPosition = Constants.kElevatorHomeEncoderValue;
+    //private double mWantedElevatorPosition = Constants.kElevatorHomeEncoderValue;
     //private double mIntakeOutput = 0;
     private Loop mLoop = new Loop() {
 
@@ -164,12 +164,31 @@ public class Superstructure extends Subsystem {
                 case IDLE:
                     newState = handleIdle(mStateChanged);
                     break;
-                case CLIMBING_EXTEND:
-                    newState = handleClimberExtending();
+                case POWERCELL_INTAKING:
+                    newState = handleIntaking();
                     break;
-                case CLIMBING_RETRACT:
-                    newState = handleClimberRetract();
+                case POWERCELL_EJECTING:
+                    newState = handleEjecting();
                     break;
+                case SHOOTING:
+                    newState = handleShooting();
+                    break;
+                case COLORWHEEL_ROTATING:
+                    newState = handleColorWheel(ColorWheel.WantedState.ROTATE); //handleColorWheelRotating();
+                    break;
+                case COLORWHEEL_MATCHING:
+                    newState = handleColorWheel(ColorWheel.WantedState.MATCH); //handleColorWheelMatching();
+                    break;
+                case CLIMB_ENGAGING:
+                    newState = handleClimb(Shooter.WantedState.CLIMB_ENGAGE); // handleClimbEngaging();
+                    break;
+                case CLIMB_EXTENDING:
+                    newState = handleClimb(Shooter.WantedState.CLIMB_EXTEND); // handleClimbExtending();
+                    break;
+                case CLIMB_RETRACTING:
+                    newState = handleClimb(Shooter.WantedState.CLIMB_RETRACT); // handleClimbRetracting();
+                    break;
+                /*    
                 case WAITING_FOR_LOW_POSITION:
                     newState = handleWaitingForLowPosition();
                     break;
@@ -179,15 +198,10 @@ public class Superstructure extends Subsystem {
                 case WAITING_FOR_POWERCELL_INTAKE:
                     newState = waitingForPowerCubeIntake();
                     break;
-                case POWERCELL_EJECTING:
-                    newState = handleEjecting();
-                    break;
-                case SHOOTING:
-                    newState = handleShooting();
-                    break;
                 case STARTINGCONFIGURATION:
                     newState = handleStartingConfiguration();
                     break;
+                
                 case WAITING_FOR_ROTATE:
                     newState = handleWaitingForRotate(timestamp);
                     break;
@@ -200,15 +214,6 @@ public class Superstructure extends Subsystem {
                 case RETURNING_HOME:
                     newState = handleReturningHome();
                     break;
-                case POWERCELL_INTAKING:
-                    newState = handleIntaking();
-                    break;
-                case COLORWHEEL_ROTATING:
-                    newState = handleColorWheelRotating();
-                    break;
-                case COLORWHEEL_MATCHING:
-                    newState = handleColorWheelMatching();
-                    break;
                 case HATCH_CAPTURED:
                     newState = handleHatchCapture();
                     break;
@@ -218,6 +223,7 @@ public class Superstructure extends Subsystem {
                 case EJECTING_CARGO:
                     newState = handleEjectingCargo();
                     break;
+                */
                 default:
                     newState = SystemState.IDLE;
                 }
@@ -233,7 +239,7 @@ public class Superstructure extends Subsystem {
                 }
             }
         }
-
+/*
         private SystemState handleEjectingCargo() {
             mBeakSwinger.set(DoubleSolenoid.Value.kReverse);
             mBeakLips.set(DoubleSolenoid.Value.kReverse);
@@ -242,10 +248,10 @@ public class Superstructure extends Subsystem {
             mIntake.setWantedState(Intake.WantedState.EJECT);
         	
             switch (mWantedState) {
-            case CLIMBING_EXTEND:
-                return SystemState.CLIMBING_EXTEND;
-            case CLIMBING_RETRACT:
-                return SystemState.CLIMBING_RETRACT;
+            case CLIMB_EXTEND:
+                return SystemState.CLIMB_EXTENDING;
+            case CLIMB_RETRACT:
+                return SystemState.CLIMB_RETRACTING;
             case AUTOINTAKING:
                 return SystemState.WAITING_FOR_LOW_POSITION;
             case INTAKING:
@@ -272,25 +278,25 @@ public class Superstructure extends Subsystem {
                 return SystemState.IDLE;
             }
         }
-
+*/
         private SystemState handleStartingConfiguration(){
-            mBeakSwinger.set(DoubleSolenoid.Value.kForward);
-            mBeakLips.set(DoubleSolenoid.Value.kReverse);
-            mTopRoller.set(DoubleSolenoid.Value.kForward);
-            mMustache.set(DoubleSolenoid.Value.kReverse);
-            mClimber.setWantedState(Climber.WantedState.IDLE);
-           // mWrist.setWantedPosition(WristPositions.STARTINGPOSITION);
-            seWristtWantedPosition(WantedWristPosition.STARTINGPOSITION);
+            //mBeakSwinger.set(DoubleSolenoid.Value.kForward);
+            //mBeakLips.set(DoubleSolenoid.Value.kReverse);
+            //mTopRoller.set(DoubleSolenoid.Value.kForward);
+            //mMustache.set(DoubleSolenoid.Value.kReverse);
+            //mClimber.setWantedState(Climber.WantedState.IDLE);
+            // mWrist.setWantedPosition(WristPositions.STARTINGPOSITION);
+            //seWristtWantedPosition(WantedWristPosition.STARTINGPOSITION);
 
             switch (mWantedState) {
-            case CLIMBING_EXTEND:
-                return SystemState.CLIMBING_EXTEND;
-            case CLIMBING_RETRACT:
-                return SystemState.CLIMBING_RETRACT;
+            case CLIMB_EXTEND:
+                return SystemState.CLIMB_EXTENDING;
+            case CLIMB_RETRACT:
+                return SystemState.CLIMB_RETRACTING;
             case AUTOINTAKING:
                 return SystemState.WAITING_FOR_LOW_POSITION;
-            case INTAKING:
-                return SystemState.WAITING_FOR_POWERCELL_INTAKE;
+            //case INTAKING:
+            //    return SystemState.WAITING_FOR_POWERCELL_INTAKE;
             case SPITTING:
                 return SystemState.SPITTING;
             case SHOOT:
@@ -299,6 +305,7 @@ public class Superstructure extends Subsystem {
                 return SystemState.STARTINGCONFIGURATION;
             case POWERCELL_EJECT:
                 return SystemState.POWERCELL_EJECTING;
+            /*
             case OVERTHETOP:
                 return SystemState.WAITING_FOR_HIGH_POSITION;
             case ELEVATOR_TRACKING:
@@ -307,6 +314,7 @@ public class Superstructure extends Subsystem {
                 return SystemState.HATCH_CAPTURED;
             case EJECTING_HATCH:
                 return SystemState.EJECTING_HATCH;
+            */
             case POWERCELL_INTAKE:
                 return SystemState.POWERCELL_INTAKING;
             default:
@@ -325,22 +333,33 @@ public class Superstructure extends Subsystem {
             //mElevator.setWantedPosition(Constants.kElevatorBallPickup_EncoderValue);
 
             switch (mWantedState) {
-            case CLIMBING_EXTEND:
-                return SystemState.CLIMBING_EXTEND;
-            case CLIMBING_RETRACT:
-                return SystemState.CLIMBING_RETRACT;
-            case AUTOINTAKING:
-                return SystemState.WAITING_FOR_LOW_POSITION;
+                case POWERCELL_INTAKE:
+                    return SystemState.POWERCELL_INTAKING;
+                case POWERCELL_EJECT:
+                    return SystemState.POWERCELL_EJECTING;
+                case SHOOT:
+                    return SystemState.SHOOTING;
+                case COLORWHEEL_ROTATE:
+                    return SystemState.COLORWHEEL_ROTATING;
+                case COLORWHEEL_MATCH:
+                    return SystemState.COLORWHEEL_MATCHING;
+                case CLIMB_ENGAGE:
+                    return SystemState.CLIMB_EXTENDING;
+                case CLIMB_EXTEND:
+                    return SystemState.CLIMB_EXTENDING;
+                case CLIMB_RETRACT:
+                    return SystemState.CLIMB_RETRACTING;
+                case AUTOINTAKING:
+                    return SystemState.WAITING_FOR_LOW_POSITION;
+                case STARTINGCONFIGURATION:
+                    return SystemState.STARTINGCONFIGURATION;
+                default:
+                    return SystemState.IDLE;
+            /*    
             case INTAKING:
                 return SystemState.WAITING_FOR_POWERCELL_INTAKE;
             case SPITTING:
                 return SystemState.SPITTING;
-            case SHOOT:
-                return SystemState.SHOOTING;
-            case STARTINGCONFIGURATION:
-                return SystemState.STARTINGCONFIGURATION;
-            case POWERCELL_EJECT:
-                return SystemState.POWERCELL_EJECTING;
             case OVERTHETOP:
                 return SystemState.WAITING_FOR_HIGH_POSITION;
             case ELEVATOR_TRACKING:
@@ -351,344 +370,80 @@ public class Superstructure extends Subsystem {
                 return SystemState.HATCH_CAPTURED;
             case EJECTING_HATCH:
                 return SystemState.EJECTING_HATCH;
-            case POWERCELL_INTAKE:
-                return SystemState.POWERCELL_INTAKING;
-            case COLORWHEEL_ROTATE:
-                return SystemState.COLORWHEEL_ROTATING;
-            case COLORWHEEL_MATCH:
-                return SystemState.COLORWHEEL_MATCHING;
+            */
+            }
+        }
+
+        private SystemState handleColorWheel(ColorWheel.WantedState colorWheelState) {
+            //mColorWheelPiston.set(DoubleSolenoid.Value.kReverse);
+            mColorWheel.setWantedState(colorWheelState);
+
+            switch (mWantedState) {
+                case POWERCELL_INTAKE:
+                    return SystemState.POWERCELL_INTAKING;
+                case POWERCELL_EJECT:
+                    return SystemState.POWERCELL_EJECTING;
+                case SHOOT:
+                    return SystemState.SHOOTING;
+                case COLORWHEEL_ROTATE:
+                    return SystemState.COLORWHEEL_ROTATING;
+                case COLORWHEEL_MATCH:
+                    return SystemState.COLORWHEEL_MATCHING;
+                case CLIMB_ENGAGE:
+                    return SystemState.CLIMB_EXTENDING;
+                case CLIMB_EXTEND:
+                    return SystemState.CLIMB_EXTENDING;
+                case CLIMB_RETRACT:
+                    return SystemState.CLIMB_RETRACTING;
+                case AUTOINTAKING:
+                    return SystemState.WAITING_FOR_LOW_POSITION;
+                case STARTINGCONFIGURATION:
+                    return SystemState.STARTINGCONFIGURATION;
                 default:
-                return SystemState.IDLE;
+                    return SystemState.IDLE;
             }
         }
-
-        private SystemState handleColorWheelRotating() {
-            //mColorWheelPiston.set(DoubleSolenoid.Value.kReverse);
-            mColorWheel.setWantedState(ColorWheel.WantedState.ROTATE);
-
-            switch (mWantedState) {
-            case CLIMBING_EXTEND:
-                return SystemState.CLIMBING_EXTEND;
-            case CLIMBING_RETRACT:
-                return SystemState.CLIMBING_RETRACT;
-            case INTAKING:
-                return SystemState.WAITING_FOR_POWERCELL_INTAKE;
-            case SHOOT:
-                return SystemState.SHOOTING;
-            case STARTINGCONFIGURATION:
-                return SystemState.STARTINGCONFIGURATION;
-            case POWERCELL_EJECT:
-                return SystemState.POWERCELL_EJECTING;
-            case POWERCELL_INTAKE:
-                return SystemState.POWERCELL_INTAKING;
-            case COLORWHEEL_ROTATE:
-                return SystemState.COLORWHEEL_ROTATING;
-            case COLORWHEEL_MATCH:
-                return SystemState.COLORWHEEL_MATCHING;
-            default:
-                return SystemState.IDLE;
-            }
-        }
-
-        private SystemState handleColorWheelMatching() {
-            //mColorWheelPiston.set(DoubleSolenoid.Value.kReverse);
-            mColorWheel.setWantedState(ColorWheel.WantedState.MATCH);
-
-            switch (mWantedState) {
-            case CLIMBING_EXTEND:
-                return SystemState.CLIMBING_EXTEND;
-            case CLIMBING_RETRACT:
-                return SystemState.CLIMBING_RETRACT;
-            case INTAKING:
-                return SystemState.WAITING_FOR_POWERCELL_INTAKE;
-            case SHOOT:
-                return SystemState.SHOOTING;
-            case STARTINGCONFIGURATION:
-                return SystemState.STARTINGCONFIGURATION;
-            case POWERCELL_EJECT:
-                return SystemState.POWERCELL_EJECTING;
-            case POWERCELL_INTAKE:
-                return SystemState.POWERCELL_INTAKING;
-            case COLORWHEEL_ROTATE:
-                return SystemState.COLORWHEEL_ROTATING;
-            case COLORWHEEL_MATCH:
-                return SystemState.COLORWHEEL_MATCHING;
-            default:
-                return SystemState.IDLE;
-            }
-        }
-
-        private SystemState handleEjectingHatch() {
-            mBeakSwinger.set(DoubleSolenoid.Value.kForward);
-            mBeakLips.set(DoubleSolenoid.Value.kReverse);
-            mTopRoller.set(DoubleSolenoid.Value.kReverse);
-            mMustache.set(DoubleSolenoid.Value.kForward);
-
-            switch (mWantedState) {
-            case CLIMBING_EXTEND:
-                return SystemState.CLIMBING_EXTEND;
-            case CLIMBING_RETRACT:
-                return SystemState.CLIMBING_RETRACT;
-            case AUTOINTAKING:
-                return SystemState.WAITING_FOR_LOW_POSITION;
-            case INTAKING:
-                return SystemState.WAITING_FOR_POWERCELL_INTAKE;
-            case SPITTING:
-                return SystemState.SPITTING;
-            case SHOOT:
-                return SystemState.SHOOTING;
-            case STARTINGCONFIGURATION:
-                return SystemState.STARTINGCONFIGURATION;
-            case POWERCELL_EJECT:
-                return SystemState.POWERCELL_EJECTING;
-            case OVERTHETOP:
-                return SystemState.WAITING_FOR_HIGH_POSITION;
-            case ELEVATOR_TRACKING:
-                return SystemState.ELEVATOR_TRACKING;
-            case HATCH_CAPTURED:
-                return SystemState.HATCH_CAPTURED;
-            case EJECTING_HATCH:
-                return SystemState.EJECTING_HATCH;
-            case POWERCELL_INTAKE:
-                return SystemState.POWERCELL_INTAKING;
-            default:
-                return SystemState.IDLE;
-            }
-        }
-
-        private SystemState handleHatchCapture() {            
-            mBeakSwinger.set(DoubleSolenoid.Value.kForward);
-            mBeakLips.set(DoubleSolenoid.Value.kReverse);
-            mTopRoller.set(DoubleSolenoid.Value.kReverse);
-            mMustache.set(DoubleSolenoid.Value.kReverse);
-        	
-            switch (mWantedState) {
-            case CLIMBING_EXTEND:
-                return SystemState.CLIMBING_EXTEND;
-            case CLIMBING_RETRACT:
-                return SystemState.CLIMBING_RETRACT;
-            case AUTOINTAKING:
-                return SystemState.WAITING_FOR_LOW_POSITION;
-            case INTAKING:
-                return SystemState.WAITING_FOR_POWERCELL_INTAKE;
-            case SPITTING:
-                return SystemState.SPITTING;
-            case SHOOT:
-                return SystemState.SHOOTING;
-            case STARTINGCONFIGURATION:
-                return SystemState.STARTINGCONFIGURATION;
-            case POWERCELL_EJECT:
-                return SystemState.POWERCELL_EJECTING;
-            case OVERTHETOP:
-                return SystemState.WAITING_FOR_HIGH_POSITION;
-            case HATCH_CAPTURED:
-                return SystemState.HATCH_CAPTURED;
-            case EJECTING_HATCH:
-                return SystemState.EJECTING_HATCH;
-            case ELEVATOR_TRACKING:            
-                mBeakLips.set(DoubleSolenoid.Value.kForward);
-                return SystemState.ELEVATOR_TRACKING;
-            case POWERCELL_INTAKE:
-                return SystemState.POWERCELL_INTAKING;
-            default:
-                return SystemState.IDLE;
-            }
-        }
-
-        private SystemState handleElevatorTracking(double timestamp) {
-        	mElevator.setWantedPosition(mWantedElevatorPosition);
-            mElevator.setWantedState(Elevator.WantedState.ELEVATORTRACKING);
-            //ORIGONALY WAS NOT INTAKING BUT HOLDING
-            if (mIntake.getSystemState() != Intake.SystemState.INTAKING) {
-                mIntake.setWantedState(Intake.WantedState.IDLE);
-            }
-            mClimber.setWantedState(Climber.WantedState.IDLE);
-            if ((timestamp - mCurrentStateStartTime  > 1.0)) {
-                mMustache.set(DoubleSolenoid.Value.kReverse);
-            }
-            
-            
-            switch (mWantedState) {
-            case CLIMBING_EXTEND:
-                return SystemState.CLIMBING_EXTEND;
-            case CLIMBING_RETRACT:
-                return SystemState.CLIMBING_RETRACT;
-            case AUTOINTAKING:
-                return SystemState.WAITING_FOR_LOW_POSITION;
-            case INTAKING:
-                return SystemState.WAITING_FOR_POWERCELL_INTAKE;
-            case SPITTING:
-                return SystemState.SPITTING;
-            case SHOOT:
-                return SystemState.SHOOTING;
-            case STARTINGCONFIGURATION:
-                return SystemState.STARTINGCONFIGURATION;
-            case POWERCELL_EJECT:
-                return SystemState.POWERCELL_EJECTING;
-            case OVERTHETOP:
-                return SystemState.WAITING_FOR_HIGH_POSITION;
-            case ELEVATOR_TRACKING:
-                return SystemState.ELEVATOR_TRACKING;
-            case HATCH_CAPTURED:
-                return SystemState.HATCH_CAPTURED;
-            case EJECTING_HATCH:
-                return SystemState.EJECTING_HATCH;
-            case POWERCELL_INTAKE:
-                return SystemState.POWERCELL_INTAKING;
-            default:
-                return SystemState.IDLE;
-            }
-        }
-        
-        private SystemState handleReturningHome() {
-        	//mElevator.setWantedPosition(0);
-        	mElevator.setWantedState(Elevator.WantedState.ELEVATORTRACKING);
-            mIntake.setWantedState(Intake.WantedState.IDLE);
-        	
-            switch (mWantedState) {
-            case CLIMBING_EXTEND:
-                return SystemState.CLIMBING_EXTEND;
-            case CLIMBING_RETRACT:
-                return SystemState.CLIMBING_RETRACT;
-            case AUTOINTAKING:
-                return SystemState.RETURNING_HOME;
-            case INTAKING:
-                return SystemState.WAITING_FOR_POWERCELL_INTAKE;
-            case SPITTING:
-                return SystemState.SPITTING;
-            case SHOOT:
-                return SystemState.SHOOTING;
-            case STARTINGCONFIGURATION:
-                return SystemState.STARTINGCONFIGURATION;
-            case POWERCELL_EJECT:
-                return SystemState.POWERCELL_EJECTING;
-            case OVERTHETOP:
-                return SystemState.WAITING_FOR_HIGH_POSITION;
-            case ELEVATOR_TRACKING:
-                return SystemState.ELEVATOR_TRACKING;
-            case HATCH_CAPTURED:
-                return SystemState.HATCH_CAPTURED;
-            case EJECTING_HATCH:
-                return SystemState.EJECTING_HATCH;
-            case POWERCELL_INTAKE:
-                return SystemState.POWERCELL_INTAKING;
-            default:
-                return SystemState.IDLE;
-            }
-        }
-
-		private SystemState handleSpittingOutTop() {
-        	mElevator.setWantedState(Elevator.WantedState.ELEVATORTRACKING);
-        	mIntake.setWantedState(Intake.WantedState.EJECT);
-        	
-            switch (mWantedState) {
-            case CLIMBING_EXTEND:
-                return SystemState.CLIMBING_EXTEND;
-            case CLIMBING_RETRACT:
-                return SystemState.CLIMBING_RETRACT;
-            case AUTOINTAKING:
-                return SystemState.WAITING_FOR_LOW_POSITION;
-            case INTAKING:
-                return SystemState.WAITING_FOR_POWERCELL_INTAKE;
-            case SPITTING:
-                return SystemState.SPITTING;
-            case SHOOT:
-                return SystemState.SHOOTING;
-            case STARTINGCONFIGURATION:
-                return SystemState.STARTINGCONFIGURATION;
-            case POWERCELL_EJECT:
-                return SystemState.POWERCELL_EJECTING;
-            case OVERTHETOP:
-                return SystemState.SPITTING_OUT_TOP;
-            case ELEVATOR_TRACKING:
-                return SystemState.ELEVATOR_TRACKING;
-            case HATCH_CAPTURED:
-                return SystemState.HATCH_CAPTURED;
-            case EJECTING_HATCH:
-                return SystemState.EJECTING_HATCH;
-            case POWERCELL_INTAKE:
-                return SystemState.POWERCELL_INTAKING;
-            default:
-                return SystemState.IDLE;
-            }
-        }
-
-		private SystemState handleWaitingForRotate(double timestamp) {
-        	mElevator.setWantedState(Elevator.WantedState.ELEVATORTRACKING);
-        	mIntake.setIdle();      
-       
-            switch (mWantedState) {
-            case CLIMBING_EXTEND:
-                return SystemState.CLIMBING_EXTEND;
-            case CLIMBING_RETRACT:
-                return SystemState.CLIMBING_RETRACT;
-            case AUTOINTAKING:
-                return SystemState.WAITING_FOR_LOW_POSITION;
-            case INTAKING:
-                return SystemState.WAITING_FOR_POWERCELL_INTAKE;
-            case SPITTING:
-                return SystemState.SPITTING;
-            case SHOOT:
-                return SystemState.SHOOTING;
-            case STARTINGCONFIGURATION:
-                return SystemState.STARTINGCONFIGURATION;
-            case POWERCELL_EJECT:
-                return SystemState.POWERCELL_EJECTING;
-            case OVERTHETOP:
-                if ((timestamp - mCurrentStateStartTime < Constants.kRotateTime)) {
-                	return SystemState.SPITTING_OUT_TOP;
-                }
-            case ELEVATOR_TRACKING:
-                return SystemState.ELEVATOR_TRACKING;
-            case HATCH_CAPTURED:
-                return SystemState.HATCH_CAPTURED;
-            case EJECTING_HATCH:
-                return SystemState.EJECTING_HATCH;
-            case POWERCELL_INTAKE:
-                return SystemState.POWERCELL_INTAKING;
-            default:
-                return SystemState.IDLE;
-            }
-        }
-
 
 		private SystemState handleShooting() {
             mShooter.setWantedState(Shooter.WantedState.SHOOT);
             mIntake.setWantedState(Intake.WantedState.SHOOT);
         	
             switch (mWantedState) {
-            case CLIMBING_EXTEND:
-                return SystemState.CLIMBING_EXTEND;
-            case CLIMBING_RETRACT:
-                return SystemState.CLIMBING_RETRACT;
-            case AUTOINTAKING:
-                return SystemState.WAITING_FOR_LOW_POSITION;
+                case POWERCELL_INTAKE:
+                    return SystemState.POWERCELL_INTAKING;
+                case POWERCELL_EJECT:
+                    return SystemState.POWERCELL_EJECTING;
+                case SHOOT:
+                    return SystemState.SHOOTING;
+                case COLORWHEEL_ROTATE:
+                    return SystemState.COLORWHEEL_ROTATING;
+                case COLORWHEEL_MATCH:
+                    return SystemState.COLORWHEEL_MATCHING;
+                case CLIMB_ENGAGE:
+                    return SystemState.CLIMB_EXTENDING;
+                case CLIMB_EXTEND:
+                    return SystemState.CLIMB_EXTENDING;
+                case CLIMB_RETRACT:
+                    return SystemState.CLIMB_RETRACTING;
+                case AUTOINTAKING:
+                    return SystemState.WAITING_FOR_LOW_POSITION;
+                case STARTINGCONFIGURATION:
+                    return SystemState.STARTINGCONFIGURATION;
+                default:
+                    return SystemState.IDLE;
+            /*        
             case INTAKING:
                 return SystemState.WAITING_FOR_POWERCELL_INTAKE;
             case SPITTING:
                 return SystemState.SPITTING;
-            case SHOOT:
-                return SystemState.SHOOTING;
-            case STARTINGCONFIGURATION:
-                return SystemState.STARTINGCONFIGURATION;
-            case POWERCELL_EJECT:
-                return SystemState.POWERCELL_EJECTING;
             case OVERTHETOP:
                 return SystemState.SPITTING_OUT_TOP;
-            case ELEVATOR_TRACKING:
-                return SystemState.ELEVATOR_TRACKING;
             case HATCH_CAPTURED:
                 return SystemState.HATCH_CAPTURED;
             case EJECTING_HATCH:
                 return SystemState.EJECTING_HATCH;
-            case POWERCELL_INTAKE:
-                return SystemState.POWERCELL_INTAKING;
-            case COLORWHEEL_ROTATE:
-                return SystemState.COLORWHEEL_ROTATING;
-            case COLORWHEEL_MATCH:
-                return SystemState.COLORWHEEL_MATCHING;
-                default:
-                return SystemState.IDLE;
+
+            */
             }
         }
 
@@ -696,80 +451,32 @@ public class Superstructure extends Subsystem {
             mIntake.setWantedState(Intake.WantedState.EJECT);
         	
             switch (mWantedState) {
-            case CLIMBING_EXTEND:
-                return SystemState.CLIMBING_EXTEND;
-            case CLIMBING_RETRACT:
-                return SystemState.CLIMBING_RETRACT;
-            case AUTOINTAKING:
-                return SystemState.WAITING_FOR_LOW_POSITION;
-            case INTAKING:
-                return SystemState.WAITING_FOR_POWERCELL_INTAKE;
-            case SPITTING:
-                return SystemState.SPITTING;
-            case SHOOT:
-                return SystemState.SHOOTING;
-            case STARTINGCONFIGURATION:
-                return SystemState.STARTINGCONFIGURATION;
-            case POWERCELL_EJECT:
-                return SystemState.POWERCELL_EJECTING;
-            case OVERTHETOP:
-                return SystemState.SPITTING_OUT_TOP;
-            case ELEVATOR_TRACKING:
-                return SystemState.ELEVATOR_TRACKING;
-            case HATCH_CAPTURED:
-                return SystemState.HATCH_CAPTURED;
-            case EJECTING_HATCH:
-                return SystemState.EJECTING_HATCH;
-            case POWERCELL_INTAKE:
-                return SystemState.POWERCELL_INTAKING;
-            case COLORWHEEL_ROTATE:
-                return SystemState.COLORWHEEL_ROTATING;
-            case COLORWHEEL_MATCH:
-                return SystemState.COLORWHEEL_MATCHING;
+                case POWERCELL_INTAKE:
+                    return SystemState.POWERCELL_INTAKING;
+                case POWERCELL_EJECT:
+                    return SystemState.POWERCELL_EJECTING;
+                case SHOOT:
+                    return SystemState.SHOOTING;
+                case COLORWHEEL_ROTATE:
+                    return SystemState.COLORWHEEL_ROTATING;
+                case COLORWHEEL_MATCH:
+                    return SystemState.COLORWHEEL_MATCHING;
+                case CLIMB_ENGAGE:
+                    return SystemState.CLIMB_EXTENDING;
+                case CLIMB_EXTEND:
+                    return SystemState.CLIMB_EXTENDING;
+                case CLIMB_RETRACT:
+                    return SystemState.CLIMB_RETRACTING;
+                case AUTOINTAKING:
+                    return SystemState.WAITING_FOR_LOW_POSITION;
+                case STARTINGCONFIGURATION:
+                    return SystemState.STARTINGCONFIGURATION;
                 default:
-                return SystemState.IDLE;
+                    return SystemState.IDLE;
             }
         }
 
-		private SystemState waitingForPowerCubeIntake() {
-
-       	    mIntake.setWantedState(Intake.WantedState.INTAKE);
-        	
-            switch (mWantedState) {
-            case CLIMBING_EXTEND:
-                return SystemState.CLIMBING_EXTEND;
-            case CLIMBING_RETRACT:
-                return SystemState.CLIMBING_RETRACT;
-            case AUTOINTAKING:
-            	//if (mIntake.gotCube()) {
-            	//	return SystemState.RETURNING_HOME;
-            	//}
-                return SystemState.WAITING_FOR_POWERCELL_INTAKE;
-            case INTAKING:
-                return SystemState.WAITING_FOR_POWERCELL_INTAKE;
-            case SPITTING:
-                return SystemState.SPITTING;
-            case SHOOT:
-                return SystemState.SHOOTING;
-            case STARTINGCONFIGURATION:
-                return SystemState.STARTINGCONFIGURATION;
-            case POWERCELL_EJECT:
-                return SystemState.POWERCELL_EJECTING;
-            case OVERTHETOP:
-                return SystemState.SPITTING_OUT_TOP;
-            case ELEVATOR_TRACKING:
-                return SystemState.ELEVATOR_TRACKING;
-            case HATCH_CAPTURED:
-                return SystemState.HATCH_CAPTURED;
-            case EJECTING_HATCH:
-                return SystemState.EJECTING_HATCH;
-            case POWERCELL_INTAKE:
-                return SystemState.POWERCELL_INTAKING;
-            default:
-                return SystemState.IDLE;
-            }
-        }
-
+        /*
 		private SystemState handleWaitingForHightPosition() {
 			return SystemState.IDLE;
 		}
@@ -779,10 +486,10 @@ public class Superstructure extends Subsystem {
         	mIntake.setWantedState(Intake.WantedState.INTAKE);
         	
             switch (mWantedState) {
-            case CLIMBING_EXTEND:
-                return SystemState.CLIMBING_EXTEND;
-            case CLIMBING_RETRACT:
-                return SystemState.CLIMBING_RETRACT;
+            case CLIMB_EXTEND:
+                return SystemState.CLIMB_EXTENDING;
+            case CLIMB_RETRACT:
+                return SystemState.CLIMB_RETRACTING;
             case AUTOINTAKING:{
             	if (mElevator.atBottom())
             		return SystemState.WAITING_FOR_POWERCELL_INTAKE; 
@@ -814,61 +521,35 @@ public class Superstructure extends Subsystem {
                 return SystemState.IDLE;
             }
         }
-
-        private SystemState handleClimberExtending() {
-            mClimber.setWantedState(Climber.WantedState.EXTENDING);
-
-            switch (mWantedState) {
-            case CLIMBING_EXTEND:
-                return SystemState.CLIMBING_EXTEND;
-            case CLIMBING_RETRACT:
-                return SystemState.CLIMBING_RETRACT;
-            case AUTOINTAKING:
-                return SystemState.WAITING_FOR_LOW_POSITION;
-            case INTAKING:
-                return SystemState.WAITING_FOR_POWERCELL_INTAKE;
-            case SPITTING:
-                return SystemState.SPITTING;
-            case SHOOT:
-                return SystemState.SHOOTING;
-            case STARTINGCONFIGURATION:
-                return SystemState.STARTINGCONFIGURATION;
-            case POWERCELL_EJECT:
-                return SystemState.POWERCELL_EJECTING;
-            case ELEVATOR_TRACKING:
-                return SystemState.ELEVATOR_TRACKING;
-            default:
-                return SystemState.IDLE;
-            }
-        }
-
-        private SystemState handleClimberRetract() {
-            mClimber.setWantedState(Climber.WantedState.RETRACTING);
+        */
+        private SystemState handleClimb(Shooter.WantedState shooterState) { //handleClimbEngaging() {
+            mShooter.setWantedState(shooterState); //Shooter.WantedState.CLIMB_ENGAGE);
 
             switch (mWantedState) {
-            case CLIMBING_EXTEND:
-                return SystemState.CLIMBING_EXTEND;
-            case CLIMBING_RETRACT:
-                return SystemState.CLIMBING_RETRACT;
-            case AUTOINTAKING:
-                return SystemState.WAITING_FOR_LOW_POSITION;
-            case INTAKING:
-                return SystemState.WAITING_FOR_POWERCELL_INTAKE;
-            case SPITTING:
-                return SystemState.SPITTING;
-            case SHOOT:
-                return SystemState.SHOOTING;
-            case STARTINGCONFIGURATION:
-                return SystemState.STARTINGCONFIGURATION;
-            case POWERCELL_EJECT:
-                return SystemState.POWERCELL_EJECTING;
-            case ELEVATOR_TRACKING:
-                return SystemState.ELEVATOR_TRACKING;
-            default:
-                return SystemState.IDLE;
+                case POWERCELL_INTAKE:
+                    return SystemState.POWERCELL_INTAKING;
+                case POWERCELL_EJECT:
+                    return SystemState.POWERCELL_EJECTING;
+                case SHOOT:
+                    return SystemState.SHOOTING;
+                case COLORWHEEL_ROTATE:
+                    return SystemState.COLORWHEEL_ROTATING;
+                case COLORWHEEL_MATCH:
+                    return SystemState.COLORWHEEL_MATCHING;
+                case CLIMB_ENGAGE:
+                    return SystemState.CLIMB_EXTENDING;
+                case CLIMB_EXTEND:
+                    return SystemState.CLIMB_EXTENDING;
+                case CLIMB_RETRACT:
+                    return SystemState.CLIMB_RETRACTING;
+                case AUTOINTAKING:
+                    return SystemState.WAITING_FOR_LOW_POSITION;
+                case STARTINGCONFIGURATION:
+                    return SystemState.STARTINGCONFIGURATION;
+                default:
+                    return SystemState.IDLE;
             }
         }
-
 
 		@Override
         public void onStop(double timestamp) {
@@ -876,29 +557,35 @@ public class Superstructure extends Subsystem {
         }
     };
 
-
     private SystemState handleIdle(boolean stateChanged) {
         if (stateChanged) {
             stop();
             //mMustache.set(DoubleSolenoid.Value.kReverse);
             //mElevator.setWantedState(Elevator.WantedState.IDLE);
             mIntake.setWantedState(Intake.WantedState.IDLE);
-            mClimber.setWantedState(Climber.WantedState.IDLE);
+            mShooter.setWantedState(Shooter.WantedState.IDLE);
         }
         
         switch (mWantedState) {
-        case CLIMBING_EXTEND:
-            return SystemState.CLIMBING_EXTEND;
-        case CLIMBING_RETRACT:
-            return SystemState.CLIMBING_RETRACT;
-        case AUTOINTAKING:
-            return SystemState.WAITING_FOR_LOW_POSITION;
-        case INTAKING:
-            return SystemState.WAITING_FOR_POWERCELL_INTAKE;      
-        case SPITTING:
-            return SystemState.SPITTING;
-        case SHOOT:
-            return SystemState.SHOOTING;
+            case POWERCELL_INTAKE:
+                return SystemState.POWERCELL_INTAKING;
+            case POWERCELL_EJECT:
+                return SystemState.POWERCELL_EJECTING;
+            case SHOOT:
+                return SystemState.SHOOTING;
+            case COLORWHEEL_ROTATE:
+                return SystemState.COLORWHEEL_ROTATING;
+            case COLORWHEEL_MATCH:
+                return SystemState.COLORWHEEL_MATCHING;
+            case CLIMB_ENGAGE:
+               return SystemState.CLIMB_EXTENDING;
+            case CLIMB_EXTEND:
+                return SystemState.CLIMB_EXTENDING;
+            case CLIMB_RETRACT:
+                return SystemState.CLIMB_RETRACTING;
+            case AUTOINTAKING:
+                return SystemState.WAITING_FOR_LOW_POSITION;
+        /*
         case STARTINGCONFIGURATION:
             return SystemState.STARTINGCONFIGURATION;
         case OVERTHETOP:
@@ -908,17 +595,14 @@ public class Superstructure extends Subsystem {
         case HATCH_CAPTURED:
             return SystemState.HATCH_CAPTURED;
         case EJECTING_HATCH:
-            return SystemState.EJECTING_HATCH; 
-        case POWERCELL_INTAKE:
-            return SystemState.POWERCELL_INTAKING;
-        case POWERCELL_EJECT:
-            return SystemState.POWERCELL_EJECTING;
-        case COLORWHEEL_ROTATE:
-            return SystemState.COLORWHEEL_ROTATING;
-        case COLORWHEEL_MATCH:
-            return SystemState.COLORWHEEL_MATCHING;
-        default:
-            return SystemState.IDLE;
+            return SystemState.EJECTING_HATCH;
+        case INTAKING:
+            return SystemState.WAITING_FOR_POWERCELL_INTAKE;      
+        case SPITTING:
+            return SystemState.SPITTING;
+        */
+            default:
+                return SystemState.IDLE;
         }
     }
 
@@ -947,93 +631,12 @@ public class Superstructure extends Subsystem {
     public void registerEnabledLoops(Looper enabledLooper) {
         enabledLooper.register(mLoop);
     }
-
-    public void setWantedElevatorPosition(ELEVATOR_POSITION position) {
-     //   System.out.println("INELEVATORSETWANTEDPOSITION******************************************************");
-        //boolean cargo = mIntake.hasCargo();
-        // This was for last year. Will take this out soon
-        boolean cargo = true;
-        double encoderValue = Constants.kElevatorHomeEncoderValue;
-        if (cargo) {
-            switch (position) {
-                case ELEVATOR_FLOOR:
-                    encoderValue = (double) Constants.kElevatorCargoFloor_EncoderValue;
-                    seWristtWantedPosition(WantedWristPosition.STRAIGHTAHEAD);
-                    break;
-                case ELEVATOR_2ND:
-                    encoderValue = (double) Constants.kElevatorCargo2nd_EncoderValue;
-                    seWristtWantedPosition(WantedWristPosition.STRAIGHTAHEAD);
-                    break;
-                case ELEVATOR_3RD:
-                    encoderValue = (double) Constants.kElevatorCargo3rd_EncoderValue;
-                    seWristtWantedPosition(WantedWristPosition.SHOOTHIGH);
-                    break;
-                case ELEVATOR_SHIP:
-                    encoderValue = (double) Constants.kElevatorCargoShip_EncoderValue;
-                    break;
-                case ELEVATOR_CARGO_PICKUP:
-                    encoderValue = (double) Constants.kElevatorBallPickup_EncoderValue;
-                    break;
-            }
-        } else {
-            switch (position) {
-                case ELEVATOR_FLOOR:
-                    encoderValue = (double) Constants.kElevatorHatchFloor_EncoderValue;
-                    seWristtWantedPosition(WantedWristPosition.STRAIGHTAHEAD);
-                    break;
-                case ELEVATOR_2ND:
-                    encoderValue = (double) Constants.kElevatorHatch2nd_EncoderValue;
-                    seWristtWantedPosition(WantedWristPosition.STRAIGHTAHEAD);
-                    break;
-                case ELEVATOR_3RD:
-                    encoderValue = (double) Constants.kElevatorHatch3rd_EncoderValue;
-                    seWristtWantedPosition(WantedWristPosition.STRAIGHTAHEAD);
-                    break;
-                case ELEVATOR_SHIP:
-                    encoderValue = (double) Constants.kElevatorHatchShip_EncoderValue;
-                    seWristtWantedPosition(WantedWristPosition.STRAIGHTAHEAD);
-                    break;
-                case ELEVATOR_CARGO_PICKUP:
-                    encoderValue = (double) Constants.kElevatorBallPickup_EncoderValue;
-                    break;
-            }
-        }
-        mWantedElevatorPosition = encoderValue;
-    }
-
-    public synchronized void seWristtWantedPosition(WantedWristPosition position) {
-
-        switch (position) {
-            case CARGOPICKUP:
-                mRotateWristShort.set(DoubleSolenoid.Value.kReverse);
-                mRotateWristLong.set(DoubleSolenoid.Value.kReverse);
-                break;
-            case STRAIGHTAHEAD:
-                mRotateWristShort.set(DoubleSolenoid.Value.kForward);
-                mRotateWristLong.set(DoubleSolenoid.Value.kReverse);
-                break;
-             case SHOOTHIGH:
-                mRotateWristShort.set(DoubleSolenoid.Value.kReverse);
-                mRotateWristLong.set(DoubleSolenoid.Value.kForward);
-                break;
-             case STARTINGPOSITION:
-                mRotateWristShort.set(DoubleSolenoid.Value.kForward);
-                mRotateWristLong.set(DoubleSolenoid.Value.kForward);
-                break;
-            default:
-                mRotateWristShort.set(DoubleSolenoid.Value.kForward);
-                mRotateWristLong.set(DoubleSolenoid.Value.kForward);
-        }
-
-    }
-
+    /*
     public void closeBeak() {
         mBeakLips.set(DoubleSolenoid.Value.kReverse);
-
     }
     public void openBeak() {
         mBeakLips.set(DoubleSolenoid.Value.kForward);
-
     }
 
     public void prepareToPickupHatch() {
@@ -1055,7 +658,7 @@ public class Superstructure extends Subsystem {
         mTopRoller.set(DoubleSolenoid.Value.kReverse);
         seWristtWantedPosition(WantedWristPosition.STRAIGHTAHEAD);
     }
-
+    */
     public void setOverrideCompressor(boolean force_off) {
     }
 

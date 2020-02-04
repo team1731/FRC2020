@@ -41,7 +41,7 @@ public class GoToTopAction implements Action {
     @Override
     public void start() {
         startTime = Timer.getFPGATimestamp();
-        mSuperstructure.setWantedElevatorPosition(ELEVATOR_POSITION.ELEVATOR_FLOOR);
-        mSuperstructure.setWantedState(Superstructure.WantedState.ELEVATOR_TRACKING);
+        //MSuperstructure.setWantedElevatorPosition(ELEVATOR_POSITION.ELEVATOR_FLOOR);
+        //mSuperstructure.setWantedState(Superstructure.WantedState.ELEVATOR_TRACKING);
     }
 }

@@ -52,7 +52,7 @@ public class TractorBeamEjectHatchAction implements Action {
     @Override
     public void done() {
        // if (mDrive.isTBFinished()) {
-            mSuperstructure.ejectHatch();
+       //     mSuperstructure.ejectHatch();
        // }
     }
 

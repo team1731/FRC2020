@@ -3,7 +3,7 @@ package frc.robot;
 import java.util.Arrays;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.command.Scheduler;
+//import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.control.Controls;
 import frc.robot.subsystem.DriveSubsystem;
@@ -48,6 +48,7 @@ public class Robot extends TimedRobot {
   private static final int deviceID = 1;
   private Wheel[] wheelObjects;
   private boolean mLoopersAreRunning = false;
+  private boolean mTestShooter = false;
 
   private Looper mEnabledLooper = new Looper();
 
@@ -107,21 +108,36 @@ public class Robot extends TimedRobot {
     boolean pickupPowerCell = mControlBoard.getPickupBall();
     boolean ejectPowerCell = mControlBoard.getEjectBall();
     boolean shoot = mControlBoard.getShootBall();
+    boolean climbEngage = mControlBoard.getClimberEngage();
     boolean climbExtend = mControlBoard.getClimberExtend();
     boolean climbRetract = mControlBoard.getClimberRetract();
+    boolean colorWheelRotate = mControlBoard.getColorWheelRotate();
+    boolean colorWheelMatch = mControlBoard.getColorWheelMatch();
 
     if (pickupPowerCell) {
       mSuperstructure.setWantedState(Superstructure.WantedState.POWERCELL_INTAKE);
+      mTestShooter = true;
     } else if (ejectPowerCell) {
       mSuperstructure.setWantedState(Superstructure.WantedState.POWERCELL_EJECT);
-    } else if (shoot) {
-      mSuperstructure.setWantedState(Superstructure.WantedState.SHOOT);
+      mTestShooter = false;
+    //} else if (shoot) {
+    //  mSuperstructure.setWantedState(Superstructure.WantedState.SHOOT);
+    } else if (climbEngage) {
+      mSuperstructure.setWantedState(Superstructure.WantedState.CLIMB_ENGAGE);
     } else if (climbExtend) {
-      mSuperstructure.setWantedState(Superstructure.WantedState.CLIMBING_EXTEND);
+      mSuperstructure.setWantedState(Superstructure.WantedState.CLIMB_EXTEND);
     } else if (climbRetract) {
-      mSuperstructure.setWantedState(Superstructure.WantedState.CLIMBING_RETRACT);
+      mSuperstructure.setWantedState(Superstructure.WantedState.CLIMB_RETRACT);
+    } else if (colorWheelRotate) {
+      mSuperstructure.setWantedState(Superstructure.WantedState.COLORWHEEL_ROTATE);
+    } else if (colorWheelMatch) {
+      mSuperstructure.setWantedState(Superstructure.WantedState.COLORWHEEL_MATCH);
     } else {
-      mSuperstructure.setWantedState(Superstructure.WantedState.IDLE);
+      if (mTestShooter) {
+        mSuperstructure.setWantedState(Superstructure.WantedState.SHOOT);
+      } else {
+        mSuperstructure.setWantedState(Superstructure.WantedState.IDLE);
+      }
     }
     /*
      * try { //Scheduler.getInstance().run();

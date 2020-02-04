@@ -16,11 +16,11 @@ public class SetElevatorPostition extends RunOnceAction implements Action {
 	private boolean up = true;
 	
 
-	
+
     @Override
     public void runOnce() {
 
-        Superstructure.getInstance().setWantedElevatorPosition(ELEVATOR_POSITION.ELEVATOR_FLOOR);
+        //Superstructure.getInstance().setWantedElevatorPosition(ELEVATOR_POSITION.ELEVATOR_FLOOR);
  
     }
 

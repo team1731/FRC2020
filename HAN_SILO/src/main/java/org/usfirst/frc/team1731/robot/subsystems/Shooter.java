@@ -101,12 +101,12 @@ public class Shooter extends Subsystem {
             synchronized (Shooter.this) {
                 SystemState newState;
                 switch (mSystemState) {
-                case IDLE:
-                    newState = handleIdle();
-                    break;
-                case SHOOTING:
-                    newState = handleShooting();
-                    break;
+                    case IDLE:
+                        newState = handleIdle();
+                        break;
+                    case SHOOTING:
+                        newState = handleShooting();
+                        break;
                     case CLIMB_ENGAGING:
                         newState = handleClimbEngaging();
                         break;
@@ -119,8 +119,8 @@ public class Shooter extends Subsystem {
                     case CLIMB_RETRACTING:
                         newState = handleClimbRetracting();
                         break;
-                default:
-                    newState = SystemState.IDLE;
+                    default:
+                        newState = SystemState.IDLE;
                 }
 
                 if (newState != mSystemState) {
@@ -144,7 +144,6 @@ public class Shooter extends Subsystem {
             }
             return defaultStateTransfer();
         }
-
 
         private SystemState handleClimbEngaging() {
             if (mStateChanged) {
@@ -185,7 +184,6 @@ public class Shooter extends Subsystem {
         switch (mWantedState) {
             case SHOOT:
                 return SystemState.SHOOTING;
-
             case CLIMB_ENGAGE:
                 return SystemState.CLIMB_ENGAGING;
             case CLIMB_EXTEND:
@@ -194,8 +192,8 @@ public class Shooter extends Subsystem {
                 return SystemState.CLIMB_ALIGNING;
             case CLIMB_RETRACT:
                 return SystemState.CLIMB_RETRACTING;
-        default:
-            return SystemState.IDLE;
+            default:
+                return SystemState.IDLE;
         }
     }
 

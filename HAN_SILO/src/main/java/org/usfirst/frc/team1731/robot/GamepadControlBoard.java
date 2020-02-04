@@ -85,16 +85,6 @@ public class GamepadControlBoard implements ControlBoardInterface {
     }
 
     @Override
-    public boolean getClimberExtend() {
-        return mOperator.getRawButton(1); // extend climber
-    }
-
-        @Override
-    public boolean getClimberRetract() {
-        return mOperator.getRawButton(2); // retract climber
-    }  
-
-    @Override
 	public double getElevatorControl() {
         double angle = mOperator.getPOV(0); // getPOV
         
@@ -287,6 +277,21 @@ public class GamepadControlBoard implements ControlBoardInterface {
         return mOperator.getRawButton(5);
     }
 
+    @Override
+    public boolean getClimberEngage() {
+        return mOperator.getRawButton(1); // extend climber
+    }
+    
+    @Override
+    public boolean getClimberExtend() {
+        return mOperator.getRawButton(1); // extend climber
+    }
+
+        @Override
+    public boolean getClimberRetract() {
+        return mOperator.getRawButton(2); // retract climber
+    }  
+
 	@Override
     public boolean getPickupBall(){
         //return Math.abs(mDriver.getRawAxis(3)) > .7;
@@ -305,9 +310,15 @@ public class GamepadControlBoard implements ControlBoardInterface {
     }
 
 	@Override
-    public boolean getCargoShipBall(){
+    public boolean getColorWheelRotate(){
         // ball sensor combined with level button (floor, 2nd level, 3d level) will determine actual elevator position
         return mOperator.getRawButton(3);
+    }
+
+    @Override
+    public boolean getColorWheelMatch(){
+        // ball sensor combined with level button (floor, 2nd level, 3d level) will determine actual elevator position
+        return mOperator.getRawButton(2);
     }
 
 	@Override

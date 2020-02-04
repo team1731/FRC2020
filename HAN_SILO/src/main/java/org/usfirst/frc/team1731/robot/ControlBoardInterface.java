@@ -31,8 +31,8 @@ public interface ControlBoardInterface {
 
 		boolean getSpit();
 
+		boolean getClimberEngage();
 		boolean getClimberExtend();
-
 		boolean getClimberRetract();
 
 		boolean getAutoPickUp();
@@ -64,7 +64,8 @@ public interface ControlBoardInterface {
 		boolean getShootPanel();
 		boolean getPickupBall();
 		boolean getShootBall();
-		boolean getCargoShipBall();
+		boolean getColorWheelRotate();
+		boolean getColorWheelMatch();
 		boolean getStartingConfiguration();
 
 		boolean getTractorDrivePickupHatch();

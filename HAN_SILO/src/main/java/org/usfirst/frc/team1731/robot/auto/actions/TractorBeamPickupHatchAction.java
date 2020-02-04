@@ -51,15 +51,15 @@ public class TractorBeamPickupHatchAction implements Action {
     @Override
     public void done() {
         if (mDrive.isTBFinished()) {
-            mSuperstructure.openBeak();
+            //mSuperstructure.openBeak();
         }
 
     }
 
     @Override
     public void start() {
-        mSuperstructure.prepareToPickupHatch();
-        mDrive.resetTractorBeam();
+        //mSuperstructure.prepareToPickupHatch();
+        //mDrive.resetTractorBeam();
     }
 
 }

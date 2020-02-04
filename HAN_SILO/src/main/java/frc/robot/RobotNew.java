@@ -373,8 +373,8 @@ public class RobotNew extends TimedRobot {
             mSuperstructure.reloadConstants();
             
 			//2019
-			mSuperstructure.openBeak();
-            mSuperstructure.uproller();
+			//mSuperstructure.openBeak();
+            //mSuperstructure.uproller();
 
             switch(CHOSEN_AUTO_SCHEME) {
             
@@ -728,18 +728,18 @@ public class RobotNew extends TimedRobot {
             boolean pickupPowerCell = mControlBoard.getPickupBall();
             boolean spitPowerCell = mControlBoard.getPickupBall();
             boolean ejectCargo = mControlBoard.getShootBall();
-            boolean elevCargoShipPos = mControlBoard.getCargoShipBall();
+            //boolean elevCargoShipPos = mControlBoard.getCargoShipBall();
             boolean startingConfiguration = mControlBoard.getStartingConfiguration();       
             boolean climber = mControlBoard.getClimberExtend();        
 
 
 
             if (climbUp) {
-            	mSuperstructure.setWantedState(Superstructure.WantedState.CLIMBING_EXTEND);
+            	mSuperstructure.setWantedState(Superstructure.WantedState.CLIMB_EXTEND);
             } else if (climbDown) {
-            	mSuperstructure.setWantedState(Superstructure.WantedState.CLIMBING_RETRACT);
-            } else if (grabCube) {
-            	mSuperstructure.setWantedState(Superstructure.WantedState.INTAKING);
+            	mSuperstructure.setWantedState(Superstructure.WantedState.CLIMB_RETRACT);
+            //} else if (grabCube) {
+            //	mSuperstructure.setWantedState(Superstructure.WantedState.INTAKING);
             } else if (spitting) {
             	mSuperstructure.setWantedState(Superstructure.WantedState.SPITTING);
             } else if (calibrateDown) {
@@ -750,12 +750,12 @@ public class RobotNew extends TimedRobot {
                 mSuperstructure.setWantedState(Superstructure.WantedState.STARTINGCONFIGURATION);
             } else if (pickUp) {
                 mSuperstructure.setWantedState(Superstructure.WantedState.AUTOINTAKING);
-            } else if (ejectHatch) {
-                mSuperstructure.setWantedState(Superstructure.WantedState.EJECTING_HATCH);
-            } else if (pickupHatch) {
-                mSuperstructure.setWantedState(Superstructure.WantedState.HATCH_CAPTURED); 
-            } else if (ejectCargo) {
-                mSuperstructure.setWantedState(Superstructure.WantedState.EJECTING_CARGO);
+            //} else if (ejectHatch) {
+            //    mSuperstructure.setWantedState(Superstructure.WantedState.EJECTING_HATCH);
+            //} else if (pickupHatch) {
+            //    mSuperstructure.setWantedState(Superstructure.WantedState.HATCH_CAPTURED); 
+            //} else if (ejectCargo) {
+            //    mSuperstructure.setWantedState(Superstructure.WantedState.EJECTING_CARGO);
             } else if (spitPowerCell) {
                 mSuperstructure.setWantedState(Superstructure.WantedState.POWERCELL_INTAKE);
             } else if (pickupPowerCell) {
@@ -817,7 +817,7 @@ public class RobotNew extends TimedRobot {
                 if (mControlBoard.getTractorDrivePickupHatch()) {
 
                     if (!mTractorBeamPickupSelected) { // this is the first time in
-                        mSuperstructure.prepareToPickupHatch();
+                        //mSuperstructure.prepareToPickupHatch();
                         mTractorBeamPickupSelected = true;
                     }
 
@@ -826,7 +826,7 @@ public class RobotNew extends TimedRobot {
                     }
 
                     if (mDrive.isTBFinished()) {
-                        mSuperstructure.openBeak();
+                        //mSuperstructure.openBeak();
                     }
                 }
 
@@ -856,7 +856,7 @@ public class RobotNew extends TimedRobot {
                 mDrive.resetTractorBeam();
                 if (mTractorBeamPickupSelected) {
                     mTractorBeamPickupSelected = false;
-                    mSuperstructure.openBeak();
+                    //mSuperstructure.openBeak();
 
                 }
             }

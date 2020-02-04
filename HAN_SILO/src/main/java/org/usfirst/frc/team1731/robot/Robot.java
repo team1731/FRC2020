@@ -291,8 +291,8 @@ public class Robot extends TimedRobot {
             mEnabledLooper.start();
             mLoopersAreRunning = true;
             mSuperstructure.reloadConstants();
-            mSuperstructure.openBeak();
-            mSuperstructure.uproller();
+            //mSuperstructure.openBeak();
+            //mSuperstructure.uproller();
             
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
@@ -423,13 +423,13 @@ public class Robot extends TimedRobot {
             boolean ejectHatch = mControlBoard.getShootPanel();
             boolean pickupPowerCell = mControlBoard.getPickupBall();
             boolean ejectCargo = mControlBoard.getShootBall();
-            boolean elevCargoShipPos = mControlBoard.getCargoShipBall();
+            //boolean elevCargoShipPos = mControlBoard.getCargoShipBall();
             boolean startingConfiguration = mControlBoard.getStartingConfiguration();       
             boolean climber = mControlBoard.getClimberExtend();           
            // boolean tractorDrive = mControlBoard.getTractorDrive();
 
             double elevatorPOV = mControlBoard.getElevatorControl();
-
+/*
             if (elevatorPOV != -1) {
                 if (elevatorPOV == 0) {
                     mSuperstructure.setWantedElevatorPosition(ELEVATOR_POSITION.ELEVATOR_FLOOR);
@@ -438,12 +438,12 @@ public class Robot extends TimedRobot {
                 } else if (elevatorPOV == 2) {
                     mSuperstructure.setWantedElevatorPosition(ELEVATOR_POSITION.ELEVATOR_3RD);
                 }
-            } else if (elevCargoShipPos) {
-                mSuperstructure.setWantedElevatorPosition(ELEVATOR_POSITION.ELEVATOR_SHIP);
+            //} else if (elevCargoShipPos) {
+            //    mSuperstructure.setWantedElevatorPosition(ELEVATOR_POSITION.ELEVATOR_SHIP);
             }
 
             if (climber) {
-                mSuperstructure.setWantedState(Superstructure.WantedState.CLIMBING_EXTEND);
+                mSuperstructure.setWantedState(Superstructure.WantedState.CLIMB_EXTEND);
             } else if (grabCube) {
             	mSuperstructure.setWantedState(Superstructure.WantedState.INTAKING);
             } else if (spitting) {
@@ -602,8 +602,6 @@ public class Robot extends TimedRobot {
                 }
             }
 
-
-            /*
             else if(mControlBoard.getTractorDrive()){
                 if(mAutoModeExecuter == null){
                     mAutoModeExecuter = new AutoModeExecuter();
@@ -612,7 +610,7 @@ public class Robot extends TimedRobot {
                     mAutoModeExecuter.start();
                 }
             }
-            */
+            
 
             else if((!climber) && !mDrive.isDrivingTractorBeam()){
                 stopAuto(); // if none of the above 4 auto buttons is being held down and we're not climbing
@@ -659,12 +657,13 @@ public class Robot extends TimedRobot {
             //    stopAuto(); // if none of the above 4 auto buttons is being held down and we're climbing
                             // NOTE: the superstructure controls the drive wheels during a climb
             //}
-
+            */
             allPeriodic();
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
         }
+
     }
 
     /*
