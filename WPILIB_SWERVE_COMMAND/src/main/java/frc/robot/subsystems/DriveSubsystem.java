@@ -72,9 +72,9 @@ public class DriveSubsystem extends SubsystemBase {
     double headingRadians = Math.toRadians(getHeading());
     m_odometry.update(
         new Rotation2d(headingRadians),
-        m_frontLeft.getState(),
-        m_rearLeft.getState(),
+        m_frontLeft.getState(),                   // frontLeft, frontRight, rearLeft, rearRight
         m_frontRight.getState(),
+        m_rearLeft.getState(),
         m_rearRight.getState());
     SmartDashboard.putNumber("pose x", m_odometry.getPoseMeters().getTranslation().getX());
     SmartDashboard.putNumber("pose y", m_odometry.getPoseMeters().getTranslation().getY());
@@ -131,7 +131,7 @@ public class DriveSubsystem extends SubsystemBase {
     );
     SwerveDriveKinematics.normalizeWheelSpeeds(swerveModuleStates,
                                                DriveConstants.kMaxSpeedMetersPerSecond);
-    m_frontLeft.setDesiredState(swerveModuleStates[0]);
+    m_frontLeft.setDesiredState(swerveModuleStates[0]);    // frontLeft, frontRight, rearLeft, rearRight
     m_frontRight.setDesiredState(swerveModuleStates[1]);
     m_rearLeft.setDesiredState(swerveModuleStates[2]);
     m_rearRight.setDesiredState(swerveModuleStates[3]);
@@ -145,7 +145,7 @@ public class DriveSubsystem extends SubsystemBase {
   public void setModuleStates(SwerveModuleState[] desiredStates) {
     SwerveDriveKinematics.normalizeWheelSpeeds(desiredStates,
                                                DriveConstants.kMaxSpeedMetersPerSecond);
-    m_frontLeft.setDesiredState(desiredStates[0]);
+    m_frontLeft.setDesiredState(desiredStates[0]);        // frontLeft, frontRight, rearLeft, rearRight
     m_frontRight.setDesiredState(desiredStates[1]);
     m_rearLeft.setDesiredState(desiredStates[2]);
     m_rearRight.setDesiredState(desiredStates[3]);

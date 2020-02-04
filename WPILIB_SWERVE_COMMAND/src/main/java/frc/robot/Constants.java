@@ -36,7 +36,7 @@ public final class Constants {
     public static final double kWheelBase = 0.7;
     //Distance between front and back wheels on robot
     public static final SwerveDriveKinematics kDriveKinematics =
-        new SwerveDriveKinematics(
+        new SwerveDriveKinematics(                                  // frontLeft, frontRight, rearLeft, rearRight
           new Translation2d(kWheelBase / 2, kTrackWidth / 2),
           new Translation2d(kWheelBase / 2, -kTrackWidth / 2),
           new Translation2d(-kWheelBase / 2, kTrackWidth / 2),
@@ -70,14 +70,10 @@ public final class Constants {
         // Assumes the encoders are on a 1:1 reduction with the module shaft.
         (2 * Math.PI) / (double) kEncoderCPR;
 
-    public static final double kPModuleTurningController = 1;
-
-    public static final double kPModuleDriveController = 1;
-
   }
 
   public static final class OIConstants {
-    public static final int kDriverControllerPort = 1;
+    public static final int kDriverControllerPort = 0; // RDB2020 previously 1
 
   }
 
