@@ -1,6 +1,9 @@
 package frc.robot.util;
 
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 
 public class DebugOutput {
     public double t;
@@ -9,6 +12,9 @@ public class DebugOutput {
     public double pose_theta;
     public double headingRadians;
     public double raw_gyro;
+    public double poseErrorX;
+    public double poseErrorY;
+    public double poseErrorTheta;
     // public double linear_displacement;
     // public double linear_velocity;
     // public double profile_displacement;
@@ -32,6 +38,14 @@ public class DebugOutput {
         pose_theta = m_odometry.getPoseMeters().getRotation().getDegrees();
         this.headingRadians = headingRadians;
         this.raw_gyro = raw_gyro;
+    }
+    
+	public void update(double t, Pose2d poseError, ChassisSpeeds targetChassisSpeeds,
+			SwerveModuleState[] targetModuleStates) {
+        this.t = t;
+        this.poseErrorX = poseError.getTranslation().getX();
+        this.poseErrorY = poseError.getTranslation().getY();
+        this.poseErrorTheta = poseError.getRotation().getDegrees();
 	}
 
 }

@@ -44,10 +44,13 @@ public class RobotContainer {
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
 
+  ReflectingCSVWriter<DebugOutput> mCSVWriter;
+
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
   public RobotContainer(ReflectingCSVWriter<DebugOutput> mCSVWriter) {
+    this.mCSVWriter = mCSVWriter;
 
     m_robotDrive = new DriveSubsystem(mCSVWriter);
 
@@ -118,7 +121,7 @@ public class RobotContainer {
         config
     );
 
-    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+    SwerveControllerCommand swerveControllerCommand = new InstrumentedSwerveControllerCommand(
         exampleTrajectory,
         m_robotDrive::getPose, //Functional interface to feed supplier
         DriveConstants.kDriveKinematics,
@@ -131,7 +134,9 @@ public class RobotContainer {
 
         m_robotDrive::setModuleStates,
 
-        m_robotDrive
+        m_robotDrive,
+
+        mCSVWriter
 
     );
 
