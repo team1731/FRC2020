@@ -154,6 +154,7 @@ public class SwerveModule {
       drive = -drive;
     }
     m_turningPIDController.setReference((azimuthPosition + azimuthError), ControlType.kSmartMotion);
+    m_drivePIDController.setReference(drive, ControlType.kVelocity);
   }
 
   /**
