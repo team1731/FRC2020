@@ -79,7 +79,7 @@ public class SwerveModule {
 
 
 
-    /**
+  /**
    * Set the azimuthTalon encoder relative to wheel zero alignment position. For example, if current
    * absolute encoder = 0 and zero setpoint = 2767, then current relative setpoint = -2767.
    *

@@ -28,6 +28,8 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.util.DebugOutput;
+import frc.robot.util.ReflectingCSVWriter;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -37,7 +39,7 @@ import frc.robot.subsystems.DriveSubsystem;
  */
 public class RobotContainer {
   // The robot's subsystems
-  public final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  public final DriveSubsystem m_robotDrive;
 
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -45,7 +47,10 @@ public class RobotContainer {
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
-  public RobotContainer() {
+  public RobotContainer(ReflectingCSVWriter<DebugOutput> mCSVWriter) {
+
+    m_robotDrive = new DriveSubsystem(mCSVWriter);
+
     // Configure the button bindings
     configureButtonBindings();
 
@@ -70,11 +75,10 @@ public class RobotContainer {
             // the right by default.
             -m_driverController.getX(GenericHID.Hand.kRight), true), m_robotDrive) // <------- RDB2020 I added m_robotDrive here to get rid of
                                                                                    //                  "Default Command must require subsytem"
-            );
-
+        );
   }
 
-  /**
+/**
    * Use this method to define your button->command mappings.  Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then calling passing it to a
@@ -108,7 +112,7 @@ public class RobotContainer {
           // RDB2020 for now, just go straight ahead in auto...
           new Translation2d(1, 0),
           new Translation2d(2, 0)
-    ),
+        ),
         // End 3 meters straight ahead of where we started, facing forward
         new Pose2d(3, 0, new Rotation2d(0)),
         config

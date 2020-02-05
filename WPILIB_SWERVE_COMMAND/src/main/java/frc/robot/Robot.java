@@ -10,6 +10,8 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.util.DebugOutput;
+import frc.robot.util.ReflectingCSVWriter;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -18,9 +20,10 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  * project.
  */
 public class Robot extends TimedRobot {
+  
   private Command m_autonomousCommand;
-
   private RobotContainer m_robotContainer;
+  private ReflectingCSVWriter<DebugOutput> mCSVWriter;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -28,9 +31,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    mCSVWriter = new ReflectingCSVWriter<DebugOutput>("/home/lvuser/PATH-FOLLOWER-LOGS.csv", DebugOutput.class);
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
-    m_robotContainer = new RobotContainer();
+    m_robotContainer = new RobotContainer(mCSVWriter);
   }
 
   /**
@@ -59,6 +63,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
     m_robotContainer.m_robotDrive.zeroHeading();
+    mCSVWriter.flush();
   }
 
   /**
@@ -69,10 +74,16 @@ public class Robot extends TimedRobot {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     /*
-     * String autoSelected = SmartDashboard.getString("Auto Selector",
-     * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
-     * = new MyAutoCommand(); break; case "Default Auto": default:
-     * autonomousCommand = new ExampleCommand(); break; }
+     * String autoSelected = SmartDashboard.getString("Auto Selector", "Default");
+     * switch(autoSelected) {
+     *   case "My Auto": 
+     *      autonomousCommand = new MyAutoCommand();
+     *      break;
+     *   case "Default":
+     *   default:
+     *      autonomousCommand = new ExampleCommand();
+     *      break;
+     *  }
      */
 
     // schedule the autonomous command (example)

@@ -11,6 +11,7 @@ import com.kauailabs.navx.frc.AHRS;
 
 //import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 //import edu.wpi.first.wpilibj.interfaces.Gyro;
@@ -22,11 +23,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.DriveConstants;
+import frc.robot.util.DebugOutput;
+import frc.robot.util.ReflectingCSVWriter;
 
 @SuppressWarnings("PMD.ExcessiveImports")
 public class DriveSubsystem extends SubsystemBase {
 
-//Robot swerve modules
+  private final ReflectingCSVWriter<DebugOutput> mCSVWriter;
+  private final DebugOutput debugOutput = new DebugOutput();
+  
+  //Robot swerve modules
   private final SwerveModule m_frontLeft = 
       new SwerveModule(DriveConstants.kFrontLeftDriveMotorPort,
                         DriveConstants.kFrontLeftTurningMotorPort);
@@ -55,7 +61,8 @@ public class DriveSubsystem extends SubsystemBase {
   /**
    * Creates a new DriveSubsystem.
    */
-  public DriveSubsystem() {
+  public DriveSubsystem(ReflectingCSVWriter<DebugOutput> mCSVWriter) {
+    this.mCSVWriter = mCSVWriter;
   }
 
   
@@ -75,7 +82,7 @@ public class DriveSubsystem extends SubsystemBase {
     double headingRadians = Math.toRadians(getHeading());
     m_odometry.update(
         new Rotation2d(headingRadians),
-        m_frontLeft.getState(),                   // frontLeft, frontRight, rearLeft, rearRight
+        m_frontLeft.getState(),              // frontLeft, frontRight, rearLeft, rearRight
         m_frontRight.getState(),
         m_rearLeft.getState(),
         m_rearRight.getState());
@@ -83,7 +90,9 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("pose y", m_odometry.getPoseMeters().getTranslation().getY());
     SmartDashboard.putNumber("rot", m_odometry.getPoseMeters().getRotation().getDegrees());
     SmartDashboard.putNumber("heading", headingRadians);    
-    SmartDashboard.putNumber("raw gyro", m_gyro.getAngle());    
+    SmartDashboard.putNumber("raw gyro", m_gyro.getAngle());
+    debugOutput.update(Timer.getFPGATimestamp(), m_odometry, headingRadians, m_gyro.getAngle());
+	  mCSVWriter.add(debugOutput);
   }
 
   /**
@@ -158,7 +167,7 @@ public class DriveSubsystem extends SubsystemBase {
    * Resets the drive encoders to currently read a position of 0.
    */
   public void resetEncoders() {
-    m_frontLeft.resetEncoders(); // frontLeft, frontRight, rearLeft, rearRight
+    m_frontLeft.resetEncoders();                          // frontLeft, frontRight, rearLeft, rearRight
     m_frontRight.resetEncoders();
     m_rearLeft.resetEncoders();
     m_rearRight.resetEncoders();
