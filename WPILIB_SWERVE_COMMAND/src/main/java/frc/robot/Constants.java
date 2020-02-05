@@ -20,16 +20,28 @@ import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+  public static final int kTICKS = 16;
+
   public static final class DriveConstants {
+
+    //Drive motor CAN IDs
     public static final int kFrontLeftDriveMotorPort = 1;
-    public static final int kRearLeftDriveMotorPort = 3;
     public static final int kFrontRightDriveMotorPort = 2;
+    public static final int kRearLeftDriveMotorPort = 3;
     public static final int kRearRightDriveMotorPort = 4;
 
+    //Turn motor CAN IDs
     public static final int kFrontLeftTurningMotorPort = 11;
-    public static final int kRearLeftTurningMotorPort = 13;
     public static final int kFrontRightTurningMotorPort = 12;
+    public static final int kRearLeftTurningMotorPort = 13;
     public static final int kRearRightTurningMotorPort = 14;
+
+    //Turn encoders CAN IDs
+    public static final int kFrontLeftTurnEncoderPort = 21;
+    public static final int kFrontRightTurnEncoderPort = 22;
+    public static final int kRearLeftTurnEncoderPort = 23;
+    public static final int kRearRightTurnEncoderPort = 24;
 
     public static final double kTrackWidth = 0.7112;
     //Distance between centers of right and left wheels on robot
@@ -60,20 +72,23 @@ public final class Constants {
     public static final double kMaxModuleAngularSpeedRadiansPerSecond = 2 * Math.PI;
     public static final double kMaxModuleAngularAccelerationRadiansPerSecondSquared = 2 * Math.PI;
 
-    public static final int kEncoderCPR = 16;
+    public static final double kDriveEncoderCPR = 5.5;
+    public static final double kTurningEncoderCPR = 16;
     public static final double kWheelDiameterMeters = 0.0762;
     public static final double kDriveEncoderDistancePerPulse =
         // Assumes the encoders are directly mounted on the wheel shafts
-        (kWheelDiameterMeters * Math.PI) / (double) kEncoderCPR;
+        (kWheelDiameterMeters * Math.PI) / kDriveEncoderCPR;
 
+        
     public static final double kTurningEncoderDistancePerPulse =
         // Assumes the encoders are on a 1:1 reduction with the module shaft.
-        (2 * Math.PI) / (double) kEncoderCPR;
+        (2 * Math.PI) / kTurningEncoderCPR;
 
   }
 
   public static final class OIConstants {
-    public static final int kDriverControllerPort = 0; // RDB2020 previously 1
+    public static final int kDriverControllerPort = 0;
+    public static final int kOperatorControllerPort = 1;
 
   }
 

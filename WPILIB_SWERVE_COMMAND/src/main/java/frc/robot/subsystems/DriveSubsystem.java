@@ -8,9 +8,12 @@
 package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
+
+//import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
+//import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveOdometry;
@@ -24,25 +27,25 @@ import frc.robot.Constants.DriveConstants;
 public class DriveSubsystem extends SubsystemBase {
 
 //Robot swerve modules
-  private final SwerveModule m_frontLeft
-      = new SwerveModule(DriveConstants.kFrontLeftDriveMotorPort,
-                         DriveConstants.kFrontLeftTurningMotorPort);
-
-  private final SwerveModule m_rearLeft =
-      new SwerveModule(DriveConstants.kRearLeftDriveMotorPort,
-                       DriveConstants.kRearLeftTurningMotorPort);
-
+  private final SwerveModule m_frontLeft = 
+      new SwerveModule(DriveConstants.kFrontLeftDriveMotorPort,
+                        DriveConstants.kFrontLeftTurningMotorPort);
 
   private final SwerveModule m_frontRight =
       new SwerveModule(DriveConstants.kFrontRightDriveMotorPort,
                        DriveConstants.kFrontRightTurningMotorPort);
+
+  private final SwerveModule m_rearLeft =
+      new SwerveModule(DriveConstants.kRearLeftDriveMotorPort,
+                       DriveConstants.kRearLeftTurningMotorPort);
+  
 
   private final SwerveModule m_rearRight =
       new SwerveModule(DriveConstants.kRearRightDriveMotorPort,
                        DriveConstants.kRearRightTurningMotorPort);
 
   // The gyro sensor
-  //private final Gyro m_gyro = new ADXRS450_Gyro();
+  //private final Gyro a_gyro = new ADXRS450_Gyro();
   private final AHRS m_gyro = new AHRS(SPI.Port.kMXP);
 
   // Odometry class for tracking robot pose
@@ -155,9 +158,9 @@ public class DriveSubsystem extends SubsystemBase {
    * Resets the drive encoders to currently read a position of 0.
    */
   public void resetEncoders() {
-    m_frontLeft.resetEncoders();
-    m_rearLeft.resetEncoders();
+    m_frontLeft.resetEncoders(); // frontLeft, frontRight, rearLeft, rearRight
     m_frontRight.resetEncoders();
+    m_rearLeft.resetEncoders();
     m_rearRight.resetEncoders();
   }
 
@@ -178,10 +181,12 @@ public class DriveSubsystem extends SubsystemBase {
   /**
    * Returns the heading of the robot.
    *
-   * @return the robot's heading in degrees, from 180 to 180
+   * @return the robot's heading in degrees, from -180 to 180
    */
   public double getHeading() {
-    return Math.IEEEremainder(m_gyro.getAngle(), 360) * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+    double heading = Math.IEEEremainder(m_gyro.getAngle(), 360) * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+    SmartDashboard.putNumber("Heading", heading);
+    return heading;
   }
 
   /**
