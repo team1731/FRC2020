@@ -14,9 +14,13 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SequencerSubsystem;
 import frc.robot.subsystems.ShootClimbSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj.DigitalInput;
+
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -30,6 +34,7 @@ public class RobotContainer {
   private final SequencerSubsystem m_SequencerSubsystem = new SequencerSubsystem();
   private final ShootClimbSubsystem m_ShootClimbSubsystem = new ShootClimbSubsystem();
 
+  private DigitalInput m_LowSensor = new DigitalInput(Constants.kLowSequencer);
   //private final ExampleCommand m_autoCommand = new ExampleCommand(m_IntakeSubsystem);
 
 
@@ -42,6 +47,8 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
+
+    //m_IntakeSubsystem.setDefaultCommand(new InstantCommand(m_IntakeSubsystem::retract));
   }
 
   /**
@@ -66,7 +73,23 @@ public class RobotContainer {
     new JoystickButton(operatorController, 3)
         .whenPressed(new InstantCommand(m_SequencerSubsystem::reverse))
         .whenReleased(new InstantCommand(m_SequencerSubsystem::stop));
-  
+
+    /*/ conditional Sequencer when Intake is pushed
+    new JoystickButton(operatorController, 0)
+      .whenPressed(new ParallelCommandGroup(
+          new InstantCommand(m_IntakeSubsystem::extend, m_IntakeSubsystem),
+          new ConditionalCommand(
+            new InstantCommand(m_SequencerSubsystem::addBall, m_SequencerSubsystem),
+            new InstantCommand(m_SequencerSubsystem::stop, m_SequencerSubsystem),
+            m_LowSensor::get)
+          )
+        )
+      .whenReleased(new ParallelCommandGroup(
+          new InstantCommand(m_IntakeSubsystem::retract, m_IntakeSubsystem),
+          new InstantCommand(m_SequencerSubsystem::stop, m_SequencerSubsystem)
+        )
+      );
+  */
     /* Shoot
     new JoystickButton(operatorController, 2)
         .whenPressed(new InstantCommand(m_ShootClimbSubsystem::forward, m_ShootClimbSubsystem))

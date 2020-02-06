@@ -59,6 +59,16 @@ public class SequencerSubsystem extends SubsystemBase {
     mPowerCellCount = 0;
   }
 
+  public void addBall() {
+    if (mPowerCellCount < 5) {
+      mTalonSeq.setSpeed(Constants.kMotorSeqFwdSpeed);
+      if (mLowSensorLast) {
+          mPowerCellCount++;
+      }
+    }
+    mLowSensorLast = mLowSensor.get();
+  }
+
   /**
    * For Shooting: Enables the Sequencer by turning on motor.
    */
