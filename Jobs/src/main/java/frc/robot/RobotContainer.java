@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 
@@ -34,7 +35,7 @@ public class RobotContainer {
   private final SequencerSubsystem m_SequencerSubsystem = new SequencerSubsystem();
   private final ShootClimbSubsystem m_ShootClimbSubsystem = new ShootClimbSubsystem();
 
-  private DigitalInput m_LowSensor = new DigitalInput(Constants.kLowSequencer);
+  //private DigitalInput m_LowSensor = new DigitalInput(Constants.kLowSequencer);
   //private final ExampleCommand m_autoCommand = new ExampleCommand(m_IntakeSubsystem);
 
 
@@ -59,18 +60,18 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Intake
-    new JoystickButton(operatorController, 0)
+    new JoystickButton(operatorController, 1)
         .whenPressed(new InstantCommand(m_IntakeSubsystem::extend, m_IntakeSubsystem))
         .whenReleased(new InstantCommand(m_IntakeSubsystem::retract, m_IntakeSubsystem));
-    new JoystickButton(operatorController, 1)
+    new JoystickButton(operatorController, 2)
         .whenPressed(new InstantCommand(m_IntakeSubsystem::eject, m_IntakeSubsystem))
         .whenReleased(new InstantCommand(m_IntakeSubsystem::retract, m_IntakeSubsystem));
 
     // Sequencer
-    new JoystickButton(operatorController, 2)
+    new JoystickButton(operatorController, 3)
         .whenPressed(new InstantCommand(m_SequencerSubsystem::forward, m_IntakeSubsystem))
         .whenReleased(new InstantCommand(m_SequencerSubsystem::stop, m_IntakeSubsystem));
-    new JoystickButton(operatorController, 3)
+    new JoystickButton(operatorController, 4)
         .whenPressed(new InstantCommand(m_SequencerSubsystem::reverse))
         .whenReleased(new InstantCommand(m_SequencerSubsystem::stop));
 
@@ -90,14 +91,14 @@ public class RobotContainer {
         )
       );
   */
-    /* Shoot
-    new JoystickButton(operatorController, 2)
-        .whenPressed(new InstantCommand(m_ShootClimbSubsystem::forward, m_ShootClimbSubsystem))
-        .whenReleased(new InstantCommand(m_ShootClimbSubsystem::stop, m_ShootClimbSubsystem));
-    new JoystickButton(operatorController, 3)
-        .whenPressed(new InstantCommand(m_ShootClimbSubsystem::reverse, m_ShootClimbSubsystem))
-        .whenReleased(new InstantCommand(m_ShootClimbSubsystem::stop, m_ShootClimbSubsystem));
-    */
+    // Shoot
+    new JoystickButton(operatorController, 5)
+        .whenPressed(new InstantCommand(m_ShootClimbSubsystem::on, m_ShootClimbSubsystem))
+        .whenReleased(new InstantCommand(m_ShootClimbSubsystem::off, m_ShootClimbSubsystem));
+    new JoystickButton(operatorController, 6)
+        .whenPressed(new InstantCommand(m_ShootClimbSubsystem::on, m_ShootClimbSubsystem))
+        .whenReleased(new InstantCommand(m_ShootClimbSubsystem::off, m_ShootClimbSubsystem));
+    
   }
 
 

@@ -25,7 +25,7 @@ public class SequencerSubsystem extends SubsystemBase {
    * Creates a new SequencerSubsystem.
    */
   public SequencerSubsystem() {
-    mTalonSeq = new PWMTalonFX(Constants.kMotorPWMIntake);
+    mTalonSeq = new PWMTalonFX(Constants.kMotorPWMSeq);
     mLowSensor = new DigitalInput(Constants.kLowSequencer);
     mIndexing = false;
     mLowSensorLast = mLowSensor.get();
