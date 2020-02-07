@@ -28,7 +28,7 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.InstrumentedSwerveControllerCommand;
+//import frc.robot.subsystems.InstrumentedSwerveControllerCommand;
 import frc.robot.util.DebugOutput;
 import frc.robot.util.ReflectingCSVWriter;
 
@@ -114,30 +114,31 @@ public class RobotContainer {
           //new Translation2d(1, 1),
           //new Translation2d(2, -1)
           // RDB2020 for now, just go straight ahead in auto...
-          new Translation2d(1, 0),
-          new Translation2d(2, 0)
+          // new Translation2d(0.5, -0.3),
+          // new Translation2d(1, 0),
+          // new Translation2d(0.5, 0.3)
         ),
         // End 3 meters straight ahead of where we started, facing forward
-        new Pose2d(3, 0, new Rotation2d(0)),
+        new Pose2d(1, 0, new Rotation2d(Math.PI/4)),
         config
     );
 
-    SwerveControllerCommand swerveControllerCommand = new InstrumentedSwerveControllerCommand(
+    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
         exampleTrajectory,
         m_robotDrive::getPose, //Functional interface to feed supplier
         DriveConstants.kDriveKinematics,
 
         //Position controllers
         new PIDController(AutoConstants.kPXController, 0, 0),
-        new PIDController(AutoConstants.kPYController, 0, 0),
+        new PIDController(-AutoConstants.kPYController, 0, 0),
         new ProfiledPIDController(-AutoConstants.kPThetaController, 0, 0,
                                   AutoConstants.kThetaControllerConstraints),
 
         m_robotDrive::setModuleStates,
 
-        m_robotDrive,
+        m_robotDrive
 
-        mCSVWriter
+        //mCSVWriter
 
     );
 

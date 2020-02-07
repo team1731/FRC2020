@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.util.DebugOutput;
 import frc.robot.util.ReflectingCSVWriter;
 
-public class InstrumentedSwerveControllerCommand extends SwerveControllerCommand {
+public class InstrumentedSwerveControllerCommand  extends SwerveControllerCommand {
     private final DebugOutput m_debugOutput = new DebugOutput();
     private final Trajectory m_trajectory;
     private final Supplier<Pose2d> m_pose;
@@ -87,7 +87,17 @@ public class InstrumentedSwerveControllerCommand extends SwerveControllerCommand
     
         m_outputModuleStates.accept(targetModuleStates);
     
-        m_debugOutput.update(Timer.getFPGATimestamp(), poseError, targetChassisSpeeds, targetModuleStates);
+        m_debugOutput.update(curTime, poseError, targetChassisSpeeds, targetModuleStates);
         m_mCSVWriter.add(m_debugOutput);
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+      m_timer.stop();
+    }
+  
+    @Override
+    public boolean isFinished() {
+      return m_timer.hasPeriodPassed(m_trajectory.getTotalTimeSeconds());
     }
 }

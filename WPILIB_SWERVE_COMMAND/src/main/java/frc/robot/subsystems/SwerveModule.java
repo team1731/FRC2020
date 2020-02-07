@@ -121,7 +121,7 @@ public class SwerveModule {
   public SwerveModuleState getState() {
     //return new SwerveModuleState(m_driveEncoder.getRate(), new Rotation2d(m_turningEncoder.get()));
         //FIXME: apply any needed unit convertion here...
-    double velocity = m_driveEncoder.getVelocity() * Math.PI * 3.0 / 39.37 / 60.0 / 16.0;
+    double velocity = m_driveEncoder.getVelocity() * Math.PI * 3.0 / 39.37 / 60.0 / 5.5;
     double azimuth = m_turningEncoder.getPosition();
     double azimuthPercent = Math.IEEEremainder(azimuth, kTICKS)/16.0;
 
@@ -152,7 +152,7 @@ public class SwerveModule {
     
     double azimuth = -state.angle.getDegrees() * kTICKS/360.0;
     double speedMetersPerSecond = state.speedMetersPerSecond;
-    double drive = speedMetersPerSecond * 16.0 * 39.37  * 60.0 / 3.0 / Math.PI;
+    double drive = speedMetersPerSecond * 5.5 * 39.37  * 60.0 / 3.0 / Math.PI;
     //wheel.set(-angleDegrees/360, speedMetersPerSecond * 16.0 * 39.37  * 60.0 / 3.0 / Math.PI);
     double azimuthPosition = m_turningEncoder.getPosition();
     double azimuthError = Math.IEEEremainder(azimuth - azimuthPosition, kTICKS);
