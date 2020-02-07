@@ -28,6 +28,7 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.InstrumentedSwerveControllerCommand;
 import frc.robot.util.DebugOutput;
 import frc.robot.util.ReflectingCSVWriter;
 
@@ -129,7 +130,7 @@ public class RobotContainer {
         //Position controllers
         new PIDController(AutoConstants.kPXController, 0, 0),
         new PIDController(AutoConstants.kPYController, 0, 0),
-        new ProfiledPIDController(AutoConstants.kPThetaController, 0, 0,
+        new ProfiledPIDController(-AutoConstants.kPThetaController, 0, 0,
                                   AutoConstants.kThetaControllerConstraints),
 
         m_robotDrive::setModuleStates,

@@ -17,57 +17,64 @@ import frc.robot.util.DebugOutput;
 import frc.robot.util.ReflectingCSVWriter;
 
 public class InstrumentedSwerveControllerCommand extends SwerveControllerCommand {
-    private final DebugOutput debugOutput = new DebugOutput();
-    private final Trajectory trajectory;
-    private final Supplier<Pose2d> pose;
-    private final SwerveDriveKinematics kinematics;
-    private final PIDController xController;
-    private final PIDController yController;
-    private final ProfiledPIDController thetaController;
-    private final Consumer<SwerveModuleState[]> outputModuleStates;
-    private final Subsystem[] requirements;
-    private final ReflectingCSVWriter<DebugOutput> mCSVWriter;
-    private final Pose2d finalPose;
+    private final DebugOutput m_debugOutput = new DebugOutput();
+    private final Trajectory m_trajectory;
+    private final Supplier<Pose2d> m_pose;
+    private final SwerveDriveKinematics m_kinematics;
+    private final PIDController m_xController;
+    private final PIDController m_yController;
+    private final ProfiledPIDController m_thetaController;
+    private final Consumer<SwerveModuleState[]> m_outputModuleStates;
+    private final ReflectingCSVWriter<DebugOutput> m_mCSVWriter;
+    private Pose2d m_finalPose;
+    private final Timer m_timer = new Timer();
 
     public InstrumentedSwerveControllerCommand(Trajectory trajectory, Supplier<Pose2d> pose,
             SwerveDriveKinematics kinematics, PIDController xController, PIDController yController,
             ProfiledPIDController thetaController, Consumer<SwerveModuleState[]> outputModuleStates,
-            Subsystem[] requirements, ReflectingCSVWriter<DebugOutput> mCSVWriter) {
-        super(trajectory, pose, kinematics, xController, yController, thetaController, outputModuleStates, requirements);
-        this.trajectory = trajectory;
-        this.pose = pose;
-        this.kinematics = kinematics;
-        this.xController = xController;
-        this.yController = yController;
-        this.thetaController = thetaController;
-        this.outputModuleStates = outputModuleStates;
-        this.requirements = requirements;
-        this.mCSVWriter = mCSVWriter;
-        this.finalPose = trajectory.sample(trajectory.getTotalTimeSeconds()).poseMeters;
+            DriveSubsystem m_robotDrive, ReflectingCSVWriter<DebugOutput> mCSVWriter) {
+        super(trajectory, pose, kinematics, xController, yController, thetaController, outputModuleStates, m_robotDrive);
+        m_trajectory = trajectory;
+        m_pose = pose;
+        m_kinematics = kinematics;
+        m_xController = xController;
+        m_yController = yController;
+        m_thetaController = thetaController;
+        m_outputModuleStates = outputModuleStates;
+        m_mCSVWriter = mCSVWriter;
     }
+
+  @Override
+  public void initialize() {
+    // Sample final pose to get robot rotation
+    m_finalPose  = m_trajectory.sample(m_trajectory.getTotalTimeSeconds()).poseMeters;
+
+    m_timer.reset();
+    m_timer.start();
+  }
 
     @Override
     public void execute(){
         double curTime = Timer.getFPGATimestamp();
 
-        var desiredState = trajectory.sample(curTime);
+        var desiredState = m_trajectory.sample(curTime);
         var desiredPose = desiredState.poseMeters;
     
-        var poseError = desiredPose.relativeTo(pose.get());
+        var poseError = desiredPose.relativeTo(m_pose.get());
     
-        double targetXVel = xController.calculate(
-            pose.get().getTranslation().getX(),
+        double targetXVel = m_xController.calculate(
+            m_pose.get().getTranslation().getX(),
             desiredPose.getTranslation().getX());
     
-        double targetYVel = yController.calculate(
-            pose.get().getTranslation().getY(),
+        double targetYVel = m_yController.calculate(
+            m_pose.get().getTranslation().getY(),
             desiredPose.getTranslation().getY());
     
         // The robot will go to the desired rotation of the final pose in the trajectory,
         // not following the poses at individual states.
-        double targetAngularVel = thetaController.calculate(
-            pose.get().getRotation().getRadians(),
-            finalPose.getRotation().getRadians());
+        double targetAngularVel = m_thetaController.calculate(
+            m_pose.get().getRotation().getRadians(),
+            m_finalPose.getRotation().getRadians());
     
         double vRef = desiredState.velocityMetersPerSecond;
     
@@ -76,11 +83,11 @@ public class InstrumentedSwerveControllerCommand extends SwerveControllerCommand
     
         var targetChassisSpeeds = new ChassisSpeeds(targetXVel, targetYVel, targetAngularVel);
     
-        var targetModuleStates = kinematics.toSwerveModuleStates(targetChassisSpeeds);
+        var targetModuleStates = m_kinematics.toSwerveModuleStates(targetChassisSpeeds);
     
-        outputModuleStates.accept(targetModuleStates);
+        m_outputModuleStates.accept(targetModuleStates);
     
-        debugOutput.update(Timer.getFPGATimestamp(), poseError, targetChassisSpeeds, targetModuleStates);
-        mCSVWriter.add(debugOutput);
+        m_debugOutput.update(Timer.getFPGATimestamp(), poseError, targetChassisSpeeds, targetModuleStates);
+        m_mCSVWriter.add(m_debugOutput);
     }
 }

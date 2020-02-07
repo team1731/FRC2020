@@ -14,6 +14,21 @@ public class ReflectingCSVWriter<T> {
     PrintWriter mOutput = null;
     Field[] mFields;
 
+    private boolean suspended;
+
+    public void suspend(){
+        suspended = true;
+        flush();
+    }
+
+    public void resume(){
+        suspended = false;
+    }
+
+    public boolean isSuspended(){
+        return suspended;
+    }
+
     public ReflectingCSVWriter(String fileName, Class<T> typeClass) {
     	//
     	// rename existing file so it's
@@ -47,20 +62,22 @@ public class ReflectingCSVWriter<T> {
     }
 
     public void add(T value) {
-        StringBuffer line = new StringBuffer();
-        for (Field field : mFields) {
-            if (line.length() != 0) {
-                line.append(", ");
+        if(!suspended){
+            StringBuffer line = new StringBuffer();
+            for (Field field : mFields) {
+                if (line.length() != 0) {
+                    line.append(", ");
+                }
+                try {
+                    line.append(field.get(value).toString());
+                } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
             }
-            try {
-                line.append(field.get(value).toString());
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
+            mLinesToWrite.add(line.toString());
         }
-        mLinesToWrite.add(line.toString());
     }
 
     protected synchronized void writeLine(String line) {

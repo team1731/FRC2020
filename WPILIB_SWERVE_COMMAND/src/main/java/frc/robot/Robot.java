@@ -35,6 +35,7 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer(mCSVWriter);
+    m_robotContainer.m_robotDrive.zeroHeading();
   }
 
   /**
@@ -46,6 +47,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    if(mCSVWriter.isSuspended()){
+      mCSVWriter.resume();
+    }
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
@@ -58,12 +62,14 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
+    if(!mCSVWriter.isSuspended()){
+      mCSVWriter.suspend();
+    }
   }
 
   @Override
   public void disabledPeriodic() {
-    m_robotContainer.m_robotDrive.zeroHeading();
-    mCSVWriter.flush();
+
   }
 
   /**
@@ -71,6 +77,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    if(mCSVWriter.isSuspended()){
+      mCSVWriter.resume();
+    }
+
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     /*
@@ -101,6 +111,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    if(mCSVWriter.isSuspended()){
+      mCSVWriter.resume();
+    }
+
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
