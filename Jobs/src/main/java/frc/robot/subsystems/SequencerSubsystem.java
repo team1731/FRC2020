@@ -95,7 +95,15 @@ public class SequencerSubsystem extends SubsystemBase {
     mIndexing = false;
   }
 
-  public boolean gotLowSensor() {
+  public boolean getLowSensor() {
     return(mLowSensor.get());
+  }
+
+  public boolean getMaxPowerCells() {
+    return(mPowerCellCount >= 5);
+  }
+
+  public void incrPowerCells() {
+    mPowerCellCount += 1;
   }
 }

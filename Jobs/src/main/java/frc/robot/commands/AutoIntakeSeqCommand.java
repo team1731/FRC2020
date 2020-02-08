@@ -32,7 +32,7 @@ public class AutoIntakeSeqCommand extends ParallelCommandGroup {
         new ConditionalCommand(
           new InstantCommand(seqSubsystem::addBall, seqSubsystem),
           new InstantCommand(seqSubsystem::stop, seqSubsystem),
-          seqSubsystem::gotLowSensor
+          seqSubsystem::getLowSensor
         )
     );   
   }
