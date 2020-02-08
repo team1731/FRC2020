@@ -94,4 +94,8 @@ public class SequencerSubsystem extends SubsystemBase {
     mTalonSeq.setSpeed(0);
     mIndexing = false;
   }
+
+  public boolean gotLowSensor() {
+    return(mLowSensor.get());
+  }
 }

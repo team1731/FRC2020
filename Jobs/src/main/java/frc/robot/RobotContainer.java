@@ -22,6 +22,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj.DigitalInput;
 
+import frc.robot.commands.IntakeEject;
+
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -64,8 +66,10 @@ public class RobotContainer {
         .whenPressed(new InstantCommand(m_IntakeSubsystem::extend, m_IntakeSubsystem))
         .whenReleased(new InstantCommand(m_IntakeSubsystem::retract, m_IntakeSubsystem));
     new JoystickButton(operatorController, 2)
-        .whenPressed(new InstantCommand(m_IntakeSubsystem::eject, m_IntakeSubsystem))
+        .whenPressed(new IntakeEject(m_IntakeSubsystem))
         .whenReleased(new InstantCommand(m_IntakeSubsystem::retract, m_IntakeSubsystem));
+        //.whenPressed(new InstantCommand(m_IntakeSubsystem::eject, m_IntakeSubsystem))
+        //.whenReleased(new InstantCommand(m_IntakeSubsystem::retract, m_IntakeSubsystem));
 
     // Sequencer
     new JoystickButton(operatorController, 3)

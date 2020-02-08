@@ -6,6 +6,7 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -62,5 +63,35 @@ public final class Constants {
     public static int kArduino_GREENW = 5; // green wipe
     public static int kArduino_BLUEW = 6; // blue wipe
     public static int kArduino_YELLW = 7; // yellow wipe
+
+        //
+    // PCM 0 SOLENOIDS
+    //
+    public static final int kBeakSwinger1 = 4; 
+    public static final int kBeakSwinger2 = 5; 
+    public static final int kMustache1 = 7; 
+    public static final int kMustache2 = 6; 
+    public static final int kDSolenoidIntake1 = 0;
+    public static final int kDSolenoidIntake2 = 1;
+
+    //
+    // PCM 1 SOLENOIDS
+    //
+    public static final int kBeakOpener1 = 0;
+    public static final int kBeakOpener2 = 5;
+    
+    public static final int kRotateWristShort1 = 2;
+    public static final int kRotateWristShort2 = 4;
+    
+    public static final int kRotateWristLong1 = 3;
+    public static final int kRotateWristLong2 = 1;
+    
+    public static final int kTopRoller1 = 7;
+    public static final int kTopRoller2 = 6;
+
+    public static DoubleSolenoid makeDoubleSolenoidForIds(int pcmChannel, int forward_solenoidId, int reverse_solenoidId) {
+    	System.out.println("creating solenoid ids " + forward_solenoidId + "-" + reverse_solenoidId + " PCM " + pcmChannel + " CHAN ");
+        return null; //TODO FIXME!!! new DoubleSolenoid(pcmChannel, forward_solenoidId, reverse_solenoidId);
+    }
 
 }
