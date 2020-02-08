@@ -7,6 +7,7 @@
 
 package frc.robot.subsystems;
 
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj.PWMTalonFX;
@@ -105,5 +106,8 @@ public class SequencerSubsystem extends SubsystemBase {
 
   public void incrPowerCells() {
     mPowerCellCount += 1;
+  }
+  public int getPowerCellCount() {
+    return(mPowerCellCount);
   }
 }

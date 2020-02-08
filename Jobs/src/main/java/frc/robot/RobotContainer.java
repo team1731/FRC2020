@@ -7,9 +7,14 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-//import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.AutoIntakeSeqCommand;
+import frc.robot.commands.IntakeRetract;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SequencerSubsystem;
 import frc.robot.subsystems.ShootClimbSubsystem;
@@ -32,6 +37,9 @@ import frc.robot.commands.IntakeEject;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+
+  ShuffleboardTab sensorTab;
+
   // The robot's subsystems and commands are defined here...
   private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
   private final SequencerSubsystem m_SequencerSubsystem = new SequencerSubsystem();
@@ -103,8 +111,10 @@ public class RobotContainer {
         .whenPressed(new InstantCommand(m_ShootClimbSubsystem::on, m_ShootClimbSubsystem))
         .whenReleased(new InstantCommand(m_ShootClimbSubsystem::off, m_ShootClimbSubsystem));
     
+    new JoystickButton(operatorController, 7)
+      .whenActive(new AutoIntakeSeqCommand(m_IntakeSubsystem, m_SequencerSubsystem))
+      .whenInactive(new IntakeRetract(m_IntakeSubsystem));
   }
-
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -117,4 +127,15 @@ public class RobotContainer {
     return m_autoCommand;
   }
   */
+
+  public void initSmartDashboard() {
+    sensorTab = Shuffleboard.getTab("Sensors");
+    sensorTab.add("LowSensor", m_SequencerSubsystem.getLowSensor());
+    sensorTab.add("PowerCellCount", m_SequencerSubsystem.getPowerCellCount());
+  }
+
+  public void outputToSmartDashboard() {
+    SmartDashboard.putBoolean("LowSensor",  m_SequencerSubsystem.getLowSensor());
+    SmartDashboard.putNumber("PowerCellCount",  (double)m_SequencerSubsystem.getPowerCellCount());
+  }
 }

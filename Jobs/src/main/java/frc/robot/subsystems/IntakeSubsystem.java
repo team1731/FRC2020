@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 public class IntakeSubsystem extends SubsystemBase {
 
   private final PWMTalonFX mTalonIntake;
-  private final DoubleSolenoid mIntakeSolenoid;
+  //private final DoubleSolenoid mIntakeSolenoid;
   
   /**
    * Creates a new ExampleSubsystem.
@@ -24,7 +24,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public IntakeSubsystem() {
     mTalonIntake = new PWMTalonFX(Constants.kMotorPWMIntake);
     //mIntakeSolenoid = new Solenoid(Constants.kIntakeExtend);
-    mIntakeSolenoid = Constants.makeDoubleSolenoidForIds(0, Constants.kDSolenoidIntake1, Constants.kDSolenoidIntake1);
+    //mIntakeSolenoid = Constants.makeDoubleSolenoidForIds(0, Constants.kDSolenoidIntake1, Constants.kDSolenoidIntake1);
   }
 
   @Override
@@ -36,7 +36,7 @@ public class IntakeSubsystem extends SubsystemBase {
    * Enables the intake by extending solenoid & turning on motor.
    */
   public void extend() {
-    mIntakeSolenoid.set(DoubleSolenoid.Value.kForward);
+    //mIntakeSolenoid.set(DoubleSolenoid.Value.kForward);
     mTalonIntake.setSpeed(Constants.kMotorIntakeFwdSpeed);
   }
 
@@ -52,7 +52,7 @@ public class IntakeSubsystem extends SubsystemBase {
    * Enables the intake by retracting solenoid & turning off motor.
    */
   public void retract() {
-    mIntakeSolenoid.set(DoubleSolenoid.Value.kReverse);
+    //mIntakeSolenoid.set(DoubleSolenoid.Value.kReverse);
     mTalonIntake.setSpeed(0);
   }
 }
