@@ -88,11 +88,22 @@ public class DriveSubsystem extends SubsystemBase {
         m_rearRight.getState());
     SmartDashboard.putNumber("pose x", m_odometry.getPoseMeters().getTranslation().getX());
     SmartDashboard.putNumber("pose y", m_odometry.getPoseMeters().getTranslation().getY());
-    SmartDashboard.putNumber("rot", m_odometry.getPoseMeters().getRotation().getDegrees());
-    SmartDashboard.putNumber("heading", headingRadians);    
+    SmartDashboard.putNumber("rot deg", m_odometry.getPoseMeters().getRotation().getDegrees());
+    SmartDashboard.putNumber("heading radians", headingRadians);    
     SmartDashboard.putNumber("raw gyro", m_gyro.getAngle());
-    debugOutput.update(Timer.getFPGATimestamp(), m_odometry, headingRadians, m_gyro.getAngle());
-    mCSVWriter.add(debugOutput);
+    SmartDashboard.putNumber("turn rate", getTurnRate());
+    //debugOutput.update(Timer.getFPGATimestamp(), m_odometry, headingRadians, m_gyro.getAngle());
+    //mCSVWriter.add(debugOutput);
+
+    SmartDashboard.putNumber("front left angle deg", m_frontLeft.getState().angle.getDegrees());
+    SmartDashboard.putNumber("front right angle deg", m_frontRight.getState().angle.getDegrees());
+    SmartDashboard.putNumber("rear left angle deg", m_rearLeft.getState().angle.getDegrees());
+    SmartDashboard.putNumber("rear right angle deg", m_rearRight.getState().angle.getDegrees());
+
+    SmartDashboard.putNumber("front left encoder pos", m_frontLeft.getDriveEncoderPosition());
+    SmartDashboard.putNumber("front right encoder pos", m_frontRight.getDriveEncoderPosition());
+    SmartDashboard.putNumber("rear left encoder pos", m_rearLeft.getDriveEncoderPosition());
+    SmartDashboard.putNumber("rear right encoder pos", m_rearRight.getDriveEncoderPosition());
   }
 
   /**
@@ -184,7 +195,6 @@ public class DriveSubsystem extends SubsystemBase {
     double adj = m_gyro.getAngle() % 360;
     m_gyro.setAngleAdjustment(-adj);
     //logger.info("<b>DriveSubsystem</b>: zeroGyro finished");
-    
   }
 
   /**

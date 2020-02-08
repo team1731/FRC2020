@@ -7,7 +7,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.util.DebugOutput;
@@ -24,6 +26,7 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private RobotContainer m_robotContainer;
   private ReflectingCSVWriter<DebugOutput> mCSVWriter;
+  private DutyCycleEncoder azimuthEncoder;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -35,7 +38,13 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer(mCSVWriter);
+
     m_robotContainer.m_robotDrive.zeroHeading();
+    azimuthEncoder = new DutyCycleEncoder(0);
+    azimuthEncoder.setDistancePerRotation(360);
+    azimuthEncoder.setConnectedFrequencyThreshold(150);
+
+    SmartDashboard.putNumber("Auto Num", 0);
   }
 
   /**
@@ -55,6 +64,24 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+
+
+
+    //
+    // ENCODER TESTING
+    //
+    boolean connected = azimuthEncoder.isConnected();
+    // Duty Cycle Frequency in Hz
+    int frequency = azimuthEncoder.getFrequency();
+    // Output of encoder
+    double output = (azimuthEncoder.get()*1000 - 50) * 360/50;
+    // Output scaled by DistancePerPulse
+    double distance = azimuthEncoder.getDistance();
+    //SmartDashboard.putBoolean("Connected", connected);
+    //SmartDashboard.putNumber("Frequency", frequency);
+    //SmartDashboard.putNumber("Output", output);
+    //SmartDashboard.putNumber("Distance", distance);
+
   }
 
   /**
@@ -70,7 +97,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
 
-  }
+   }
 
   /**
    * This autonomous runs the autonomous command selected by your {@link RobotContainer} class.
@@ -80,8 +107,6 @@ public class Robot extends TimedRobot {
     if(mCSVWriter.isSuspended()){
       mCSVWriter.resume();
     }
-
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     /*
      * String autoSelected = SmartDashboard.getString("Auto Selector", "Default");
@@ -96,6 +121,9 @@ public class Robot extends TimedRobot {
      *  }
      */
 
+    int autoNum = (int)SmartDashboard.getNumber("Auto Num", 0);
+    System.out.println("\n\n\nAUTO MODE chosen: " + autoNum + " ===> " + m_robotContainer.getAutonomousName(autoNum));
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand(autoNum);
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();

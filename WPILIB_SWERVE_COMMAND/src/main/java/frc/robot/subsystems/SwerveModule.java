@@ -72,12 +72,11 @@ public class SwerveModule {
     m_turningPIDController.setSmartMotionAllowedClosedLoopError(0, smartMotionSlot);
 
     setAzimuthZero(0);
-
-
-
   }
 
-
+public double getDriveEncoderPosition(){
+  return m_driveEncoder.getPosition();
+}
 
   /**
    * Set the azimuthTalon encoder relative to wheel zero alignment position. For example, if current
@@ -125,7 +124,7 @@ public class SwerveModule {
     double azimuth = m_turningEncoder.getPosition();
     double azimuthPercent = Math.IEEEremainder(azimuth, kTICKS)/16.0;
 
-    SmartDashboard.putNumber("Module"+id+" Drive Encoder Tick", m_driveEncoder.getPosition());
+    //SmartDashboard.putNumber("Module"+id+" Drive Encoder Tick", m_driveEncoder.getPosition());
 
     return new SwerveModuleState(velocity, new Rotation2d(azimuthPercent * 2.0 * Math.PI));
 
@@ -157,12 +156,13 @@ public class SwerveModule {
     double azimuthPosition = m_turningEncoder.getPosition();
     double azimuthError = Math.IEEEremainder(azimuth - azimuthPosition, kTICKS);
 
+    //this block commented out on purpose -- wpilib doesn't know we do this!
     // minimize azimuth rotation, reversing drive if necessary
-    boolean isInverted = Math.abs(azimuthError) > 0.25 * kTICKS;
-    if (isInverted) {
-      azimuthError -= Math.copySign(0.5 * kTICKS, azimuthError);
-      drive = -drive;
-    }
+    //boolean isInverted = Math.abs(azimuthError) > 0.25 * kTICKS;
+    //if (isInverted) {
+    //  azimuthError -= Math.copySign(0.5 * kTICKS, azimuthError);
+    //  drive = -drive;
+    //}
     m_turningPIDController.setReference((azimuthPosition + azimuthError), ControlType.kSmartMotion);
     m_drivePIDController.setReference(drive, ControlType.kVelocity);
   }
