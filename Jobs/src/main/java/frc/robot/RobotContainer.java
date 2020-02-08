@@ -13,7 +13,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.commands.AutoIntakeSeqCommand;
+
+import frc.robot.commands.*;
 import frc.robot.commands.IntakeRetract;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SequencerSubsystem;
@@ -114,6 +115,10 @@ public class RobotContainer {
     new JoystickButton(operatorController, 7)
       .whenActive(new AutoIntakeSeqCommand(m_IntakeSubsystem, m_SequencerSubsystem))
       .whenInactive(new IntakeRetract(m_IntakeSubsystem));
+
+      new JoystickButton(operatorController, 8)
+      .whenActive(new IntakeSeqCommand(m_IntakeSubsystem, m_SequencerSubsystem));
+      //.whenInactive(new IntakeRetract(m_IntakeSubsystem));
   }
 
   /**

@@ -12,23 +12,23 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 //import edu.wpi.first.wpilibj2.command.StartEndCommand;
 
-import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShootClimbSubsystem;
 import frc.robot.subsystems.SequencerSubsystem;
 
 /**
  * A complex auto command that drives forward, releases a hatch, and then drives backward.
  */
-public class AutoIntakeSeqCommand extends ParallelCommandGroup {
+public class ShootingCommand extends ParallelCommandGroup {
   /**
    * Creates a new ComplexAutoCommand.
    *
    * @param intakeSubsystem The intake subsystem this command will run on
    * @param seqSubsystem The sequencer subsystem this command will run on
    */
-  public AutoIntakeSeqCommand(IntakeSubsystem intakeSubsystem, SequencerSubsystem seqSubsystem) {
+  public ShootingCommand(ShootClimbSubsystem shootSubsystem, SequencerSubsystem seqSubsystem) {
     addCommands(
         // Extend the intake
-        new InstantCommand(intakeSubsystem::extend, intakeSubsystem),
+        new InstantCommand(shootSubsystem::on, shootSubsystem),
         new ConditionalCommand(
           new InstantCommand(seqSubsystem::addPowerCell, seqSubsystem),
           new InstantCommand(seqSubsystem::stop, seqSubsystem),

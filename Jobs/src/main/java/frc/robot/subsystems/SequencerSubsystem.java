@@ -18,8 +18,8 @@ public class SequencerSubsystem extends SubsystemBase {
 
   private final PWMTalonFX mTalonSeq;
   private DigitalInput mLowSensor;
-  private boolean mLowSensorLast;
-  private boolean mIndexing; // does robot want to index balls - mode
+  private boolean mLowSensorCur;
+  private boolean mLowSensorLast; // does robot want to index balls - mode
   private int mPowerCellCount;
 
   /**
@@ -28,46 +28,34 @@ public class SequencerSubsystem extends SubsystemBase {
   public SequencerSubsystem() {
     mTalonSeq = new PWMTalonFX(Constants.kMotorPWMSeq);
     mLowSensor = new DigitalInput(Constants.kLowSequencer);
-    mIndexing = false;
-    mLowSensorLast = mLowSensor.get();
+    mLowSensorCur = mLowSensor.get();
+    mLowSensorLast = mLowSensorCur;
     mPowerCellCount = 0;
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    if (mIndexing) {
-      boolean sensor = mLowSensor.get();
-      if (sensor) {
-          mTalonSeq.setSpeed(0);
-      } else {
-          if (mPowerCellCount < 5) {
-              mTalonSeq.setSpeed(Constants.kMotorSeqFwdSpeed);
-              if (mLowSensorLast) {
-                  mPowerCellCount++;
-              }
-          }
-      }
-      mLowSensorLast = sensor;
-    }
+    mLowSensorCur = mLowSensor.get();
   }
 
-  /**
-   * For Intaking: Enables the Sequencer Index Mode.
-   */
-  public void index() {
-    mIndexing = true;
-    mPowerCellCount = 0;
-  }
-
-  public void addBall() {
-    if (mPowerCellCount < 5) {
-      mTalonSeq.setSpeed(Constants.kMotorSeqFwdSpeed);
-      if (mLowSensorLast) {
+  public void addPowerCell() {
+    if (mLowSensorCur) {
+        mTalonSeq.setSpeed(0);
+        // incr count at end of intaking powercell
+        if (!mLowSensorLast) {
           mPowerCellCount++;
-      }
+        }
+    } else {
+        if (mPowerCellCount < 5) {
+            mTalonSeq.setSpeed(Constants.kMotorSeqFwdSpeed);
+            // incr count at beginning of intaking powercell
+            //if (mLowSensorLast) {
+            //    mPowerCellCount++;
+            //}
+        }
     }
-    mLowSensorLast = mLowSensor.get();
+    mLowSensorLast = mLowSensorCur;
   }
 
   /**
@@ -75,7 +63,6 @@ public class SequencerSubsystem extends SubsystemBase {
    */
   public void forward() {
     mTalonSeq.setSpeed(Constants.kMotorSeqFwdSpeed);
-    mIndexing = false;
     mPowerCellCount = 0;
   }
 
@@ -84,7 +71,6 @@ public class SequencerSubsystem extends SubsystemBase {
    */
   public void reverse() {
     mTalonSeq.setSpeed(Constants.kMotorSeqRevSpeed);
-    mIndexing = false;
     mPowerCellCount = 0;
   }
 
@@ -93,20 +79,16 @@ public class SequencerSubsystem extends SubsystemBase {
    */
   public void stop() {
     mTalonSeq.setSpeed(0);
-    mIndexing = false;
   }
 
   public boolean getLowSensor() {
-    return(mLowSensor.get());
+    return(mLowSensorCur);
   }
 
   public boolean getMaxPowerCells() {
     return(mPowerCellCount >= 5);
   }
 
-  public void incrPowerCells() {
-    mPowerCellCount += 1;
-  }
   public int getPowerCellCount() {
     return(mPowerCellCount);
   }
