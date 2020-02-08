@@ -17,14 +17,15 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private final PWMTalonFX mTalonIntake;
   //private final DoubleSolenoid mIntakeSolenoid;
+  private String mTalonState;
   
   /**
    * Creates a new ExampleSubsystem.
    */
   public IntakeSubsystem() {
     mTalonIntake = new PWMTalonFX(Constants.kMotorPWMIntake);
-    //mIntakeSolenoid = new Solenoid(Constants.kIntakeExtend);
     //mIntakeSolenoid = Constants.makeDoubleSolenoidForIds(0, Constants.kDSolenoidIntake1, Constants.kDSolenoidIntake1);
+    mTalonState = "Off";
   }
 
   @Override
@@ -38,6 +39,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public void extend() {
     //mIntakeSolenoid.set(DoubleSolenoid.Value.kForward);
     mTalonIntake.setSpeed(Constants.kMotorIntakeFwdSpeed);
+    mTalonState = "Extending/Fwd";
   }
 
   /**
@@ -46,6 +48,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public void eject() {
     //mIntakeSolenoid.set(true);
     mTalonIntake.setSpeed(Constants.kMotorIntakeRevSpeed);
+    mTalonState = "Ejecting/Rev";
   }
 
   /**
@@ -54,5 +57,10 @@ public class IntakeSubsystem extends SubsystemBase {
   public void retract() {
     //mIntakeSolenoid.set(DoubleSolenoid.Value.kReverse);
     mTalonIntake.setSpeed(0);
+    mTalonState = "Retracted/Off";
+  }
+
+  public String getIntakeState() {
+    return(mTalonState);
   }
 }

@@ -137,10 +137,12 @@ public class RobotContainer {
     sensorTab = Shuffleboard.getTab("Sensors");
     sensorTab.add("LowSensor", m_SequencerSubsystem.getLowSensor());
     sensorTab.add("PowerCellCount", m_SequencerSubsystem.getPowerCellCount());
+    sensorTab.add("Intake State", m_IntakeSubsystem.getIntakeState());
   }
 
   public void outputToSmartDashboard() {
     SmartDashboard.putBoolean("LowSensor",  m_SequencerSubsystem.getLowSensor());
     SmartDashboard.putNumber("PowerCellCount",  (double)m_SequencerSubsystem.getPowerCellCount());
+    SmartDashboard.putString("Intake State",  m_IntakeSubsystem.getIntakeState());
   }
 }

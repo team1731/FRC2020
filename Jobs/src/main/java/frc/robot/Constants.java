@@ -91,7 +91,7 @@ public final class Constants {
 
     public static DoubleSolenoid makeDoubleSolenoidForIds(int pcmChannel, int forward_solenoidId, int reverse_solenoidId) {
     	System.out.println("creating solenoid ids " + forward_solenoidId + "-" + reverse_solenoidId + " PCM " + pcmChannel + " CHAN ");
-        return null; //TODO FIXME!!! new DoubleSolenoid(pcmChannel, forward_solenoidId, reverse_solenoidId);
+        return new DoubleSolenoid(pcmChannel, forward_solenoidId, reverse_solenoidId);
     }
 
 }
