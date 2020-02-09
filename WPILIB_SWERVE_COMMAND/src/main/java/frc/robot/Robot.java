@@ -36,6 +36,7 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer(mCSVWriter);
     m_robotContainer.m_robotDrive.zeroHeading();
+    m_robotContainer.m_robotDrive.resetEncoders();
   }
 
   /**

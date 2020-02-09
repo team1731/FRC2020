@@ -180,9 +180,9 @@ public class DriveSubsystem extends SubsystemBase {
     m_gyro.reset(); // RDB2020 - I replace this call with the below 5 lines...
 
     //logger.info("<b>DriveSubsystem</b>: zeroGyro started");
-    m_gyro.setAngleAdjustment(0);
-    double adj = m_gyro.getAngle() % 360;
-    m_gyro.setAngleAdjustment(-adj);
+    //m_gyro.setAngleAdjustment(0);
+    //double adj = m_gyro.getAngle() % 360;
+    //m_gyro.setAngleAdjustment(-adj);
     //logger.info("<b>DriveSubsystem</b>: zeroGyro finished");
     
   }

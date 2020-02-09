@@ -37,11 +37,11 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
   The navX-Sensor RoboRIO Libraries for C++ and Java (version 3.1.365)
   have just been released, which enhance the performance of the ZeroYaw()
   and Reset() functionality. The reset now takes effect instantaneously,
-  using “Software-based Yaw Reset” behavior. Logging information available,
-  accessible via the RioLog or the Driver Station “Message Console”.
+  using "Software-based Yaw Reset" behavior. Logging information available,
+  accessible via the RioLog or the Driver Station "Message Console".
 
   Also, as always, note that resetting yaw does not take any effect when
-  the board is in the “startup calibration” phase. The robot application
+  the board is in the "startup calibration" phase. The robot application
   software can always use the IsCalibrating() method to know when the
   startup calibration is in progress and completed. The logging information
   will give you more insight into that.
@@ -102,11 +102,11 @@ public class RotateToAngle {
         } catch (RuntimeException ex ) {
             DriverStation.reportError("Error instantiating navX MXP:  " + ex.getMessage(), true);
         }
-        turnController = new PIDController(kP, kI, kD, kF, ahrs, this);
-        turnController.setInputRange(-180.0f,  180.0f);
-        turnController.setOutputRange(-1.0, 1.0);
-        turnController.setAbsoluteTolerance(kToleranceDegrees);
-        turnController.setContinuous(true);
+        // turnController = new PIDController(kP, kI, kD, kF, ahrs, this);
+        // turnController.setInputRange(-180.0f,  180.0f);
+        // turnController.setOutputRange(-1.0, 1.0);
+        // turnController.setAbsoluteTolerance(kToleranceDegrees);
+        // turnController.setContinuous(true);
         
         /* Add the PID Controller to the Test-mode dashboard, allowing manual  */
         /* tuning of the Turn Controller's P, I and D coefficients.            */
@@ -138,7 +138,7 @@ public class RotateToAngle {
      */
     public void operatorControl() {
         myRobot.setSafetyEnabled(true);
-        while (isOperatorControl() && isEnabled()) {
+        //while (isOperatorControl() && isEnabled()) {
             boolean rotateToAngle = false;
             if ( stick.getRawButton(1)) {
                 ahrs.reset();
@@ -158,10 +158,10 @@ public class RotateToAngle {
             }
             double currentRotationRate;
             if ( rotateToAngle ) {
-                turnController.enable();
+                //turnController.enable();
                 currentRotationRate = rotateToAngleRate;
             } else {
-                turnController.disable();
+                //turnController.disable();
                 currentRotationRate = stick.getTwist();
             }
             try {
@@ -175,7 +175,7 @@ public class RotateToAngle {
                 DriverStation.reportError("Error communicating with drive system:  " + ex.getMessage(), true);
             }
             Timer.delay(0.005);		// wait for a motor update time
-        }
+        //}
     }
 
     /**
@@ -184,10 +184,10 @@ public class RotateToAngle {
     public void test() {
     }
 
-    @Override
-    /* This function is invoked periodically by the PID Controller, */
-    /* based upon navX MXP yaw angle input and PID Coefficients.    */
-    public void pidWrite(double output) {
-        rotateToAngleRate = output;
-    }
+    // @Override
+    // /* This function is invoked periodically by the PID Controller, */
+    // /* based upon navX MXP yaw angle input and PID Coefficients.    */
+    // public void pidWrite(double output) {
+    //     rotateToAngleRate = output;
+    // }
 }
