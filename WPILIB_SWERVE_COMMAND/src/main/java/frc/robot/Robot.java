@@ -8,6 +8,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.util.DebugOutput;
@@ -37,6 +38,8 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer(mCSVWriter);
     m_robotContainer.m_robotDrive.zeroHeading();
     m_robotContainer.m_robotDrive.resetEncoders();
+
+    SmartDashboard.putString("Auto Num", "0");
   }
 
   /**
@@ -82,20 +85,17 @@ public class Robot extends TimedRobot {
       mCSVWriter.resume();
     }
 
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-    /*
-     * String autoSelected = SmartDashboard.getString("Auto Selector", "Default");
-     * switch(autoSelected) {
-     *   case "My Auto": 
-     *      autonomousCommand = new MyAutoCommand();
-     *      break;
-     *   case "Default":
-     *   default:
-     *      autonomousCommand = new ExampleCommand();
-     *      break;
-     *  }
-     */
+    int autoNum = 0;
+    String autoSelected = SmartDashboard.getString("Auto Selector", "Default");
+    try{
+      autoNum = Integer.parseInt(autoSelected);
+    }
+    catch(Exception e){
+      System.out.println("AUTO NUM did not parse -- default to DO NOTHING!!!!");
+    }
+    System.out.println("Running auto mode " + autoNum);
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand(autoNum);
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {

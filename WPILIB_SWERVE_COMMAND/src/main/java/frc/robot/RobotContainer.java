@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-
+import frc.autonomous._1_BwdPickup2Balls;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
@@ -39,6 +39,8 @@ import frc.robot.util.ReflectingCSVWriter;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+  Command[] autoCommands;
+
   // The robot's subsystems
   public final DriveSubsystem m_robotDrive;
 
@@ -80,6 +82,7 @@ public class RobotContainer {
             -m_driverController.getX(GenericHID.Hand.kRight), true), m_robotDrive) // <------- RDB2020 I added m_robotDrive here to get rid of
                                                                                    //                  "Default Command must require subsytem"
         );
+    autoCommands = setupAutoCommands();
   }
 
 /**
@@ -91,13 +94,20 @@ public class RobotContainer {
   private void configureButtonBindings() {
   }
 
+  public Command getAutonomousCommand(int autoNum){
+    Command autonomousCommand = null;
+    if(autoNum <= autoCommands.length){
+      autonomousCommand = autoCommands[autoNum];
+    }
+    return autonomousCommand;
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() {
+  public Command getDefaultAutonomousCommand() {
     // Create config for trajectory
     TrajectoryConfig config =
         new TrajectoryConfig(AutoConstants.kMaxSpeedMetersPerSecond,
@@ -151,5 +161,13 @@ public class RobotContainer {
 
     // Run path following command, then stop at the end.
     return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
+  }
+
+  private Command[] setupAutoCommands(){
+    Command[] autoCommands = new Command[]{
+      getDefaultAutonomousCommand(),
+      new _1_BwdPickup2Balls().getCommand(m_robotDrive)
+    };
+    return autoCommands;
   }
 }
