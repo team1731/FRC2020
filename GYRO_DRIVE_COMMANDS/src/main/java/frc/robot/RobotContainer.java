@@ -18,9 +18,12 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.ConstantsOrig.DriveConstantsOrig;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.commands.TurnToAngleProfiled;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.util.DebugOutput;
+import frc.robot.util.ReflectingCSVWriter;
 
 import static edu.wpi.first.wpilibj.XboxController.Button;
 
@@ -32,7 +35,7 @@ import static edu.wpi.first.wpilibj.XboxController.Button;
  */
 public class RobotContainer {
   // The robot's subsystems
-  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  private final DriveSubsystem m_robotDrive = new DriveSubsystem((ReflectingCSVWriter<DebugOutput>)null);
 
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -50,8 +53,9 @@ public class RobotContainer {
         // A split-stick arcade command, with forward/backward controlled by the left
         // hand, and turning controlled by the right.
         new RunCommand(() -> m_robotDrive
-            .arcadeDrive(m_driverController.getY(GenericHID.Hand.kLeft),
-                         m_driverController.getX(GenericHID.Hand.kRight)), m_robotDrive));
+            .drive(0, 0, 0, false) //RDB arcadeDrive(m_driverController.getY(GenericHID.Hand.kLeft),
+                     //    m_driverController.getX(GenericHID.Hand.kRight))
+                     , m_robotDrive));
 
   }
 
@@ -64,19 +68,19 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // Drive at half speed when the right bumper is held
     new JoystickButton(m_driverController, Button.kBumperRight.value)
-        .whenPressed(() -> m_robotDrive.setMaxOutput(0.5))
-        .whenReleased(() -> m_robotDrive.setMaxOutput(1));
+        .whenPressed(() -> m_robotDrive.resetEncoders()) ///RDB .setMaxOutput(0.5))
+        .whenReleased(() -> m_robotDrive.resetEncoders()); //RDB .setMaxOutput(1));
 
     // Stabilize robot to drive straight with gyro when left bumper is held
     new JoystickButton(m_driverController, Button.kBumperLeft.value).whenHeld(new PIDCommand(
-        new PIDController(DriveConstants.kStabilizationP, DriveConstants.kStabilizationI,
-                          DriveConstants.kStabilizationD),
+        new PIDController(DriveConstantsOrig.kStabilizationP, DriveConstantsOrig.kStabilizationI,
+                          DriveConstantsOrig.kStabilizationD),
         // Close the loop on the turn rate
         m_robotDrive::getTurnRate,
         // Setpoint is 0
         0,
         // Pipe the output to the turning controls
-        output -> m_robotDrive.arcadeDrive(m_driverController.getY(GenericHID.Hand.kLeft), output),
+        output -> m_robotDrive.drive(0, 0, 0, true), //RDB .arcadeDrive(m_driverController.getY(GenericHID.Hand.kLeft), output),
         // Require the robot drive
         m_robotDrive));
 
