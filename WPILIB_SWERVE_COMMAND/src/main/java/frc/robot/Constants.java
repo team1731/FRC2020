@@ -37,12 +37,6 @@ public final class Constants {
     public static final int kRearLeftTurningMotorPort = 13;
     public static final int kRearRightTurningMotorPort = 14;
 
-    //Turn encoders CAN IDs
-    public static final int kFrontLeftTurnEncoderPort = 21;
-    public static final int kFrontRightTurnEncoderPort = 22;
-    public static final int kRearLeftTurnEncoderPort = 23;
-    public static final int kRearRightTurnEncoderPort = 24;
-
     public static final double kTrackWidth = 0.7112;
     //Distance between centers of right and left wheels on robot
     public static final double kWheelBase = 0.7;
@@ -93,8 +87,8 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 0.5; //3;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 0.3;//1; //3;
+    public static final double kMaxSpeedMetersPerSecond = 2; //3;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 1; //3;
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 

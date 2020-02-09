@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.util.DebugOutput;
 import frc.robot.util.ReflectingCSVWriter;
 
+@Deprecated
 public class InstrumentedSwerveControllerCommand  extends SwerveControllerCommand {
     private final DebugOutput m_debugOutput = new DebugOutput();
     private final Trajectory m_trajectory;

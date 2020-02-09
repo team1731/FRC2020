@@ -157,12 +157,14 @@ public class SwerveModule {
     double azimuthPosition = m_turningEncoder.getPosition();
     double azimuthError = Math.IEEEremainder(azimuth - azimuthPosition, kTICKS);
 
+    // NO - DON'T DO THIS!!! WPILIB DOESN'T KNOW THAT WE DID IT!!!
+    //
     // minimize azimuth rotation, reversing drive if necessary
-    boolean isInverted = Math.abs(azimuthError) > 0.25 * kTICKS;
-    if (isInverted) {
-      azimuthError -= Math.copySign(0.5 * kTICKS, azimuthError);
-      drive = -drive;
-    }
+    // boolean isInverted = Math.abs(azimuthError) > 0.25 * kTICKS;
+    // if (isInverted) {
+    //   azimuthError -= Math.copySign(0.5 * kTICKS, azimuthError);
+    //   drive = -drive;
+    // }
     m_turningPIDController.setReference((azimuthPosition + azimuthError), ControlType.kSmartMotion);
     m_drivePIDController.setReference(drive, ControlType.kVelocity);
   }

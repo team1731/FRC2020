@@ -103,23 +103,30 @@ public class RobotContainer {
         new TrajectoryConfig(AutoConstants.kMaxSpeedMetersPerSecond,
                              AutoConstants.kMaxAccelerationMetersPerSecondSquared)
             // Add kinematics to ensure max speed is actually obeyed
-            .setKinematics(DriveConstants.kDriveKinematics);
+            .setKinematics(DriveConstants.kDriveKinematics)
+            .setReversed(true);
 
     // An example trajectory to follow.  All units in meters.
     Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
         // Start at the origin facing the +X direction
         new Pose2d(0, 0, new Rotation2d(0)),
+        
         // Pass through these two interior waypoints, making an 's' curve path
         List.of(
-          //new Translation2d(1, 1),
-          //new Translation2d(2, -1)
-          // RDB2020 for now, just go straight ahead in auto...
-          // new Translation2d(0.5, -0.3),
-          // new Translation2d(1, 0),
-          // new Translation2d(0.5, 0.3)
-        ),
+          //new Translation2d(-1, 1),
+          //new Translation2d(-2, -1)
+
+          // new Translation2d(-1.35,2.06),
+          // new Translation2d(-2.56,3.29)
+
+           new Translation2d(-1.03,2.637),
+           new Translation2d(-3.33,2.82)
+          ),
         // End 3 meters straight ahead of where we started, facing forward
-        new Pose2d(1, 0, new Rotation2d(Math.PI/4)),
+        //new Pose2d(-3, 0, new Rotation2d(0)),
+        //new Pose2d(-6.8,3.27, new Rotation2d(0)),
+
+        new Pose2d(-5.93,2.28, new Rotation2d(0)),
         config
     );
 
