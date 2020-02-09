@@ -45,6 +45,9 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
     
     m_robotContainer.initSmartDashboard();
+
+    m_robotContainer.initSubsystems();
+    
     // PWM port 9
     // Must be a PWM header, not MXP or DIO
     m_led = new AddressableLED(9);

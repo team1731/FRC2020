@@ -9,40 +9,41 @@ package frc.robot.commands;
 
 import java.util.function.BooleanSupplier;
 
-import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShootClimbSubsystem;
 import frc.robot.subsystems.SequencerSubsystem;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /**
  * An example command that uses an example subsystem.
  */
-public class IntakeSeqCommand extends CommandBase {
+public class ShootClimbCommand extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final IntakeSubsystem m_IntakeSubsystem;
+  private final ShootClimbSubsystem m_ShootClimbSubsystem;
   private final SequencerSubsystem m_SeqSubsystem;
-
-  private final BooleanSupplier intakeTrig;
+  
+  private final BooleanSupplier shoot;
   private boolean last;
   private boolean activate;
+
   /**
    * Creates a new ExampleCommand.
    *
-   * @param intakeSubsystem The intake subsystem this command will run on
+   * @param ShootClimbSubsystem The intake subsystem this command will run on
    * @param seqSubsystem The sequencer subsystem this command will run on
    */
-  public IntakeSeqCommand(IntakeSubsystem intakeSubsystem, SequencerSubsystem seqSubsystem, BooleanSupplier intakeTrig) {
-    m_IntakeSubsystem = intakeSubsystem;
+  public ShootClimbCommand(ShootClimbSubsystem shootClimbSubsystem, SequencerSubsystem seqSubsystem, BooleanSupplier shoot) {
+    m_ShootClimbSubsystem = shootClimbSubsystem;
     m_SeqSubsystem = seqSubsystem;
-    this.intakeTrig = intakeTrig;
+
+    this.shoot = shoot;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(intakeSubsystem, seqSubsystem);
+    addRequirements(shootClimbSubsystem, seqSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_IntakeSubsystem.retract();
-    m_SeqSubsystem.stop();
+    m_ShootClimbSubsystem.disable();
     activate = false;
     last = activate;
   }
@@ -51,20 +52,16 @@ public class IntakeSeqCommand extends CommandBase {
   @Override
   public void execute() {
 
-    if (intakeTrig.getAsBoolean()) {
-      if (m_SeqSubsystem.getMaxPowerCells()) {
-        activate = false;
-      } else {
-        activate = true;
-      }
+    if (shoot.getAsBoolean()) {
+      activate = true;
+    } else {
+      activate = false;
     }
 
     if (last != activate) {
       if (activate) {
-        m_IntakeSubsystem.extend();
-        m_SeqSubsystem.addPowerCell();
+        m_SeqSubsystem.forward();
       } else {
-        m_IntakeSubsystem.retract();
         m_SeqSubsystem.stop();
       }
       last = activate;
@@ -81,4 +78,5 @@ public class IntakeSeqCommand extends CommandBase {
   public boolean isFinished() {
     return false;
   }
+
 }

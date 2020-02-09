@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 
@@ -52,8 +53,8 @@ public class RobotContainer {
   //private final ExampleCommand m_autoCommand = new ExampleCommand(m_IntakeSubsystem);
 
 
-  XboxController driverController = new XboxController(0); 
-  XboxController operatorController = new XboxController(1); 
+  XboxController driverController = new XboxController(1); 
+  XboxController operatorController = new XboxController(0); 
   private NetworkTableEntry eLowSensor;
   private NetworkTableEntry ePowerCellCount;
   private NetworkTableEntry eIntakeState;
@@ -64,17 +65,15 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
-
+    
     m_IntakeSubsystem.setDefaultCommand(
-      new ConditionalCommand(
-        new IntakeSeqCommand(m_IntakeSubsystem, m_SequencerSubsystem),
-        new ParallelCommandGroup(
-          new InstantCommand(m_IntakeSubsystem::retract, m_IntakeSubsystem),
-          new InstantCommand(m_SequencerSubsystem::stop, m_IntakeSubsystem) 
-        ),
-        () -> getIntake()
-      )
+      new IntakeSeqCommand(m_IntakeSubsystem, m_SequencerSubsystem, () -> getIntake())
     );
+    
+    m_ShootClimbSubsystem.setDefaultCommand(
+      new ShootClimbCommand(m_ShootClimbSubsystem, m_SequencerSubsystem, () -> getShoot())
+    );
+
 
     /*
     //m_IntakeSubsystem.setDefaultCommand(new InstantCommand(m_IntakeSubsystem::retract));
@@ -89,14 +88,21 @@ public class RobotContainer {
       new InstantCommand(m_SequencerSubsystem::stop)
     );
     */
-    m_ShootClimbSubsystem.setDefaultCommand(
-      //new IntakeRetract(m_IntakeSubsystem, () -> getIntake())
-      new InstantCommand(m_ShootClimbSubsystem::off)
-    );
+  }
+
+  public void initSubsystems() {
+    m_IntakeSubsystem.retract();
+    m_SequencerSubsystem.stop();
+    m_ShootClimbSubsystem.disable();
   }
 
   public boolean getIntake() {
     double n = operatorController.getTriggerAxis(Hand.kLeft);
+    return Math.abs(n) > 0.5;
+  }
+
+  public boolean getShoot() {
+    double n = operatorController.getTriggerAxis(Hand.kRight);
     return Math.abs(n) > 0.5;
   }
   //public double getIntake() {
@@ -131,15 +137,16 @@ public class RobotContainer {
 
     // Shoot
     new JoystickButton(operatorController, 5)
-        .whenPressed(new InstantCommand(m_ShootClimbSubsystem::on, m_ShootClimbSubsystem));;
+        .whenPressed(new InstantCommand(m_ShootClimbSubsystem::modeClimb, m_ShootClimbSubsystem));;
         //.whenReleased(new InstantCommand(m_ShootClimbSubsystem::off, m_ShootClimbSubsystem));
     new JoystickButton(operatorController, 6)
         //.whenPressed(new InstantCommand(m_ShootClimbSubsystem::on, m_ShootClimbSubsystem))
-        .whenReleased(new InstantCommand(m_ShootClimbSubsystem::off, m_ShootClimbSubsystem));
+        .whenReleased(new InstantCommand(m_ShootClimbSubsystem::modeShoot, m_ShootClimbSubsystem));
     
     new JoystickButton(operatorController, 7)
-      .whenHeld(new IntakeSeqCommand(m_IntakeSubsystem, m_SequencerSubsystem));
+      .whenHeld(new AutoIntakeSeqCommand(m_IntakeSubsystem, m_SequencerSubsystem));
       //.whenInactive(new IntakeRetract(m_IntakeSubsystem));
+
 
     //new JoystickButton(operatorController, 7)
     //  .whenActive(new AutoIntakeSeqCommand(m_IntakeSubsystem, m_SequencerSubsystem))
@@ -164,7 +171,7 @@ public class RobotContainer {
         )
       );
   */
-}
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

@@ -28,7 +28,7 @@ public class ShootingCommand extends ParallelCommandGroup {
   public ShootingCommand(ShootClimbSubsystem shootSubsystem, SequencerSubsystem seqSubsystem) {
     addCommands(
         // Extend the intake
-        new InstantCommand(shootSubsystem::on, shootSubsystem),
+        new InstantCommand(shootSubsystem::enableShooting, shootSubsystem),
         new ConditionalCommand(
           new InstantCommand(seqSubsystem::addPowerCell, seqSubsystem),
           new InstantCommand(seqSubsystem::stop, seqSubsystem),

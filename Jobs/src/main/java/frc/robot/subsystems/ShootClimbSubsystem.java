@@ -7,49 +7,95 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.PWMTalonFX;
-import frc.robot.Constants;
 import edu.wpi.first.wpilibj.DigitalOutput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+
+import edu.wpi.first.wpilibj.PWMTalonFX;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import frc.robot.Constants;
 
 public class ShootClimbSubsystem extends SubsystemBase {
 
-  private final PWMTalonFX mTalonShoot1;
+  private final DoubleSolenoid mShootClimbSolenoid;
+  private final DoubleSolenoid mClimberSolenoid;
+  private final PWMTalonFX mTalonShoot;
+  //private final TalonFX mTalonShoot1;
+  //private final TalonFX mTalonShoot2;
   private DigitalOutput mColor1;
-  private boolean mTest; // does robot want to index balls - mode
+  private boolean modeClimbing;
   
   /**
    * Creates a new ExampleSubsystem.
    */
   public ShootClimbSubsystem() {
-    mTalonShoot1 = new PWMTalonFX(Constants.kMotorPWMShoot1);
-    mTest = false;
+    mShootClimbSolenoid = Constants.makeDoubleSolenoidForIds(0, Constants.kShooting, Constants.kClimbing);
+    mClimberSolenoid = Constants.makeDoubleSolenoidForIds(0, Constants.kClimbRetract, Constants.kClimbExtend);
+    mTalonShoot = new PWMTalonFX(Constants.kMotorPWMShoot1);
+    //mTalonShoot1 = new TalonFX(Constants.kMotorCANShoot1);
+    //mTalonShoot2 = new TalonFX(Constants.kMotorCANShoot2);
+
+    modeClimbing = false;
+
     mColor1 = new DigitalOutput(7);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    if (mTest) {
-      mTalonShoot1.setSpeed(0.5);
-      mColor1.set(true);
-    } else {
-      mTalonShoot1.setSpeed(0);
-      mColor1.set(false);
+    if (modeClimbing) {
+      // Climb mode
+    } // else Climbing mode
+  }
+
+  public void enableShooting() {
+    mColor1.set(true);
+    mShootClimbSolenoid.set(DoubleSolenoid.Value.kReverse);
+    mTalonShoot.setSpeed(0);
+    //mTalonShoot1.set(ControlMode.PercentOutput,Constants.kMotorShootPercent);
+    //mTalonShoot2.set(ControlMode.PercentOutput,Constants.kMotorShootPercent);
+  }
+  public void enableClimbing() {
+    mColor1.set(false);
+    mShootClimbSolenoid.set(DoubleSolenoid.Value.kForward);
+    mTalonShoot.setSpeed(0);
+    //mTalonShoot1.set(ControlMode.PercentOutput,Constants.kMotorShootPercent);
+    //mTalonShoot2.set(ControlMode.PercentOutput,Constants.kMotorShootPercent);
+  }
+
+  public void climbExtend() {
+    if (modeClimbing) {
+      mClimberSolenoid.set(DoubleSolenoid.Value.kForward);
     }
   }
 
-    /**
-   * For Intaking: Enables the Sequencer Index Mode.
-   */
-  public void on() {
-    mTest = true;
+  public void climbRetract() {
+    if (modeClimbing) {
+      mClimberSolenoid.set(DoubleSolenoid.Value.kReverse);
+    }
   }
-  /**
-   * For Intaking: Enables the Sequencer Index Mode.
-   */
-  public void off() {
-    mTest = false;
+
+  public void disable() {
+    mShootClimbSolenoid.set(DoubleSolenoid.Value.kReverse);
+    mClimberSolenoid.set(DoubleSolenoid.Value.kReverse);
+    mTalonShoot.setSpeed(0);
+    //mTalonShoot1.set(ControlMode.PercentOutput, 0);
+    //mTalonShoot2.set(ControlMode.PercentOutput, 0);
+  }
+
+  public void modeShoot() {
+    modeClimbing = false;
+    mTalonShoot.setSpeed(0.5);
+    //mTalonShoot1.set(ControlMode.PercentOutput,Constants.kMotorShootPercent);
+    //mTalonShoot2.set(ControlMode.PercentOutput,Constants.kMotorShootPercent);
+  }
+
+  public void modeClimb() {
+    modeClimbing = true;
+    mTalonShoot.setSpeed(-0.5); // for testing only
+    //mTalonShoot1.set(ControlMode.PercentOutput,Constants.kMotorShootPercent);
+    //mTalonShoot2.set(ControlMode.PercentOutput, 0);
   }
 
 }
