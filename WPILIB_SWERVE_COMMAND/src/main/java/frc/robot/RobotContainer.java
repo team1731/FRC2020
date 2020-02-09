@@ -129,14 +129,16 @@ public class RobotContainer {
           // new Translation2d(-1.35,2.06),
           // new Translation2d(-2.56,3.29)
 
-           new Translation2d(-1.03,2.637),
-           new Translation2d(-3.33,2.82)
+          // new Translation2d(-1.03,-2.637),
+          // new Translation2d(-3.33,-2.82)
+          new Translation2d(-2,-3.11),
+          new Translation2d(-3.93,-3.11)
           ),
         // End 3 meters straight ahead of where we started, facing forward
         //new Pose2d(-3, 0, new Rotation2d(0)),
         //new Pose2d(-6.8,3.27, new Rotation2d(0)),
 
-        new Pose2d(-5.93,2.28, new Rotation2d(0)),
+        new Pose2d(-7.06,-3.01, new Rotation2d(0)),
         config
     );
 
@@ -147,8 +149,8 @@ public class RobotContainer {
 
         //Position controllers
         new PIDController(AutoConstants.kPXController, 0, 0),
-        new PIDController(-AutoConstants.kPYController, 0, 0),
-        new ProfiledPIDController(-AutoConstants.kPThetaController, 0, 0,
+        new PIDController(AutoConstants.kPYController, 0, 0),
+        new ProfiledPIDController(AutoConstants.kPThetaController, 0, 0,
                                   AutoConstants.kThetaControllerConstraints),
 
         m_robotDrive::setModuleStates,
