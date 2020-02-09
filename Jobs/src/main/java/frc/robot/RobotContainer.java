@@ -6,10 +6,12 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -25,7 +27,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
+
 import edu.wpi.first.wpilibj.DigitalInput;
 
 import frc.robot.commands.IntakeEject;
@@ -52,7 +54,10 @@ public class RobotContainer {
 
   XboxController driverController = new XboxController(0); 
   XboxController operatorController = new XboxController(1); 
-
+  private NetworkTableEntry eLowSensor;
+  private NetworkTableEntry ePowerCellCount;
+  private NetworkTableEntry eIntakeState;
+  //private double axis3;
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
@@ -60,8 +65,44 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
 
+    m_IntakeSubsystem.setDefaultCommand(
+      new ConditionalCommand(
+        new IntakeSeqCommand(m_IntakeSubsystem, m_SequencerSubsystem),
+        new ParallelCommandGroup(
+          new InstantCommand(m_IntakeSubsystem::retract, m_IntakeSubsystem),
+          new InstantCommand(m_SequencerSubsystem::stop, m_IntakeSubsystem) 
+        ),
+        () -> getIntake()
+      )
+    );
+
+    /*
     //m_IntakeSubsystem.setDefaultCommand(new InstantCommand(m_IntakeSubsystem::retract));
+    m_IntakeSubsystem.setDefaultCommand(
+      //new IntakeRetract(m_IntakeSubsystem, () -> getIntake())
+      new IntakeRetract(m_IntakeSubsystem)
+    );
+
+    //m_SequencerSubsystem.setDefaultCommand(new IntakeRetract(m_IntakeSubsystem), () -> getIntake());
+    m_SequencerSubsystem.setDefaultCommand(
+      //new IntakeRetract(m_IntakeSubsystem, () -> getIntake())
+      new InstantCommand(m_SequencerSubsystem::stop)
+    );
+    */
+    m_ShootClimbSubsystem.setDefaultCommand(
+      //new IntakeRetract(m_IntakeSubsystem, () -> getIntake())
+      new InstantCommand(m_ShootClimbSubsystem::off)
+    );
   }
+
+  public boolean getIntake() {
+    double n = operatorController.getTriggerAxis(Hand.kLeft);
+    return Math.abs(n) > 0.5;
+  }
+  //public double getIntake() {
+  //  double n = operatorController.getTriggerAxis(Hand.kLeft);
+  //  return Math.abs(n) < 0.1 ? 0 : n;
+  //}
 
   /**
    * Use this method to define your button->command mappings.  Buttons can be created by
@@ -88,6 +129,25 @@ public class RobotContainer {
         .whenPressed(new InstantCommand(m_SequencerSubsystem::reverse))
         .whenReleased(new InstantCommand(m_SequencerSubsystem::stop));
 
+    // Shoot
+    new JoystickButton(operatorController, 5)
+        .whenPressed(new InstantCommand(m_ShootClimbSubsystem::on, m_ShootClimbSubsystem));;
+        //.whenReleased(new InstantCommand(m_ShootClimbSubsystem::off, m_ShootClimbSubsystem));
+    new JoystickButton(operatorController, 6)
+        //.whenPressed(new InstantCommand(m_ShootClimbSubsystem::on, m_ShootClimbSubsystem))
+        .whenReleased(new InstantCommand(m_ShootClimbSubsystem::off, m_ShootClimbSubsystem));
+    
+    new JoystickButton(operatorController, 7)
+      .whenHeld(new IntakeSeqCommand(m_IntakeSubsystem, m_SequencerSubsystem));
+      //.whenInactive(new IntakeRetract(m_IntakeSubsystem));
+
+    //new JoystickButton(operatorController, 7)
+    //  .whenActive(new AutoIntakeSeqCommand(m_IntakeSubsystem, m_SequencerSubsystem))
+    //  .whenInactive(new IntakeRetract(m_IntakeSubsystem));
+
+      //axis3 = operatorController.getX(Hand.kLeft);
+      //axis3 = operatorController.getTriggerAxis(Hand.kRight); // new Trigger(operatorController, 1);
+      
     /*/ conditional Sequencer when Intake is pushed
     new JoystickButton(operatorController, 0)
       .whenPressed(new ParallelCommandGroup(
@@ -104,22 +164,7 @@ public class RobotContainer {
         )
       );
   */
-    // Shoot
-    new JoystickButton(operatorController, 5)
-        .whenPressed(new InstantCommand(m_ShootClimbSubsystem::on, m_ShootClimbSubsystem))
-        .whenReleased(new InstantCommand(m_ShootClimbSubsystem::off, m_ShootClimbSubsystem));
-    new JoystickButton(operatorController, 6)
-        .whenPressed(new InstantCommand(m_ShootClimbSubsystem::on, m_ShootClimbSubsystem))
-        .whenReleased(new InstantCommand(m_ShootClimbSubsystem::off, m_ShootClimbSubsystem));
-    
-    new JoystickButton(operatorController, 7)
-      .whenActive(new AutoIntakeSeqCommand(m_IntakeSubsystem, m_SequencerSubsystem))
-      .whenInactive(new IntakeRetract(m_IntakeSubsystem));
-
-      new JoystickButton(operatorController, 8)
-      .whenActive(new IntakeSeqCommand(m_IntakeSubsystem, m_SequencerSubsystem));
-      //.whenInactive(new IntakeRetract(m_IntakeSubsystem));
-  }
+}
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -135,14 +180,17 @@ public class RobotContainer {
 
   public void initSmartDashboard() {
     sensorTab = Shuffleboard.getTab("Sensors");
-    sensorTab.add("LowSensor", m_SequencerSubsystem.getLowSensor());
-    sensorTab.add("PowerCellCount", m_SequencerSubsystem.getPowerCellCount());
-    sensorTab.add("Intake State", m_IntakeSubsystem.getIntakeState());
+    eLowSensor = sensorTab.add("LowSensor", m_SequencerSubsystem.getLowSensor()).getEntry();
+    ePowerCellCount =sensorTab.add("PowerCellCount", m_SequencerSubsystem.getPowerCellCount()).getEntry();
+    eIntakeState =sensorTab.add("Intake State", m_IntakeSubsystem.getIntakeState()).getEntry();
   }
 
   public void outputToSmartDashboard() {
     SmartDashboard.putBoolean("LowSensor",  m_SequencerSubsystem.getLowSensor());
     SmartDashboard.putNumber("PowerCellCount",  (double)m_SequencerSubsystem.getPowerCellCount());
     SmartDashboard.putString("Intake State",  m_IntakeSubsystem.getIntakeState());
-  }
+    eLowSensor.setBoolean(m_SequencerSubsystem.getLowSensor());
+    ePowerCellCount.forceSetNumber(m_SequencerSubsystem.getPowerCellCount());
+    eIntakeState.setString(m_IntakeSubsystem.getIntakeState());
+    }
 }

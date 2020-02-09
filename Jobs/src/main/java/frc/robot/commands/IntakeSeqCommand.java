@@ -35,6 +35,7 @@ public class IntakeSeqCommand extends CommandBase {
   @Override
   public void initialize() {
     m_IntakeSubsystem.extend();
+    m_SeqSubsystem.stop();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
