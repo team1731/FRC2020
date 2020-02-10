@@ -49,6 +49,8 @@ public final class Constants {
     public static final int kClimbing = 3; 
     public static final int kClimbExtend = 4; 
     public static final int kClimbRetract = 5; 
+    public static final int kHoodExtend = 6; 
+    public static final int kHoodRetract = 7; 
 
     // Digital Input/Outputs
     public static int kLowSequencer = 0;

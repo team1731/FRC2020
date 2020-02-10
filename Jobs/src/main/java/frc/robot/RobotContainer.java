@@ -147,6 +147,7 @@ public class RobotContainer {
       .whenHeld(new AutoIntakeSeqCommand(m_IntakeSubsystem, m_SequencerSubsystem));
       //.whenInactive(new IntakeRetract(m_IntakeSubsystem));
 
+    //new JoystickButton(operatorController, XboxController.Axis.kLeftTrigger).whenHeld(command)
 
     //new JoystickButton(operatorController, 7)
     //  .whenActive(new AutoIntakeSeqCommand(m_IntakeSubsystem, m_SequencerSubsystem))

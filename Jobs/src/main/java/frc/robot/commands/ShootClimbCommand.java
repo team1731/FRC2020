@@ -60,9 +60,11 @@ public class ShootClimbCommand extends CommandBase {
 
     if (last != activate) {
       if (activate) {
-        m_SeqSubsystem.forward();
+        m_ShootClimbSubsystem.hoodRetract(); // open shooting hood for shooting
+        m_SeqSubsystem.forward();  // turn on sequencer to shoot balls
       } else {
-        m_SeqSubsystem.stop();
+        m_SeqSubsystem.stop(); // turn off sequencer, should be empty
+        m_ShootClimbSubsystem.hoodExtend(); // close shooting hood - to go under color wheel
       }
       last = activate;
     }
