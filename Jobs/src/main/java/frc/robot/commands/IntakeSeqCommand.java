@@ -7,8 +7,6 @@
 
 package frc.robot.commands;
 
-import java.util.function.BooleanSupplier;
-
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SequencerSubsystem;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -21,21 +19,15 @@ public class IntakeSeqCommand extends CommandBase {
   private final IntakeSubsystem m_IntakeSubsystem;
   private final SequencerSubsystem m_SeqSubsystem;
 
-  private final BooleanSupplier intakeTrig;
-  private boolean last;
-  private boolean activate;
   /**
    * Creates a new ExampleCommand.
    *
    * @param intakeSubsystem The intake subsystem this command will run on
    * @param seqSubsystem The sequencer subsystem this command will run on
    */
-  public IntakeSeqCommand(IntakeSubsystem intakeSubsystem, SequencerSubsystem seqSubsystem, BooleanSupplier intakeTrig) {
+  public IntakeSeqCommand(IntakeSubsystem intakeSubsystem, SequencerSubsystem seqSubsystem) {
     m_IntakeSubsystem = intakeSubsystem;
     m_SeqSubsystem = seqSubsystem;
-    this.intakeTrig = intakeTrig;
-    activate = false;
-    last = activate;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(intakeSubsystem, seqSubsystem);
   }

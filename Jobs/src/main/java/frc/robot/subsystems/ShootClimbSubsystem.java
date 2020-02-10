@@ -96,7 +96,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
 
   public void modeClimb() {
     modeClimbing = true;
-    mTalonShoot.setSpeed(-0.5); // for testing only
+    mTalonShoot.setSpeed(-0.0); // for testing only
     //mTalonShoot1.set(ControlMode.PercentOutput,Constants.kMotorShootPercent);
     //mTalonShoot2.set(ControlMode.PercentOutput, 0);
   }

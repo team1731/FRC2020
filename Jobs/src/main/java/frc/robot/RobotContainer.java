@@ -118,15 +118,27 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    // Intake & Sequencer works will button is held
-    new JoystickButton(operatorController, 1).whenHeld(
-      new IntakeSeqCommand(m_IntakeSubsystem, m_SequencerSubsystem, () -> getIntake())
+    // Intake & Sequencer ejects works will button is held
+    new JoystickButton(operatorController, 1).whenHeld(new ParallelCommandGroup(
+      new InstantCommand(m_IntakeSubsystem::eject, m_IntakeSubsystem),
+      new InstantCommand(m_SequencerSubsystem::reverse, m_SequencerSubsystem)
+      )).whenReleased(new ParallelCommandGroup(
+        new InstantCommand(m_IntakeSubsystem::retract, m_IntakeSubsystem),
+        new InstantCommand(m_SequencerSubsystem::stop, m_SequencerSubsystem)
+      )
     );
 
+    // Intake & Sequencer intake works will button is held
+    new JoystickButton(operatorController, 5).whenHeld(
+      new IntakeSeqCommand(m_IntakeSubsystem, m_SequencerSubsystem)
+    );
+    new IntakeTrigger().whileActiveOnce(new IntakeSeqCommand(m_IntakeSubsystem, m_SequencerSubsystem));
+
     // Shooter
-    new JoystickButton(operatorController, 2).whenHeld(
+    new JoystickButton(operatorController, 6).whenHeld(
       new ShootSeqCommand(m_ShootClimbSubsystem, m_SequencerSubsystem)
     );
+    new ShootTrigger().whileActiveOnce(new ShootSeqCommand(m_ShootClimbSubsystem, m_SequencerSubsystem));
     /* Intake
     new JoystickButton(operatorController, 1)
         .whenPressed(new InstantCommand(m_IntakeSubsystem::extend, m_IntakeSubsystem));
@@ -195,6 +207,20 @@ public class RobotContainer {
     return m_autoCommand;
   }
   */
+
+  public class IntakeTrigger extends Trigger {
+    @Override
+    public boolean get() {
+      return getIntake();
+    }
+  }
+
+  public class ShootTrigger extends Trigger {
+    @Override
+    public boolean get() {
+      return getShoot();
+    }
+  }
 
   public void initSmartDashboard() {
     sensorTab = Shuffleboard.getTab("Sensors");
