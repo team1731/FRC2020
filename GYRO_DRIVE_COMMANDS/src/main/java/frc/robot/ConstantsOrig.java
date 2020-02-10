@@ -40,12 +40,12 @@ public final class ConstantsOrig {
     public static final double kStabilizationI = 0.5;
     public static final double kStabilizationD = 0;
 
-    public static final double kTurnP = 1;
+    public static final double kTurnP = 0.5;
     public static final double kTurnI = 0;
     public static final double kTurnD = 0;
 
-    public static final double kMaxTurnRateDegPerS = 100;
-    public static final double kMaxTurnAccelerationDegPerSSquared = 300;
+    public static final double kMaxTurnRateDegPerS = 10;
+    public static final double kMaxTurnAccelerationDegPerSSquared = 30;
 
     public static final double kTurnToleranceDeg = 5;
     public static final double kTurnRateToleranceDegPerS = 10; // degrees per second

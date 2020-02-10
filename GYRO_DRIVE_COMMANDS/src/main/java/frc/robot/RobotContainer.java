@@ -52,11 +52,29 @@ public class RobotContainer {
     m_robotDrive.setDefaultCommand(
         // A split-stick arcade command, with forward/backward controlled by the left
         // hand, and turning controlled by the right.
-        new RunCommand(() -> m_robotDrive
-            .drive(0, 0, 0, false) //RDB arcadeDrive(m_driverController.getY(GenericHID.Hand.kLeft),
-                     //    m_driverController.getX(GenericHID.Hand.kRight))
-                     , m_robotDrive));
 
+
+        // new RunCommand(() -> m_robotDrive
+        //     .arcadeDrive(m_driverController.getY(GenericHID.Hand.kLeft),
+        //                  m_driverController.getX(GenericHID.Hand.kRight))
+        //              , m_robotDrive));
+
+      new RunCommand(() -> m_robotDrive.drive(
+        // Get the x speed. We are inverting this because Xbox controllers return
+        // negative values when we push forward.
+        -m_driverController.getY(GenericHID.Hand.kLeft),
+
+        // Get the y speed or sideways/strafe speed. We are inverting this because
+        // we want a positive value when we pull to the left. Xbox controllers
+        // return positive values when you pull to the right by default.
+        -m_driverController.getX(GenericHID.Hand.kLeft),
+
+        // Get the rate of angular rotation. We are inverting this because we want a
+        // positive value when we pull to the left (remember, CCW is positive in
+        // mathematics). Xbox controllers return positive values when you pull to
+        // the right by default.
+        -m_driverController.getX(GenericHID.Hand.kRight), true), m_robotDrive) // <------- RDB2020 I added m_robotDrive here to get rid of
+    );
   }
 
   /**
@@ -66,31 +84,14 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // Drive at half speed when the right bumper is held
-    new JoystickButton(m_driverController, Button.kBumperRight.value)
-        .whenPressed(() -> m_robotDrive.resetEncoders()) ///RDB .setMaxOutput(0.5))
-        .whenReleased(() -> m_robotDrive.resetEncoders()); //RDB .setMaxOutput(1));
-
-    // Stabilize robot to drive straight with gyro when left bumper is held
-    new JoystickButton(m_driverController, Button.kBumperLeft.value).whenHeld(new PIDCommand(
-        new PIDController(DriveConstantsOrig.kStabilizationP, DriveConstantsOrig.kStabilizationI,
-                          DriveConstantsOrig.kStabilizationD),
-        // Close the loop on the turn rate
-        m_robotDrive::getTurnRate,
-        // Setpoint is 0
-        0,
-        // Pipe the output to the turning controls
-        output -> m_robotDrive.drive(0, 0, 0, true), //RDB .arcadeDrive(m_driverController.getY(GenericHID.Hand.kLeft), output),
-        // Require the robot drive
-        m_robotDrive));
 
     // Turn to 90 degrees when the 'X' button is pressed, with a 5 second timeout
     new JoystickButton(m_driverController, Button.kX.value)
-        .whenPressed(new TurnToAngle(90, m_robotDrive).withTimeout(5));
+        .whenPressed(new TurnToAngle(30, m_robotDrive).withTimeout(5));
 
     // Turn to -90 degrees with a profile when the 'A' button is pressed, with a 5 second timeout
     new JoystickButton(m_driverController, Button.kA.value)
-        .whenPressed(new TurnToAngleProfiled(-90, m_robotDrive).withTimeout(5));
+        .whenPressed(new TurnToAngleProfiled(30, m_robotDrive).withTimeout(5));
   }
 
 
