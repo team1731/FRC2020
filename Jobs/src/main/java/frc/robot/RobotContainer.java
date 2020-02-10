@@ -58,14 +58,14 @@ public class RobotContainer {
   private NetworkTableEntry eLowSensor;
   private NetworkTableEntry ePowerCellCount;
   private NetworkTableEntry eIntakeState;
-  //private double axis3;
+  private double axis3;
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
-    
+    /*
     m_IntakeSubsystem.setDefaultCommand(
       new IntakeSeqCommand(m_IntakeSubsystem, m_SequencerSubsystem, () -> getIntake())
     );
@@ -73,7 +73,7 @@ public class RobotContainer {
     m_ShootClimbSubsystem.setDefaultCommand(
       new ShootClimbCommand(m_ShootClimbSubsystem, m_SequencerSubsystem, () -> getShoot())
     );
-    
+    */
     /*
     //m_IntakeSubsystem.setDefaultCommand(new InstantCommand(m_IntakeSubsystem::retract));
     m_IntakeSubsystem.setDefaultCommand(
@@ -117,7 +117,17 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    /*/ Intake
+
+    // Intake & Sequencer works will button is held
+    new JoystickButton(operatorController, 1).whenHeld(
+      new IntakeSeqCommand(m_IntakeSubsystem, m_SequencerSubsystem, () -> getIntake())
+    );
+
+    // Shooter
+    new JoystickButton(operatorController, 2).whenHeld(
+      new ShootSeqCommand(m_ShootClimbSubsystem, m_SequencerSubsystem)
+    );
+    /* Intake
     new JoystickButton(operatorController, 1)
         .whenPressed(new InstantCommand(m_IntakeSubsystem::extend, m_IntakeSubsystem));
         //.whenReleased(new InstantCommand(m_IntakeSubsystem::retract, m_IntakeSubsystem));
@@ -127,7 +137,7 @@ public class RobotContainer {
         //.whenPressed(new InstantCommand(m_IntakeSubsystem::eject, m_IntakeSubsystem))
         //.whenReleased(new InstantCommand(m_IntakeSubsystem::retract, m_IntakeSubsystem));
     */
-    /*/ Sequencer
+    /* Sequencer
     new JoystickButton(operatorController, 3)
         .whenPressed(new InstantCommand(m_SequencerSubsystem::forward, m_IntakeSubsystem))
         .whenReleased(new InstantCommand(m_SequencerSubsystem::stop, m_IntakeSubsystem));
@@ -136,15 +146,15 @@ public class RobotContainer {
         .whenReleased(new InstantCommand(m_SequencerSubsystem::stop));
     */
     // Shoot
-    new JoystickButton(operatorController, 5)
-        .whenPressed(new InstantCommand(m_ShootClimbSubsystem::modeClimb, m_ShootClimbSubsystem));;
+    new JoystickButton(operatorController, 3)
+        .whenPressed(new InstantCommand(m_ShootClimbSubsystem::modeClimb, m_ShootClimbSubsystem));
         //.whenReleased(new InstantCommand(m_ShootClimbSubsystem::off, m_ShootClimbSubsystem));
-    new JoystickButton(operatorController, 6)
+    new JoystickButton(operatorController, 4)
         //.whenPressed(new InstantCommand(m_ShootClimbSubsystem::on, m_ShootClimbSubsystem))
         .whenReleased(new InstantCommand(m_ShootClimbSubsystem::modeShoot, m_ShootClimbSubsystem));
     
-    new JoystickButton(operatorController, 7)
-      .whenHeld(new AutoIntakeSeqCommand(m_IntakeSubsystem, m_SequencerSubsystem));
+    //new JoystickButton(operatorController, 7)
+    //  .whenHeld(new AutoIntakeSeqCommand(m_IntakeSubsystem, m_SequencerSubsystem));
       //.whenInactive(new IntakeRetract(m_IntakeSubsystem));
 
     //new JoystickButton(operatorController, XboxController.Axis.kLeftTrigger).whenHeld(command)
@@ -154,8 +164,8 @@ public class RobotContainer {
     //  .whenInactive(new IntakeRetract(m_IntakeSubsystem));
 
       //axis3 = operatorController.getX(Hand.kLeft);
-      //axis3 = operatorController.getTriggerAxis(Hand.kRight); // new Trigger(operatorController, 1);
-      
+    //axis3 = operatorController.getTriggerAxis(Hand.kRight); // new Trigger(operatorController, 1);
+    
     /*/ conditional Sequencer when Intake is pushed
     new JoystickButton(operatorController, 0)
       .whenPressed(new ParallelCommandGroup(
