@@ -36,16 +36,17 @@ public class ShootClimbCommand extends CommandBase {
     m_SeqSubsystem = seqSubsystem;
 
     this.shoot = shoot;
+    activate = false;
+    last = activate;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(shootClimbSubsystem, seqSubsystem);
   }
 
   // Called when the command is initially scheduled.
+  // If it is used as Default command then it gets call all the time
   @Override
   public void initialize() {
-    m_ShootClimbSubsystem.disable();
-    activate = false;
-    last = activate;
+    //m_ShootClimbSubsystem.disable(); Can't call this all the time it will make it ineffective
   }
 
   // Called every time the scheduler runs while the command is scheduled.

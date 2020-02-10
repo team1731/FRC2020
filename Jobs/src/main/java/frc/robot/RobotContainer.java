@@ -53,8 +53,8 @@ public class RobotContainer {
   //private final ExampleCommand m_autoCommand = new ExampleCommand(m_IntakeSubsystem);
 
 
-  XboxController driverController = new XboxController(1); 
-  XboxController operatorController = new XboxController(0); 
+  XboxController driverController = new XboxController(0); 
+  XboxController operatorController = new XboxController(1); 
   private NetworkTableEntry eLowSensor;
   private NetworkTableEntry ePowerCellCount;
   private NetworkTableEntry eIntakeState;
@@ -73,8 +73,7 @@ public class RobotContainer {
     m_ShootClimbSubsystem.setDefaultCommand(
       new ShootClimbCommand(m_ShootClimbSubsystem, m_SequencerSubsystem, () -> getShoot())
     );
-
-
+    
     /*
     //m_IntakeSubsystem.setDefaultCommand(new InstantCommand(m_IntakeSubsystem::retract));
     m_IntakeSubsystem.setDefaultCommand(
@@ -95,7 +94,7 @@ public class RobotContainer {
     m_SequencerSubsystem.stop();
     m_ShootClimbSubsystem.disable();
   }
-
+  
   public boolean getIntake() {
     double n = operatorController.getTriggerAxis(Hand.kLeft);
     return Math.abs(n) > 0.5;
@@ -105,6 +104,7 @@ public class RobotContainer {
     double n = operatorController.getTriggerAxis(Hand.kRight);
     return Math.abs(n) > 0.5;
   }
+  
   //public double getIntake() {
   //  double n = operatorController.getTriggerAxis(Hand.kLeft);
   //  return Math.abs(n) < 0.1 ? 0 : n;
@@ -117,24 +117,24 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // Intake
+    /*/ Intake
     new JoystickButton(operatorController, 1)
-        .whenPressed(new InstantCommand(m_IntakeSubsystem::extend, m_IntakeSubsystem))
-        .whenReleased(new InstantCommand(m_IntakeSubsystem::retract, m_IntakeSubsystem));
+        .whenPressed(new InstantCommand(m_IntakeSubsystem::extend, m_IntakeSubsystem));
+        //.whenReleased(new InstantCommand(m_IntakeSubsystem::retract, m_IntakeSubsystem));
     new JoystickButton(operatorController, 2)
-        .whenPressed(new IntakeEject(m_IntakeSubsystem))
-        .whenReleased(new InstantCommand(m_IntakeSubsystem::retract, m_IntakeSubsystem));
+        .whenPressed(new IntakeEject(m_IntakeSubsystem));
+        //.whenReleased(new InstantCommand(m_IntakeSubsystem::retract, m_IntakeSubsystem));
         //.whenPressed(new InstantCommand(m_IntakeSubsystem::eject, m_IntakeSubsystem))
         //.whenReleased(new InstantCommand(m_IntakeSubsystem::retract, m_IntakeSubsystem));
-
-    // Sequencer
+    */
+    /*/ Sequencer
     new JoystickButton(operatorController, 3)
         .whenPressed(new InstantCommand(m_SequencerSubsystem::forward, m_IntakeSubsystem))
         .whenReleased(new InstantCommand(m_SequencerSubsystem::stop, m_IntakeSubsystem));
     new JoystickButton(operatorController, 4)
         .whenPressed(new InstantCommand(m_SequencerSubsystem::reverse))
         .whenReleased(new InstantCommand(m_SequencerSubsystem::stop));
-
+    */
     // Shoot
     new JoystickButton(operatorController, 5)
         .whenPressed(new InstantCommand(m_ShootClimbSubsystem::modeClimb, m_ShootClimbSubsystem));;

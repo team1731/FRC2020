@@ -34,31 +34,37 @@ public class IntakeSeqCommand extends CommandBase {
     m_IntakeSubsystem = intakeSubsystem;
     m_SeqSubsystem = seqSubsystem;
     this.intakeTrig = intakeTrig;
+    activate = false;
+    last = activate;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(intakeSubsystem, seqSubsystem);
   }
 
   // Called when the command is initially scheduled.
+  // If it is used as Default command then it gets call all the time
   @Override
   public void initialize() {
-    m_IntakeSubsystem.retract();
-    m_SeqSubsystem.stop();
-    activate = false;
-    last = activate;
+    //m_IntakeSubsystem.retract();
+    //m_SeqSubsystem.stop();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
 
-    if (intakeTrig.getAsBoolean()) {
-      if (m_SeqSubsystem.getMaxPowerCells()) {
-        activate = false;
-      } else {
-        activate = true;
-      }
+    // get necessary input
+    if (intakeTrig.getAsBoolean() && !m_SeqSubsystem.getMaxPowerCells()) {
+      activate = true;
+    } else {
+      activate = false;
     }
 
+    // methods called continuously when activate
+    if (activate) {
+      m_SeqSubsystem.addPowerCell();
+    }
+
+    // methods called only on activate change
     if (last != activate) {
       if (activate) {
         m_IntakeSubsystem.extend();

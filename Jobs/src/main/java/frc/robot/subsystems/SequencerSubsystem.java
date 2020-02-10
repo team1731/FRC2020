@@ -47,7 +47,7 @@ public class SequencerSubsystem extends SubsystemBase {
           mPowerCellCount++;
         }
     } else {
-        if (mPowerCellCount < 5) {
+        if (mPowerCellCount < Constants.kMaxPowerCells) {
             mTalonSeq.setSpeed(Constants.kMotorSeqFwdSpeed);
             // incr count at beginning of intaking powercell
             //if (mLowSensorLast) {
@@ -86,7 +86,7 @@ public class SequencerSubsystem extends SubsystemBase {
   }
 
   public boolean getMaxPowerCells() {
-    return(mPowerCellCount >= 5);
+    return(mPowerCellCount >= Constants.kMaxPowerCells);
   }
 
   public int getPowerCellCount() {

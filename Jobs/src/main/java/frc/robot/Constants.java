@@ -33,6 +33,7 @@ public final class Constants {
     public static final double kMotorShootSpeed2 = 0.3;
     public static final double kMotorShootPercent = 0.80;   // check shooting motor percent
     public static final double kMotorClimbPercent = 0.3;
+    public static final int kMaxPowerCells = 3;
 
     // ColorWheel
 	public static final int kColorWheelTalonFX = 8;
@@ -77,8 +78,8 @@ public final class Constants {
     public static final int kBeakSwinger2 = 5; 
     public static final int kMustache1 = 7; 
     public static final int kMustache2 = 6; 
-    public static final int kDSolenoidIntake1 = 0;
-    public static final int kDSolenoidIntake2 = 1;
+    public static final int kDSolenoidExtra1 = 0;
+    public static final int kDSolenoidExtra2 = 1;
 
     //
     // PCM 1 SOLENOIDS
