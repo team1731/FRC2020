@@ -7,35 +7,44 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.ExampleSubsystem;
+import java.util.function.DoubleSupplier;
+
+import frc.robot.subsystems.ShootClimbSubsystem;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /**
  * An example command that uses an example subsystem.
  */
-public class ExampleCommand extends CommandBase {
+public class ClimbingCommand extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final ExampleSubsystem m_subsystem;
+  private final ShootClimbSubsystem m_ShootClimbSubsystem;
+  
+  private final DoubleSupplier climb;
 
   /**
    * Creates a new ExampleCommand.
    *
-   * @param subsystem The subsystem used by this command.
+   * @param ShootClimbSubsystem The intake subsystem this command will run on
+   * @param seqSubsystem The sequencer subsystem this command will run on
    */
-  public ExampleCommand(ExampleSubsystem subsystem) {
-    m_subsystem = subsystem;
+  public ClimbingCommand(ShootClimbSubsystem shootClimbSubsystem, DoubleSupplier climb) {
+    m_ShootClimbSubsystem = shootClimbSubsystem;  
+    this.climb = climb;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(subsystem);
+    addRequirements(shootClimbSubsystem);
   }
 
   // Called when the command is initially scheduled.
+  // If it is used as Default command then it gets call all the time
   @Override
   public void initialize() {
+    //m_ShootClimbSubsystem.disable(); Can't call this all the time it will make it ineffective
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    m_ShootClimbSubsystem.setClimber(climb.getAsDouble());
   }
 
   // Called once the command ends or is interrupted.
@@ -48,4 +57,5 @@ public class ExampleCommand extends CommandBase {
   public boolean isFinished() {
     return false;
   }
+
 }

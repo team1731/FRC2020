@@ -25,7 +25,10 @@ public class ShootClimbSubsystem extends SubsystemBase {
   //private final TalonFX mTalonShoot1;
   //private final TalonFX mTalonShoot2;
   private DigitalOutput mColor1;
+  private DigitalOutput zMode;
+
   private boolean modeClimbing;
+  private double extendRetract;
   
   /**
    * Creates a new ExampleSubsystem.
@@ -39,8 +42,10 @@ public class ShootClimbSubsystem extends SubsystemBase {
     //mTalonShoot2 = new TalonFX(Constants.kMotorCANShoot2);
 
     modeClimbing = false;
+    extendRetract = 0;
 
     mColor1 = new DigitalOutput(7);
+    zMode = new DigitalOutput(5);
   }
 
   @Override
@@ -89,6 +94,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
 
   public void modeShoot() {
     modeClimbing = false;
+    zMode.set(false);
     mTalonShoot.setSpeed(0.5);
     //mTalonShoot1.set(ControlMode.PercentOutput,Constants.kMotorShootPercent);
     //mTalonShoot2.set(ControlMode.PercentOutput,Constants.kMotorShootPercent);
@@ -96,6 +102,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
 
   public void modeClimb() {
     modeClimbing = true;
+    zMode.set(true);
     mTalonShoot.setSpeed(-0.0); // for testing only
     //mTalonShoot1.set(ControlMode.PercentOutput,Constants.kMotorShootPercent);
     //mTalonShoot2.set(ControlMode.PercentOutput, 0);
@@ -109,4 +116,9 @@ public class ShootClimbSubsystem extends SubsystemBase {
     mShootHoodSolenoid.set(DoubleSolenoid.Value.kForward);
   }
 
+  public void setClimber(double zVal) {
+    if (modeClimbing) {
+      extendRetract = zVal;
+    }
+  }
 }

@@ -7,8 +7,6 @@
 
 package frc.robot.commands;
 
-import java.util.function.BooleanSupplier;
-
 import frc.robot.subsystems.ShootClimbSubsystem;
 import frc.robot.subsystems.SequencerSubsystem;
 import edu.wpi.first.wpilibj2.command.CommandBase;
