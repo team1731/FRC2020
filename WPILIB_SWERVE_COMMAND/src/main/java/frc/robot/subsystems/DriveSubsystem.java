@@ -9,6 +9,7 @@ package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 //import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
@@ -157,7 +158,7 @@ public class DriveSubsystem extends SubsystemBase {
   public void setModuleStates(SwerveModuleState[] desiredStates) {
     SwerveDriveKinematics.normalizeWheelSpeeds(desiredStates,
                                                DriveConstants.kMaxSpeedMetersPerSecond);
-    m_frontLeft.setDesiredState(desiredStates[0]);        // frontLeft, frontRight, rearLeft, rearRight
+    m_frontLeft.setDesiredState(desiredStates[0]);           // frontLeft, frontRight, rearLeft, rearRight
     m_frontRight.setDesiredState(desiredStates[1]);
     m_rearLeft.setDesiredState(desiredStates[2]);
     m_rearRight.setDesiredState(desiredStates[3]);
@@ -166,11 +167,14 @@ public class DriveSubsystem extends SubsystemBase {
   /**
    * Resets the drive encoders to currently read a position of 0.
    */
-  public void resetEncoders() {
-    m_frontLeft.resetEncoders();                          // frontLeft, frontRight, rearLeft, rearRight
-    m_frontRight.resetEncoders();
-    m_rearLeft.resetEncoders();
-    m_rearRight.resetEncoders();
+  public void resetEncoders(double leftFrontAbsEncoderReading, // frontLeft, frontRight, rearLeft, rearRight
+                            double rightFrontAbsEncoderReading, 
+                            double leftRearAbsEncoderReading, 
+                            double rightRearAbsEncoderReading) {
+    m_frontLeft.resetEncoders(leftFrontAbsEncoderReading);     // frontLeft, frontRight, rearLeft, rearRight
+    m_frontRight.resetEncoders(rightFrontAbsEncoderReading);
+    m_rearLeft.resetEncoders(leftRearAbsEncoderReading);
+    m_rearRight.resetEncoders(rightRearAbsEncoderReading);
   }
 
   /**

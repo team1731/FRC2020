@@ -29,6 +29,8 @@ public class SwerveModule {
   private CANPIDController m_drivePIDController;
   private CANPIDController m_turningPIDController;
 
+  private double offsetFromAbsoluteEncoder;
+
   private int id;
     
   /**
@@ -71,10 +73,7 @@ public class SwerveModule {
     m_turningPIDController.setSmartMotionMaxAccel(1500, smartMotionSlot);
     m_turningPIDController.setSmartMotionAllowedClosedLoopError(0, smartMotionSlot);
 
-    setAzimuthZero(0);
-
-
-
+    //setAzimuthZero(0); //RDB 10FEB I don't think we want this any more -- abs encoders now
   }
 
 
@@ -93,7 +92,8 @@ public class SwerveModule {
    *
    * @param zero zero setpoint, absolute encoder position (in ticks) where wheel is zeroed.
    */
-  private void setAzimuthZero(double zero) {
+  private void setAzimuthZero(double zeroSetpointAbsoluteEncoderVoltage) { // 0.0 to 3.26, 180=1.63V
+    offsetFromAbsoluteEncoder = zeroSetpointAbsoluteEncoderVoltage * 16/3.26;
     //logger.info("<b>Wheel</b>: setAzimuthZero starting");
     //double azimuthSetpoint = getAzimuthAbsolutePosition() - zero;
     //ErrorCode err = azimuthTalon.setSelectedSensorPosition(azimuthSetpoint, 0, 10);
@@ -101,7 +101,8 @@ public class SwerveModule {
     //azimuthTalon.set(MotionMagic, azimuthSetpoint);
     //azimuthSpark.set(azimuthSetpoint);
     //m_pidController.setReference(azimuthSetpoint, ControlType.kSmartMotion);
-    m_turningEncoder.setPosition(0); // TODO change whith 221 encoder
+    //m_turningEncoder.setPosition(0); // TODO change whith 221 encoder
+    //TODO FIXME change voltage to position 0 to 12!!
     //logger.info("<b>Wheel</b>: setAzimuthZero finished");
   }
 
@@ -109,8 +110,9 @@ public class SwerveModule {
     //return azimuthTalon.getSensorCollection().getPulseWidthPosition() & 0xFFF;
     //return (int)azimuthSpark.get() & 0xFFF;
     //TODO - need to return azimuth from the 221 encoder
-
-    return m_turningEncoder.getPosition(); //TODO FIXME RDB2020
+    double rawEncoder = m_turningEncoder.getPosition();
+    double correctedEncoder = rawEncoder - offsetFromAbsoluteEncoder;
+    return correctedEncoder;
   }
 
   /**
@@ -122,7 +124,7 @@ public class SwerveModule {
     //return new SwerveModuleState(m_driveEncoder.getRate(), new Rotation2d(m_turningEncoder.get()));
         //FIXME: apply any needed unit convertion here...
     double velocity = m_driveEncoder.getVelocity() * Math.PI * 3.0 / 39.37 / 60.0 / 5.5;
-    double azimuth = -m_turningEncoder.getPosition();
+    double azimuth = -getAzimuthAbsolutePosition(); //m_turningEncoder.getPosition();
     double azimuthPercent = Math.IEEEremainder(azimuth, kTICKS)/16.0;
 
     SmartDashboard.putNumber("Module"+id+" Drive Encoder Tick", m_driveEncoder.getPosition());
@@ -154,7 +156,7 @@ public class SwerveModule {
     double speedMetersPerSecond = state.speedMetersPerSecond;
     double drive = speedMetersPerSecond * 5.5 * 39.37  * 60.0 / 3.0 / Math.PI;
     //wheel.set(-angleDegrees/360, speedMetersPerSecond * 16.0 * 39.37  * 60.0 / 3.0 / Math.PI);
-    double azimuthPosition = m_turningEncoder.getPosition();
+    double azimuthPosition = getAzimuthAbsolutePosition(); //m_turningEncoder.getPosition();
     double azimuthError = Math.IEEEremainder(azimuth - azimuthPosition, kTICKS);
 
     // NO - DON'T DO THIS!!! WPILIB DOESN'T KNOW THAT WE DID IT!!!
@@ -173,10 +175,10 @@ public class SwerveModule {
    * Zeros all the SwerveModule encoders.
    */
 
-  public void resetEncoders() {
-    //m_driveEncoder.reset();
-    m_driveEncoder.setPosition(0); // ??????????????????????????????
-    //m_turningEncoder.reset();
-    m_turningEncoder.setPosition(0); // ?????????????????????????????
+  public void resetEncoders(double absoluteEncoderVoltage) {
+    m_driveEncoder.setPosition(0);
+    m_turningEncoder.setPosition(0);
+    setAzimuthZero(absoluteEncoderVoltage); //remember our offset
   }
+
 }

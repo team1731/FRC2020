@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -25,7 +26,11 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private RobotContainer m_robotContainer;
   private ReflectingCSVWriter<DebugOutput> mCSVWriter;
-
+  private AnalogInput leftFrontAbsEncoder;
+  private AnalogInput rightFrontAbsEncoder;
+  private AnalogInput leftRearAbsEncoder;
+  private AnalogInput rightRearAbsEncoder;
+  
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -37,7 +42,18 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer(mCSVWriter);
     m_robotContainer.m_robotDrive.zeroHeading();
-    m_robotContainer.m_robotDrive.resetEncoders();
+
+    leftFrontAbsEncoder = new AnalogInput(1);
+    rightFrontAbsEncoder = new AnalogInput(2);
+    leftRearAbsEncoder = new AnalogInput(3);
+    rightRearAbsEncoder = new AnalogInput(4);
+
+    m_robotContainer.m_robotDrive.resetEncoders(leftFrontAbsEncoder.getVoltage(),
+                                                rightFrontAbsEncoder.getVoltage(),
+                                                leftRearAbsEncoder.getVoltage(),
+                                                rightRearAbsEncoder.getVoltage()
+     );
+
 
     SmartDashboard.putString("Auto Num", "0");
   }
@@ -59,6 +75,11 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+
+    SmartDashboard.putNumber("leftFrontAbsEncoder", leftFrontAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
+    SmartDashboard.putNumber("rightFrontAbsEncoder", rightFrontAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
+    SmartDashboard.putNumber("leftRearAbsEncoder", leftRearAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
+    SmartDashboard.putNumber("rightRearAbsEncoder", rightRearAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
   }
 
   /**
