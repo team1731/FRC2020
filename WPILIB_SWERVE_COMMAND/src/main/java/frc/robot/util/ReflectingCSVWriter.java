@@ -6,6 +6,8 @@ import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
+import edu.wpi.first.wpilibj.RobotBase;
+
 /**
  * Writes data to a CSV file
  */

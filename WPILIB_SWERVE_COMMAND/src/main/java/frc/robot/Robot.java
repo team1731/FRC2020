@@ -8,6 +8,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -37,8 +38,13 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    mCSVWriter = new ReflectingCSVWriter<DebugOutput>("/home/lvuser/PATH-FOLLOWER-LOGS.csv", DebugOutput.class);
-    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
+    if(RobotBase.isReal()){
+      mCSVWriter = new ReflectingCSVWriter<DebugOutput>("/home/lvuser/PATH-FOLLOWER-LOGS.csv", DebugOutput.class);
+    }
+    else{
+      mCSVWriter = new ReflectingCSVWriter<DebugOutput>("PATH-FOLLOWER-LOGS.csv", DebugOutput.class);
+    }
+      // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer(mCSVWriter);
     m_robotContainer.m_robotDrive.zeroHeading();
