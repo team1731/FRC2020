@@ -1,4 +1,4 @@
-package frc.autonomous;
+package frc.robot.autonomous;
 
 public class Rotation2d {
 

@@ -25,7 +25,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.autonomous._1_BwdPickup2Balls;
+import frc.robot.autonomous._1_BwdPickup2Balls;
+import frc.robot.autonomous._2_BwdPickup2BallsAndShoot;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
@@ -194,7 +195,8 @@ exampleTrajectory = new Trajectory(newStates);
   private Command[] setupAutoCommands(){
     Command[] autoCommands = new Command[]{
       getDefaultAutonomousCommand(),
-      new _1_BwdPickup2Balls().getCommand(m_robotDrive)
+      new _1_BwdPickup2Balls().getCommand(m_robotDrive),
+      new _2_BwdPickup2BallsAndShoot().getCommand(m_robotDrive, null, null) //m_intake, m_shooter)
     };
     return autoCommands;
   }
