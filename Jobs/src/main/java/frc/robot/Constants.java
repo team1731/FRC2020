@@ -7,6 +7,8 @@
 
 package frc.robot;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.util.Color;
+import com.revrobotics.ColorMatch;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -82,5 +84,25 @@ public final class Constants {
     	System.out.println("creating solenoid ids " + forward_solenoidId + "-" + reverse_solenoidId + " PCM " + pcmChannel + " CHAN ");
         return new DoubleSolenoid(pcmChannel, forward_solenoidId, reverse_solenoidId);
     }
+
+    // ColorWheel
+    // Note: Any example colors should be calibrated as the user needs, these are here as a basic example.
+    public static Color kBlueTarget = ColorMatch.makeColor(0.143, 0.427, 0.429);
+    public static Color kGreenTarget = ColorMatch.makeColor(0.197, 0.561, 0.240);
+    public static Color kRedTarget = ColorMatch.makeColor(0.561, 0.232, 0.114);
+    public static Color kYellowTarget = ColorMatch.makeColor(0.361, 0.524, 0.113);
+
+    public static final int kWheelUnknown = 0;
+    public static final int kWheelGreen = 1;
+    public static final int kWheelBlue = 2;
+    public static final int kWheelYellow= 3;
+    public static final int kWheelRed = 4;
+
+    public static final int kWheelCountRotate = 7;
+    public static final int kWheelCountMatch = 1;
+
+    public static double kWheelRotateSpeed = 0.5;
+    public static double kWheelMatchFwdSpeed = 0.2;
+    public static double kWheelMatchRevSpeed = -0.2;
 
 }
