@@ -17,10 +17,11 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 
 import frc.robot.commands.*;
+import frc.robot.autonomous._2_BwdPickup2BallsAndShoot;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SequencerSubsystem;
 import frc.robot.subsystems.ShootClimbSubsystem;
-//import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Command;
 //import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -157,12 +158,12 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  /*
-  public Command getAutonomousCommand() {
+  
+  public Command getAutonomousCommand(int autoNum) {
     // An ExampleCommand will run in autonomous
-    return m_autoCommand;
+    return new _2_BwdPickup2BallsAndShoot().getCommand(m_IntakeSubsystem, m_SequencerSubsystem, m_ShootClimbSubsystem);
   }
-  */
+  
   public class StickTrigger extends Trigger {
     public boolean get() {
       //double v = operatorController.getY(Hand.kRight);

@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -56,7 +57,9 @@ public class Robot extends TimedRobot {
 
     // Set the data
     m_led.setData(m_ledBuffer);
-    m_led.start();    
+    m_led.start();
+    
+    SmartDashboard.putString("Auto Num", "0");
   }
 
   /**
@@ -96,14 +99,23 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    /*
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    
+    int autoNum = 0;
+    String autoSelected = SmartDashboard.getString("Auto Selector", "Default");
+    try{
+      autoNum = Integer.parseInt(autoSelected);
+    }
+    catch(Exception e){
+      System.out.println("AUTO NUM did not parse -- default to DO NOTHING!!!!");
+    }
+    System.out.println("Running auto mode " + autoNum);
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand(autoNum);
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
-    */
+    
   }
 
   /**

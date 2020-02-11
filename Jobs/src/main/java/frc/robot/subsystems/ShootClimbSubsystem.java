@@ -59,7 +59,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
   public void enableShooting() {
     mColor1.set(true);
     mShootClimbSolenoid.set(DoubleSolenoid.Value.kReverse);
-    mTalonShoot.setSpeed(0);
+    mTalonShoot.setSpeed(0.7);
     //mTalonShoot1.set(ControlMode.PercentOutput,Constants.kMotorShootPercent);
     //mTalonShoot2.set(ControlMode.PercentOutput,Constants.kMotorShootPercent);
   }
