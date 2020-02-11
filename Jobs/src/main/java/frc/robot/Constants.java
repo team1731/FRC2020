@@ -18,6 +18,9 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
  */
 public final class Constants {
 
+    // PWM
+    public static final int kPWM_LedSting = 9;         // Addressable Led String
+
     // Intake
     public static final int kMotorPWMIntake = 0;      // Intake
     public static final int kMotorPWMSeq = 1;         // Sequencer
@@ -41,18 +44,6 @@ public final class Constants {
     // Shooter
     public static final int kShooterVictor = 3;
 
-    //
-    // PCM 0 SOLENOIDS
-    //
-    public static final int kIntakeExtend = 0; 
-    public static final int kIntakeRetract = 1; 
-    public static final int kShooting = 2; 
-    public static final int kClimbing = 3; 
-    public static final int kClimbExtend = 4; 
-    public static final int kClimbRetract = 5; 
-    public static final int kHoodExtend = 6; 
-    public static final int kHoodRetract = 7; 
-
     // Digital Input/Outputs
     public static int kLowSequencer = 0;
     public static int kHighSequencer = 1;
@@ -71,30 +62,21 @@ public final class Constants {
     public static int kArduino_BLUEW = 6; // blue wipe
     public static int kArduino_YELLW = 7; // yellow wipe
 
-        //
-    // PCM 0 SOLENOIDS
-    //
-    public static final int kBeakSwinger1 = 4; 
-    public static final int kBeakSwinger2 = 5; 
-    public static final int kMustache1 = 7; 
-    public static final int kMustache2 = 6; 
-    public static final int kDSolenoidExtra1 = 0;
-    public static final int kDSolenoidExtra2 = 1;
+    public enum LedOption {
+        TEAM, RED, BLUE, GREEN, YELLOW, ORANGE, PURPLE, RAINBOW
+    }
 
-    //
+    // PCM 0 SOLENOIDS
+    public static final int kIntakeExtend = 0; 
+    public static final int kIntakeRetract = 1; 
+    public static final int kShooting = 2; 
+    public static final int kClimbing = 3; 
+    public static final int kClimbExtend = 4; 
+    public static final int kClimbRetract = 5; 
+    public static final int kHoodExtend = 6; 
+    public static final int kHoodRetract = 7; 
+
     // PCM 1 SOLENOIDS
-    //
-    public static final int kBeakOpener1 = 0;
-    public static final int kBeakOpener2 = 5;
-    
-    public static final int kRotateWristShort1 = 2;
-    public static final int kRotateWristShort2 = 4;
-    
-    public static final int kRotateWristLong1 = 3;
-    public static final int kRotateWristLong2 = 1;
-    
-    public static final int kTopRoller1 = 7;
-    public static final int kTopRoller2 = 6;
 
     public static DoubleSolenoid makeDoubleSolenoidForIds(int pcmChannel, int forward_solenoidId, int reverse_solenoidId) {
     	System.out.println("creating solenoid ids " + forward_solenoidId + "-" + reverse_solenoidId + " PCM " + pcmChannel + " CHAN ");
