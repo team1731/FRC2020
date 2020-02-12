@@ -3,9 +3,9 @@ package frc.robot.subsystems;
 import frc.robot.util.DebugOutput;
 import frc.robot.util.ReflectingCSVWriter;
 
-public class TargetingSubsystem {
+public class ClimberSubsystem {
 
-	public TargetingSubsystem(ReflectingCSVWriter<DebugOutput> mCSVWriter) {
+	public ClimberSubsystem(ReflectingCSVWriter<DebugOutput> mCSVWriter) {
 	}
 
 }

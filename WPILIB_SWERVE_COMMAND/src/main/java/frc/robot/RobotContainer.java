@@ -30,7 +30,12 @@ import frc.robot.autonomous._2_BwdPickup2BallsAndShoot;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.TargetingSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
 //import frc.robot.subsystems.InstrumentedSwerveControllerCommand;
 import frc.robot.util.DebugOutput;
 import frc.robot.util.ReflectingCSVWriter;
@@ -43,23 +48,28 @@ import frc.robot.util.ReflectingCSVWriter;
  */
 public class RobotContainer {
   Command[] autoCommands;
-
-  // The robot's subsystems
-  public final DriveSubsystem m_robotDrive;
+  DriveSubsystem m_robotDrive;
 
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
 
-  ReflectingCSVWriter<DebugOutput> mCSVWriter;
+  private IntakeSubsystem m_intake;
+  private ShooterSubsystem m_shooter;
+  private TargetingSubsystem m_targeting;
+  private VisionSubsystem m_vision;
+  private ClimberSubsystem m_climber;
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
-  public RobotContainer(ReflectingCSVWriter<DebugOutput> mCSVWriter) {
-    this.mCSVWriter = mCSVWriter;
-
-    m_robotDrive = new DriveSubsystem(mCSVWriter);
-
+  public RobotContainer(DriveSubsystem m_robotDrive, IntakeSubsystem m_intake, ShooterSubsystem m_shooter, TargetingSubsystem m_targeting, VisionSubsystem m_vision, ClimberSubsystem m_climber) {
+    this.m_robotDrive = m_robotDrive;
+    this.m_intake = m_intake;
+    this.m_shooter = m_shooter;
+    this.m_targeting = m_targeting;
+    this.m_vision = m_vision;
+    this.m_climber = m_climber;
+    
     // Configure the button bindings
     configureButtonBindings();
 
@@ -184,8 +194,6 @@ exampleTrajectory = new Trajectory(newStates);
 
         m_robotDrive
 
-        //mCSVWriter
-
     );
 
     // Run path following command, then stop at the end.
@@ -195,10 +203,8 @@ exampleTrajectory = new Trajectory(newStates);
   private Command[] setupAutoCommands(){
     Command[] autoCommands = new Command[]{
       getDefaultAutonomousCommand(),
-      
-      new _1_BwdPickup2Balls().getCommand(m_robotDrive),
-                                                               //m_intake, m_shooter, m_vision, m_targeting)
-      new _2_BwdPickup2BallsAndShoot().getCommand(m_robotDrive,      null,      null,     null,        null)
+      new _1_BwdPickup2Balls().getCommand(m_robotDrive),                                                               
+      new _2_BwdPickup2BallsAndShoot().getCommand(m_robotDrive, m_intake, m_shooter, m_vision, m_targeting)
     };
     return autoCommands;
   }

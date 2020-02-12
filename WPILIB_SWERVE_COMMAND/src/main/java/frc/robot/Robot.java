@@ -13,6 +13,12 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.TargetingSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.util.DebugOutput;
 import frc.robot.util.ReflectingCSVWriter;
 
@@ -32,6 +38,14 @@ public class Robot extends TimedRobot {
   private AnalogInput leftRearAbsEncoder;
   private AnalogInput rightRearAbsEncoder;
   
+  // The robot's subsystems
+  public DriveSubsystem m_robotDrive;
+  public IntakeSubsystem m_intake;
+  public ShooterSubsystem m_shooter;
+  public TargetingSubsystem m_targeting;
+  public VisionSubsystem m_vision;
+  public ClimberSubsystem m_climber;
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -44,21 +58,30 @@ public class Robot extends TimedRobot {
     else{
       mCSVWriter = new ReflectingCSVWriter<DebugOutput>("PATH-FOLLOWER-LOGS.csv", DebugOutput.class);
     }
+
+    m_robotDrive = new DriveSubsystem(mCSVWriter);
+    m_intake = new IntakeSubsystem(mCSVWriter);
+    m_shooter = new ShooterSubsystem(mCSVWriter);
+    m_targeting = new TargetingSubsystem(mCSVWriter);
+    m_vision = new VisionSubsystem(mCSVWriter);
+    m_climber = new ClimberSubsystem(mCSVWriter);
     
+    m_robotDrive.zeroHeading();
+
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
-    m_robotContainer = new RobotContainer(mCSVWriter);
-    m_robotContainer.m_robotDrive.zeroHeading();
+    m_robotContainer = new RobotContainer(m_robotDrive, m_intake, m_shooter, m_targeting, m_vision, m_climber);
+
 
     leftFrontAbsEncoder = new AnalogInput(1);
     rightFrontAbsEncoder = new AnalogInput(2);
     leftRearAbsEncoder = new AnalogInput(3);
     rightRearAbsEncoder = new AnalogInput(4);
 
-    m_robotContainer.m_robotDrive.resetEncoders(leftFrontAbsEncoder.getVoltage(),
-                                                rightFrontAbsEncoder.getVoltage(),
-                                                leftRearAbsEncoder.getVoltage(),
-                                                rightRearAbsEncoder.getVoltage());
+    m_robotDrive.resetEncoders(leftFrontAbsEncoder.getVoltage(),
+                               rightFrontAbsEncoder.getVoltage(),
+                               leftRearAbsEncoder.getVoltage(),
+                               rightRearAbsEncoder.getVoltage());
 
 
     SmartDashboard.putString("Auto Num", "0");
@@ -73,9 +96,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+
     if(mCSVWriter.isSuspended()){
       mCSVWriter.resume();
     }
+
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
