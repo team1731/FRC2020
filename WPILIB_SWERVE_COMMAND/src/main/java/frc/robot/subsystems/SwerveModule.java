@@ -182,8 +182,10 @@ public class SwerveModule {
     //   azimuthError -= Math.copySign(0.5 * kTICKS, azimuthError);
     //   drive = -drive;
     // }
-    m_turningPIDController.setReference((azimuthPosition + azimuthError), ControlType.kSmartMotion);
-    m_drivePIDController.setReference(drive, ControlType.kVelocity);
+    if(RobotBase.isReal()){
+      m_turningPIDController.setReference((azimuthPosition + azimuthError), ControlType.kSmartMotion);
+      m_drivePIDController.setReference(drive, ControlType.kVelocity);
+    }
   }
 
   /**

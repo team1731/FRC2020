@@ -44,7 +44,8 @@ public class Robot extends TimedRobot {
     else{
       mCSVWriter = new ReflectingCSVWriter<DebugOutput>("PATH-FOLLOWER-LOGS.csv", DebugOutput.class);
     }
-      // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
+    
+    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer(mCSVWriter);
     m_robotContainer.m_robotDrive.zeroHeading();
@@ -57,8 +58,7 @@ public class Robot extends TimedRobot {
     m_robotContainer.m_robotDrive.resetEncoders(leftFrontAbsEncoder.getVoltage(),
                                                 rightFrontAbsEncoder.getVoltage(),
                                                 leftRearAbsEncoder.getVoltage(),
-                                                rightRearAbsEncoder.getVoltage()
-     );
+                                                rightRearAbsEncoder.getVoltage());
 
 
     SmartDashboard.putString("Auto Num", "0");
@@ -114,7 +114,7 @@ public class Robot extends TimedRobot {
 
 
     int autoNum = 0;
-    String autoSelected = SmartDashboard.getString("Auto Selector", "Default");
+    String autoSelected = "2"; //FIXME RDB SmartDashboard.getString("Auto Selector", "Default");
     try{
       autoNum = Integer.parseInt(autoSelected);
     }

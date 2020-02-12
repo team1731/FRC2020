@@ -195,8 +195,10 @@ exampleTrajectory = new Trajectory(newStates);
   private Command[] setupAutoCommands(){
     Command[] autoCommands = new Command[]{
       getDefaultAutonomousCommand(),
+      
       new _1_BwdPickup2Balls().getCommand(m_robotDrive),
-      new _2_BwdPickup2BallsAndShoot().getCommand(m_robotDrive, null, null) //m_intake, m_shooter)
+                                                               //m_intake, m_shooter, m_vision, m_targeting)
+      new _2_BwdPickup2BallsAndShoot().getCommand(m_robotDrive,      null,      null,     null,        null)
     };
     return autoCommands;
   }
