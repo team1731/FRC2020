@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.PWMTalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import frc.robot.Constants;
 
 public class ShootClimbSubsystem extends SubsystemBase {
@@ -22,7 +23,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
   private final DoubleSolenoid mClimberSolenoid;
   private final DoubleSolenoid mShootHoodSolenoid;
   private final PWMTalonFX mTalonShoot;
-  //private final TalonFX mTalonShoot1;
+  private final TalonFX mTalonShoot1;
   //private final TalonFX mTalonShoot2;
   private DigitalOutput mColor1;
   private DigitalOutput zMode;
@@ -38,8 +39,27 @@ public class ShootClimbSubsystem extends SubsystemBase {
     mClimberSolenoid = Constants.makeDoubleSolenoidForIds(0, Constants.kClimbRetract, Constants.kClimbExtend);
     mShootHoodSolenoid = Constants.makeDoubleSolenoidForIds(0, Constants.kHoodRetract, Constants.kHoodExtend);
     mTalonShoot = new PWMTalonFX(Constants.kMotorPWMShoot1);
-    //mTalonShoot1 = new TalonFX(Constants.kMotorCANShoot1);
+    mTalonShoot1 = new TalonFX(Constants.kMotorCANShoot1);
     //mTalonShoot2 = new TalonFX(Constants.kMotorCANShoot2);
+    mTalonShoot1.configFactoryDefault();
+    /* Config sensor used for Primary PID [Velocity] */
+    mTalonShoot1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+    /** Phase sensor accordingly. 
+      * Positive Sensor Reading should match Green (blinking) Leds on Talon
+    */
+		mTalonShoot1.setSensorPhase(true);
+
+		/* Config the peak and nominal outputs */
+		mTalonShoot1.configNominalOutputForward(0, Constants.kTimeoutMs);
+		mTalonShoot1.configNominalOutputReverse(0, Constants.kTimeoutMs);
+		mTalonShoot1.configPeakOutputForward(1, Constants.kTimeoutMs);
+		mTalonShoot1.configPeakOutputReverse(-1, Constants.kTimeoutMs);
+
+		/* Config the Velocity closed loop gains in slot0 */
+		mTalonShoot1.config_kF(Constants.kPIDLoopIdx, Constants.kGains_Velocity.kF, Constants.kTimeoutMs);
+		mTalonShoot1.config_kP(Constants.kPIDLoopIdx, Constants.kGains_Velocity.kP, Constants.kTimeoutMs);
+		mTalonShoot1.config_kI(Constants.kPIDLoopIdx, Constants.kGains_Velocity.kI, Constants.kTimeoutMs);
+		mTalonShoot1.config_kD(Constants.kPIDLoopIdx, Constants.kGains_Velocity.kD, Constants.kTimeoutMs);
 
     modeClimbing = false;
     extendRetract = 0;
@@ -60,6 +80,15 @@ public class ShootClimbSubsystem extends SubsystemBase {
     mColor1.set(true);
     mShootClimbSolenoid.set(DoubleSolenoid.Value.kReverse);
     mTalonShoot.setSpeed(0.7);
+    /**
+			 * Convert 500 RPM to units / 100ms.
+			 * 2048(FX) 4096(SRX) Units/Rev * 500 RPM / 600 100ms/min in either direction:
+			 * velocity setpoint is in units/100ms
+    */
+    double velocity = 0.5; // guessing between -1.0 to 1.0
+		double targetVelocity_UnitsPer100ms = velocity * 500.0 * 2048 / 600;
+		/* 500 RPM in either direction */
+		mTalonShoot1.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
     //mTalonShoot1.set(ControlMode.PercentOutput,Constants.kMotorShootPercent);
     //mTalonShoot2.set(ControlMode.PercentOutput,Constants.kMotorShootPercent);
   }

@@ -8,6 +8,8 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+//import edu.wpi.first.wpilibj.Solenoid;
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj.PWMTalonFX;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -27,6 +29,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class ColorWheelSubsystem extends SubsystemBase {
   
   private final PWMTalonFX mTalonFX;
+  private final DoubleSolenoid mColorWheelSolenoid;
   // sensors used for ColorWheel
   private final I2C.Port i2cPort;
   private final ColorSensorV3 mColorSensor;
@@ -71,6 +74,7 @@ public class ColorWheelSubsystem extends SubsystemBase {
   public ColorWheelSubsystem() {
     
     mTalonFX = new PWMTalonFX(Constants.kColorWheelTalonFX);
+    mColorWheelSolenoid = Constants.makeDoubleSolenoidForIds(1, Constants.kColorWheelRetract, Constants.kColorWheelExtend);
     i2cPort = I2C.Port.kOnboard;
     mColorSensor = new ColorSensorV3(i2cPort);
     mColorMatcher = new ColorMatch();
@@ -109,7 +113,7 @@ public class ColorWheelSubsystem extends SubsystemBase {
             // check override button if any is used, otherwise this is of no consequence
             break;
         case ENGAGE:
-            // SET Solenoid
+            mColorWheelSolenoid.set(DoubleSolenoid.Value.kForward);// SET Solenoid
             newState = WheelState.START;
             break;
         case START: // 1) read color 2) determine next color set as sample 3) start motor
@@ -158,7 +162,7 @@ public class ColorWheelSubsystem extends SubsystemBase {
             newState = WheelState.COUNT;
             break;
         case DISENGAGE:
-            // UNSET solonoid
+            mColorWheelSolenoid.set(DoubleSolenoid.Value.kReverse);// UnSET Solenoid
             newState = WheelState.IDLE;
             //mWantedState = WantedState.IDLE;  // return to IDLEing
             break;

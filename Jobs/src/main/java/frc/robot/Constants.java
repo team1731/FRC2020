@@ -9,6 +9,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.util.Color;
 import com.revrobotics.ColorMatch;
+import frc.robot.Gains;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -69,6 +70,7 @@ public final class Constants {
     }
 
     // PCM 0 SOLENOIDS
+    // pairs b4-t3, b5-t2, b6-t4, b7-t5, t0-t6, t1-t7
     public static final int kIntakeExtend = 0; 
     public static final int kIntakeRetract = 1; 
     public static final int kShooting = 2; 
@@ -79,6 +81,9 @@ public final class Constants {
     public static final int kHoodRetract = 7; 
 
     // PCM 1 SOLENOIDS
+    public static final int kColorWheelExtend = 6; 
+    public static final int kColorWheelRetract = 7; 
+    // pairs b4-t3, b5-t2, b6-t4, b7-t5, t0-t6, t1-t7 
 
     public static DoubleSolenoid makeDoubleSolenoidForIds(int pcmChannel, int forward_solenoidId, int reverse_solenoidId) {
     	System.out.println("creating solenoid ids " + forward_solenoidId + "-" + reverse_solenoidId + " PCM " + pcmChannel + " CHAN ");
@@ -105,4 +110,23 @@ public final class Constants {
     public static double kWheelMatchFwdSpeed = 0.2;
     public static double kWheelMatchRevSpeed = -0.2;
 
+    /////// TalonFX parameters
+    public static final int kSlotIdx = 0;
+	/**
+	 * Talon SRX/ Victor SPX will supported multiple (cascaded) PID loops. For
+	 * now we just want the primary one.
+	 */
+	public static final int kPIDLoopIdx = 0;
+	/**
+	 * Set to zero to skip waiting for confirmation, set to nonzero to wait and
+	 * report to DS if action fails.
+	 */
+    public static final int kTimeoutMs = 30;
+    /**
+	 * PID Gains may have to be adjusted based on the responsiveness of control loop.
+     * kF: 1023 represents output value to Talon at 100%, 7200 represents Velocity units at 100% output
+     * 
+	 * 	                                    			  kP   kI   kD   kF          Iz    PeakOut */
+    public final static Gains kGains_Velocity = new Gains( 0.25, 0.001, 20, 1023.0/7200.0,  300,  1.00);
+    ///// End TalonFX
 }
