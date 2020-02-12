@@ -25,7 +25,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * @see ColorWheelSubsystem.java
  */
 public class ColorWheelSubsystem extends SubsystemBase {
-
+  
   private final PWMTalonFX mTalonFX;
   // sensors used for ColorWheel
   private final I2C.Port i2cPort;
@@ -64,10 +64,12 @@ public class ColorWheelSubsystem extends SubsystemBase {
     ROTATE,     // rotate 3-5 times
     MATCH       // match color and stay for 5 seconds
   }
+  
   /**
    * Creates a new ExampleSubsystem.
    */
   public ColorWheelSubsystem() {
+    
     mTalonFX = new PWMTalonFX(Constants.kColorWheelTalonFX);
     i2cPort = I2C.Port.kOnboard;
     mColorSensor = new ColorSensorV3(i2cPort);

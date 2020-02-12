@@ -20,6 +20,7 @@ import frc.robot.commands.*;
 import frc.robot.autonomous._2_BwdPickup2BallsAndShoot;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ColorWheelSubsystem;
+import frc.robot.subsystems.LedStringSubsystem;
 import frc.robot.subsystems.SequencerSubsystem;
 import frc.robot.subsystems.ShootClimbSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -45,7 +46,8 @@ public class RobotContainer {
   private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
   private final SequencerSubsystem m_SequencerSubsystem = new SequencerSubsystem();
   private final ShootClimbSubsystem m_ShootClimbSubsystem = new ShootClimbSubsystem();
-  private final ColorWheelSubsystem m_LedStringSubsystem = new ColorWheelSubsystem();
+  private final ColorWheelSubsystem m_ColorWheelSubsystem = new ColorWheelSubsystem();
+  private final LedStringSubsystem m_LedStringSubsystem = new LedStringSubsystem();
 
 
   //private final ExampleCommand m_autoCommand = new ExampleCommand(m_IntakeSubsystem);
@@ -73,6 +75,7 @@ public class RobotContainer {
     m_IntakeSubsystem.retract();
     m_SequencerSubsystem.stop();
     m_ShootClimbSubsystem.disable();
+    m_ColorWheelSubsystem.init();
     m_LedStringSubsystem.init();
   }
   

@@ -19,7 +19,7 @@ public class LedStringSubsystem extends SubsystemBase {
   private AddressableLEDBuffer mLedBuffer;
   // Store what the last hue of the first pixel is
   private int m_rainbowFirstPixelHue;
-
+  private Constants.LedOption mLedOption;
   /**
    * Creates a new ExampleSubsystem.
    */
@@ -42,11 +42,12 @@ public class LedStringSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    option(mLedOption);
   }
 
   public void init() {
     // initialization stuff
-    option(Constants.LedOption.RAINBOW);
+    mLedOption = Constants.LedOption.RAINBOW;
   }
 
   private void rainbow() {
