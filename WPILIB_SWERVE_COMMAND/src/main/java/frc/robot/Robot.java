@@ -139,12 +139,12 @@ public class Robot extends TimedRobot {
 
 
     int autoNum = 0;
-    String autoSelected = "2"; //FIXME RDB SmartDashboard.getString("Auto Selector", "Default");
+    String autoSelected = SmartDashboard.getString("Auto Selector", "Default");
     try{
-      autoNum = Integer.parseInt(autoSelected);
+      autoNum = Math.abs(Integer.parseInt(autoSelected));
     }
     catch(Exception e){
-      System.out.println("AUTO NUM did not parse -- default to DO NOTHING!!!!");
+      System.out.println("AUTO NUM did not parse -- defaulting to MOVE FORWARD!!!");
     }
     System.out.println("Running auto mode " + autoNum);
     m_autonomousCommand = m_robotContainer.getAutonomousCommand(autoNum);
