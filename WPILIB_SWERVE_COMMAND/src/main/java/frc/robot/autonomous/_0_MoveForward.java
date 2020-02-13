@@ -17,8 +17,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class _0_MoveForward {
-
-	public Command getCommand(DriveSubsystem m_robotDrive) {
+  public Command getCommand(DriveSubsystem m_robotDrive) {
     // Create config for trajectory
     TrajectoryConfig config =
         new TrajectoryConfig(AutoConstants.kMaxSpeedMetersPerSecond,
@@ -74,6 +73,6 @@ public class _0_MoveForward {
 
     // Run path following command, then stop at the end.
     return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
-	}
+  }
 
 }

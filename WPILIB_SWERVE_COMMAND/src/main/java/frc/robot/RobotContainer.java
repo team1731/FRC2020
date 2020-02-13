@@ -33,7 +33,7 @@ import frc.robot.subsystems.VisionSubsystem;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  Command[] autoCommands;
+  NamedAutoCommand[] namedAutoCommands;
   DriveSubsystem m_robotDrive;
 
   // The driver's controller
@@ -56,7 +56,7 @@ public class RobotContainer {
     this.m_vision = m_vision;
     this.m_climber = m_climber;
     
-    autoCommands = setupAutoCommands();
+    namedAutoCommands = setupNamedAutoCommands();
     
     // Configure the button bindings
     configureButtonBindings();
@@ -103,20 +103,23 @@ public class RobotContainer {
 
   }
 
-  public Command getAutonomousCommand(int autoNum){
-    Command autonomousCommand = null;
-    if(autoNum >= 0 && autoNum < autoCommands.length){
-      autonomousCommand = autoCommands[autoNum];
+  public NamedAutoCommand getNamedAutonomousCommand(int autoNum){
+    if(autoNum < 0 || autoNum >= namedAutoCommands.length){
+      System.out.println("specified AUTO NUM (" + autoNum + ") is INVALID -- defaulting to MOVE FORWARD!!!");
+      autoNum = 0;
     }
-    return autonomousCommand;
+    return namedAutoCommands[autoNum];
   }
 
-  private Command[] setupAutoCommands(){
-    Command[] autoCommands = new Command[]{
-      new _0_MoveForward().getCommand(m_robotDrive),
-      new _1_BwdPickup2Balls().getCommand(m_robotDrive),                                                               
-      new _2_BwdPickup2BallsAndShoot().getCommand(m_robotDrive, m_intake, m_shooter, m_vision, m_targeting)
+  private NamedAutoCommand[] setupNamedAutoCommands(){
+    NamedAutoCommand[] namedAutoCommands = new NamedAutoCommand[]{
+      new NamedAutoCommand("0 - MOVE FORWARD",
+                           new _0_MoveForward().getCommand(m_robotDrive)),
+      new NamedAutoCommand("1 = BWD PICKUP 2 BALLS",
+                           new _1_BwdPickup2Balls().getCommand(m_robotDrive)),                                                               
+      new NamedAutoCommand("2 - BWD PICKUP 2 BALLS AND SHOOT",
+                           new _2_BwdPickup2BallsAndShoot().getCommand(m_robotDrive, m_intake, m_shooter, m_vision, m_targeting))
     };
-    return autoCommands;
+    return namedAutoCommands;
   }
 }

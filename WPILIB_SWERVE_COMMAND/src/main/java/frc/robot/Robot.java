@@ -139,20 +139,22 @@ public class Robot extends TimedRobot {
 
 
     int autoNum = 0;
-    String autoSelected = SmartDashboard.getString("Auto Selector", "Default");
+    String autoSelected = "0"; //DEFAULT AUTO MODE if Drive Team forgets
+    if(RobotBase.isReal()){
+      autoSelected = SmartDashboard.getString("Auto Selector", "2");
+    }
     try{
       autoNum = Math.abs(Integer.parseInt(autoSelected));
     }
     catch(Exception e){
       System.out.println("AUTO NUM did not parse -- defaulting to MOVE FORWARD!!!");
     }
-    System.out.println("Running auto mode " + autoNum);
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand(autoNum);
+    NamedAutoCommand namedAutoCommand = m_robotContainer.getNamedAutonomousCommand(autoNum);
+    m_autonomousCommand = namedAutoCommand.command;
 
     // schedule the autonomous command (example)
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
-    }
+    System.out.println("Running auto mode " + namedAutoCommand.name);
+    m_autonomousCommand.schedule();
   }
 
   /**

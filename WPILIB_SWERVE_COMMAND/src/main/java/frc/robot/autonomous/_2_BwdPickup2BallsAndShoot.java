@@ -13,7 +13,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TargetingSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 
-public class _2_BwdPickup2BallsAndShoot extends SequentialCommandGroup  {
+public class _2_BwdPickup2BallsAndShoot extends SequentialCommandGroup {
     public Command getCommand(DriveSubsystem m_robotDrive, 
                               IntakeSubsystem m_intake, 
                               ShooterSubsystem m_shooter,
