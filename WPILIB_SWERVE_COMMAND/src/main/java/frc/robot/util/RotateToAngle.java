@@ -46,6 +46,11 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
   startup calibration is in progress and completed. The logging information
   will give you more insight into that.
  */
+/**
+ * @deprecated This is for "example code use only".
+ *             For the fielded robot, please use frc.robot.commands.TurnToAngleProfiled
+ */
+@Deprecated
 public class RotateToAngle {
     AHRS ahrs;
     MecanumDrive myRobot;

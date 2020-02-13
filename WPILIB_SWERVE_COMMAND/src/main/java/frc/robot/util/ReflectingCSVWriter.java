@@ -6,7 +6,6 @@ import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
-import edu.wpi.first.wpilibj.RobotBase;
 
 /**
  * Writes data to a CSV file
@@ -82,14 +81,13 @@ public class ReflectingCSVWriter<T> {
         }
     }
 
-    protected synchronized void writeLine(String line) {
+    private synchronized void writeLine(String line) {
         if (mOutput != null) {
             mOutput.println(line);
         }
     }
 
-    // Call this periodically from any thread to write to disk.
-    public void write() {
+    private void write() {
         while (true) {
             String val = mLinesToWrite.pollFirst();
             if (val == null) {
@@ -99,6 +97,7 @@ public class ReflectingCSVWriter<T> {
         }
     }
 
+    // Call this periodically from any thread to write to disk.
     public synchronized void flush() {
         if (mOutput != null) {
             write();

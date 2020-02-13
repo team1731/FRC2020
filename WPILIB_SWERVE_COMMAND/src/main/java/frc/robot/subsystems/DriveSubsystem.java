@@ -92,8 +92,9 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("rot", m_odometry.getPoseMeters().getRotation().getDegrees());
     SmartDashboard.putNumber("heading", headingRadians);    
     SmartDashboard.putNumber("raw gyro", m_gyro.getAngle());
-    //debugOutput.update(Timer.getFPGATimestamp(), m_odometry, headingRadians, m_gyro.getAngle());
-    //mCSVWriter.add(debugOutput);
+    SmartDashboard.putBoolean("gyro is calibrating", m_gyro.isCalibrating());
+    debugOutput.update(Timer.getFPGATimestamp(), m_odometry, headingRadians, m_gyro.getAngle());
+    mCSVWriter.add(debugOutput);
   }
 
   /**
