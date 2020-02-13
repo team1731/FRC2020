@@ -8,4 +8,9 @@ public class StartIntake extends CommandBase {
 	public StartIntake(IntakeSubsystem m_intake) {
 	}
 
+    @Override
+    public boolean isFinished() {
+      return false;
+    }
+
 }

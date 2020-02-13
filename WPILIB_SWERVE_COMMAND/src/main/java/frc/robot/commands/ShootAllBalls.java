@@ -8,4 +8,9 @@ public class ShootAllBalls extends CommandBase {
 	public ShootAllBalls(ShooterSubsystem m_shooter) {
 	}
 
+    @Override
+    public boolean isFinished() {
+      return false;
+    }
+
 }

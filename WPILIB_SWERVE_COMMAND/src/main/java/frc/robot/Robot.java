@@ -139,9 +139,9 @@ public class Robot extends TimedRobot {
 
 
     int autoNum = 0;
-    String autoSelected = "0"; //DEFAULT AUTO MODE if Drive Team forgets
+    String autoSelected = "3"; //DEFAULT AUTO MODE if Drive Team forgets
     if(RobotBase.isReal()){
-      autoSelected = SmartDashboard.getString("Auto Selector", "2");
+      autoSelected = SmartDashboard.getString("Auto Selector", autoSelected);
     }
     try{
       autoNum = Math.abs(Integer.parseInt(autoSelected));

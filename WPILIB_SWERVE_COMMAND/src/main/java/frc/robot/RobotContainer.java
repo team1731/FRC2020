@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.autonomous._0_MoveForward;
 import frc.robot.autonomous._1_BwdPickup2Balls;
 import frc.robot.autonomous._2_BwdPickup2BallsAndShoot;
+import frc.robot.autonomous._3_AimAndShoot;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.commands.TurnToAngleProfiled;
 import frc.robot.Constants.OIConstants;
@@ -118,7 +119,9 @@ public class RobotContainer {
       new NamedAutoCommand("1 = BWD PICKUP 2 BALLS",
                            new _1_BwdPickup2Balls().getCommand(m_robotDrive)),                                                               
       new NamedAutoCommand("2 - BWD PICKUP 2 BALLS AND SHOOT",
-                           new _2_BwdPickup2BallsAndShoot().getCommand(m_robotDrive, m_intake, m_shooter, m_vision, m_targeting))
+                           new _2_BwdPickup2BallsAndShoot().getCommand(m_robotDrive, m_intake, m_shooter, m_vision, m_targeting)),
+      new NamedAutoCommand("3 - AIM AND SHOOT",
+                           new _3_AimAndShoot().getCommand(m_robotDrive, m_shooter, m_vision, m_targeting))
     };
     return namedAutoCommands;
   }

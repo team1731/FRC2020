@@ -8,4 +8,9 @@ public class SpinUpShooter extends CommandBase {
 	public SpinUpShooter(ShooterSubsystem m_shooter) {
 	}
 
+    @Override
+    public boolean isFinished() {
+      return false;
+    }
+
 }
