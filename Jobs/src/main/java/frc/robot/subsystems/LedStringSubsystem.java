@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.Timer;
 
-import frc.robot.Constants;
+import frc.robot.Constants.OpConstants;
 
 public class LedStringSubsystem extends SubsystemBase {
 
@@ -23,14 +23,14 @@ public class LedStringSubsystem extends SubsystemBase {
   private int m_rainbowFirstPixelHue;
   private int count;
   private double elapsed;
-  private Constants.LedOption mLedOption;
+  private OpConstants.LedOption mLedOption;
   /**
    * Creates a new ExampleSubsystem.
    */
   public LedStringSubsystem() {
     // PWM port 9
     // Must be a PWM header, not MXP or DIO
-    mLed = new AddressableLED(Constants.kPWM_LedSting);
+    mLed = new AddressableLED(OpConstants.kPWM_LedSting);
     mTimer = new Timer();
     // Reuse buffer
     // Default to a length of 60, start empty output
@@ -55,7 +55,7 @@ public class LedStringSubsystem extends SubsystemBase {
 
   public void init() {
     // initialization stuff
-    mLedOption = Constants.LedOption.TEAM;
+    mLedOption = OpConstants.LedOption.TEAM;
     mTimer.start();
     elapsed = mTimer.get();
   }
@@ -103,7 +103,7 @@ public class LedStringSubsystem extends SubsystemBase {
     m_rainbowFirstPixelHue %= 180;
   }
 
-  public void option(Constants.LedOption select) {
+  public void option(OpConstants.LedOption select) {
     // Fill the buffer with selection
     switch (select) {
       case TEAM:

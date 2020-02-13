@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 //import edu.wpi.first.wpilibj.Solenoid;
 import frc.robot.Constants;
+import frc.robot.Constants.OpConstants;
 import edu.wpi.first.wpilibj.PWMTalonFX;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
@@ -42,12 +43,12 @@ public class ColorWheelSubsystem extends SubsystemBase {
   private WheelState mWheelState;
 
   public static final int[] colorSeq = {
-      Constants.kWheelRed,
-      Constants.kWheelGreen,
-      Constants.kWheelBlue,
-      Constants.kWheelYellow,
-      Constants.kWheelRed,
-      Constants.kWheelGreen
+      OpConstants.kWheelRed,
+      OpConstants.kWheelGreen,
+      OpConstants.kWheelBlue,
+      OpConstants.kWheelYellow,
+      OpConstants.kWheelRed,
+      OpConstants.kWheelGreen
   };
 
   public enum WheelState {
@@ -73,17 +74,17 @@ public class ColorWheelSubsystem extends SubsystemBase {
    */
   public ColorWheelSubsystem() {
     
-    mTalonFX = new PWMTalonFX(Constants.kColorWheelTalonFX);
-    mColorWheelSolenoid = Constants.makeDoubleSolenoidForIds(1, Constants.kColorWheelRetract, Constants.kColorWheelExtend);
+    mTalonFX = new PWMTalonFX(OpConstants.kColorWheelTalonFX);
+    mColorWheelSolenoid = Constants.makeDoubleSolenoidForIds(1, OpConstants.kColorWheelRetract, OpConstants.kColorWheelExtend);
     i2cPort = I2C.Port.kOnboard;
     mColorSensor = new ColorSensorV3(i2cPort);
     mColorMatcher = new ColorMatch();
     mWheelState = WheelState.IDLE;
 
-    mColorMatcher.addColorMatch(Constants.kBlueTarget);
-    mColorMatcher.addColorMatch(Constants.kGreenTarget);
-    mColorMatcher.addColorMatch(Constants.kRedTarget);
-    mColorMatcher.addColorMatch(Constants.kYellowTarget);
+    mColorMatcher.addColorMatch(OpConstants.kBlueTarget);
+    mColorMatcher.addColorMatch(OpConstants.kGreenTarget);
+    mColorMatcher.addColorMatch(OpConstants.kRedTarget);
+    mColorMatcher.addColorMatch(OpConstants.kYellowTarget);
   }
 
   @Override
@@ -107,7 +108,7 @@ public class ColorWheelSubsystem extends SubsystemBase {
              } else {
                  // SIGNAL led strip that don't see color wheel
              }
-            colorSample = Constants.kWheelUnknown;    
+            colorSample = OpConstants.kWheelUnknown;    
             break;
         case OVERRIDE:
             // check override button if any is used, otherwise this is of no consequence
@@ -119,22 +120,22 @@ public class ColorWheelSubsystem extends SubsystemBase {
         case START: // 1) read color 2) determine next color set as sample 3) start motor
             colorCount = 0;
             zColor = getMatch();
-            if (zColor > Constants.kWheelUnknown) {
+            if (zColor > OpConstants.kWheelUnknown) {
                 switch (mode) {
                     case ROTATE:
                         colorSample = colorSeq[zColor + 1]; // our sample color is the next one after our match
-                        wheelCount = Constants.kWheelCountRotate;
-                        mTalonFX.setSpeed(Constants.kWheelRotateSpeed);
+                        wheelCount = OpConstants.kWheelCountRotate;
+                        mTalonFX.setSpeed(OpConstants.kWheelRotateSpeed);
                         break;
                     case MATCH:
                         colorSample = getGameColor();   // GET color to Match & determine direction
-                        wheelCount = Constants.kWheelCountMatch;
-                        mTalonFX.setSpeed(Constants.kWheelMatchFwdSpeed);
+                        wheelCount = OpConstants.kWheelCountMatch;
+                        mTalonFX.setSpeed(OpConstants.kWheelMatchFwdSpeed);
                         break;
                     default:
                         break;
                 }
-                if (colorSample > Constants.kWheelUnknown) {
+                if (colorSample > OpConstants.kWheelUnknown) {
                     newState = WheelState.COUNT;  // only move on if a valid colorSample
                     // SIGNAL led strip that can't get game color data
                 }
@@ -203,16 +204,16 @@ public class ColorWheelSubsystem extends SubsystemBase {
     ColorMatchResult match = mColorMatcher.matchClosestColor(detectedColor);
     matchConfidence = match.confidence;
 
-    if (match.color == Constants.kBlueTarget) {
-        colorId = Constants.kWheelBlue;
-    } else if (match.color == Constants.kRedTarget) {
-        colorId = Constants.kWheelRed;
-    } else if (match.color == Constants.kGreenTarget) {
-        colorId = Constants.kWheelGreen;
-    } else if (match.color == Constants.kYellowTarget) {
-        colorId = Constants.kWheelYellow;
+    if (match.color == OpConstants.kBlueTarget) {
+        colorId = OpConstants.kWheelBlue;
+    } else if (match.color == OpConstants.kRedTarget) {
+        colorId = OpConstants.kWheelRed;
+    } else if (match.color == OpConstants.kGreenTarget) {
+        colorId = OpConstants.kWheelGreen;
+    } else if (match.color == OpConstants.kYellowTarget) {
+        colorId = OpConstants.kWheelYellow;
     } else {
-        colorId = Constants.kWheelUnknown;
+        colorId = OpConstants.kWheelUnknown;
     }
 
     return colorId;
@@ -220,20 +221,20 @@ public class ColorWheelSubsystem extends SubsystemBase {
 
   private int getGameColor() {
     String gameData;
-    int color = Constants.kWheelUnknown;
+    int color = OpConstants.kWheelUnknown;
     gameData = DriverStation.getInstance().getGameSpecificMessage();
     if(gameData.length() > 0)
     {
         switch (gameData.charAt(0))
         {
-            case 'B' : color = Constants.kWheelBlue; break; //Blue case code
-            case 'G' : color = Constants.kWheelGreen; break; //Green case code
-            case 'R' : color = Constants.kWheelRed; break; //Red case code
-            case 'Y' : color = Constants.kWheelYellow; break; //Yellow case code
-            default :  color = Constants.kWheelUnknown; break; //This is corrupt data
+            case 'B' : color = OpConstants.kWheelBlue; break; //Blue case code
+            case 'G' : color = OpConstants.kWheelGreen; break; //Green case code
+            case 'R' : color = OpConstants.kWheelRed; break; //Red case code
+            case 'Y' : color = OpConstants.kWheelYellow; break; //Yellow case code
+            default :  color = OpConstants.kWheelUnknown; break; //This is corrupt data
         }
     } else {
-      color = Constants.kWheelUnknown; //Code for no data received yet
+      color = OpConstants.kWheelUnknown; //Code for no data received yet
     }
     return color;
   }

@@ -9,7 +9,7 @@ package frc.robot.subsystems;
 
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import frc.robot.Constants.OpConstants;
 import edu.wpi.first.wpilibj.PWMTalonFX;
 import edu.wpi.first.wpilibj.DigitalInput;
 
@@ -26,8 +26,8 @@ public class SequencerSubsystem extends SubsystemBase {
    * Creates a new SequencerSubsystem.
    */
   public SequencerSubsystem() {
-    mTalonSeq = new PWMTalonFX(Constants.kMotorPWMSeq);
-    mLowSensor = new DigitalInput(Constants.kLowSequencer);
+    mTalonSeq = new PWMTalonFX(OpConstants.kMotorPWMSeq);
+    mLowSensor = new DigitalInput(OpConstants.kLowSequencer);
     mLowSensorCur = mLowSensor.get();
     mLowSensorLast = mLowSensorCur;
     mPowerCellCount = 0;
@@ -47,8 +47,8 @@ public class SequencerSubsystem extends SubsystemBase {
           mPowerCellCount++;
         }
     } else {
-        if (mPowerCellCount < Constants.kMaxPowerCells) {
-            mTalonSeq.setSpeed(Constants.kMotorSeqFwdSpeed);
+        if (mPowerCellCount < OpConstants.kMaxPowerCells) {
+            mTalonSeq.setSpeed(OpConstants.kMotorSeqFwdSpeed);
             // incr count at beginning of intaking powercell
             //if (mLowSensorLast) {
             //    mPowerCellCount++;
@@ -62,7 +62,7 @@ public class SequencerSubsystem extends SubsystemBase {
    * For Shooting: Enables the Sequencer by turning on motor.
    */
   public void forward() {
-    mTalonSeq.setSpeed(Constants.kMotorSeqFwdSpeed);
+    mTalonSeq.setSpeed(OpConstants.kMotorSeqFwdSpeed);
     mPowerCellCount = 0;
   }
 
@@ -70,7 +70,7 @@ public class SequencerSubsystem extends SubsystemBase {
    * For Ejecting balls: Reverses the motor.
    */
   public void reverse() {
-    mTalonSeq.setSpeed(Constants.kMotorSeqRevSpeed);
+    mTalonSeq.setSpeed(OpConstants.kMotorSeqRevSpeed);
     mPowerCellCount = 0;
   }
 
@@ -86,7 +86,7 @@ public class SequencerSubsystem extends SubsystemBase {
   }
 
   public boolean getMaxPowerCells() {
-    return(mPowerCellCount >= Constants.kMaxPowerCells);
+    return(mPowerCellCount >= OpConstants.kMaxPowerCells);
   }
 
   public int getPowerCellCount() {

@@ -9,6 +9,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.OpConstants;
 import edu.wpi.first.wpilibj.PWMTalonFX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 //import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -23,8 +24,8 @@ public class IntakeSubsystem extends SubsystemBase {
    * Creates a new ExampleSubsystem.
    */
   public IntakeSubsystem() {
-    mTalonIntake = new PWMTalonFX(Constants.kMotorPWMIntake);
-    mIntakeSolenoid = Constants.makeDoubleSolenoidForIds(0, Constants.kIntakeRetract, Constants.kIntakeExtend);
+    mTalonIntake = new PWMTalonFX(OpConstants.kMotorPWMIntake);
+    mIntakeSolenoid = Constants.makeDoubleSolenoidForIds(0, OpConstants.kIntakeRetract, OpConstants.kIntakeExtend);
     mTalonState = "Off";
   }
 
@@ -38,7 +39,7 @@ public class IntakeSubsystem extends SubsystemBase {
    */
   public void extend() {
     mIntakeSolenoid.set(DoubleSolenoid.Value.kForward);
-    mTalonIntake.setSpeed(Constants.kMotorIntakeFwdSpeed);
+    mTalonIntake.setSpeed(OpConstants.kMotorIntakeFwdSpeed);
     mTalonState = "Extending/Fwd";
   }
 
@@ -47,7 +48,7 @@ public class IntakeSubsystem extends SubsystemBase {
    */
   public void eject() {
     //mIntakeSolenoid.set(true);
-    mTalonIntake.setSpeed(Constants.kMotorIntakeRevSpeed);
+    mTalonIntake.setSpeed(OpConstants.kMotorIntakeRevSpeed);
     mTalonState = "Ejecting/Rev";
   }
 

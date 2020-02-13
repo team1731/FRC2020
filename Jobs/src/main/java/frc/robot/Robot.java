@@ -12,6 +12,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ColorWheelSubsystem;
+import frc.robot.subsystems.LedStringSubsystem;
+import frc.robot.subsystems.SequencerSubsystem;
+import frc.robot.subsystems.ShootClimbSubsystem;
+
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -23,6 +29,14 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
+  // The robot's subsystems and commands are defined here...
+  public IntakeSubsystem m_intake = new IntakeSubsystem();
+  public SequencerSubsystem m_sequencer = new SequencerSubsystem();
+  public ShootClimbSubsystem m_shootclimb = new ShootClimbSubsystem();
+  public ColorWheelSubsystem m_colorwheel = new ColorWheelSubsystem();
+  public LedStringSubsystem m_ledstring = new LedStringSubsystem();
+
+  
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -31,11 +45,17 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
-    m_robotContainer = new RobotContainer();
+    m_robotContainer = new RobotContainer(m_intake, m_sequencer, m_shootclimb);
     
     m_robotContainer.initSmartDashboard();
 
-    m_robotContainer.initSubsystems();
+  // initial SubSystems to at rest states
+    m_intake.retract();
+    m_sequencer.stop();
+    m_shootclimb.disable();
+    m_colorwheel.init();
+    m_ledstring.init();
+  
         
     SmartDashboard.putString("Auto Num", "0");
   }
@@ -108,6 +128,10 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+
+    SmartDashboard.putBoolean("LowSensor",  m_sequencer.getLowSensor());
+    SmartDashboard.putNumber("PowerCellCount",  (double)m_sequencer.getPowerCellCount());
+    SmartDashboard.putString("Intake State",  m_intake.getIntakeState());
   }
 
   /**
