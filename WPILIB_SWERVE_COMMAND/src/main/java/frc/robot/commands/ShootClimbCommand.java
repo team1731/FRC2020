@@ -7,53 +7,79 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.IntakeSubsystem;
+import java.util.function.BooleanSupplier;
+
+import frc.robot.subsystems.ShootClimbSubsystem;
 import frc.robot.subsystems.SequencerSubsystem;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /**
  * An example command that uses an example subsystem.
  */
-public class StartIntake extends CommandBase {
+public class ShootClimbCommand extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final IntakeSubsystem m_IntakeSubsystem;
+  private final ShootClimbSubsystem m_ShootClimbSubsystem;
   private final SequencerSubsystem m_SeqSubsystem;
+  
+  private final BooleanSupplier shoot;
+  private boolean last;
+  private boolean activate;
+
   /**
    * Creates a new ExampleCommand.
    *
-   * @param intakeSubsystem The intake subsystem this command will run on
+   * @param ShootClimbSubsystem The intake subsystem this command will run on
    * @param seqSubsystem The sequencer subsystem this command will run on
    */
-  public StartIntake(IntakeSubsystem intakeSubsystem, SequencerSubsystem seqSubsystem) {
-    m_IntakeSubsystem = intakeSubsystem;
+  public ShootClimbCommand(ShootClimbSubsystem shootClimbSubsystem, SequencerSubsystem seqSubsystem, BooleanSupplier shoot) {
+    m_ShootClimbSubsystem = shootClimbSubsystem;
     m_SeqSubsystem = seqSubsystem;
+
+    this.shoot = shoot;
+    activate = false;
+    last = activate;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(intakeSubsystem, seqSubsystem);
+    addRequirements(shootClimbSubsystem, seqSubsystem);
   }
 
   // Called when the command is initially scheduled.
+  // If it is used as Default command then it gets call all the time
   @Override
   public void initialize() {
-    m_IntakeSubsystem.extend();
-    //m_SeqSubsystem.stop();
+    //m_ShootClimbSubsystem.disable(); Can't call this all the time it will make it ineffective
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_SeqSubsystem.addPowerCell();
+
+    if (shoot.getAsBoolean()) {
+      activate = true;
+    } else {
+      activate = false;
+    }
+
+    if (last != activate) {
+      if (activate) {
+        m_ShootClimbSubsystem.hoodRetract(); // open shooting hood for shooting
+        m_SeqSubsystem.forward();  // turn on sequencer to shoot balls
+      } else {
+        m_SeqSubsystem.stop(); // turn off sequencer, should be empty
+        m_ShootClimbSubsystem.hoodExtend(); // close shooting hood - to go under color wheel
+      }
+      last = activate;
+    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_IntakeSubsystem.retract();
-    //m_SeqSubsystem.stop();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_SeqSubsystem.getMaxPowerCells();
+    return false;
   }
+
 }

@@ -9,13 +9,12 @@ package frc.robot.commands;
 
 import frc.robot.subsystems.ShootClimbSubsystem;
 import frc.robot.subsystems.SequencerSubsystem;
-//import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /**
  * An example command that uses an example subsystem.
  */
-public class ShootAllBalls extends WaitCommand {
+public class ShootSeqCommand extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final ShootClimbSubsystem shootSubsystem;
   private final SequencerSubsystem seqSubsystem;
@@ -26,8 +25,7 @@ public class ShootAllBalls extends WaitCommand {
    * @param intakeSubsystem The intake subsystem this command will run on
    * @param seqSubsystem The sequencer subsystem this command will run on
    */
-  public ShootAllBalls(ShootClimbSubsystem shootClimbSubsystem, SequencerSubsystem sequenceSubsystem) {
-    super(5);  // how many seconds to enable sequencer and keep hood open for shooting - extends WaitCommand
+  public ShootSeqCommand(ShootClimbSubsystem shootClimbSubsystem, SequencerSubsystem sequenceSubsystem) {
     shootSubsystem = shootClimbSubsystem;
     seqSubsystem = sequenceSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
@@ -40,14 +38,17 @@ public class ShootAllBalls extends WaitCommand {
   public void initialize() {
     shootSubsystem.hoodExtend();
     seqSubsystem.forward();
-    super.initialize();
+    //seqSubsystem.stop();
   }
 
-  /*/ Called every time the scheduler runs while the command is scheduled.
+  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    // get necessary input
+    //if (!m_SeqSubsystem.getMaxPowerCells()) {
+    //}
   }
-  */
+
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
@@ -55,10 +56,9 @@ public class ShootAllBalls extends WaitCommand {
     shootSubsystem.hoodRetract();
   }
 
-  /*/ Returns true when the command should end.
+  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return false;
   }
-  */
 }
