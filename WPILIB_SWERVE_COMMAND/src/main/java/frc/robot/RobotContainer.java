@@ -38,13 +38,13 @@ import frc.robot.Constants.OIConstants;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  NamedAutoCommand[] namedAutoCommands;
-  DriveSubsystem m_robotDrive;
+  private NamedAutoCommand[] namedAutoCommands;
 
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
   XboxController m_operatorController = new XboxController(OIConstants.kOperatorControllerPort); 
 
+  private DriveSubsystem m_robotDrive;
   private IntakeSubsystem m_intake;
   private ShootClimbSubsystem m_shootclimb;
   private SequencerSubsystem m_sequencer;
