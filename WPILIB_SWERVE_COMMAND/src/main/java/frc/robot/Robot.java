@@ -13,10 +13,12 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.ColorWheelSubsystem;
+import frc.robot.subsystems.LedStringSubsystem;
+import frc.robot.subsystems.SequencerSubsystem;
+import frc.robot.subsystems.ShootClimbSubsystem;
 import frc.robot.subsystems.TargetingSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.util.DebugOutput;
@@ -40,12 +42,13 @@ public class Robot extends TimedRobot {
   
   // The robot's subsystems
   public DriveSubsystem m_robotDrive;
-  public IntakeSubsystem m_intake;
-  public ShooterSubsystem m_shooter;
   public TargetingSubsystem m_targeting;
   public VisionSubsystem m_vision;
-  public ClimberSubsystem m_climber;
-
+  public IntakeSubsystem m_intake;
+  public SequencerSubsystem m_sequencer;
+  public ShootClimbSubsystem m_shootclimb;
+  public ColorWheelSubsystem m_colorwheel;
+  public LedStringSubsystem m_ledstring;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -60,17 +63,19 @@ public class Robot extends TimedRobot {
     }
 
     m_robotDrive = new DriveSubsystem(mCSVWriter);
-    m_intake = new IntakeSubsystem(mCSVWriter);
-    m_shooter = new ShooterSubsystem(mCSVWriter);
     m_targeting = new TargetingSubsystem(mCSVWriter);
     m_vision = new VisionSubsystem(mCSVWriter);
-    m_climber = new ClimberSubsystem(mCSVWriter);
+    m_intake = new IntakeSubsystem(mCSVWriter);
+    m_sequencer = new SequencerSubsystem();
+    m_shootclimb = new ShootClimbSubsystem();
+    m_colorwheel = new ColorWheelSubsystem();
+    m_ledstring = new LedStringSubsystem();
     
     m_robotDrive.zeroHeading();
 
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
-    m_robotContainer = new RobotContainer(m_robotDrive, m_intake, m_shooter, m_targeting, m_vision, m_climber);
+    m_robotContainer = new RobotContainer(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_targeting, m_vision);
 
 
     leftFrontAbsEncoder = new AnalogInput(1);
@@ -82,8 +87,14 @@ public class Robot extends TimedRobot {
                                rightFrontAbsEncoder.getVoltage(),
                                leftRearAbsEncoder.getVoltage(),
                                rightRearAbsEncoder.getVoltage());
-
-
+							   
+  // initial SubSystems to at rest states
+    m_intake.retract();
+    m_sequencer.stop();
+    m_shootclimb.disable();
+    m_colorwheel.init();
+    m_ledstring.init();
+  
     SmartDashboard.putString("Auto Num", "0");
   }
 
@@ -177,6 +188,10 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+
+    SmartDashboard.putBoolean("LowSensor",  m_sequencer.getLowSensor());
+    SmartDashboard.putNumber("PowerCellCount",  (double)m_sequencer.getPowerCellCount());
+    SmartDashboard.putString("Intake State",  m_intake.getIntakeState());
   }
 
   /**

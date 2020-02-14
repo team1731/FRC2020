@@ -7,58 +7,55 @@
 
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import frc.robot.subsystems.ShootClimbSubsystem;
-import frc.robot.subsystems.SequencerSubsystem;
-//import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /**
  * An example command that uses an example subsystem.
  */
-public class ShootAllBalls extends WaitCommand {
+public class ClimbingCommand extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final ShootClimbSubsystem shootSubsystem;
-  private final SequencerSubsystem seqSubsystem;
+  private final ShootClimbSubsystem m_ShootClimbSubsystem;
+  
+  private final DoubleSupplier climb;
 
   /**
    * Creates a new ExampleCommand.
    *
-   * @param intakeSubsystem The intake subsystem this command will run on
+   * @param ShootClimbSubsystem The intake subsystem this command will run on
    * @param seqSubsystem The sequencer subsystem this command will run on
    */
-  public ShootAllBalls(ShootClimbSubsystem shootClimbSubsystem, SequencerSubsystem sequenceSubsystem) {
-    super(5);  // how many seconds to enable sequencer and keep hood open for shooting - extends WaitCommand
-    shootSubsystem = shootClimbSubsystem;
-    seqSubsystem = sequenceSubsystem;
+  public ClimbingCommand(ShootClimbSubsystem shootClimbSubsystem, DoubleSupplier climb) {
+    m_ShootClimbSubsystem = shootClimbSubsystem;  
+    this.climb = climb;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(shootClimbSubsystem, seqSubsystem);
+    addRequirements(shootClimbSubsystem);
   }
 
   // Called when the command is initially scheduled.
   // If it is used as Default command then it gets call all the time
   @Override
   public void initialize() {
-    shootSubsystem.hoodExtend();
-    seqSubsystem.forward();
-    super.initialize();
+    //m_ShootClimbSubsystem.disable(); Can't call this all the time it will make it ineffective
   }
 
-  /*/ Called every time the scheduler runs while the command is scheduled.
+  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    m_ShootClimbSubsystem.setClimber(climb.getAsDouble());
   }
-  */
+
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    seqSubsystem.stop();
-    shootSubsystem.hoodRetract();
   }
 
-  /*/ Returns true when the command should end.
+  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return false;
   }
-  */
+
 }
