@@ -115,7 +115,7 @@ public final class Constants {
   
     public static final class OpConstants {
         // PWM
-        public static final int kPWM_LedSting = 9;         // Addressable Led String
+        public static final int kPWM_LedSting = 6;         // Addressable Led String
 
         // Intake
         public static final int kMotorPWMIntake = 0;      // Intake

@@ -25,7 +25,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
   private final DoubleSolenoid mShootHoodSolenoid;
   //private final PWMTalonFX mTalonShoot;
   private final TalonFX mTalonShoot1;
-  //private final TalonFX mTalonShoot2;
+  private final TalonFX mTalonShoot2;
   private DigitalOutput mColor1;
   private DigitalOutput zMode;
 
@@ -41,26 +41,37 @@ public class ShootClimbSubsystem extends SubsystemBase {
     mShootHoodSolenoid = Constants.makeDoubleSolenoidForIds(0, OpConstants.kHoodRetract, OpConstants.kHoodExtend);
     //mTalonShoot = new PWMTalonFX(OpConstants.kMotorPWMShoot1);
     mTalonShoot1 = new TalonFX(OpConstants.kMotorCANShoot1);
-    //mTalonShoot2 = new TalonFX(OpConstants.kMotorCANShoot2);
+    mTalonShoot2 = new TalonFX(OpConstants.kMotorCANShoot2);
     mTalonShoot1.configFactoryDefault();
+    mTalonShoot2.configFactoryDefault();
     /* Config sensor used for Primary PID [Velocity] */
     mTalonShoot1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, OpConstants.kPIDLoopIdx, OpConstants.kTimeoutMs);
+    mTalonShoot2.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, OpConstants.kPIDLoopIdx, OpConstants.kTimeoutMs);
     /** Phase sensor accordingly. 
       * Positive Sensor Reading should match Green (blinking) Leds on Talon
     */
 		mTalonShoot1.setSensorPhase(true);
+		mTalonShoot2.setSensorPhase(true);
 
 		/* Config the peak and nominal outputs */
 		mTalonShoot1.configNominalOutputForward(0, OpConstants.kTimeoutMs);
 		mTalonShoot1.configNominalOutputReverse(0, OpConstants.kTimeoutMs);
 		mTalonShoot1.configPeakOutputForward(1, OpConstants.kTimeoutMs);
 		mTalonShoot1.configPeakOutputReverse(-1, OpConstants.kTimeoutMs);
+		mTalonShoot2.configNominalOutputForward(0, OpConstants.kTimeoutMs);
+		mTalonShoot2.configNominalOutputReverse(0, OpConstants.kTimeoutMs);
+		mTalonShoot2.configPeakOutputForward(1, OpConstants.kTimeoutMs);
+		mTalonShoot2.configPeakOutputReverse(-1, OpConstants.kTimeoutMs);
 
 		/* Config the Velocity closed loop gains in slot0 */
 		mTalonShoot1.config_kF(OpConstants.kPIDLoopIdx, OpConstants.kGains_Velocity.kF, OpConstants.kTimeoutMs);
 		mTalonShoot1.config_kP(OpConstants.kPIDLoopIdx, OpConstants.kGains_Velocity.kP, OpConstants.kTimeoutMs);
 		mTalonShoot1.config_kI(OpConstants.kPIDLoopIdx, OpConstants.kGains_Velocity.kI, OpConstants.kTimeoutMs);
 		mTalonShoot1.config_kD(OpConstants.kPIDLoopIdx, OpConstants.kGains_Velocity.kD, OpConstants.kTimeoutMs);
+		mTalonShoot2.config_kF(OpConstants.kPIDLoopIdx, OpConstants.kGains_Velocity.kF, OpConstants.kTimeoutMs);
+		mTalonShoot2.config_kP(OpConstants.kPIDLoopIdx, OpConstants.kGains_Velocity.kP, OpConstants.kTimeoutMs);
+		mTalonShoot2.config_kI(OpConstants.kPIDLoopIdx, OpConstants.kGains_Velocity.kI, OpConstants.kTimeoutMs);
+		mTalonShoot2.config_kD(OpConstants.kPIDLoopIdx, OpConstants.kGains_Velocity.kD, OpConstants.kTimeoutMs);
 
     modeClimbing = false;
     extendRetract = 0;
@@ -119,7 +130,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
     mShootHoodSolenoid.set(DoubleSolenoid.Value.kReverse);
     //mTalonShoot.setSpeed(0);
     mTalonShoot1.set(ControlMode.PercentOutput, 0);
-    //mTalonShoot2.set(ControlMode.PercentOutput, 0);
+    mTalonShoot2.set(ControlMode.PercentOutput, 0);
   }
 
   public void modeShoot() {
