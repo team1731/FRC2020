@@ -23,7 +23,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
   private final DoubleSolenoid mShootClimbSolenoid;
   private final DoubleSolenoid mClimberSolenoid;
   private final DoubleSolenoid mShootHoodSolenoid;
-  private final PWMTalonFX mTalonShoot;
+  //private final PWMTalonFX mTalonShoot;
   private final TalonFX mTalonShoot1;
   //private final TalonFX mTalonShoot2;
   private DigitalOutput mColor1;
@@ -39,7 +39,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
     mShootClimbSolenoid = Constants.makeDoubleSolenoidForIds(0, OpConstants.kShooting, OpConstants.kClimbing);
     mClimberSolenoid = Constants.makeDoubleSolenoidForIds(0, OpConstants.kClimbRetract, OpConstants.kClimbExtend);
     mShootHoodSolenoid = Constants.makeDoubleSolenoidForIds(0, OpConstants.kHoodRetract, OpConstants.kHoodExtend);
-    mTalonShoot = new PWMTalonFX(OpConstants.kMotorPWMShoot1);
+    //mTalonShoot = new PWMTalonFX(OpConstants.kMotorPWMShoot1);
     mTalonShoot1 = new TalonFX(OpConstants.kMotorCANShoot1);
     //mTalonShoot2 = new TalonFX(OpConstants.kMotorCANShoot2);
     mTalonShoot1.configFactoryDefault();
@@ -80,7 +80,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
   public void enableShooting() {
     mColor1.set(true);
     mShootClimbSolenoid.set(DoubleSolenoid.Value.kReverse);
-    mTalonShoot.setSpeed(0.7);
+    //mTalonShoot.setSpeed(0.7);
     /**
 			 * Convert 500 RPM to units / 100ms.
 			 * 2048(FX) 4096(SRX) Units/Rev * 500 RPM / 600 100ms/min in either direction:
@@ -89,15 +89,15 @@ public class ShootClimbSubsystem extends SubsystemBase {
     double velocity = 0.5; // guessing between -1.0 to 1.0
 		double targetVelocity_UnitsPer100ms = velocity * 500.0 * 2048 / 600;
 		/* 500 RPM in either direction */
-		mTalonShoot1.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
-    //mTalonShoot1.set(ControlMode.PercentOutput,OpConstants.kMotorShootPercent);
+		//mTalonShoot1.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
+    mTalonShoot1.set(ControlMode.PercentOutput,OpConstants.kMotorShootPercent);
     //mTalonShoot2.set(ControlMode.PercentOutput,OpConstants.kMotorShootPercent);
   }
   public void enableClimbing() {
     mColor1.set(false);
     mShootClimbSolenoid.set(DoubleSolenoid.Value.kForward);
-    mTalonShoot.setSpeed(0);
-    //mTalonShoot1.set(ControlMode.PercentOutput,OpConstants.kMotorShootPercent);
+    //mTalonShoot.setSpeed(0);
+    mTalonShoot1.set(ControlMode.PercentOutput,OpConstants.kMotorShootPercent);
     //mTalonShoot2.set(ControlMode.PercentOutput,OpConstants.kMotorShootPercent);
   }
 
@@ -117,24 +117,24 @@ public class ShootClimbSubsystem extends SubsystemBase {
     mShootClimbSolenoid.set(DoubleSolenoid.Value.kReverse);
     mClimberSolenoid.set(DoubleSolenoid.Value.kReverse);
     mShootHoodSolenoid.set(DoubleSolenoid.Value.kReverse);
-    mTalonShoot.setSpeed(0);
-    //mTalonShoot1.set(ControlMode.PercentOutput, 0);
+    //mTalonShoot.setSpeed(0);
+    mTalonShoot1.set(ControlMode.PercentOutput, 0);
     //mTalonShoot2.set(ControlMode.PercentOutput, 0);
   }
 
   public void modeShoot() {
     modeClimbing = false;
     zMode.set(false);
-    mTalonShoot.setSpeed(0.5);
-    //mTalonShoot1.set(ControlMode.PercentOutput,OpConstants.kMotorShootPercent);
+    //mTalonShoot.setSpeed(0.5);
+    mTalonShoot1.set(ControlMode.PercentOutput,OpConstants.kMotorShootPercent);
     //mTalonShoot2.set(ControlMode.PercentOutput,OpConstants.kMotorShootPercent);
   }
 
   public void modeClimb() {
     modeClimbing = true;
     zMode.set(true);
-    mTalonShoot.setSpeed(-0.0); // for testing only
-    //mTalonShoot1.set(ControlMode.PercentOutput,OpConstants.kMotorShootPercent);
+    //mTalonShoot.setSpeed(-0.0); // for testing only
+    mTalonShoot1.set(ControlMode.PercentOutput,OpConstants.kMotorShootPercent);
     //mTalonShoot2.set(ControlMode.PercentOutput, 0);
   }
 
