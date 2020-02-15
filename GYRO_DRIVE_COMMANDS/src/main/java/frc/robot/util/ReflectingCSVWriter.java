@@ -6,9 +6,6 @@ import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
-import edu.wpi.first.wpilibj.RobotBase;
-
-
 /**
  * Writes data to a CSV file
  */
@@ -33,34 +30,26 @@ public class ReflectingCSVWriter<T> {
     }
 
     public ReflectingCSVWriter(String fileName, Class<T> typeClass) {
-        String pathName;
-        if(RobotBase.isReal()){
-            pathName = "/home/lvuser/" + fileName + ".csv";
-        }
-        else{
-            pathName = fileName;
-        }
-      
     	//
     	// rename existing file so it's
     	// available after we cycle power
     	//
-    	File existingFile = new File(pathName);
+    	File existingFile = new File(fileName);
     	if(existingFile.exists()) {
-    		File previousFile = new File(pathName + ".prev");
+    		File previousFile = new File(fileName + ".prev");
     		if(previousFile.exists()) {
     			previousFile.delete();
     		}
     		existingFile.renameTo(previousFile);
     	}
     	
+    	
         mFields = typeClass.getFields();
         try {
-            mOutput = new PrintWriter(pathName);
+            mOutput = new PrintWriter(fileName);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        
         // Write field names.
         StringBuffer line = new StringBuffer();
         for (Field field : mFields) {
@@ -91,13 +80,14 @@ public class ReflectingCSVWriter<T> {
         }
     }
 
-    private synchronized void writeLine(String line) {
+    protected synchronized void writeLine(String line) {
         if (mOutput != null) {
             mOutput.println(line);
         }
     }
 
-    private void write() {
+    // Call this periodically from any thread to write to disk.
+    public void write() {
         while (true) {
             String val = mLinesToWrite.pollFirst();
             if (val == null) {
@@ -107,7 +97,6 @@ public class ReflectingCSVWriter<T> {
         }
     }
 
-    // Call this periodically from any thread to write to disk.
     public synchronized void flush() {
         if (mOutput != null) {
             write();

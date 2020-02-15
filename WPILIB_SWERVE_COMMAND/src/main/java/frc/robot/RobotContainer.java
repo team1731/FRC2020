@@ -6,35 +6,30 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot;
-
-import java.util.List;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
-import edu.wpi.first.wpilibj.geometry.Pose2d;
-import edu.wpi.first.wpilibj.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.geometry.Translation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.trajectory.Trajectory;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile.State;
-import edu.wpi.first.wpilibj.trajectory.constraint.TrajectoryConstraint;
-import edu.wpi.first.wpilibj.util.Units;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.autonomous.AutoModes;
-import frc.robot.Constants.AutoConstants;
-import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.OIConstants;
+import frc.robot.autonomous._0_MoveForward;
+import frc.robot.autonomous._1_BwdPickup2Balls;
+import frc.robot.autonomous._2_BwdPickup2BallsAndShoot;
+import frc.robot.autonomous._3_AimAndShoot;
+import frc.robot.commands.*;
 import frc.robot.subsystems.DriveSubsystem;
-//import frc.robot.subsystems.InstrumentedSwerveControllerCommand;
-import frc.robot.util.DebugOutput;
-import frc.robot.util.ReflectingCSVWriter;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.SequencerSubsystem;
+import frc.robot.subsystems.TargetingSubsystem;
+import frc.robot.subsystems.ShootClimbSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
+
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.OIConstants;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -43,22 +38,35 @@ import frc.robot.util.ReflectingCSVWriter;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems
-  public final DriveSubsystem m_robotDrive;
+  private NamedAutoCommand[] namedAutoCommands;
 
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+  XboxController m_operatorController = new XboxController(OIConstants.kOperatorControllerPort); 
 
-  ReflectingCSVWriter<DebugOutput> mCSVWriter;
+  private DriveSubsystem m_robotDrive;
+  private IntakeSubsystem m_intake;
+  private ShootClimbSubsystem m_shootclimb;
+  private SequencerSubsystem m_sequencer;
+  private TargetingSubsystem m_targeting;
+  private VisionSubsystem m_vision;
 
+  // Controller Triggers
+  public enum HansTriggers {DR_TRIG_LEFT, DR_TRIG_RIGHT, OP_TRIG_LEFT, OP_TRIG_RIGHT}
+  
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
-  public RobotContainer(ReflectingCSVWriter<DebugOutput> mCSVWriter) {
-    this.mCSVWriter = mCSVWriter;
-
-    m_robotDrive = new DriveSubsystem(mCSVWriter);
-
+  public RobotContainer(DriveSubsystem m_robotDrive, IntakeSubsystem m_intake, SequencerSubsystem m_sequencer, ShootClimbSubsystem m_shootclimb, TargetingSubsystem m_targeting, VisionSubsystem m_vision) {
+    this.m_robotDrive = m_robotDrive;
+    this.m_intake = m_intake;
+    this.m_sequencer = m_sequencer;
+    this.m_targeting = m_targeting;
+    this.m_vision = m_vision;
+    this.m_shootclimb = m_shootclimb;
+    
+    namedAutoCommands = setupNamedAutoCommands();
+    
     // Configure the button bindings
     configureButtonBindings();
 
@@ -81,8 +89,9 @@ public class RobotContainer {
             // positive value when we pull to the left (remember, CCW is positive in
             // mathematics). Xbox controllers return positive values when you pull to
             // the right by default.
-            -m_driverController.getX(GenericHID.Hand.kRight), true), m_robotDrive) // <------- RDB2020 I added m_robotDrive here to get rid of
-                                                                                   //                  "Default Command must require subsytem"
+            -m_driverController.getX(GenericHID.Hand.kRight), true),
+            
+            m_robotDrive)                                                                          
         );
   }
 
@@ -93,41 +102,109 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
+    // Turn to 90 degrees when the 'X' button is pressed, with a 5 second timeout
+    new JoystickButton(m_driverController, Button.kX.value)
+        .whenPressed(new TurnToAngle(30, m_robotDrive).withTimeout(5));
+
+    // Turn to -90 degrees with a profile when the 'A' button is pressed, with a 5 second timeout
+    new JoystickButton(m_driverController, Button.kA.value)
+        .whenPressed(new TurnToAngleProfiled(30, m_robotDrive).withTimeout(5));
+
+
+    // Intake & Sequencer ejects works will button is held
+    new JoystickButton(m_operatorController, 1).whenHeld(new ParallelCommandGroup(
+      new InstantCommand(m_intake::eject, m_intake),
+      new InstantCommand(m_sequencer::reverse, m_sequencer)
+      )).whenReleased(new ParallelCommandGroup(
+        new InstantCommand(m_intake::retract, m_intake),
+        new InstantCommand(m_sequencer::stop, m_sequencer)
+      )
+    );
+
+    // Activate Intake via Operator Left Axis/Trigger
+    new HansTrigger(HansTriggers.OP_TRIG_LEFT).whileActiveOnce(
+      new IntakeSeqCommand(m_intake, m_sequencer)
+    );
+
+    // Activate Shooter via Operator Right Axis/Trigger
+    new HansTrigger(HansTriggers.OP_TRIG_RIGHT).whileActiveOnce(
+      new ShootSeqCommand(m_shootclimb, m_sequencer)
+    );
+
+    // Climbing Mode
+    new StickTrigger().whileActiveContinuous(
+      new ClimbingCommand(m_shootclimb, () -> m_operatorController.getRawAxis(1))
+    );
+
+    // Select Shoot or Climb Mode
+    new JoystickButton(m_operatorController, 3)
+        .whenPressed(new InstantCommand(m_shootclimb::modeClimb, m_shootclimb));
+        //.whenReleased(new InstantCommand(m_ShootClimbSubsystem::off, m_ShootClimbSubsystem));
+    new JoystickButton(m_operatorController, 4)
+        //.whenPressed(new InstantCommand(m_ShootClimbSubsystem::on, m_ShootClimbSubsystem))
+        .whenReleased(new InstantCommand(m_shootclimb::modeShoot, m_shootclimb));
+    
   }
 
-  public String getAutonomousName(int autoNum) {
-    return AutoModes.getName(autoNum);
-  }
-
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand(int autoNum) {
-    Command command = AutoModes.getCommand(m_robotDrive, autoNum);
-
-    Trajectory trajectory = AutoModes.getTrajectory(autoNum);
-    if(trajectory == null){
-      return null;
+  public NamedAutoCommand getNamedAutonomousCommand(int autoNum){
+    if(autoNum < 0 || autoNum >= namedAutoCommands.length){
+      System.out.println("specified AUTO NUM (" + autoNum + ") is INVALID -- defaulting to MOVE FORWARD!!!");
+      autoNum = 0;
     }
-    double duration = trajectory.getTotalTimeSeconds();
-    System.out.println("Autonomous: " + getAutonomousName(autoNum));
-    System.out.println("trajectory duration " +  duration);
-    for(int i=0; i<=(int)duration; i++){
-      Trajectory.State state = trajectory.sample(i);
-      System.out.println("state " + i + "                 poseMetersX " + state.poseMeters.getTranslation().getX());
-      System.out.println("state " + i + "                 poseMetersY " + state.poseMeters.getTranslation().getY());
-      System.out.println("state " + i + "         poseMetersTheta Deg " + state.poseMeters.getRotation().getDegrees());
-      System.out.println("state " + i + "     velocityMetersPerSecond " + state.velocityMetersPerSecond);
-    }
-    Trajectory.State state = trajectory.sample(duration);
-    System.out.println("state (end)             poseMetersX " + state.poseMeters.getTranslation().getX());
-    System.out.println("state (end)             poseMetersY " + state.poseMeters.getTranslation().getY());
-    System.out.println("state (end)     poseMetersTheta Deg " + state.poseMeters.getRotation().getDegrees());
-    System.out.println("state (end) velocityMetersPerSecond " + state.velocityMetersPerSecond);
-
-    // Run path following command, then stop at the end.
-    return command.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
+    return namedAutoCommands[autoNum];
   }
+
+  private NamedAutoCommand[] setupNamedAutoCommands(){
+    NamedAutoCommand[] namedAutoCommands = new NamedAutoCommand[]{
+      new NamedAutoCommand("0 - MOVE FORWARD",
+                           new _0_MoveForward().getCommand(m_robotDrive)),
+      new NamedAutoCommand("1 = BWD PICKUP 2 BALLS",
+                           new _1_BwdPickup2Balls().getCommand(m_robotDrive)),                                                               
+      new NamedAutoCommand("2 - BWD PICKUP 2 BALLS AND SHOOT",
+                           new _2_BwdPickup2BallsAndShoot().getCommand(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting)),
+      new NamedAutoCommand("3 - AIM AND SHOOT",
+                           new _3_AimAndShoot().getCommand(m_robotDrive, m_sequencer, m_shootclimb, m_vision, m_targeting))
+    };
+    return namedAutoCommands;
+  }
+  
+  public class StickTrigger extends Trigger {
+    public boolean get() {
+      //double v = operatorController.getY(Hand.kRight);
+      //v = operatorController.getX(Hand.kRight);
+      //x = operatorController.getRawAxis(0);
+      double y = m_operatorController.getRawAxis(1);
+      return Math.abs(y) < 0.1 ? false : true; 
+    }
+  }
+
+  // Enables Use of controller axis/trigger by creating a Custom Trigger
+  public class HansTrigger extends Trigger {
+    HansTriggers desired;
+    double triggerValue = 0;
+
+    public HansTrigger(HansTriggers selected) {
+      this.desired = selected;
+    }
+
+    @Override
+    public boolean get() {
+      switch (desired) {
+        case DR_TRIG_LEFT:
+          triggerValue = m_driverController.getTriggerAxis(Hand.kLeft);
+          break;
+        case DR_TRIG_RIGHT:
+          triggerValue = m_driverController.getTriggerAxis(Hand.kRight);
+          break;
+        case OP_TRIG_LEFT:
+          triggerValue = m_operatorController.getTriggerAxis(Hand.kLeft);
+          break;
+        case OP_TRIG_RIGHT:
+          triggerValue = m_operatorController.getTriggerAxis(Hand.kRight);
+          break;
+      }
+      return (Math.abs(triggerValue) > 0.5);
+    }
+  }
+
 }

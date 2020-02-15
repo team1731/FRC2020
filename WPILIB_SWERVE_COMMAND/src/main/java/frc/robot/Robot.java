@@ -7,11 +7,20 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ColorWheelSubsystem;
+import frc.robot.subsystems.LedStringSubsystem;
+import frc.robot.subsystems.SequencerSubsystem;
+import frc.robot.subsystems.ShootClimbSubsystem;
+import frc.robot.subsystems.TargetingSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.util.DebugOutput;
 import frc.robot.util.ReflectingCSVWriter;
 
@@ -25,26 +34,60 @@ public class Robot extends TimedRobot {
 
   private Command m_autonomousCommand;
   private RobotContainer m_robotContainer;
-  private ReflectingCSVWriter<DebugOutput> mCSVWriter;
-  private DutyCycleEncoder azimuthEncoder;
-
+  private AnalogInput leftFrontAbsEncoder;
+  private AnalogInput rightFrontAbsEncoder;
+  private AnalogInput leftRearAbsEncoder;
+  private AnalogInput rightRearAbsEncoder;
+  
+  // The robot's subsystems
+  public DriveSubsystem m_robotDrive;
+  public TargetingSubsystem m_targeting;
+  public VisionSubsystem m_vision;
+  public IntakeSubsystem m_intake;
+  public SequencerSubsystem m_sequencer;
+  public ShootClimbSubsystem m_shootclimb;
+  public ColorWheelSubsystem m_colorwheel;
+  public LedStringSubsystem m_ledstring;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   @Override
   public void robotInit() {
-    mCSVWriter = new ReflectingCSVWriter<DebugOutput>("/home/lvuser/PATH-FOLLOWER-LOGS.csv", DebugOutput.class);
+    m_robotDrive = new DriveSubsystem();
+    m_targeting = new TargetingSubsystem();
+    m_vision = new VisionSubsystem();
+    m_intake = new IntakeSubsystem();
+    m_sequencer = new SequencerSubsystem();
+    m_shootclimb = new ShootClimbSubsystem();
+    m_colorwheel = new ColorWheelSubsystem();
+    m_ledstring = new LedStringSubsystem();
+    
+    m_robotDrive.zeroHeading();
+
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
-    m_robotContainer = new RobotContainer(mCSVWriter);
+    m_robotContainer = new RobotContainer(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_targeting, m_vision);
 
-    m_robotContainer.m_robotDrive.zeroHeading();
-    azimuthEncoder = new DutyCycleEncoder(0);
-    azimuthEncoder.setDistancePerRotation(360);
-    azimuthEncoder.setConnectedFrequencyThreshold(150);
 
-    SmartDashboard.putNumber("Auto Num", 0);
+    leftFrontAbsEncoder = new AnalogInput(1);
+    rightFrontAbsEncoder = new AnalogInput(2);
+    leftRearAbsEncoder = new AnalogInput(3);
+    rightRearAbsEncoder = new AnalogInput(4);
+
+    m_robotDrive.resetEncoders(leftFrontAbsEncoder.getVoltage(),
+                               rightFrontAbsEncoder.getVoltage(),
+                               leftRearAbsEncoder.getVoltage(),
+                               rightRearAbsEncoder.getVoltage());
+							   
+  // initial SubSystems to at rest states
+    m_intake.retract();
+    m_sequencer.stop();
+    m_shootclimb.disable();
+    m_colorwheel.init();
+    m_ledstring.init();
+  
+    SmartDashboard.putString("Auto Num", "0");
   }
 
   /**
@@ -56,32 +99,16 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    if(mCSVWriter.isSuspended()){
-      mCSVWriter.resume();
-    }
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
-
-
-    //
-    // ENCODER TESTING
-    //
-    boolean connected = azimuthEncoder.isConnected();
-    // Duty Cycle Frequency in Hz
-    int frequency = azimuthEncoder.getFrequency();
-    // Output of encoder
-    double output = (azimuthEncoder.get()*1000 - 50) * 360/50;
-    // Output scaled by DistancePerPulse
-    double distance = azimuthEncoder.getDistance();
-    //SmartDashboard.putBoolean("Connected", connected);
-    //SmartDashboard.putNumber("Frequency", frequency);
-    //SmartDashboard.putNumber("Output", output);
-    //SmartDashboard.putNumber("Distance", distance);
-
+    SmartDashboard.putNumber("leftFrontAbsEncoder", leftFrontAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
+    SmartDashboard.putNumber("rightFrontAbsEncoder", rightFrontAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
+    SmartDashboard.putNumber("leftRearAbsEncoder", leftRearAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
+    SmartDashboard.putNumber("rightRearAbsEncoder", rightRearAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
   }
 
   /**
@@ -89,9 +116,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
-    if(!mCSVWriter.isSuspended()){
-      mCSVWriter.suspend();
-    }
+    m_robotDrive.suspendCSVWriter();
   }
 
   @Override
@@ -104,30 +129,26 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    if(mCSVWriter.isSuspended()){
-      mCSVWriter.resume();
+    m_robotDrive.resumeCSVWriter();
+
+
+    int autoNum = 0;
+    String autoSelected = "3"; //DEFAULT AUTO MODE if Drive Team forgets
+    if(RobotBase.isReal()){
+      autoSelected = SmartDashboard.getString("Auto Selector", autoSelected);
     }
+    try{
+      autoNum = Math.abs(Integer.parseInt(autoSelected));
+    }
+    catch(Exception e){
+      System.out.println("AUTO NUM did not parse -- defaulting to MOVE FORWARD!!!");
+    }
+    NamedAutoCommand namedAutoCommand = m_robotContainer.getNamedAutonomousCommand(autoNum);
+    m_autonomousCommand = namedAutoCommand.command;
 
-    /*
-     * String autoSelected = SmartDashboard.getString("Auto Selector", "Default");
-     * switch(autoSelected) {
-     *   case "My Auto": 
-     *      autonomousCommand = new MyAutoCommand();
-     *      break;
-     *   case "Default":
-     *   default:
-     *      autonomousCommand = new ExampleCommand();
-     *      break;
-     *  }
-     */
-
-    int autoNum = (int)SmartDashboard.getNumber("Auto Num", 0);
-    System.out.println("\n\n\nAUTO MODE chosen: " + autoNum + " ===> " + m_robotContainer.getAutonomousName(autoNum));
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand(autoNum);
     // schedule the autonomous command (example)
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
-    }
+    System.out.println("Running auto mode " + namedAutoCommand.name);
+    m_autonomousCommand.schedule();
   }
 
   /**
@@ -139,9 +160,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    if(mCSVWriter.isSuspended()){
-      mCSVWriter.resume();
-    }
+    m_robotDrive.resumeCSVWriter();
 
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
@@ -150,6 +169,10 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+
+    SmartDashboard.putBoolean("LowSensor",  m_sequencer.getLowSensor());
+    SmartDashboard.putNumber("PowerCellCount",  (double)m_sequencer.getPowerCellCount());
+    SmartDashboard.putString("Intake State",  m_intake.getIntakeState());
   }
 
   /**

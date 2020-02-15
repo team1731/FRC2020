@@ -9,7 +9,6 @@ package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.wpilibj.AnalogInput;
 //import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
@@ -62,8 +61,8 @@ public class DriveSubsystem extends SubsystemBase {
   /**
    * Creates a new DriveSubsystem.
    */
-  public DriveSubsystem() {
-    mCSVWriter = new ReflectingCSVWriter<>(this.getName(), DebugOutput.class);
+  public DriveSubsystem(ReflectingCSVWriter<DebugOutput> mCSVWriter) {
+    this.mCSVWriter = mCSVWriter;
   }
 
   
@@ -79,10 +78,6 @@ public class DriveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if(mCSVWriter.isSuspended()){
-      mCSVWriter.resume();
-    }
-
     // Update the odometry in the periodic block
     double headingRadians = Math.toRadians(getHeading());
     m_odometry.update(
@@ -93,12 +88,11 @@ public class DriveSubsystem extends SubsystemBase {
         m_rearRight.getState());
     SmartDashboard.putNumber("pose x", m_odometry.getPoseMeters().getTranslation().getX());
     SmartDashboard.putNumber("pose y", m_odometry.getPoseMeters().getTranslation().getY());
-    SmartDashboard.putNumber("rot deg", m_odometry.getPoseMeters().getRotation().getDegrees());
-    SmartDashboard.putNumber("heading radians", headingRadians);    
+    SmartDashboard.putNumber("rot", m_odometry.getPoseMeters().getRotation().getDegrees());
+    SmartDashboard.putNumber("heading", headingRadians);    
     SmartDashboard.putNumber("raw gyro", m_gyro.getAngle());
-    SmartDashboard.putBoolean("gyro is calibrating", m_gyro.isCalibrating());
-    debugOutput.update(Timer.getFPGATimestamp(), m_odometry, headingRadians, m_gyro.getAngle());
-    mCSVWriter.add(debugOutput);
+    //debugOutput.update(Timer.getFPGATimestamp(), m_odometry, headingRadians, m_gyro.getAngle());
+    //mCSVWriter.add(debugOutput);
   }
 
   /**
@@ -163,7 +157,7 @@ public class DriveSubsystem extends SubsystemBase {
   public void setModuleStates(SwerveModuleState[] desiredStates) {
     SwerveDriveKinematics.normalizeWheelSpeeds(desiredStates,
                                                DriveConstants.kMaxSpeedMetersPerSecond);
-    m_frontLeft.setDesiredState(desiredStates[0]);           // frontLeft, frontRight, rearLeft, rearRight
+    m_frontLeft.setDesiredState(desiredStates[0]);        // frontLeft, frontRight, rearLeft, rearRight
     m_frontRight.setDesiredState(desiredStates[1]);
     m_rearLeft.setDesiredState(desiredStates[2]);
     m_rearRight.setDesiredState(desiredStates[3]);
@@ -172,14 +166,11 @@ public class DriveSubsystem extends SubsystemBase {
   /**
    * Resets the drive encoders to currently read a position of 0.
    */
-  public void resetEncoders(double leftFrontAbsEncoderReading, // frontLeft, frontRight, rearLeft, rearRight
-                            double rightFrontAbsEncoderReading, 
-                            double leftRearAbsEncoderReading, 
-                            double rightRearAbsEncoderReading) {
-    m_frontLeft.resetEncoders(leftFrontAbsEncoderReading);     // frontLeft, frontRight, rearLeft, rearRight
-    m_frontRight.resetEncoders(rightFrontAbsEncoderReading);
-    m_rearLeft.resetEncoders(leftRearAbsEncoderReading);
-    m_rearRight.resetEncoders(rightRearAbsEncoderReading);
+  public void resetEncoders() {
+    m_frontLeft.resetEncoders();                          // frontLeft, frontRight, rearLeft, rearRight
+    m_frontRight.resetEncoders();
+    m_rearLeft.resetEncoders();
+    m_rearRight.resetEncoders();
   }
 
   /**
@@ -193,6 +184,7 @@ public class DriveSubsystem extends SubsystemBase {
     //double adj = m_gyro.getAngle() % 360;
     //m_gyro.setAngleAdjustment(-adj);
     //logger.info("<b>DriveSubsystem</b>: zeroGyro finished");
+    
   }
 
   /**
@@ -206,6 +198,10 @@ public class DriveSubsystem extends SubsystemBase {
     return heading;
   }
 
+  public double getHeadingNegated() {
+    return -getHeading();
+  }
+
   /**
    * Returns the turn rate of the robot.
    *
@@ -213,17 +209,5 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public double getTurnRate() {
     return m_gyro.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
-  }
-
-  public void suspendCSVWriter() {
-    if(!mCSVWriter.isSuspended()){
-      mCSVWriter.suspend();
-    }
-  }
-
-  public void resumeCSVWriter() {
-    if(mCSVWriter.isSuspended()){
-      mCSVWriter.resume();
-    }
   }
 }

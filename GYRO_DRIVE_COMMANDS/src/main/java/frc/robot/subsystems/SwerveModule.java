@@ -13,7 +13,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -30,8 +29,6 @@ public class SwerveModule {
   private CANPIDController m_drivePIDController;
   private CANPIDController m_turningPIDController;
 
-  private double offsetFromAbsoluteEncoder;
-
   private int id;
     
   /**
@@ -43,49 +40,44 @@ public class SwerveModule {
   public SwerveModule(int driveMotorChannel, int turningMotorChannel) {
     id = driveMotorChannel;
 
-    if(RobotBase.isReal()){
-      int smartMotionSlot = 0;
-      m_driveMotor = new CANSparkMax(driveMotorChannel, MotorType.kBrushless);
-      m_driveMotor.restoreFactoryDefaults();
-      m_drivePIDController = m_driveMotor.getPIDController();
-      m_driveEncoder = m_driveMotor.getEncoder();
-      m_drivePIDController.setP(5e-5);
-      m_drivePIDController.setI(1e-6);
-      m_drivePIDController.setD(0);
-      m_drivePIDController.setFF(0.000156);
-      m_drivePIDController.setOutputRange(-1, 1);
-      m_drivePIDController.setSmartMotionMaxVelocity(2000, smartMotionSlot);
-      m_drivePIDController.setSmartMotionMinOutputVelocity(0, smartMotionSlot);
-      m_drivePIDController.setSmartMotionMaxAccel(1500, smartMotionSlot);
-      m_drivePIDController.setSmartMotionAllowedClosedLoopError(50, smartMotionSlot);
-  
-      m_turningMotor = new CANSparkMax(turningMotorChannel, MotorType.kBrushless);
-      m_turningMotor.restoreFactoryDefaults();
-      m_turningPIDController = m_turningMotor.getPIDController();
-      m_turningEncoder = m_turningMotor.getEncoder();
-      m_turningMotor.setInverted(true);
-      m_turningPIDController.setP(5e-5);
-      m_turningPIDController.setI(1e-6);
-      m_turningPIDController.setD(0);
-      m_turningPIDController.setIZone(0);
-      m_turningPIDController.setFF(0.000156);
-      m_turningPIDController.setOutputRange(-1, 1);
-      m_turningPIDController.setSmartMotionMaxVelocity(2000, smartMotionSlot);
-      m_turningPIDController.setSmartMotionMinOutputVelocity(0, smartMotionSlot);
-      m_turningPIDController.setSmartMotionMaxAccel(1500, smartMotionSlot);
-      m_turningPIDController.setSmartMotionAllowedClosedLoopError(0, smartMotionSlot);  
-    }
-    else{
-      m_driveMotor = null;
-      m_turningMotor = null;
-    }
+    int smartMotionSlot = 0;
+    m_driveMotor = new CANSparkMax(driveMotorChannel, MotorType.kBrushless);
+    m_driveMotor.restoreFactoryDefaults();
+    m_drivePIDController = m_driveMotor.getPIDController();
+    m_driveEncoder = m_driveMotor.getEncoder();
+    m_drivePIDController.setP(5e-5);
+    m_drivePIDController.setI(1e-6);
+    m_drivePIDController.setD(0);
+    m_drivePIDController.setFF(0.000156);
+    m_drivePIDController.setOutputRange(-1, 1);
+    m_drivePIDController.setSmartMotionMaxVelocity(2000, smartMotionSlot);
+    m_drivePIDController.setSmartMotionMinOutputVelocity(0, smartMotionSlot);
+    m_drivePIDController.setSmartMotionMaxAccel(1500, smartMotionSlot);
+    m_drivePIDController.setSmartMotionAllowedClosedLoopError(50, smartMotionSlot);
 
-    //setAzimuthZero(0); //RDB 10FEB I don't think we want this any more -- abs encoders now
+    m_turningMotor = new CANSparkMax(turningMotorChannel, MotorType.kBrushless);
+    m_turningMotor.restoreFactoryDefaults();
+    m_turningPIDController = m_turningMotor.getPIDController();
+    m_turningEncoder = m_turningMotor.getEncoder();
+    m_turningMotor.setInverted(true);
+    m_turningPIDController.setP(5e-5);
+    m_turningPIDController.setI(1e-6);
+    m_turningPIDController.setD(0);
+    m_turningPIDController.setIZone(0);
+    m_turningPIDController.setFF(0.000156);
+    m_turningPIDController.setOutputRange(-1, 1);
+    m_turningPIDController.setSmartMotionMaxVelocity(2000, smartMotionSlot);
+    m_turningPIDController.setSmartMotionMinOutputVelocity(0, smartMotionSlot);
+    m_turningPIDController.setSmartMotionMaxAccel(1500, smartMotionSlot);
+    m_turningPIDController.setSmartMotionAllowedClosedLoopError(0, smartMotionSlot);
+
+    setAzimuthZero(0);
+
+
+
   }
 
-public double getDriveEncoderPosition(){
-  return m_driveEncoder.getPosition();
-}
+
 
   /**
    * Set the azimuthTalon encoder relative to wheel zero alignment position. For example, if current
@@ -101,8 +93,7 @@ public double getDriveEncoderPosition(){
    *
    * @param zero zero setpoint, absolute encoder position (in ticks) where wheel is zeroed.
    */
-  private void setAzimuthZero(double zeroSetpointAbsoluteEncoderVoltage) { // 0.0 to 3.26, 180=1.63V
-    offsetFromAbsoluteEncoder = zeroSetpointAbsoluteEncoderVoltage * 16/3.26;
+  private void setAzimuthZero(double zero) {
     //logger.info("<b>Wheel</b>: setAzimuthZero starting");
     //double azimuthSetpoint = getAzimuthAbsolutePosition() - zero;
     //ErrorCode err = azimuthTalon.setSelectedSensorPosition(azimuthSetpoint, 0, 10);
@@ -110,8 +101,7 @@ public double getDriveEncoderPosition(){
     //azimuthTalon.set(MotionMagic, azimuthSetpoint);
     //azimuthSpark.set(azimuthSetpoint);
     //m_pidController.setReference(azimuthSetpoint, ControlType.kSmartMotion);
-    //m_turningEncoder.setPosition(0); // TODO change whith 221 encoder
-    //TODO FIXME change voltage to position 0 to 12!!
+    m_turningEncoder.setPosition(0); // TODO change whith 221 encoder
     //logger.info("<b>Wheel</b>: setAzimuthZero finished");
   }
 
@@ -119,12 +109,8 @@ public double getDriveEncoderPosition(){
     //return azimuthTalon.getSensorCollection().getPulseWidthPosition() & 0xFFF;
     //return (int)azimuthSpark.get() & 0xFFF;
     //TODO - need to return azimuth from the 221 encoder
-    double rawEncoder = 0;
-    if(RobotBase.isReal()){
-      m_turningEncoder.getPosition();
-    }
-    double correctedEncoder = rawEncoder - offsetFromAbsoluteEncoder;
-    return correctedEncoder;
+
+    return m_turningEncoder.getPosition(); //TODO FIXME RDB2020
   }
 
   /**
@@ -135,16 +121,11 @@ public double getDriveEncoderPosition(){
   public SwerveModuleState getState() {
     //return new SwerveModuleState(m_driveEncoder.getRate(), new Rotation2d(m_turningEncoder.get()));
         //FIXME: apply any needed unit convertion here...
-    double velocity = 0;
-    if(RobotBase.isReal()){
-       velocity = m_driveEncoder.getVelocity() * Math.PI * 3.0 / 39.37 / 60.0 / 5.5;
-    }
-    double azimuth = -getAzimuthAbsolutePosition(); //m_turningEncoder.getPosition();
+    double velocity = m_driveEncoder.getVelocity() * Math.PI * 3.0 / 39.37 / 60.0 / 5.5;
+    double azimuth = -m_turningEncoder.getPosition();
     double azimuthPercent = Math.IEEEremainder(azimuth, kTICKS)/16.0;
 
-    if(RobotBase.isReal()){
-      SmartDashboard.putNumber("Module"+id+" Drive Encoder Tick", m_driveEncoder.getPosition());
-    }
+    SmartDashboard.putNumber("Module"+id+" Drive Encoder Tick", m_driveEncoder.getPosition());
 
     return new SwerveModuleState(velocity, new Rotation2d(azimuthPercent * 2.0 * Math.PI));
 
@@ -173,7 +154,7 @@ public double getDriveEncoderPosition(){
     double speedMetersPerSecond = state.speedMetersPerSecond;
     double drive = speedMetersPerSecond * 5.5 * 39.37  * 60.0 / 3.0 / Math.PI;
     //wheel.set(-angleDegrees/360, speedMetersPerSecond * 16.0 * 39.37  * 60.0 / 3.0 / Math.PI);
-    double azimuthPosition = getAzimuthAbsolutePosition(); //m_turningEncoder.getPosition();
+    double azimuthPosition = m_turningEncoder.getPosition();
     double azimuthError = Math.IEEEremainder(azimuth - azimuthPosition, kTICKS);
 
     // NO - DON'T DO THIS!!! WPILIB DOESN'T KNOW THAT WE DID IT!!!
@@ -184,22 +165,18 @@ public double getDriveEncoderPosition(){
     //   azimuthError -= Math.copySign(0.5 * kTICKS, azimuthError);
     //   drive = -drive;
     // }
-    if(RobotBase.isReal()){
-      m_turningPIDController.setReference((azimuthPosition + azimuthError), ControlType.kSmartMotion);
-      m_drivePIDController.setReference(drive, ControlType.kVelocity);
-    }
+    m_turningPIDController.setReference((azimuthPosition + azimuthError), ControlType.kSmartMotion);
+    m_drivePIDController.setReference(drive, ControlType.kVelocity);
   }
 
   /**
    * Zeros all the SwerveModule encoders.
    */
 
-  public void resetEncoders(double absoluteEncoderVoltage) {
-    if(RobotBase.isReal()){
-      m_driveEncoder.setPosition(0);
-      m_turningEncoder.setPosition(0);
-    }
-    setAzimuthZero(absoluteEncoderVoltage); //remember our offset
+  public void resetEncoders() {
+    //m_driveEncoder.reset();
+    m_driveEncoder.setPosition(0); // ??????????????????????????????
+    //m_turningEncoder.reset();
+    m_turningEncoder.setPosition(0); // ?????????????????????????????
   }
-
 }
