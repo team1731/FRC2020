@@ -218,4 +218,16 @@ public final class Constants {
         public final static Gains kGains_Velocity = new Gains( 0.25, 0.001, 20, 1023.0/7200.0,  300,  1.00);
         ///// End TalonFX
     }
+
+    public static final class VisionConstants {
+        public static final double kBoilerTargetTopHeight = 27.5; //was 19.5
+        public static final double kCameraZOffset = 4.0;  // they had 20.9
+        public static final double kCameraDeadband = 0.0;
+        public static final double kCameraPitchAngleDegrees = 18.135; // Measured on 3/30
+        public static final double kCameraYawAngleDegrees = 0.0;
+        public static final double kEpsilon = 1E-9;
+        public static final double kMaxTrackerDistance = 18.0;
+        public static final double kMaxGoalTrackAge = 1.0;  // cp had 1.0
+        public static final double kCameraFrameRate = 30.0;
+    }
 }

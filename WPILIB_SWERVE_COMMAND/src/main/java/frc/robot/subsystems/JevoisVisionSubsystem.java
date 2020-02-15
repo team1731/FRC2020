@@ -1,7 +1,18 @@
 package frc.robot.subsystems;
 
+import frc.robot.Constants.VisionConstants;
+import frc.robot.vision.GoalTracker;
 import frc.robot.vision.JevoisVisionUpdate;
+import frc.robot.vision.TargetInfo;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.geometry.Transform2d;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -13,8 +24,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  * @see GoalTracker.java
  */
 public class JevoisVisionSubsystem extends SubsystemBase {
-    static JevoisVisionSubsystem instance_ = new JevoisVisionSubsystem();
-    JevoisVisionUpdate update_ = null;
+    private static JevoisVisionSubsystem instance_ = new JevoisVisionSubsystem();
+    private JevoisVisionUpdate update_ = null;
+
+    private GoalTracker goal_tracker_;
     //RobotState robot_state_ = RobotState.getInstance();
 
     public static JevoisVisionSubsystem getInstance() {
@@ -22,6 +35,7 @@ public class JevoisVisionSubsystem extends SubsystemBase {
     }
 
     public JevoisVisionSubsystem() {
+        goal_tracker_ = new GoalTracker();
     }
 
     @Override
@@ -45,6 +59,73 @@ public class JevoisVisionSubsystem extends SubsystemBase {
         updateCounter++;
      //   SmartDashboard.putString("JevoisVisionProcessorGotUpdate", "Got Update: "+updateCounter);
         update_ = update;
+    }
+
+    /**
+     * From trig, we know that sin^2 + cos^2 == 1, but as we do math on this object we might accumulate rounding errors.
+     * Normalizing forces us to re-scale the sin and cos to reset rounding errors.
+     */
+    public Rotation2d normalize(Rotation2d rotation) {
+        //cosangle sinangle
+        double cos_angle_ = rotation.getCos();
+        double sin_angle_ = rotation.getSin();
+
+        double magnitude = Math.hypot(cos_angle_, sin_angle_);
+        if (magnitude > VisionConstants.kEpsilon) {
+            sin_angle_ /= magnitude;
+            cos_angle_ /= magnitude;
+        } else {
+            sin_angle_ = 0;
+            cos_angle_ = 1;
+        }
+
+        return new Rotation2d(cos_angle_, sin_angle_);
+    }
+
+    public void addVisionUpdate(double timestamp, List<TargetInfo> vision_update) {
+        List<Translation2d> field_to_goals = new ArrayList<>();
+        Pose2d field_to_camera = null;
+        Rotation2d camera_pitch_correction_ = Rotation2d.fromDegrees(-VisionConstants.kCameraPitchAngleDegrees);;
+        Rotation2d camera_yaw_correction_ = Rotation2d.fromDegrees(-VisionConstants.kCameraYawAngleDegrees);;
+        double differential_height_ = VisionConstants.kBoilerTargetTopHeight - VisionConstants.kCameraZOffset;
+
+        //RigidTransform2d field_to_camera = getFieldToCamera(timestamp);
+        if (!(vision_update == null || vision_update.isEmpty())) {
+            for (TargetInfo target : vision_update) {
+                
+                double ydeadband = (target.getY() > -VisionConstants.kCameraDeadband
+                        && target.getY() < VisionConstants.kCameraDeadband) ? 0.0 : target.getY();
+
+                // Compensate for camera yaw
+                double xyaw = target.getX() * camera_yaw_correction_.getCos() + ydeadband * camera_yaw_correction_.getSin();
+                double yyaw = ydeadband * camera_yaw_correction_.getCos() - target.getX() * camera_yaw_correction_.getSin();
+                double zyaw = -target.getZ();
+
+                // Compensate for camera pitch
+                double xr = zyaw * camera_pitch_correction_.getSin() + xyaw * camera_pitch_correction_.getCos();
+                double yr = yyaw;
+                double zr = zyaw * camera_pitch_correction_.getCos() - xyaw * camera_pitch_correction_.getSin();
+
+                // find intersection with the goal
+                if (zr > 0) {
+                    double scaling = differential_height_ / zr;
+                 //   System.out.println("zr: "+zr);
+                    double distance = Math.hypot(xr, yr) * scaling;
+                    Rotation2d angle = normalize(new Rotation2d(xr, yr));
+                    SmartDashboard.putString("RobotState_distance/angle", "Distance: "+distance+" angle: "+angle);
+    //                System.out.println("RobotState_distance/angle Distance: "+distance+" angle: "+angle);
+                   angle = angle.rotateBy(Rotation2d.fromDegrees(-1.5));
+                   
+
+                   field_to_camera = field_to_camera.transformBy(new Transform2d(new Translation2d(distance * angle.getCos(), distance * angle.getSin()), new Rotation2d()));
+                   
+                   field_to_goals.add(field_to_camera.getTranslation());
+                }
+            }
+        }
+        synchronized (this) {
+            goal_tracker_.update(timestamp, field_to_goals);
+        }
     }
 
 }
