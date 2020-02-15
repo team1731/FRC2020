@@ -60,10 +60,10 @@ public class RobotContainer {
    */
   public RobotContainer(IntakeSubsystem m_intake, SequencerSubsystem m_sequencer, ShootClimbSubsystem m_shootclimb) {
     // Configure the button bindings
-    configureButtonBindings();
     this.m_intake = m_intake;
     this.m_sequencer = m_sequencer;
     this.m_shootClimb = m_shootclimb;
+    configureButtonBindings();
   }
 
   

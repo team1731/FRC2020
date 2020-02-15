@@ -47,7 +47,7 @@ public class LedStringSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    if (mTimer.get() - elapsed > 0.1) {
+    if (mTimer.get() - elapsed > 0.02) {
       option(mLedOption);
       elapsed = mTimer.get();
     }
@@ -55,17 +55,17 @@ public class LedStringSubsystem extends SubsystemBase {
 
   public void init() {
     // initialization stuff
-    mLedOption = OpConstants.LedOption.TEAM;
+    mLedOption = OpConstants.LedOption.ORANGE;
     mTimer.start();
     elapsed = mTimer.get();
   }
 
   private void fixedColor(int r, int g, int b) {
     // For every pixel
-    int window = count + 5;
+    int window = count + 4;
     for (var i = 0; i < mLedBuffer.getLength(); i++) {
       if ((i >= count) && (i < window)) { 
-        mLedBuffer.setRGB(i, 0, 0, 0);
+        mLedBuffer.setRGB(i, 120, 0, 200);
       } else {
         mLedBuffer.setRGB(i, r, g, b);
       }
@@ -74,17 +74,33 @@ public class LedStringSubsystem extends SubsystemBase {
     count %= mLedBuffer.getLength();
   }
 
-  private void teamColors(int window) {
-    // For every pixel
-    for (var i = 0; i < mLedBuffer.getLength(); i++) {
-      if ((i >= count) && (i < window)) { 
+  private void teamColors(int winSize) {
+    int bufLen = mLedBuffer.getLength();
+    int winMin;
+    int winMax;
+
+    if (count < winSize) {
+      winMin = 0;
+    } else {
+      winMin = (count - winSize) % bufLen;
+    }  
+    if (count < winSize) {
+      winMax = count;
+    } else {
+      winMax = winMin + winSize;
+      if (winMax > bufLen) winMax = bufLen;
+    }
+
+  // For every pixel
+    for (var i = 0; i < bufLen; i++) {
+      if ((i >= winMin) && (i < winMax)) { 
         mLedBuffer.setRGB(i, 255, 255, 0);
       } else {
         mLedBuffer.setRGB(i, 0, 0, 200);
       }
     }
     count++;
-    count %= mLedBuffer.getLength();
+    count %= (bufLen + winSize);
   }
 
   private void rainbow() {
@@ -122,10 +138,10 @@ public class LedStringSubsystem extends SubsystemBase {
         fixedColor(255, 255, 0);
         break;
       case ORANGE:
-        fixedColor(255, 128, 0);
+        fixedColor(255, 30, 0);
         break;
       case PURPLE:
-        fixedColor(75, 0, 150);
+        fixedColor(150, 0, 150);
         break;
       case RAINBOW:
         rainbow(); // Fill the buffer with a rainbow

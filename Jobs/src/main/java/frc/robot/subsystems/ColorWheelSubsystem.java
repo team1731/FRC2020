@@ -30,7 +30,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class ColorWheelSubsystem extends SubsystemBase {
   
   private final PWMTalonFX mTalonFX;
-  private final DoubleSolenoid mColorWheelSolenoid;
+  //private final DoubleSolenoid mColorWheelSolenoid;
   // sensors used for ColorWheel
   private final I2C.Port i2cPort;
   private final ColorSensorV3 mColorSensor;
@@ -75,7 +75,7 @@ public class ColorWheelSubsystem extends SubsystemBase {
   public ColorWheelSubsystem() {
     
     mTalonFX = new PWMTalonFX(OpConstants.kColorWheelTalonFX);
-    mColorWheelSolenoid = Constants.makeDoubleSolenoidForIds(1, OpConstants.kColorWheelRetract, OpConstants.kColorWheelExtend);
+    //mColorWheelSolenoid = Constants.makeDoubleSolenoidForIds(1, OpConstants.kColorWheelRetract, OpConstants.kColorWheelExtend);
     i2cPort = I2C.Port.kOnboard;
     mColorSensor = new ColorSensorV3(i2cPort);
     mColorMatcher = new ColorMatch();
@@ -114,7 +114,7 @@ public class ColorWheelSubsystem extends SubsystemBase {
             // check override button if any is used, otherwise this is of no consequence
             break;
         case ENGAGE:
-            mColorWheelSolenoid.set(DoubleSolenoid.Value.kForward);// SET Solenoid
+            //mColorWheelSolenoid.set(DoubleSolenoid.Value.kForward);// SET Solenoid
             newState = WheelState.START;
             break;
         case START: // 1) read color 2) determine next color set as sample 3) start motor
@@ -163,7 +163,7 @@ public class ColorWheelSubsystem extends SubsystemBase {
             newState = WheelState.COUNT;
             break;
         case DISENGAGE:
-            mColorWheelSolenoid.set(DoubleSolenoid.Value.kReverse);// UnSET Solenoid
+            //mColorWheelSolenoid.set(DoubleSolenoid.Value.kReverse);// UnSET Solenoid
             newState = WheelState.IDLE;
             //mWantedState = WantedState.IDLE;  // return to IDLEing
             break;
