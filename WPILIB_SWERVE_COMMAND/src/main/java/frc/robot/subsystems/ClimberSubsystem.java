@@ -6,7 +6,7 @@ import frc.robot.util.ReflectingCSVWriter;
 
 public class ClimberSubsystem extends SubsystemBase {
 
-	public ClimberSubsystem(ReflectingCSVWriter<DebugOutput> mCSVWriter) {
+	public ClimberSubsystem() {
 	}
 
 }

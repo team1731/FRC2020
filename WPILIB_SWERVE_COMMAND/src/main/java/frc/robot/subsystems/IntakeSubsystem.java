@@ -17,7 +17,7 @@ public class IntakeSubsystem extends SubsystemBase {
   /**
    * Creates a new IntakeSubsystem.
    */
-	public IntakeSubsystem(ReflectingCSVWriter<DebugOutput> mCSVWriter) {
+	public IntakeSubsystem() {
     mTalonIntake = new PWMTalonFX(OpConstants.kMotorPWMIntake);
     mIntakeSolenoid = Constants.makeDoubleSolenoidForIds(0, OpConstants.kIntakeRetract, OpConstants.kIntakeExtend);
     mTalonState = "Off";

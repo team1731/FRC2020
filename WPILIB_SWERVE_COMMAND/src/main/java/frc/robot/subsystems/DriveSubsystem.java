@@ -62,8 +62,8 @@ public class DriveSubsystem extends SubsystemBase {
   /**
    * Creates a new DriveSubsystem.
    */
-  public DriveSubsystem(ReflectingCSVWriter<DebugOutput> mCSVWriter) {
-    this.mCSVWriter = mCSVWriter;
+  public DriveSubsystem() {
+    mCSVWriter = new ReflectingCSVWriter<>(this.getName(), DebugOutput.class);
   }
 
   
@@ -79,6 +79,10 @@ public class DriveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    if(mCSVWriter.isSuspended()){
+      mCSVWriter.resume();
+    }
+
     // Update the odometry in the periodic block
     double headingRadians = Math.toRadians(getHeading());
     m_odometry.update(
@@ -210,5 +214,17 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public double getTurnRate() {
     return m_gyro.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+  }
+
+  public void suspendCSVWriter() {
+    if(!mCSVWriter.isSuspended()){
+      mCSVWriter.suspend();
+    }
+  }
+
+  public void resumeCSVWriter() {
+    if(mCSVWriter.isSuspended()){
+      mCSVWriter.resume();
+    }
   }
 }

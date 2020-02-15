@@ -34,7 +34,6 @@ public class Robot extends TimedRobot {
 
   private Command m_autonomousCommand;
   private RobotContainer m_robotContainer;
-  private ReflectingCSVWriter<DebugOutput> mCSVWriter;
   private AnalogInput leftFrontAbsEncoder;
   private AnalogInput rightFrontAbsEncoder;
   private AnalogInput leftRearAbsEncoder;
@@ -55,17 +54,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    if(RobotBase.isReal()){
-      mCSVWriter = new ReflectingCSVWriter<DebugOutput>("/home/lvuser/PATH-FOLLOWER-LOGS.csv", DebugOutput.class);
-    }
-    else{
-      mCSVWriter = new ReflectingCSVWriter<DebugOutput>("PATH-FOLLOWER-LOGS.csv", DebugOutput.class);
-    }
-
-    m_robotDrive = new DriveSubsystem(mCSVWriter);
-    m_targeting = new TargetingSubsystem(mCSVWriter);
-    m_vision = new VisionSubsystem(mCSVWriter);
-    m_intake = new IntakeSubsystem(mCSVWriter);
+    m_robotDrive = new DriveSubsystem();
+    m_targeting = new TargetingSubsystem();
+    m_vision = new VisionSubsystem();
+    m_intake = new IntakeSubsystem();
     m_sequencer = new SequencerSubsystem();
     m_shootclimb = new ShootClimbSubsystem();
     m_colorwheel = new ColorWheelSubsystem();
@@ -107,11 +99,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-
-    if(mCSVWriter.isSuspended()){
-      mCSVWriter.resume();
-    }
-
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
@@ -129,9 +116,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
-    if(!mCSVWriter.isSuspended()){
-      mCSVWriter.suspend();
-    }
+    m_robotDrive.suspendCSVWriter();
   }
 
   @Override
@@ -144,9 +129,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    if(mCSVWriter.isSuspended()){
-      mCSVWriter.resume();
-    }
+    m_robotDrive.resumeCSVWriter();
 
 
     int autoNum = 0;
@@ -177,9 +160,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    if(mCSVWriter.isSuspended()){
-      mCSVWriter.resume();
-    }
+    m_robotDrive.resumeCSVWriter();
 
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to

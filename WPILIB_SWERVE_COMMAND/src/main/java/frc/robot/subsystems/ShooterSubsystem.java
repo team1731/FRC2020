@@ -6,7 +6,7 @@ import frc.robot.util.ReflectingCSVWriter;
 
 public class ShooterSubsystem extends SubsystemBase {
 
-	public ShooterSubsystem(ReflectingCSVWriter<DebugOutput> mCSVWriter) {
+	public ShooterSubsystem() {
 	}
 
 }

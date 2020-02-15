@@ -6,6 +6,8 @@ import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
+import edu.wpi.first.wpilibj.RobotBase;
+
 
 /**
  * Writes data to a CSV file
@@ -31,26 +33,34 @@ public class ReflectingCSVWriter<T> {
     }
 
     public ReflectingCSVWriter(String fileName, Class<T> typeClass) {
+        String pathName;
+        if(RobotBase.isReal()){
+            pathName = "/home/lvuser/" + fileName + ".csv";
+        }
+        else{
+            pathName = fileName;
+        }
+      
     	//
     	// rename existing file so it's
     	// available after we cycle power
     	//
-    	File existingFile = new File(fileName);
+    	File existingFile = new File(pathName);
     	if(existingFile.exists()) {
-    		File previousFile = new File(fileName + ".prev");
+    		File previousFile = new File(pathName + ".prev");
     		if(previousFile.exists()) {
     			previousFile.delete();
     		}
     		existingFile.renameTo(previousFile);
     	}
     	
-    	
         mFields = typeClass.getFields();
         try {
-            mOutput = new PrintWriter(fileName);
+            mOutput = new PrintWriter(pathName);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+        
         // Write field names.
         StringBuffer line = new StringBuffer();
         for (Field field : mFields) {
