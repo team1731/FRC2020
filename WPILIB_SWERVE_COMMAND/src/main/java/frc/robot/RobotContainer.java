@@ -20,10 +20,10 @@ import frc.robot.autonomous._3_AimAndShoot;
 import frc.robot.commands.*;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.JevoisVisionSubsystem;
 import frc.robot.subsystems.SequencerSubsystem;
 import frc.robot.subsystems.TargetingSubsystem;
 import frc.robot.subsystems.ShootClimbSubsystem;
-import frc.robot.subsystems.VisionSubsystem;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -49,7 +49,7 @@ public class RobotContainer {
   private ShootClimbSubsystem m_shootclimb;
   private SequencerSubsystem m_sequencer;
   private TargetingSubsystem m_targeting;
-  private VisionSubsystem m_vision;
+  private JevoisVisionSubsystem m_vision;
 
   // Controller Triggers
   public enum HansTriggers {DR_TRIG_LEFT, DR_TRIG_RIGHT, OP_TRIG_LEFT, OP_TRIG_RIGHT}
@@ -57,7 +57,8 @@ public class RobotContainer {
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
-  public RobotContainer(DriveSubsystem m_robotDrive, IntakeSubsystem m_intake, SequencerSubsystem m_sequencer, ShootClimbSubsystem m_shootclimb, TargetingSubsystem m_targeting, VisionSubsystem m_vision) {
+  public RobotContainer(DriveSubsystem m_robotDrive, IntakeSubsystem m_intake, SequencerSubsystem m_sequencer, 
+                        ShootClimbSubsystem m_shootclimb, TargetingSubsystem m_targeting, JevoisVisionSubsystem m_vision) {
     this.m_robotDrive = m_robotDrive;
     this.m_intake = m_intake;
     this.m_sequencer = m_sequencer;

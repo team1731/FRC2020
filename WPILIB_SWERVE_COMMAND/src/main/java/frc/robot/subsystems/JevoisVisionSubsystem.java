@@ -21,7 +21,7 @@ public class JevoisVisionSubsystem extends SubsystemBase {
         return instance_;
     }
 
-    JevoisVisionSubsystem() {
+    public JevoisVisionSubsystem() {
     }
 
     @Override

@@ -15,14 +15,15 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.JevoisVisionSubsystem;
 import frc.robot.subsystems.ColorWheelSubsystem;
 import frc.robot.subsystems.LedStringSubsystem;
 import frc.robot.subsystems.SequencerSubsystem;
 import frc.robot.subsystems.ShootClimbSubsystem;
 import frc.robot.subsystems.TargetingSubsystem;
-import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.util.DebugOutput;
 import frc.robot.util.ReflectingCSVWriter;
+import frc.robot.vision.JevoisVisionServer;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -42,7 +43,7 @@ public class Robot extends TimedRobot {
   // The robot's subsystems
   public DriveSubsystem m_robotDrive;
   public TargetingSubsystem m_targeting;
-  public VisionSubsystem m_vision;
+  public JevoisVisionSubsystem m_vision;
   public IntakeSubsystem m_intake;
   public SequencerSubsystem m_sequencer;
   public ShootClimbSubsystem m_shootclimb;
@@ -54,9 +55,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    JevoisVisionServer.getInstance();
+
     m_robotDrive = new DriveSubsystem();
     m_targeting = new TargetingSubsystem();
-    m_vision = new VisionSubsystem();
+    m_vision = new JevoisVisionSubsystem();
     m_intake = new IntakeSubsystem();
     m_sequencer = new SequencerSubsystem();
     m_shootclimb = new ShootClimbSubsystem();
