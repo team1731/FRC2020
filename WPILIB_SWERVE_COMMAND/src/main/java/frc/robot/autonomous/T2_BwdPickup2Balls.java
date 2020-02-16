@@ -1,6 +1,5 @@
 package frc.robot.autonomous;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
@@ -17,9 +16,9 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class _1_BwdPickup2Balls extends DelayableAutoMode {
+public class T2_BwdPickup2Balls extends _DelayableStrafingAutoMode {
 
-  public _1_BwdPickup2Balls(DriveSubsystem m_robotDrive) {
+  public T2_BwdPickup2Balls(DriveSubsystem m_robotDrive) {
     // Create config for trajectory
     TrajectoryConfig config =
         new TrajectoryConfig(AutoConstants.kMaxSpeedMetersPerSecond,
@@ -29,7 +28,7 @@ public class _1_BwdPickup2Balls extends DelayableAutoMode {
             .setReversed(true);
 
     // An example trajectory to follow.  All units in meters.
-    Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
         // Start at the origin facing the +X direction
         new Pose2d(0, 0, new Rotation2d(Math.PI/4)),
         
@@ -50,36 +49,25 @@ public class _1_BwdPickup2Balls extends DelayableAutoMode {
         config
     );
 
-    List<Trajectory.State> states = exampleTrajectory.getStates();
-    List<Trajectory.State> newStates = new ArrayList<Trajectory.State>();
-    for(Trajectory.State state : states){
-      Rotation2d newRot = state.poseMeters.getRotation().rotateBy(new Rotation2d(-state.poseMeters.getRotation().getRadians()));
-      Pose2d newPose = new Pose2d(state.poseMeters.getTranslation(), newRot);
-      newStates.add(new Trajectory.State(state.timeSeconds, 
-                                        state.velocityMetersPerSecond, 
-                                        state.accelerationMetersPerSecondSq, 
-                                        newPose, 
-                                        state.curvatureRadPerMeter));
-    }
-    exampleTrajectory = new Trajectory(newStates);
+    trajectory = new Trajectory(unrotateTrajectory(trajectory.getStates())); // make it pure strafe
 
-    double duration = exampleTrajectory.getTotalTimeSeconds();
+    double duration = trajectory.getTotalTimeSeconds();
     System.out.println("trajectory duration " +  duration);
     for(int i=0; i<=(int)duration * 2; i++){
-      Trajectory.State state = exampleTrajectory.sample(i/2.0);
+      Trajectory.State state = trajectory.sample(i/2.0);
       System.out.println("state " + i + "                 poseMetersX " + state.poseMeters.getTranslation().getX());
       System.out.println("state " + i + "                 poseMetersY " + state.poseMeters.getTranslation().getY());
       System.out.println("state " + i + "         poseMetersTheta Deg " + state.poseMeters.getRotation().getDegrees());
       System.out.println("state " + i + "     velocityMetersPerSecond " + state.velocityMetersPerSecond);
     }
-    Trajectory.State state = exampleTrajectory.sample(duration);
+    Trajectory.State state = trajectory.sample(duration);
     System.out.println("state (end)             poseMetersX " + state.poseMeters.getTranslation().getX());
     System.out.println("state (end)             poseMetersY " + state.poseMeters.getTranslation().getY());
     System.out.println("state (end)     poseMetersTheta Deg " + state.poseMeters.getRotation().getDegrees());
     System.out.println("state (end) velocityMetersPerSecond " + state.velocityMetersPerSecond);
 
     SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-        exampleTrajectory,
+        trajectory,
         m_robotDrive::getPose, //Functional interface to feed supplier
         DriveConstants.kDriveKinematics,
 

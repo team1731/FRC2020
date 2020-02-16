@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -18,8 +17,8 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class _0_MoveForward extends DelayableAutoMode {
-  public _0_MoveForward(DriveSubsystem m_robotDrive) {
+public class F1_Move_Forward extends _DelayableStrafingAutoMode {
+  public F1_Move_Forward(DriveSubsystem m_robotDrive) {
     // Create config for trajectory
     TrajectoryConfig config =
         new TrajectoryConfig(AutoConstants.kMaxSpeedMetersPerSecond,
@@ -29,7 +28,7 @@ public class _0_MoveForward extends DelayableAutoMode {
             .setReversed(false);
 
     // An example trajectory to follow.  All units in meters.
-    Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
         // Start at the origin facing the +X direction
         new Pose2d(0, 0, new Rotation2d(0)),
         
@@ -41,23 +40,23 @@ public class _0_MoveForward extends DelayableAutoMode {
         config
     );
 
-    double duration = exampleTrajectory.getTotalTimeSeconds();
+    double duration = trajectory.getTotalTimeSeconds();
     System.out.println("trajectory duration " +  duration);
     for(int i=0; i<=(int)duration * 2; i++){
-      Trajectory.State state = exampleTrajectory.sample(i/2.0);
+      Trajectory.State state = trajectory.sample(i/2.0);
       System.out.println("state " + i + "                 poseMetersX " + state.poseMeters.getTranslation().getX());
       System.out.println("state " + i + "                 poseMetersY " + state.poseMeters.getTranslation().getY());
       System.out.println("state " + i + "         poseMetersTheta Deg " + state.poseMeters.getRotation().getDegrees());
       System.out.println("state " + i + "     velocityMetersPerSecond " + state.velocityMetersPerSecond);
     }
-    Trajectory.State state = exampleTrajectory.sample(duration);
+    Trajectory.State state = trajectory.sample(duration);
     System.out.println("state (end)             poseMetersX " + state.poseMeters.getTranslation().getX());
     System.out.println("state (end)             poseMetersY " + state.poseMeters.getTranslation().getY());
     System.out.println("state (end)     poseMetersTheta Deg " + state.poseMeters.getRotation().getDegrees());
     System.out.println("state (end) velocityMetersPerSecond " + state.velocityMetersPerSecond);
 
     SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-        exampleTrajectory,
+        trajectory,
         m_robotDrive::getPose, //Functional interface to feed supplier
         DriveConstants.kDriveKinematics,
 

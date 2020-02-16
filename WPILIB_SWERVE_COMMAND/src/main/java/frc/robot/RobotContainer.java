@@ -17,11 +17,12 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.autonomous.NamedAutoMode;
-import frc.robot.autonomous._0_MoveForward;
-import frc.robot.autonomous._1_BwdPickup2Balls;
-import frc.robot.autonomous._2_BwdPickup2BallsAndShoot;
-import frc.robot.autonomous._3_AimAndShoot;
+import frc.robot.autonomous.F1_Move_Forward;
+import frc.robot.autonomous.T1_Move_Forward;
+import frc.robot.autonomous.T2_BwdPickup2Balls;
+import frc.robot.autonomous.T3_BwdPickup2BallsAndShoot;
+import frc.robot.autonomous.T4_AimAndShoot;
+import frc.robot.autonomous._NamedAutoMode;
 import frc.robot.commands.*;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -43,7 +44,7 @@ import frc.robot.Constants.OIConstants;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  Map<String, NamedAutoMode> nameAutoModeMap;
+  Map<String, _NamedAutoMode> nameAutoModeMap;
 
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
   XboxController m_operatorController = new XboxController(OIConstants.kOperatorControllerPort);
@@ -145,7 +146,7 @@ public class RobotContainer {
 
   }
 
-  public NamedAutoMode getNamedAutonomousCommand(String autoSelected){
+  public _NamedAutoMode getNamedAutonomousCommand(String autoSelected){
     String autoMode = "";
     int initialDelaySeconds = 0;
     int secondaryDelaySeconds = 0;
@@ -169,32 +170,35 @@ public class RobotContainer {
       }
     }
 
-    NamedAutoMode selectedAutoMode = nameAutoModeMap.get(autoMode);
+    _NamedAutoMode selectedAutoMode = nameAutoModeMap.get(autoMode);
     if(selectedAutoMode == null){
-      selectedAutoMode = new NamedAutoMode("SELECTED MODE NOT IMPLEMENTED -- DEFAULT TO MOVE FWD!!!", new _0_MoveForward(m_robotDrive));
+      selectedAutoMode = new _NamedAutoMode("SELECTED MODE NOT IMPLEMENTED -- DEFAULT TO F1_MOVE_FORWARD!!!", new F1_Move_Forward(m_robotDrive));
     }
-    selectedAutoMode.delayableAutoMode.setInitialDelaySeconds(initialDelaySeconds);
-    selectedAutoMode.delayableAutoMode.setSecondaryDelaySeconds(secondaryDelaySeconds);
+    selectedAutoMode.delayableStrafingAutoMode.setInitialDelaySeconds(initialDelaySeconds);
+    selectedAutoMode.delayableStrafingAutoMode.setSecondaryDelaySeconds(secondaryDelaySeconds);
 
     return selectedAutoMode;
   }
 
-  private Map<String, NamedAutoMode> createNamedAutoModeMap() {
-      Map<String, NamedAutoMode> myMap = new HashMap<String, NamedAutoMode>();
-      myMap.put("F1", new NamedAutoMode("L1 - MOVE FORWARD",
-                      new _0_MoveForward(m_robotDrive)));
+  private Map<String, _NamedAutoMode> createNamedAutoModeMap() {
+      Map<String, _NamedAutoMode> myMap = new HashMap<String, _NamedAutoMode>();
 
-      myMap.put("L1", new NamedAutoMode("L1 - MOVE FORWARD",
-      new _0_MoveForward(m_robotDrive)));
+      // for HM: R1, L1, M1, M3
+      //
+      myMap.put("F1", new _NamedAutoMode("F1 - MOVE FORWARD",
+                      new F1_Move_Forward(m_robotDrive)));
 
-      myMap.put("L2", new NamedAutoMode("L2 - BWD PICKUP 2 BALLS",
-                      new _1_BwdPickup2Balls(m_robotDrive)));
+      myMap.put("T1", new _NamedAutoMode("T1 - MOVE FORWARD",
+                      new T1_Move_Forward(m_robotDrive)));
 
-      myMap.put("L3", new NamedAutoMode("L3 = BWD PICKUP 2 BALLS AND SHOOT",
-                      new _2_BwdPickup2BallsAndShoot(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting)));
+      myMap.put("L2", new _NamedAutoMode("L2 - BWD PICKUP 2 BALLS",
+                      new T2_BwdPickup2Balls(m_robotDrive)));
+
+      myMap.put("L3", new _NamedAutoMode("L3 = BWD PICKUP 2 BALLS AND SHOOT",
+                      new T3_BwdPickup2BallsAndShoot(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting)));
                       
-      myMap.put("M1", new NamedAutoMode("M1 - AIM AND SHOOT",
-                      new _3_AimAndShoot(m_robotDrive, m_sequencer, m_shootclimb, m_vision, m_targeting)));
+      myMap.put("M1", new _NamedAutoMode("M1 - AIM AND SHOOT",
+                      new T4_AimAndShoot(m_robotDrive, m_sequencer, m_shootclimb, m_vision, m_targeting)));
 
       return myMap;
   }
