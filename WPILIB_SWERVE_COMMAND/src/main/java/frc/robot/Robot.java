@@ -59,11 +59,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    JevoisVisionServer.getInstance();
+    //JevoisVisionServer.getInstance();
 
     m_robotDrive = new DriveSubsystem();
     m_targeting = new TargetingSubsystem();
-    m_vision = new JevoisVisionSubsystem();
+    m_vision = null; //new JevoisVisionSubsystem();
     m_intake = new IntakeSubsystem();
     m_sequencer = new SequencerSubsystem();
     m_shootclimb = new ShootClimbSubsystem();
@@ -80,16 +80,23 @@ public class Robot extends TimedRobot {
     }
     catch(_NotImplementedProperlyException e){
       System.err.println("UNABLE TO INITIALILZE AUTONOMOUS -- ABORTING -- FIX YOUR SOFTWARE!!! ==> " + e.getMessage());
+      e.printStackTrace();
       return;
     }
 
-    leftFrontAbsEncoder = new AnalogInput(1);
-    rightFrontAbsEncoder = new AnalogInput(2);
-    leftRearAbsEncoder = new AnalogInput(3);
-    rightRearAbsEncoder = new AnalogInput(4);
+    leftFrontAbsEncoder = new AnalogInput(0);
+    rightFrontAbsEncoder = new AnalogInput(1);
+    leftRearAbsEncoder = new AnalogInput(2);
+    rightRearAbsEncoder = new AnalogInput(3);
 
-    m_robotDrive.resetEncoders(leftFrontAbsEncoder.getVoltage(), rightFrontAbsEncoder.getVoltage(),
-        leftRearAbsEncoder.getVoltage(), rightRearAbsEncoder.getVoltage());
+    if(RobotBase.isReal()){
+      if(leftFrontAbsEncoder == null || rightFrontAbsEncoder == null || leftRearAbsEncoder == null || rightRearAbsEncoder == null){
+        System.err.println("At least one absolute encoder (AnalogInput(0)--AnalogInput(3) is NULL!!! -- Aborting!!!");
+        return;
+      }
+      m_robotDrive.resetEncoders(leftFrontAbsEncoder.getVoltage(), rightFrontAbsEncoder.getVoltage(),
+      leftRearAbsEncoder.getVoltage(), rightRearAbsEncoder.getVoltage());
+    }
 
     // initial SubSystems to at rest states
     m_intake.retract();
@@ -122,19 +129,20 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    // Runs the Scheduler. This is responsible for polling buttons, adding
-    // newly-scheduled
-    // commands, running already-scheduled commands, removing finished or
-    // interrupted commands,
-    // and running subsystem periodic() methods. This must be called from the
-    // robot's periodic
+    // Runs the Scheduler. This is responsible for polling buttons, adding newly-scheduled
+    // commands, running already-scheduled commands, removing finished or interrupted commands,
+    // and running subsystem periodic() methods. This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
-    SmartDashboard.putNumber("leftFrontAbsEncoder", leftFrontAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
-    SmartDashboard.putNumber("rightFrontAbsEncoder", rightFrontAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
-    SmartDashboard.putNumber("leftRearAbsEncoder", leftRearAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
-    SmartDashboard.putNumber("rightRearAbsEncoder", rightRearAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
+    if(leftFrontAbsEncoder != null)
+      SmartDashboard.putNumber("leftFrontAbsEncoder", leftFrontAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
+    if(rightFrontAbsEncoder != null)
+      SmartDashboard.putNumber("rightFrontAbsEncoder", rightFrontAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
+    if(leftRearAbsEncoder != null)
+      SmartDashboard.putNumber("leftRearAbsEncoder", leftRearAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
+    if(rightRearAbsEncoder != null)
+      SmartDashboard.putNumber("rightRearAbsEncoder", rightRearAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
   }
 
   /**

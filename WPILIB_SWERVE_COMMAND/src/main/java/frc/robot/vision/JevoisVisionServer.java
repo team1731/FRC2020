@@ -69,7 +69,7 @@ public class JevoisVisionServer {
 
         private VisionServerThread(){
             try {
-                AttemptJevoisConnection();
+                //AttemptJevoisConnection();
             } catch (Exception e){
                 try {
                     Thread.sleep(1000);

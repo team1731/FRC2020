@@ -10,7 +10,7 @@ public class _NamedAutoMode {
             throws _NotImplementedProperlyException {
         if(delayableStrafingAutoMode != null){
             if(delayableStrafingAutoMode instanceof _DelayableStrafingAutoMode){
-                name = delayableStrafingAutoMode.getClass().getCanonicalName();
+                name = delayableStrafingAutoMode.getClass().getSimpleName();
                 if(name.length() < 3){
                     throw new _NotImplementedProperlyException();
                 }
