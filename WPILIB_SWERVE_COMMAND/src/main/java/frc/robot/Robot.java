@@ -150,16 +150,27 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_robotDrive.resumeCSVWriter();
 
-    String autoSelected = "M1"; // DEFAULT AUTO MODE if Drive Team forgets
+    String DEFAULT_AUTO_CODE = "F1"; // DEFAULT AUTO MODE if Drive Team is unable to set the mode via Dashboard
+    String autoCode = DEFAULT_AUTO_CODE;
     if (RobotBase.isReal()) {
-      autoSelected = SmartDashboard.getString("Auto Selector", autoSelected);
+      autoCode = SmartDashboard.getString("Auto Code", autoCode);
+      System.out.println("Auto Code retrieved from Dashboard --> " + autoCode);
+      if(autoCode == null || autoCode.length() < 2){
+        autoCode = DEFAULT_AUTO_CODE;
+      }
+      System.out.println("Auto Code being used by the software --> " + autoCode);
     }
-    NamedAutoMode namedAutoCommand = m_robotContainer.getNamedAutonomousCommand(autoSelected);
+    NamedAutoMode namedAutoCommand = m_robotContainer.getNamedAutonomousCommand(autoCode);
     m_autonomousCommand = namedAutoCommand.getCommand();
 
     // schedule the autonomous command (example)
-    System.out.println("Running auto mode " + namedAutoCommand.name);
-    m_autonomousCommand.schedule();
+    if(m_autonomousCommand == null){
+      System.out.println("Running actual autonomous mode --> " + namedAutoCommand.name);
+      m_autonomousCommand.schedule();
+    }
+    else{
+      System.out.println("SOMETHING WENT WRONG - UNABLE TO RUN AUTONOMOUS! CHECK LOOKUP TABLE!");
+    }
   }
 
   /**
