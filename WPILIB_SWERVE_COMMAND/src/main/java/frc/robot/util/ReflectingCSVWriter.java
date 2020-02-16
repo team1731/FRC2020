@@ -38,7 +38,7 @@ public class ReflectingCSVWriter<T> {
             pathName = "/home/lvuser/" + fileName + ".csv";
         }
         else{
-            pathName = fileName;
+            pathName = fileName + ".csv";
         }
       
     	//
