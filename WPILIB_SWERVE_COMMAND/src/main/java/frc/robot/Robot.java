@@ -17,6 +17,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.JevoisVisionSubsystem;
 import frc.robot.autonomous._NamedAutoMode;
+import frc.robot.autonomous._NotImplementedProperlyException;
 import frc.robot.subsystems.ColorWheelSubsystem;
 import frc.robot.subsystems.LedStringSubsystem;
 import frc.robot.subsystems.SequencerSubsystem;
@@ -74,7 +75,13 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our
     // autonomous chooser on the dashboard.
-    m_robotContainer = new RobotContainer(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_targeting, m_vision);
+    try{
+      m_robotContainer = new RobotContainer(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_targeting, m_vision);
+    }
+    catch(_NotImplementedProperlyException e){
+      System.err.println("UNABLE TO INITIALILZE AUTONOMOUS -- ABORTING -- FIX YOUR SOFTWARE!!! ==> " + e.getMessage());
+      return;
+    }
 
     leftFrontAbsEncoder = new AnalogInput(1);
     rightFrontAbsEncoder = new AnalogInput(2);
@@ -162,16 +169,22 @@ public class Robot extends TimedRobot {
     }
     autoCode = autoCode.toUpperCase();
     System.out.println("Auto Code being used by the software --> " + autoCode);
-    _NamedAutoMode namedAutoCommand = m_robotContainer.getNamedAutonomousCommand(autoCode);
-    m_autonomousCommand = namedAutoCommand.getCommand();
 
-    // schedule the autonomous command (example)
-    if(m_autonomousCommand == null){
-      System.out.println("SOMETHING WENT WRONG - UNABLE TO RUN AUTONOMOUS! CHECK SOFTWARE!");
+    try{
+      _NamedAutoMode namedAutoCommand = m_robotContainer.getNamedAutonomousCommand(autoCode);
+      m_autonomousCommand = namedAutoCommand.getCommand();
+
+      // schedule the autonomous command (example)
+      if(m_autonomousCommand == null){
+        System.out.println("SOMETHING WENT WRONG - UNABLE TO RUN AUTONOMOUS! CHECK SOFTWARE!");
+      }
+      else{
+        System.out.println("Running actual autonomous mode --> " + namedAutoCommand.name);
+        m_autonomousCommand.schedule();
+      }
     }
-    else{
-      System.out.println("Running actual autonomous mode --> " + namedAutoCommand.name);
-      m_autonomousCommand.schedule();
+    catch(_NotImplementedProperlyException e){
+      System.err.println("CANNOT RUN AUTONOMOUS COMMAND! ==> " + e.getMessage());
     }
   }
 

@@ -23,6 +23,7 @@ import frc.robot.autonomous.T2_BwdPickup2Balls;
 import frc.robot.autonomous.T3_BwdPickup2BallsAndShoot;
 import frc.robot.autonomous.T4_AimAndShoot;
 import frc.robot.autonomous._NamedAutoMode;
+import frc.robot.autonomous._NotImplementedProperlyException;
 import frc.robot.commands.*;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -63,9 +64,12 @@ public class RobotContainer {
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
+   * 
+   * @throws _NotImplementedProperlyException
    */
-  public RobotContainer(DriveSubsystem m_robotDrive, IntakeSubsystem m_intake, SequencerSubsystem m_sequencer, 
-                        ShootClimbSubsystem m_shootclimb, TargetingSubsystem m_targeting, JevoisVisionSubsystem m_vision) {
+  public RobotContainer(DriveSubsystem m_robotDrive, IntakeSubsystem m_intake, SequencerSubsystem m_sequencer,
+      ShootClimbSubsystem m_shootclimb, TargetingSubsystem m_targeting, JevoisVisionSubsystem m_vision)
+      throws _NotImplementedProperlyException {
     this.m_robotDrive = m_robotDrive;
     this.m_intake = m_intake;
     this.m_sequencer = m_sequencer;
@@ -146,7 +150,7 @@ public class RobotContainer {
 
   }
 
-  public _NamedAutoMode getNamedAutonomousCommand(String autoSelected){
+  public _NamedAutoMode getNamedAutonomousCommand(String autoSelected) throws _NotImplementedProperlyException {
     String autoMode = "";
     int initialDelaySeconds = 0;
     int secondaryDelaySeconds = 0;
@@ -172,7 +176,8 @@ public class RobotContainer {
 
     _NamedAutoMode selectedAutoMode = nameAutoModeMap.get(autoMode);
     if(selectedAutoMode == null){
-      selectedAutoMode = new _NamedAutoMode("SELECTED MODE NOT IMPLEMENTED -- DEFAULT TO F1_MOVE_FORWARD!!!", new F1_Move_Forward(m_robotDrive));
+      System.err.println("SELECTED MODE NOT IMPLEMENTED -- DEFAULT TO F1_MOVE_FORWARD!!!");
+      selectedAutoMode = new _NamedAutoMode(new F1_Move_Forward(m_robotDrive));
     }
     selectedAutoMode.delayableStrafingAutoMode.setInitialDelaySeconds(initialDelaySeconds);
     selectedAutoMode.delayableStrafingAutoMode.setSecondaryDelaySeconds(secondaryDelaySeconds);
@@ -180,25 +185,26 @@ public class RobotContainer {
     return selectedAutoMode;
   }
 
-  private Map<String, _NamedAutoMode> createNamedAutoModeMap() {
-      Map<String, _NamedAutoMode> myMap = new HashMap<String, _NamedAutoMode>();
+  private Map<String, _NamedAutoMode> createNamedAutoModeMap() throws _NotImplementedProperlyException {
+    _NamedAutoMode mode;
+    Map<String, _NamedAutoMode> myMap = new HashMap<String, _NamedAutoMode>();
 
-      // for HM: R1, L1, M1, M3
+      // for Haymarket: R1, L1, M1, M3
       //
-      myMap.put("F1", new _NamedAutoMode("F1 - MOVE FORWARD",
-                      new F1_Move_Forward(m_robotDrive)));
+      mode = new _NamedAutoMode(new F1_Move_Forward(m_robotDrive));
+      myMap.put(mode.name, mode);
 
-      myMap.put("T1", new _NamedAutoMode("T1 - MOVE FORWARD",
-                      new T1_Move_Forward(m_robotDrive)));
+      mode = new _NamedAutoMode(new T1_Move_Forward(m_robotDrive));
+      myMap.put(mode.name, mode);
 
-      myMap.put("L2", new _NamedAutoMode("L2 - BWD PICKUP 2 BALLS",
-                      new T2_BwdPickup2Balls(m_robotDrive)));
+      mode = new _NamedAutoMode(new T2_BwdPickup2Balls(m_robotDrive));
+      myMap.put(mode.name, mode);
 
-      myMap.put("L3", new _NamedAutoMode("L3 = BWD PICKUP 2 BALLS AND SHOOT",
-                      new T3_BwdPickup2BallsAndShoot(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting)));
-                      
-      myMap.put("M1", new _NamedAutoMode("M1 - AIM AND SHOOT",
-                      new T4_AimAndShoot(m_robotDrive, m_sequencer, m_shootclimb, m_vision, m_targeting)));
+      mode = new _NamedAutoMode(new T3_BwdPickup2BallsAndShoot(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
+      myMap.put(mode.name, mode);
+                    
+      mode = new _NamedAutoMode(new T4_AimAndShoot(m_robotDrive, m_sequencer, m_shootclimb, m_vision, m_targeting));
+      myMap.put(mode.name, mode);
 
       return myMap;
   }
