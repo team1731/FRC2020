@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import frc.robot.Constants.VisionConstants;
 import frc.robot.vision.GoalTracker;
+import frc.robot.vision.JevoisVisionServer;
 import frc.robot.vision.JevoisVisionUpdate;
 import frc.robot.vision.TargetInfo;
 
@@ -26,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class JevoisVisionSubsystem extends SubsystemBase {
     private static JevoisVisionSubsystem instance_ = new JevoisVisionSubsystem();
     private JevoisVisionUpdate update_ = null;
+    private JevoisVisionServer m_VisionServer = JevoisVisionServer.getInstance();
 
     private GoalTracker goal_tracker_;
     //RobotState robot_state_ = RobotState.getInstance();
@@ -114,8 +116,9 @@ public class JevoisVisionSubsystem extends SubsystemBase {
                     Rotation2d angle = normalize(new Rotation2d(xr, yr));
                     SmartDashboard.putString("RobotState_distance/angle", "Distance: "+distance+" angle: "+angle);
     //                System.out.println("RobotState_distance/angle Distance: "+distance+" angle: "+angle);
-                   angle = angle.rotateBy(Rotation2d.fromDegrees(-1.5));
+                    angle = angle.rotateBy(Rotation2d.fromDegrees(-1.5));
                    
+                    
 
                    field_to_camera = field_to_camera.transformBy(new Transform2d(new Translation2d(distance * angle.getCos(), distance * angle.getSin()), new Rotation2d()));
                    
@@ -126,6 +129,34 @@ public class JevoisVisionSubsystem extends SubsystemBase {
         synchronized (this) {
             goal_tracker_.update(timestamp, field_to_goals);
         }
+    }
+
+    /**
+     * Writes "SEND" to the vision camera. 
+     * This should start the flood of JSON strings determining the center point of the target of interest
+     * @return A boolean determining the success of the write
+     */
+    public boolean StartCameraDataStream(){
+        if(m_VisionServer.getVisionCam() != null){
+            m_VisionServer.getVisionCam().writeString("SEND");
+            return true;
+        }
+        
+        return false;
+    }
+
+    /**
+     * Writes "STOP" to the vision camera.
+     * This should stop the flood of serial outputs coming from the vision camera
+     * @return A boolean determining the success of the write
+     */
+    public boolean StopCameraDataStream(){
+        if(m_VisionServer.getVisionCam() != null){
+            m_VisionServer.getVisionCam().writeString("STOP");
+            return true;
+        }
+
+        return false;
     }
 
 }

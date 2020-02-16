@@ -11,9 +11,10 @@ import java.util.Collections;
 import edu.wpi.first.wpilibj.SerialPort;
 import org.json.simple.parser.JSONParser;
 
+import frc.robot.Constants.VisionConstants;
 //import org.usfirst.frc.team1731.lib.util.CrashTrackingRunnable;
 //import org.usfirst.frc.team1731.robot.Constants;
-import frc.robot.Constants;
+//import frc.robot.Constants;
 //import org.usfirst.frc.team1731.robot.loops.JevoisVisionProcessor;
 import frc.robot.subsystems.JevoisVisionSubsystem;
 import org.json.simple.JSONObject;
@@ -51,9 +52,16 @@ public class JevoisVisionServer {
             s_instance = new JevoisVisionServer();
 
         }
-        return null;// s_instance;
+        return  s_instance;
     }
 
+    public SerialPort getVisionCam(){
+        if(visionCamAvailable){
+            return visionCam;
+        }
+
+        return null;
+    }
 
     private class VisionServerThread implements Runnable {
 
@@ -91,7 +99,7 @@ public class JevoisVisionServer {
             }
             
             if(dashboardCounter >= 10){
-              //  SmartDashboard.putString("JevoisVisionServerTargets", visionTargetPositions_Raw);
+                SmartDashboard.putString("JevoisVisionServerTargets", visionTargetPositions_Raw);
             }
 
             String[] visionTargetLines = visionTargetPositions_Raw.split("\n");
@@ -127,7 +135,7 @@ public class JevoisVisionServer {
             if(targetInfoArray.size() > 0){ 
                 sentTimes++;
                 if(dashboardCounter >= 10){
-                 //   SmartDashboard.putString("JevoisVisionServerUpdate", "Sent: "+sentTimes);
+                    SmartDashboard.putString("JevoisVisionServerUpdate", "Sent: "+sentTimes);
                 }
                 mJevoisVisionProcessor.gotUpdate(new JevoisVisionUpdate(Timer.getFPGATimestamp()-visionCamDeltaTime, targetInfoArray));
 
@@ -146,13 +154,13 @@ public class JevoisVisionServer {
             try {
                 Thread.sleep(1000);
                 connectionAttempt++;
-               // SmartDashboard.putString("JevoisVisionServerOutput", "Attempting Jevois connection... ("+connectionAttempt+")");
+                SmartDashboard.putString("JevoisVisionServerOutput", "Attempting Jevois connection... ("+connectionAttempt+")");
                 
-                visionCam = new SerialPort(115200, SerialPort.Port.kMXP);
+                visionCam = new SerialPort(VisionConstants.kCameraBaudRate, SerialPort.Port.kMXP);
                 visionCam.setTimeout(5);
 
                 if(visionCam != null){
-                 //   SmartDashboard.putString("JevoisVisionServerOutput", "(NO RUN) Connected successfully on attempt "+connectionAttempt);
+                    SmartDashboard.putString("JevoisVisionServerOutput", "(NO RUN) Connected successfully on attempt "+connectionAttempt);
                     visionCamAvailable = true;
                     
                     //run();
@@ -173,6 +181,8 @@ public class JevoisVisionServer {
 
         String lastDashboardMessage = "";
 
+
+
         @Override
         public void run() {
             String dashboardMessage = "";
@@ -188,7 +198,7 @@ public class JevoisVisionServer {
                     return;
                 }
                 if(lastDashboardMessage != dashboardMessage){
-                  //  SmartDashboard.putString("JevoisVisionServerOutput", dashboardMessage);
+                    SmartDashboard.putString("JevoisVisionServerOutput", dashboardMessage);
                 }
                 lastDashboardMessage = dashboardMessage;
             } catch (Exception e){
