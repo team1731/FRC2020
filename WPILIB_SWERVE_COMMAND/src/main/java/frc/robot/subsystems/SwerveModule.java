@@ -23,8 +23,8 @@ import static frc.robot.Constants.kTICKS;
 
 public class SwerveModule {
   public static final double kMaxAngularSpeed = Math.PI;
-  private final CANSparkMax m_driveMotor;
-  private final CANSparkMax m_turningMotor;
+  private CANSparkMax m_driveMotor;
+  private CANSparkMax m_turningMotor;
   public CANEncoder m_driveEncoder;
   public CANEncoder m_turningEncoder;
   private CANPIDController m_drivePIDController;
@@ -82,6 +82,10 @@ public class SwerveModule {
 
     //setAzimuthZero(0); //RDB 10FEB I don't think we want this any more -- abs encoders now
   }
+
+public SwerveModule() {
+  System.err.println("DUMMY SWERVE MODULE HAS BEEN INSTANTIATED");
+}
 
 public double getDriveEncoderPosition(){
   return m_driveEncoder.getPosition();

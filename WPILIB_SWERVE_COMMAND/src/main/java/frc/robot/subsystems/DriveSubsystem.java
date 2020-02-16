@@ -47,9 +47,9 @@ public class DriveSubsystem extends SubsystemBase {
                        DriveConstants.kRearLeftTurningMotorPort);
   
 
-  private final SwerveModule m_rearRight = null;
-      // new SwerveModule(DriveConstants.kRearRightDriveMotorPort,
-      //                  DriveConstants.kRearRightTurningMotorPort);
+  private final SwerveModule m_rearRight =
+      new DummySwerveModule(DriveConstants.kRearRightDriveMotorPort,
+                       DriveConstants.kRearRightTurningMotorPort);
 
   // The gyro sensor
   //private final Gyro a_gyro = new ADXRS450_Gyro();
@@ -90,7 +90,7 @@ public class DriveSubsystem extends SubsystemBase {
         m_frontLeft.getState(),              // frontLeft, frontRight, rearLeft, rearRight
         m_frontRight.getState(),
         m_rearLeft.getState(),
-        new SwerveModuleState()); //m_rearRight.getState());
+        m_rearRight.getState());
     SmartDashboard.putNumber("pose x", m_odometry.getPoseMeters().getTranslation().getX());
     SmartDashboard.putNumber("pose y", m_odometry.getPoseMeters().getTranslation().getY());
     SmartDashboard.putNumber("rot deg", m_odometry.getPoseMeters().getRotation().getDegrees());
