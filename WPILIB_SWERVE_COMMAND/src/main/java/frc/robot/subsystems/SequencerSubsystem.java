@@ -12,12 +12,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.OpConstants;
 import edu.wpi.first.wpilibj.PWMTalonFX;
 import edu.wpi.first.wpilibj.DigitalInput;
-
+import edu.wpi.first.wpilibj.Timer;
 
 public class SequencerSubsystem extends SubsystemBase {
 
   private final PWMTalonFX mTalonSeq;
   private DigitalInput mLowSensor;
+  private Timer mTimer;
+  private double elapsed;
+  private boolean startDelay;
   private boolean mLowSensorCur;
   private boolean mLowSensorLast; // does robot want to index balls - mode
   private int mPowerCellCount;
@@ -28,6 +31,8 @@ public class SequencerSubsystem extends SubsystemBase {
   public SequencerSubsystem() {
     mTalonSeq = new PWMTalonFX(OpConstants.kMotorPWMSeq);
     mLowSensor = new DigitalInput(OpConstants.kLowSequencer);
+    mTimer = new Timer();
+    startDelay = false;
     mLowSensorCur = mLowSensor.get();
     mLowSensorLast = mLowSensorCur;
     mPowerCellCount = 0;
@@ -37,11 +42,19 @@ public class SequencerSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     mLowSensorCur = mLowSensor.get();
+    if (startDelay) {
+      if (mTimer.get() - elapsed > OpConstants.kSeqIntakeDelay) {
+        mTalonSeq.setSpeed(0);
+        startDelay = false;
+      }
+    }
+    
   }
 
   public void addPowerCell() {
     if (mLowSensorCur) {
-        mTalonSeq.setSpeed(0);
+        startDelay = true;
+        elapsed = mTimer.get();
         // incr count at end of intaking powercell
         if (!mLowSensorLast) {
           mPowerCellCount++;
