@@ -32,6 +32,7 @@ public class SequencerSubsystem extends SubsystemBase {
     mTalonSeq = new PWMTalonFX(OpConstants.kMotorPWMSeq);
     mLowSensor = new DigitalInput(OpConstants.kLowSequencer);
     mTimer = new Timer();
+    mTimer.start();
     startDelay = false;
     mLowSensorCur = mLowSensor.get();
     mLowSensorLast = mLowSensorCur;
