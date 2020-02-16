@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.autonomous.NamedAutoMode;
 import frc.robot.subsystems.ColorWheelSubsystem;
 import frc.robot.subsystems.LedStringSubsystem;
 import frc.robot.subsystems.SequencerSubsystem;
@@ -25,9 +26,10 @@ import frc.robot.util.DebugOutput;
 import frc.robot.util.ReflectingCSVWriter;
 
 /**
- * The VM is configured to automatically run this class, and to call the functions corresponding to
- * each mode, as described in the TimedRobot documentation. If you change the name of this class or
- * the package after creating this project, you must also update the build.gradle file in the
+ * The VM is configured to automatically run this class, and to call the
+ * functions corresponding to each mode, as described in the TimedRobot
+ * documentation. If you change the name of this class or the package after
+ * creating this project, you must also update the build.gradle file in the
  * project.
  */
 public class Robot extends TimedRobot {
@@ -38,7 +40,7 @@ public class Robot extends TimedRobot {
   private AnalogInput rightFrontAbsEncoder;
   private AnalogInput leftRearAbsEncoder;
   private AnalogInput rightRearAbsEncoder;
-  
+
   // The robot's subsystems
   public DriveSubsystem m_robotDrive;
   public TargetingSubsystem m_targeting;
@@ -48,9 +50,10 @@ public class Robot extends TimedRobot {
   public ShootClimbSubsystem m_shootclimb;
   public ColorWheelSubsystem m_colorwheel;
   public LedStringSubsystem m_ledstring;
+
   /**
-   * This function is run when the robot is first started up and should be used for any
-   * initialization code.
+   * This function is run when the robot is first started up and should be used
+   * for any initialization code.
    */
   @Override
   public void robotInit() {
@@ -62,46 +65,58 @@ public class Robot extends TimedRobot {
     m_shootclimb = new ShootClimbSubsystem();
     m_colorwheel = new ColorWheelSubsystem();
     m_ledstring = new LedStringSubsystem();
-    
+
     m_robotDrive.zeroHeading();
 
-    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
+    // Instantiate our RobotContainer. This will perform all our button bindings,
+    // and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_targeting, m_vision);
-
 
     leftFrontAbsEncoder = new AnalogInput(1);
     rightFrontAbsEncoder = new AnalogInput(2);
     leftRearAbsEncoder = new AnalogInput(3);
     rightRearAbsEncoder = new AnalogInput(4);
 
-    m_robotDrive.resetEncoders(leftFrontAbsEncoder.getVoltage(),
-                               rightFrontAbsEncoder.getVoltage(),
-                               leftRearAbsEncoder.getVoltage(),
-                               rightRearAbsEncoder.getVoltage());
-							   
-  // initial SubSystems to at rest states
+    m_robotDrive.resetEncoders(leftFrontAbsEncoder.getVoltage(), rightFrontAbsEncoder.getVoltage(),
+        leftRearAbsEncoder.getVoltage(), rightRearAbsEncoder.getVoltage());
+
+    // initial SubSystems to at rest states
     m_intake.retract();
     m_sequencer.stop();
     m_shootclimb.disable();
     m_colorwheel.init();
     m_ledstring.init();
-  
-    SmartDashboard.putString("Auto Num", "0");
+
+    SmartDashboard.putString("Auto Code", "M1"); // XNDD (X=L,M,R,F) (N=1,2,3,4) (DD=0-99 [optional])
+                                                 // XN = one of Mark and Chuck's 10 auto modes plus new "forward" mode
+                                                 // DD = up to 2 digits (0-9) signifying 2 possible delays (in seconds)
+                                                 // 1st D = 0-9 second delay at very beginning of auto
+                                                 // 2nd D = 0-9 second delay after first shooting event
+                                                 // examples:
+                                                 // M1 --> run M1 auto with NO DELAYS
+                                                 // M25 --> wait 5 seconds, then run M2 auto
+                                                 // M203 --> wait 0 seconds, run M2 with 3-sec delay after 1st shooting
+                                                 // F12 --> wait 2 seconds, run "forward" auto mode (1 meter forward)
   }
 
   /**
-   * This function is called every robot packet, no matter the mode. Use this for items like
-   * diagnostics that you want ran during disabled, autonomous, teleoperated and test.
+   * This function is called every robot packet, no matter the mode. Use this for
+   * items like diagnostics that you want ran during disabled, autonomous,
+   * teleoperated and test.
    *
-   * <p>This runs after the mode specific periodic functions, but before
-   * LiveWindow and SmartDashboard integrated updating.
+   * <p>
+   * This runs after the mode specific periodic functions, but before LiveWindow
+   * and SmartDashboard integrated updating.
    */
   @Override
   public void robotPeriodic() {
-    // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
-    // commands, running already-scheduled commands, removing finished or interrupted commands,
-    // and running subsystem periodic() methods.  This must be called from the robot's periodic
+    // Runs the Scheduler. This is responsible for polling buttons, adding
+    // newly-scheduled
+    // commands, running already-scheduled commands, removing finished or
+    // interrupted commands,
+    // and running subsystem periodic() methods. This must be called from the
+    // robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
@@ -125,26 +140,19 @@ public class Robot extends TimedRobot {
   }
 
   /**
-   * This autonomous runs the autonomous command selected by your {@link RobotContainer} class.
+   * This autonomous runs the autonomous command selected by your
+   * {@link RobotContainer} class.
    */
   @Override
   public void autonomousInit() {
     m_robotDrive.resumeCSVWriter();
 
-
-    int autoNum = 0;
-    String autoSelected = "3"; //DEFAULT AUTO MODE if Drive Team forgets
-    if(RobotBase.isReal()){
+    String autoSelected = "M1"; // DEFAULT AUTO MODE if Drive Team forgets
+    if (RobotBase.isReal()) {
       autoSelected = SmartDashboard.getString("Auto Selector", autoSelected);
     }
-    try{
-      autoNum = Math.abs(Integer.parseInt(autoSelected));
-    }
-    catch(Exception e){
-      System.out.println("AUTO NUM did not parse -- defaulting to MOVE FORWARD!!!");
-    }
-    NamedAutoCommand namedAutoCommand = m_robotContainer.getNamedAutonomousCommand(autoNum);
-    m_autonomousCommand = namedAutoCommand.command;
+    NamedAutoMode namedAutoCommand = m_robotContainer.getNamedAutonomousCommand(autoSelected);
+    m_autonomousCommand = namedAutoCommand.getCommand();
 
     // schedule the autonomous command (example)
     System.out.println("Running auto mode " + namedAutoCommand.name);

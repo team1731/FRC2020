@@ -17,8 +17,15 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class _1_BwdPickup2Balls {
-  public Command getCommand(DriveSubsystem m_robotDrive){
+public class _1_BwdPickup2Balls extends DelayableAutoMode {
+  private DriveSubsystem m_robotDrive;
+
+  public _1_BwdPickup2Balls(DriveSubsystem m_robotDrive) {
+    this.m_robotDrive = m_robotDrive;
+	}
+
+@Override
+public Command getCommand() {
     // Create config for trajectory
     TrajectoryConfig config =
         new TrajectoryConfig(AutoConstants.kMaxSpeedMetersPerSecond,

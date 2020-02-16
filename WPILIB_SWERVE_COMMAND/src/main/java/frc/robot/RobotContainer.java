@@ -6,13 +6,18 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot;
+
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.autonomous.NamedAutoMode;
 import frc.robot.autonomous._0_MoveForward;
 import frc.robot.autonomous._1_BwdPickup2Balls;
 import frc.robot.autonomous._2_BwdPickup2BallsAndShoot;
@@ -38,11 +43,10 @@ import frc.robot.Constants.OIConstants;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  private NamedAutoCommand[] namedAutoCommands;
+  Map<String, NamedAutoMode> nameAutoModeMap;
 
-  // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
-  XboxController m_operatorController = new XboxController(OIConstants.kOperatorControllerPort); 
+  XboxController m_operatorController = new XboxController(OIConstants.kOperatorControllerPort);
 
   private DriveSubsystem m_robotDrive;
   private IntakeSubsystem m_intake;
@@ -52,21 +56,24 @@ public class RobotContainer {
   private VisionSubsystem m_vision;
 
   // Controller Triggers
-  public enum HansTriggers {DR_TRIG_LEFT, DR_TRIG_RIGHT, OP_TRIG_LEFT, OP_TRIG_RIGHT}
-  
+  public enum HanTriggers {
+    DR_TRIG_LEFT, DR_TRIG_RIGHT, OP_TRIG_LEFT, OP_TRIG_RIGHT
+  }
+
   /**
-   * The container for the robot.  Contains subsystems, OI devices, and commands.
+   * The container for the robot. Contains subsystems, OI devices, and commands.
    */
-  public RobotContainer(DriveSubsystem m_robotDrive, IntakeSubsystem m_intake, SequencerSubsystem m_sequencer, ShootClimbSubsystem m_shootclimb, TargetingSubsystem m_targeting, VisionSubsystem m_vision) {
+  public RobotContainer(DriveSubsystem m_robotDrive, IntakeSubsystem m_intake, SequencerSubsystem m_sequencer,
+      ShootClimbSubsystem m_shootclimb, TargetingSubsystem m_targeting, VisionSubsystem m_vision) {
     this.m_robotDrive = m_robotDrive;
     this.m_intake = m_intake;
     this.m_sequencer = m_sequencer;
     this.m_targeting = m_targeting;
     this.m_vision = m_vision;
     this.m_shootclimb = m_shootclimb;
-    
-    namedAutoCommands = setupNamedAutoCommands();
-    
+
+    nameAutoModeMap = createNamedAutoModeMap();
+
     // Configure the button bindings
     configureButtonBindings();
 
@@ -90,84 +97,105 @@ public class RobotContainer {
             // mathematics). Xbox controllers return positive values when you pull to
             // the right by default.
             -m_driverController.getX(GenericHID.Hand.kRight), true),
-            
-            m_robotDrive)                                                                          
-        );
+
+            m_robotDrive));
   }
 
-/**
-   * Use this method to define your button->command mappings.  Buttons can be created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then calling passing it to a
-   * {@link JoystickButton}.
+  /**
+   * Use this method to define your button->command mappings. Buttons can be
+   * created by instantiating a {@link GenericHID} or one of its subclasses
+   * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then
+   * calling passing it to a {@link JoystickButton}.
    */
   private void configureButtonBindings() {
     // Turn to 90 degrees when the 'X' button is pressed, with a 5 second timeout
-    //new JoystickButton(m_driverController, Button.kX.value)
-    //    .whenPressed(new TurnToAngle(30, m_robotDrive).withTimeout(5));
+    // new JoystickButton(m_driverController, Button.kX.value)
+    // .whenPressed(new TurnToAngle(30, m_robotDrive).withTimeout(5));
 
-    // Turn to -90 degrees with a profile when the 'A' button is pressed, with a 5 second timeout
-    //new JoystickButton(m_driverController, Button.kA.value)
-    //    .whenPressed(new TurnToAngleProfiled(30, m_robotDrive).withTimeout(5));
-
+    // Turn to -90 degrees with a profile when the 'A' button is pressed, with a 5
+    // second timeout
+    // new JoystickButton(m_driverController, Button.kA.value)
+    // .whenPressed(new TurnToAngleProfiled(30, m_robotDrive).withTimeout(5));
 
     // Intake & Sequencer ejects works will button is held
-    new JoystickButton(m_operatorController, 1).whenHeld(new ParallelCommandGroup(
-      new InstantCommand(m_intake::eject, m_intake),
-      new InstantCommand(m_sequencer::reverse, m_sequencer)
-      )).whenReleased(new ParallelCommandGroup(
-        new InstantCommand(m_intake::retract, m_intake),
-        new InstantCommand(m_sequencer::stop, m_sequencer)
-      )
-    );
+    new JoystickButton(m_operatorController, 1)
+        .whenHeld(new ParallelCommandGroup(new InstantCommand(m_intake::eject, m_intake),
+            new InstantCommand(m_sequencer::reverse, m_sequencer)))
+        .whenReleased(new ParallelCommandGroup(new InstantCommand(m_intake::retract, m_intake),
+            new InstantCommand(m_sequencer::stop, m_sequencer)));
 
     // Activate Intake via Operator Left Axis/Trigger
-    new HansTrigger(HansTriggers.OP_TRIG_LEFT).whileActiveOnce(
-      new IntakeSeqCommand(m_intake, m_sequencer)
-    );
+    new HanTrigger(HanTriggers.OP_TRIG_LEFT).whileActiveOnce(new IntakeSeqCommand(m_intake, m_sequencer));
 
     // Activate Shooter via Operator Right Axis/Trigger
-    new HansTrigger(HansTriggers.OP_TRIG_RIGHT).whileActiveOnce(
-      new ShootSeqCommand(m_shootclimb, m_sequencer)
-    );
+    new HanTrigger(HanTriggers.OP_TRIG_RIGHT).whileActiveOnce(new ShootSeqCommand(m_shootclimb, m_sequencer));
 
     // Climbing Mode
-    new StickTrigger().whileActiveContinuous(
-      new ClimbingCommand(m_shootclimb, () -> m_operatorController.getRawAxis(1))
-    );
+    new StickTrigger()
+        .whileActiveContinuous(new ClimbingCommand(m_shootclimb, () -> m_operatorController.getRawAxis(1)));
 
     // Select Shoot or Climb Mode
-    new JoystickButton(m_operatorController, 3)
-        .whenPressed(new InstantCommand(m_shootclimb::modeClimb, m_shootclimb));
-        //.whenReleased(new InstantCommand(m_ShootClimbSubsystem::off, m_ShootClimbSubsystem));
+    new JoystickButton(m_operatorController, 3).whenPressed(new InstantCommand(m_shootclimb::modeClimb, m_shootclimb));
+    // .whenReleased(new InstantCommand(m_ShootClimbSubsystem::off,
+    // m_ShootClimbSubsystem));
     new JoystickButton(m_operatorController, 4)
-        //.whenPressed(new InstantCommand(m_ShootClimbSubsystem::on, m_ShootClimbSubsystem))
+        // .whenPressed(new InstantCommand(m_ShootClimbSubsystem::on,
+        // m_ShootClimbSubsystem))
         .whenReleased(new InstantCommand(m_shootclimb::modeShoot, m_shootclimb));
-    
+
   }
 
-  public NamedAutoCommand getNamedAutonomousCommand(int autoNum){
-    if(autoNum < 0 || autoNum >= namedAutoCommands.length){
-      System.out.println("specified AUTO NUM (" + autoNum + ") is INVALID -- defaulting to MOVE FORWARD!!!");
-      autoNum = 0;
+  public NamedAutoMode getNamedAutonomousCommand(String autoSelected){
+    String autoMode = "";
+    int initialDelaySeconds = 0;
+    int secondaryDelaySeconds = 0;
+    if(autoSelected.length() > 1){
+      autoMode = autoSelected.substring(0, 2);
     }
-    return namedAutoCommands[autoNum];
+    if(autoSelected.length() > 2){
+      try{
+        initialDelaySeconds = Integer.parseInt(autoSelected.substring(2, 2));
+      }
+      catch(Exception e){
+        System.out.println("INITIAL DELAY did not parse -- defaulting to 0 seconds!!!");
+      }
+    }
+    if(autoSelected.length() > 3){
+      try{
+        secondaryDelaySeconds = Integer.parseInt(autoSelected.substring(3, 3));
+      }
+      catch(Exception e){
+        System.out.println("SECONDARY DELAY did not parse -- defaulting to 0 seconds!!!");
+      }
+    }
+
+    NamedAutoMode selectedAutoMode = nameAutoModeMap.get(autoMode);
+    if(selectedAutoMode == null){
+      selectedAutoMode = new NamedAutoMode("SELECTED MODE NOT IMPLEMENTED -- DEFAULT TO MOVE FWD!!!", new _0_MoveForward(m_robotDrive));
+    }
+    selectedAutoMode.delayableAutoMode.setInitialDelaySeconds(initialDelaySeconds);
+    selectedAutoMode.delayableAutoMode.setSecondaryDelaySeconds(secondaryDelaySeconds);
+
+    return selectedAutoMode;
   }
 
-  private NamedAutoCommand[] setupNamedAutoCommands(){
-    NamedAutoCommand[] namedAutoCommands = new NamedAutoCommand[]{
-      new NamedAutoCommand("0 - MOVE FORWARD",
-                           new _0_MoveForward().getCommand(m_robotDrive)),
-      new NamedAutoCommand("1 = BWD PICKUP 2 BALLS",
-                           new _1_BwdPickup2Balls().getCommand(m_robotDrive)),                                                               
-      new NamedAutoCommand("2 - BWD PICKUP 2 BALLS AND SHOOT",
-                           new _2_BwdPickup2BallsAndShoot().getCommand(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting)),
-      new NamedAutoCommand("3 - AIM AND SHOOT",
-                           new _3_AimAndShoot().getCommand(m_robotDrive, m_sequencer, m_shootclimb, m_vision, m_targeting))
-    };
-    return namedAutoCommands;
+  private Map<String, NamedAutoMode> createNamedAutoModeMap() {
+      Map<String, NamedAutoMode> myMap = new HashMap<String, NamedAutoMode>();
+      myMap.put("L1", new NamedAutoMode("L1 - MOVE FORWARD",
+                      new _0_MoveForward(m_robotDrive)));
+
+      myMap.put("L2", new NamedAutoMode("L2 - BWD PICKUP 2 BALLS",
+                      new _1_BwdPickup2Balls(m_robotDrive)));
+
+      myMap.put("L3", new NamedAutoMode("L3 = BWD PICKUP 2 BALLS AND SHOOT",
+                      new _2_BwdPickup2BallsAndShoot(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting)));
+                      
+      myMap.put("M1", new NamedAutoMode("M1 - AIM AND SHOOT",
+                      new _3_AimAndShoot(m_robotDrive, m_sequencer, m_shootclimb, m_vision, m_targeting)));
+
+      return myMap;
   }
-  
+    
   public class StickTrigger extends Trigger {
     public boolean get() {
       //double v = operatorController.getY(Hand.kRight);
@@ -179,11 +207,11 @@ public class RobotContainer {
   }
 
   // Enables Use of controller axis/trigger by creating a Custom Trigger
-  public class HansTrigger extends Trigger {
-    HansTriggers desired;
+  public class HanTrigger extends Trigger {
+    HanTriggers desired;
     double triggerValue = 0;
 
-    public HansTrigger(HansTriggers selected) {
+    public HanTrigger(HanTriggers selected) {
       this.desired = selected;
     }
 

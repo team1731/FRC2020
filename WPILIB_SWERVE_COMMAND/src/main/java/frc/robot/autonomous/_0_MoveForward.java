@@ -11,13 +11,22 @@ import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class _0_MoveForward {
-  public Command getCommand(DriveSubsystem m_robotDrive) {
+public class _0_MoveForward extends DelayableAutoMode {
+  private DriveSubsystem m_robotDrive;
+
+  public _0_MoveForward(DriveSubsystem m_robotDrive) {
+    this.m_robotDrive = m_robotDrive;
+	}
+
+@Override
+public Command getCommand() {
     // Create config for trajectory
     TrajectoryConfig config =
         new TrajectoryConfig(AutoConstants.kMaxSpeedMetersPerSecond,
@@ -71,8 +80,12 @@ public class _0_MoveForward {
 
     );
 
-    // Run path following command, then stop at the end.
-    return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
+    SequentialCommandGroup commandGroup = new SequentialCommandGroup(
+      new WaitCommand(getInitialDelaySeconds()),
+      swerveControllerCommand,
+      new WaitCommand(getSecondaryDelaySeconds()));
+
+    return commandGroup.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
   }
 
 }
