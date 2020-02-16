@@ -9,20 +9,20 @@ import frc.robot.commands.SpinUpShooter;
 import frc.robot.commands.StartIntake;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.JevoisVisionSubsystem;
 import frc.robot.subsystems.SequencerSubsystem;
 import frc.robot.subsystems.ShootClimbSubsystem;
 import frc.robot.subsystems.TargetingSubsystem;
-import frc.robot.subsystems.VisionSubsystem;
 
 public class _2_BwdPickup2BallsAndShoot extends DelayableAutoMode {
     private DriveSubsystem m_robotDrive;
     private IntakeSubsystem m_intake;
     private SequencerSubsystem m_sequence;
     private ShootClimbSubsystem m_shootclimb;
-    private VisionSubsystem m_vision;
+    private JevoisVisionSubsystem m_vision;
     private TargetingSubsystem m_targeting;
   
-    public _2_BwdPickup2BallsAndShoot(DriveSubsystem m_robotDrive, IntakeSubsystem m_intake, SequencerSubsystem m_sequence, ShootClimbSubsystem m_shootclimb, VisionSubsystem m_vision, TargetingSubsystem m_targeting) {
+    public _2_BwdPickup2BallsAndShoot(DriveSubsystem m_robotDrive, IntakeSubsystem m_intake, SequencerSubsystem m_sequence, ShootClimbSubsystem m_shootclimb, JevoisVisionSubsystem m_vision, TargetingSubsystem m_targeting) {
         this.m_robotDrive = m_robotDrive;
         this.m_sequence = m_sequence;
         this.m_shootclimb = m_shootclimb;

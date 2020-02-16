@@ -83,7 +83,9 @@ public class SwerveModule {
     //setAzimuthZero(0); //RDB 10FEB I don't think we want this any more -- abs encoders now
   }
 
-
+public double getDriveEncoderPosition(){
+  return m_driveEncoder.getPosition();
+}
 
   /**
    * Set the azimuthTalon encoder relative to wheel zero alignment position. For example, if current

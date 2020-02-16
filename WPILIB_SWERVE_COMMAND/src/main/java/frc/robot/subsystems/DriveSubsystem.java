@@ -93,8 +93,8 @@ public class DriveSubsystem extends SubsystemBase {
         m_rearRight.getState());
     SmartDashboard.putNumber("pose x", m_odometry.getPoseMeters().getTranslation().getX());
     SmartDashboard.putNumber("pose y", m_odometry.getPoseMeters().getTranslation().getY());
-    SmartDashboard.putNumber("rot", m_odometry.getPoseMeters().getRotation().getDegrees());
-    SmartDashboard.putNumber("heading", headingRadians);    
+    SmartDashboard.putNumber("rot deg", m_odometry.getPoseMeters().getRotation().getDegrees());
+    SmartDashboard.putNumber("heading radians", headingRadians);    
     SmartDashboard.putNumber("raw gyro", m_gyro.getAngle());
     SmartDashboard.putBoolean("gyro is calibrating", m_gyro.isCalibrating());
     debugOutput.update(Timer.getFPGATimestamp(), m_odometry, headingRadians, m_gyro.getAngle());
@@ -193,7 +193,6 @@ public class DriveSubsystem extends SubsystemBase {
     //double adj = m_gyro.getAngle() % 360;
     //m_gyro.setAngleAdjustment(-adj);
     //logger.info("<b>DriveSubsystem</b>: zeroGyro finished");
-    
   }
 
   /**
