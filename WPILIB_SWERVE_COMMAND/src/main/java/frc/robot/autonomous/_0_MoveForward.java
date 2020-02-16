@@ -19,14 +19,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class _0_MoveForward extends DelayableAutoMode {
-  private DriveSubsystem m_robotDrive;
-
   public _0_MoveForward(DriveSubsystem m_robotDrive) {
-    this.m_robotDrive = m_robotDrive;
-	}
-
-@Override
-public Command getCommand() {
     // Create config for trajectory
     TrajectoryConfig config =
         new TrajectoryConfig(AutoConstants.kMaxSpeedMetersPerSecond,
@@ -85,7 +78,7 @@ public Command getCommand() {
       swerveControllerCommand,
       new WaitCommand(getSecondaryDelaySeconds()));
 
-    return commandGroup.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
-  }
+    command = commandGroup.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
+	}
 
 }

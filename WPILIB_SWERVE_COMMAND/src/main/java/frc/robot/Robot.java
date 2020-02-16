@@ -154,22 +154,22 @@ public class Robot extends TimedRobot {
     String autoCode = DEFAULT_AUTO_CODE;
     if (RobotBase.isReal()) {
       autoCode = SmartDashboard.getString("Auto Code", autoCode);
-      System.out.println("Auto Code retrieved from Dashboard --> " + autoCode);
-      if(autoCode == null || autoCode.length() < 2){
-        autoCode = DEFAULT_AUTO_CODE;
-      }
-      System.out.println("Auto Code being used by the software --> " + autoCode);
     }
+    System.out.println("Auto Code retrieved from Dashboard --> " + autoCode);
+    if(autoCode == null || autoCode.length() < 2){
+      autoCode = DEFAULT_AUTO_CODE;
+    }
+    System.out.println("Auto Code being used by the software --> " + autoCode);
     NamedAutoMode namedAutoCommand = m_robotContainer.getNamedAutonomousCommand(autoCode);
     m_autonomousCommand = namedAutoCommand.getCommand();
 
     // schedule the autonomous command (example)
     if(m_autonomousCommand == null){
-      System.out.println("Running actual autonomous mode --> " + namedAutoCommand.name);
-      m_autonomousCommand.schedule();
+      System.out.println("SOMETHING WENT WRONG - UNABLE TO RUN AUTONOMOUS! CHECK SOFTWARE!");
     }
     else{
-      System.out.println("SOMETHING WENT WRONG - UNABLE TO RUN AUTONOMOUS! CHECK LOOKUP TABLE!");
+      System.out.println("Running actual autonomous mode --> " + namedAutoCommand.name);
+      m_autonomousCommand.schedule();
     }
   }
 

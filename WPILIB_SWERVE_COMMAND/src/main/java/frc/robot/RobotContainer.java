@@ -181,8 +181,11 @@ public class RobotContainer {
 
   private Map<String, NamedAutoMode> createNamedAutoModeMap() {
       Map<String, NamedAutoMode> myMap = new HashMap<String, NamedAutoMode>();
-      myMap.put("L1", new NamedAutoMode("L1 - MOVE FORWARD",
+      myMap.put("F1", new NamedAutoMode("L1 - MOVE FORWARD",
                       new _0_MoveForward(m_robotDrive)));
+
+      myMap.put("L1", new NamedAutoMode("L1 - MOVE FORWARD",
+      new _0_MoveForward(m_robotDrive)));
 
       myMap.put("L2", new NamedAutoMode("L2 - BWD PICKUP 2 BALLS",
                       new _1_BwdPickup2Balls(m_robotDrive)));

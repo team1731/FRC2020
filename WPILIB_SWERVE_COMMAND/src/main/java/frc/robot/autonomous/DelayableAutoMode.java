@@ -2,9 +2,10 @@ package frc.robot.autonomous;
 
 import edu.wpi.first.wpilibj2.command.Command;
 
-public abstract class DelayableAutoMode {
+public class DelayableAutoMode {
     private int initialDelaySeconds;
     private int secondaryDelaySeconds;
+    Command command;
   
     public DelayableAutoMode(int initialDelaySeconds, int secondaryDelaySeconds) {
         this.initialDelaySeconds = initialDelaySeconds;
@@ -31,5 +32,7 @@ public abstract class DelayableAutoMode {
         return secondaryDelaySeconds;
     }
 
-    public abstract Command getCommand();
+    public Command getCommand(){
+        return command;
+    }
 }

@@ -18,14 +18,8 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class _1_BwdPickup2Balls extends DelayableAutoMode {
-  private DriveSubsystem m_robotDrive;
 
   public _1_BwdPickup2Balls(DriveSubsystem m_robotDrive) {
-    this.m_robotDrive = m_robotDrive;
-	}
-
-@Override
-public Command getCommand() {
     // Create config for trajectory
     TrajectoryConfig config =
         new TrajectoryConfig(AutoConstants.kMaxSpeedMetersPerSecond,
@@ -102,10 +96,14 @@ public Command getCommand() {
     );
 
     // Run path following command, then stop at the end.
-    return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
+    command = swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
   }
 
-  public Command getCommandOld(DriveSubsystem m_robotDrive){
+  @Deprecated
+  /**
+   * @deprecated For code example purposes only -- do not use!
+   */
+  private Command getCommandOld(DriveSubsystem m_robotDrive){
     // Create config for trajectory
     TrajectoryConfig config =
         new TrajectoryConfig(AutoConstants.kMaxSpeedMetersPerSecond,
