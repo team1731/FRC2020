@@ -20,9 +20,9 @@ import frc.robot.Constants.OpConstants;
 
 public class ShootClimbSubsystem extends SubsystemBase {
 
-  private final DoubleSolenoid mShootClimbSolenoid;
-  private final DoubleSolenoid mClimberSolenoid;
-  private final DoubleSolenoid mShootHoodSolenoid;
+  private DoubleSolenoid mShootClimbSolenoid;
+  private DoubleSolenoid mClimberSolenoid;
+  private DoubleSolenoid mShootHoodSolenoid;
   //private final PWMTalonFX mTalonShoot;
   private final TalonFX mTalonShoot1;
   private final TalonFX mTalonShoot2;
@@ -36,9 +36,9 @@ public class ShootClimbSubsystem extends SubsystemBase {
    * Creates a new ExampleSubsystem.
    */
   public ShootClimbSubsystem() {
-    mShootClimbSolenoid = Constants.makeDoubleSolenoidForIds(0, OpConstants.kShooting, OpConstants.kClimbing);
-    mClimberSolenoid = Constants.makeDoubleSolenoidForIds(0, OpConstants.kClimbRetract, OpConstants.kClimbExtend);
-    mShootHoodSolenoid = Constants.makeDoubleSolenoidForIds(0, OpConstants.kHoodRetract, OpConstants.kHoodExtend);
+    //mShootClimbSolenoid = Constants.makeDoubleSolenoidForIds(0, OpConstants.kShooting, OpConstants.kClimbing);
+    //mClimberSolenoid = Constants.makeDoubleSolenoidForIds(0, OpConstants.kClimbRetract, OpConstants.kClimbExtend);
+    //mShootHoodSolenoid = Constants.makeDoubleSolenoidForIds(0, OpConstants.kHoodRetract, OpConstants.kHoodExtend);
     //mTalonShoot = new PWMTalonFX(OpConstants.kMotorPWMShoot1);
     mTalonShoot1 = new TalonFX(OpConstants.kMotorCANShoot1);
     mTalonShoot2 = new TalonFX(OpConstants.kMotorCANShoot2);
@@ -90,7 +90,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
 
   public void enableShooting() {
     mColor1.set(true);
-    mShootClimbSolenoid.set(DoubleSolenoid.Value.kReverse);
+    //mShootClimbSolenoid.set(DoubleSolenoid.Value.kReverse);
     //mTalonShoot.setSpeed(0.7);
     /**
 			 * Convert 500 RPM to units / 100ms.
@@ -106,7 +106,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
   }
   public void enableClimbing() {
     mColor1.set(false);
-    mShootClimbSolenoid.set(DoubleSolenoid.Value.kForward);
+    //mShootClimbSolenoid.set(DoubleSolenoid.Value.kForward);
     //mTalonShoot.setSpeed(0);
     mTalonShoot1.set(ControlMode.PercentOutput,OpConstants.kMotorShootPercent);
     //mTalonShoot2.set(ControlMode.PercentOutput,OpConstants.kMotorShootPercent);
@@ -114,20 +114,20 @@ public class ShootClimbSubsystem extends SubsystemBase {
 
   public void climbExtend() {
     if (modeClimbing) {
-      mClimberSolenoid.set(DoubleSolenoid.Value.kForward);
+      //mClimberSolenoid.set(DoubleSolenoid.Value.kForward);
     }
   }
 
   public void climbRetract() {
     if (modeClimbing) {
-      mClimberSolenoid.set(DoubleSolenoid.Value.kReverse);
+     // mClimberSolenoid.set(DoubleSolenoid.Value.kReverse);
     }
   }
 
   public void disable() {
-    mShootClimbSolenoid.set(DoubleSolenoid.Value.kReverse);
-    mClimberSolenoid.set(DoubleSolenoid.Value.kReverse);
-    mShootHoodSolenoid.set(DoubleSolenoid.Value.kReverse);
+    //mShootClimbSolenoid.set(DoubleSolenoid.Value.kReverse);
+    //mClimberSolenoid.set(DoubleSolenoid.Value.kReverse);
+    //mShootHoodSolenoid.set(DoubleSolenoid.Value.kReverse);
     //mTalonShoot.setSpeed(0);
     mTalonShoot1.set(ControlMode.PercentOutput, 0);
     mTalonShoot2.set(ControlMode.PercentOutput, 0);
@@ -150,11 +150,11 @@ public class ShootClimbSubsystem extends SubsystemBase {
   }
 
   public void hoodRetract() {
-    mShootHoodSolenoid.set(DoubleSolenoid.Value.kReverse);
+    //mShootHoodSolenoid.set(DoubleSolenoid.Value.kReverse);
   }
 
   public void hoodExtend() {
-    mShootHoodSolenoid.set(DoubleSolenoid.Value.kForward);
+    //mShootHoodSolenoid.set(DoubleSolenoid.Value.kForward);
   }
 
   public void setClimber(double zVal) {

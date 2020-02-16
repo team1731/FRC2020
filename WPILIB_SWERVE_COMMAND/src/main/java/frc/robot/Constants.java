@@ -130,7 +130,7 @@ public final class Constants {
         public static final double kMotorIntakeRevSpeed = -0.2;   // forward or backward
         public static final double kMotorShootSpeed1 = -0.3;   // forward or backward
         public static final double kMotorShootSpeed2 = 0.3;
-        public static final double kMotorShootPercent = 0.80;   // check shooting motor percent
+        public static final double kMotorShootPercent = 0.280;   // check shooting motor percent
         public static final double kMotorClimbPercent = 0.3;
         public static final int kMaxPowerCells = 3;
 
