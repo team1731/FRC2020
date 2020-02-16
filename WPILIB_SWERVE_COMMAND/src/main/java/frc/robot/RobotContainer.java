@@ -18,6 +18,10 @@ import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.autonomous.F1_Move_Forward;
+import frc.robot.autonomous.L1_Placeholder;
+import frc.robot.autonomous.M1_Placeholder;
+import frc.robot.autonomous.M3_Placeholder;
+import frc.robot.autonomous.R1_Placeholder;
 import frc.robot.autonomous.T1_Move_Forward;
 import frc.robot.autonomous.T2_BwdPickup2Balls;
 import frc.robot.autonomous.T3_BwdPickup2BallsAndShoot;
@@ -189,11 +193,13 @@ public class RobotContainer {
     _NamedAutoMode mode;
     Map<String, _NamedAutoMode> myMap = new HashMap<String, _NamedAutoMode>();
 
-      // for Haymarket: R1, L1, M1, M3
+      // DEFAULT AUTO -- MOVE FORWARD
       //
       mode = new _NamedAutoMode(new F1_Move_Forward(m_robotDrive));
       myMap.put(mode.name, mode);
 
+      // TEST AUTO ROUTINES
+      //
       mode = new _NamedAutoMode(new T1_Move_Forward(m_robotDrive));
       myMap.put(mode.name, mode);
 
@@ -204,6 +210,20 @@ public class RobotContainer {
       myMap.put(mode.name, mode);
                     
       mode = new _NamedAutoMode(new T4_AimAndShoot(m_robotDrive, m_sequencer, m_shootclimb, m_vision, m_targeting));
+      myMap.put(mode.name, mode);
+
+      // FOR HAYMARKET: R1, L1, M1, M3
+      //
+      mode = new _NamedAutoMode(new R1_Placeholder(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
+      myMap.put(mode.name, mode);
+
+      mode = new _NamedAutoMode(new L1_Placeholder(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
+      myMap.put(mode.name, mode);
+
+      mode = new _NamedAutoMode(new M1_Placeholder(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
+      myMap.put(mode.name, mode);
+                    
+      mode = new _NamedAutoMode(new M3_Placeholder(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
       myMap.put(mode.name, mode);
 
       return myMap;
