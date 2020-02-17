@@ -40,6 +40,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 
 /*
@@ -94,12 +95,12 @@ public class RobotContainer {
         new RunCommand(() -> m_robotDrive.drive(
             // Get the x speed. We are inverting this because Xbox controllers return
             // negative values when we push forward.
-            -m_driverController.getY(GenericHID.Hand.kLeft),
+            -m_driverController.getY(GenericHID.Hand.kLeft) * DriveConstants.kMaxSpeedMetersPerSecond,
 
             // Get the y speed or sideways/strafe speed. We are inverting this because
             // we want a positive value when we pull to the left. Xbox controllers
             // return positive values when you pull to the right by default.
-            -m_driverController.getX(GenericHID.Hand.kLeft),
+            -m_driverController.getX(GenericHID.Hand.kLeft) * DriveConstants.kMaxSpeedMetersPerSecond,
 
             // Get the rate of angular rotation. We are inverting this because we want a
             // positive value when we pull to the left (remember, CCW is positive in

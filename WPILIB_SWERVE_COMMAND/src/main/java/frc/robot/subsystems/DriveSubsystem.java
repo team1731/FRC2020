@@ -48,7 +48,7 @@ public class DriveSubsystem extends SubsystemBase {
   
 
   private final SwerveModule m_rearRight =
-      new DummySwerveModule(DriveConstants.kRearRightDriveMotorPort,
+      new SwerveModule(DriveConstants.kRearRightDriveMotorPort,
                        DriveConstants.kRearRightTurningMotorPort);
 
   // The gyro sensor
@@ -133,13 +133,13 @@ public class DriveSubsystem extends SubsystemBase {
     double ySpeedAdjusted = ySpeed;
     double rotAdjusted = rot;
     // DEADBAND
-    if(Math.abs(xSpeedAdjusted) < 0.05){
+    if(Math.abs(xSpeedAdjusted) < 0.1){
       xSpeedAdjusted = 0;
     }
-    if(Math.abs(ySpeedAdjusted) < 0.05){
+    if(Math.abs(ySpeedAdjusted) < 0.1){
       ySpeedAdjusted = 0;
     }
-    if(Math.abs(rotAdjusted) < 0.05){
+    if(Math.abs(rotAdjusted) < 0.1){
       rotAdjusted = 0;
     }
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
