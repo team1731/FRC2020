@@ -23,8 +23,8 @@ import static frc.robot.Constants.kTICKS;
 
 public class SwerveModule {
   public static final double kMaxAngularSpeed = Math.PI;
-  private final CANSparkMax m_driveMotor;
-  private final CANSparkMax m_turningMotor;
+  private CANSparkMax m_driveMotor;
+  private CANSparkMax m_turningMotor;
   public CANEncoder m_driveEncoder;
   public CANEncoder m_turningEncoder;
   private CANPIDController m_drivePIDController;
@@ -54,9 +54,9 @@ public class SwerveModule {
       m_drivePIDController.setD(0);
       m_drivePIDController.setFF(0.000156);
       m_drivePIDController.setOutputRange(-1, 1);
-      m_drivePIDController.setSmartMotionMaxVelocity(2000, smartMotionSlot);
+      m_drivePIDController.setSmartMotionMaxVelocity(2000, smartMotionSlot); //RPM
       m_drivePIDController.setSmartMotionMinOutputVelocity(0, smartMotionSlot);
-      m_drivePIDController.setSmartMotionMaxAccel(1500, smartMotionSlot);
+      m_drivePIDController.setSmartMotionMaxAccel(1500, smartMotionSlot); //RPM per second
       m_drivePIDController.setSmartMotionAllowedClosedLoopError(50, smartMotionSlot);
   
       m_turningMotor = new CANSparkMax(turningMotorChannel, MotorType.kBrushless);
@@ -83,6 +83,10 @@ public class SwerveModule {
     //setAzimuthZero(0); //RDB 10FEB I don't think we want this any more -- abs encoders now
   }
 
+public SwerveModule() {
+  System.err.println("DUMMY SWERVE MODULE HAS BEEN INSTANTIATED");
+}
+
 public double getDriveEncoderPosition(){
   return m_driveEncoder.getPosition();
 }
@@ -103,6 +107,7 @@ public double getDriveEncoderPosition(){
    */
   private void setAzimuthZero(double zeroSetpointAbsoluteEncoderVoltage) { // 0.0 to 3.26, 180=1.63V
     offsetFromAbsoluteEncoder = zeroSetpointAbsoluteEncoderVoltage * 16/3.26;
+    SmartDashboard.putNumber("offsetFromAbsoluteEncoder"+id, offsetFromAbsoluteEncoder);
     //logger.info("<b>Wheel</b>: setAzimuthZero starting");
     //double azimuthSetpoint = getAzimuthAbsolutePosition() - zero;
     //ErrorCode err = azimuthTalon.setSelectedSensorPosition(azimuthSetpoint, 0, 10);
@@ -121,7 +126,7 @@ public double getDriveEncoderPosition(){
     //TODO - need to return azimuth from the 221 encoder
     double rawEncoder = 0;
     if(RobotBase.isReal()){
-      m_turningEncoder.getPosition();
+      rawEncoder = m_turningEncoder.getPosition();
     }
     double correctedEncoder = rawEncoder - offsetFromAbsoluteEncoder;
     return correctedEncoder;
@@ -136,10 +141,10 @@ public double getDriveEncoderPosition(){
     //return new SwerveModuleState(m_driveEncoder.getRate(), new Rotation2d(m_turningEncoder.get()));
         //FIXME: apply any needed unit convertion here...
     double velocity = 0;
-    if(RobotBase.isReal()){
-       velocity = m_driveEncoder.getVelocity() * Math.PI * 3.0 / 39.37 / 60.0 / 5.5;
+    if(RobotBase.isReal()){ // RPM/60 is RPS *PI*D is inches/s * 39.37 is meter/s but it's 5.5 ticks/rev
+       velocity = (m_driveEncoder.getVelocity() * Math.PI * 3.0) / (39.37 * 60.0 * 5.5);
     }
-    double azimuth = -getAzimuthAbsolutePosition(); //m_turningEncoder.getPosition();
+    double azimuth = -m_turningEncoder.getPosition();
     double azimuthPercent = Math.IEEEremainder(azimuth, kTICKS)/16.0;
 
     if(RobotBase.isReal()){
@@ -171,19 +176,19 @@ public double getDriveEncoderPosition(){
     
     double azimuth = -state.angle.getDegrees() * kTICKS/360.0;
     double speedMetersPerSecond = state.speedMetersPerSecond;
-    double drive = speedMetersPerSecond * 5.5 * 39.37  * 60.0 / 3.0 / Math.PI;
+    SmartDashboard.putNumber("SpeedMPS-"+id, speedMetersPerSecond);
+    // meters per sec * 39.37 is inches/s * 60 is inches per min / PI*D is RPM * 5.5 is ticks
+    double drive = (speedMetersPerSecond * 5.5 * 39.37  * 60.0) / (3.0 * Math.PI);
     //wheel.set(-angleDegrees/360, speedMetersPerSecond * 16.0 * 39.37  * 60.0 / 3.0 / Math.PI);
-    double azimuthPosition = getAzimuthAbsolutePosition(); //m_turningEncoder.getPosition();
+    double azimuthPosition = m_turningEncoder.getPosition();
     double azimuthError = Math.IEEEremainder(azimuth - azimuthPosition, kTICKS);
 
-    // NO - DON'T DO THIS!!! WPILIB DOESN'T KNOW THAT WE DID IT!!!
-    //
     // minimize azimuth rotation, reversing drive if necessary
-    // boolean isInverted = Math.abs(azimuthError) > 0.25 * kTICKS;
-    // if (isInverted) {
-    //   azimuthError -= Math.copySign(0.5 * kTICKS, azimuthError);
-    //   drive = -drive;
-    // }
+    boolean isInverted = Math.abs(azimuthError) > 0.25 * kTICKS;
+    if (isInverted) {
+      azimuthError -= Math.copySign(0.5 * kTICKS, azimuthError);
+      drive = -drive;
+    }
     if(RobotBase.isReal()){
       m_turningPIDController.setReference((azimuthPosition + azimuthError), ControlType.kSmartMotion);
       m_drivePIDController.setReference(drive, ControlType.kVelocity);
@@ -197,9 +202,9 @@ public double getDriveEncoderPosition(){
   public void resetEncoders(double absoluteEncoderVoltage) {
     if(RobotBase.isReal()){
       m_driveEncoder.setPosition(0);
-      m_turningEncoder.setPosition(0);
+      m_turningEncoder.setPosition(absoluteEncoderVoltage * 16/3.26);
     }
-    setAzimuthZero(absoluteEncoderVoltage); //remember our offset
+    //setAzimuthZero(absoluteEncoderVoltage); //remember our offset
   }
 
 }

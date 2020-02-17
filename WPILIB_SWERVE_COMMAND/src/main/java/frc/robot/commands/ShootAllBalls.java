@@ -39,7 +39,7 @@ public class ShootAllBalls extends WaitCommand {
   @Override
   public void initialize() {
     shootSubsystem.hoodExtend();
-    seqSubsystem.forward();
+    seqSubsystem.forward(true);
     super.initialize();
   }
 

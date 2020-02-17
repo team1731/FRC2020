@@ -30,13 +30,14 @@ public class IntakeSeqCommand extends CommandBase {
     m_SeqSubsystem = seqSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(intakeSubsystem, seqSubsystem);
+    
   }
 
   // Called when the command is initially scheduled.
   // If it is used as Default command then it gets call all the time
   @Override
   public void initialize() {
-    m_IntakeSubsystem.extend();
+    //m_IntakeSubsystem.extend();
     //m_SeqSubsystem.stop();
   }
 
@@ -45,13 +46,31 @@ public class IntakeSeqCommand extends CommandBase {
   public void execute() {
     // get necessary input
     //if (!m_SeqSubsystem.getMaxPowerCells()) {
-      m_SeqSubsystem.addPowerCell();
+      //m_SeqSubsystem.addPowerCell();
     //}
+    
+    // if low and high not tripped do something
+    // if they are both tripped we do NOTHING
+    if(!m_SeqSubsystem.getLowSensor() && !m_SeqSubsystem.getHighSensor()){
+      //do something
+      m_IntakeSubsystem.extend();
+      System.out.println("intake extended");
+    }
+    else if (m_SeqSubsystem.getLowSensor() && m_SeqSubsystem.getHighSensor()){
+      m_IntakeSubsystem.retract();
+    }
+    if((m_SeqSubsystem.getLowSensor() || m_SeqSubsystem.getMidSensor()) && !m_SeqSubsystem.getHighSensor()){
+      m_SeqSubsystem.forward(false);
+    }
+    else{
+      m_SeqSubsystem.stop();
+    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    System.out.println("IntakeSequenceCommand end interrupted=" + (interrupted?"true":"false"));
     m_IntakeSubsystem.retract();
     m_SeqSubsystem.stop();
   }
@@ -59,6 +78,6 @@ public class IntakeSeqCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_SeqSubsystem.getMaxPowerCells();
+    return false; //m_SeqSubsystem.getMaxPowerCells();
   }
 }

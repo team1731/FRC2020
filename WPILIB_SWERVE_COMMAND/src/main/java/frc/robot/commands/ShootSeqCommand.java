@@ -37,7 +37,7 @@ public class ShootSeqCommand extends CommandBase {
   @Override
   public void initialize() {
     shootSubsystem.hoodExtend();
-    seqSubsystem.forward();
+    seqSubsystem.forward(true);
     //seqSubsystem.stop();
   }
 

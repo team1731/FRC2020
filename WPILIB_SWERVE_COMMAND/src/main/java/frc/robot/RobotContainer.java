@@ -40,6 +40,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 
 /*
@@ -95,12 +96,12 @@ public class RobotContainer {
         new RunCommand(() -> m_robotDrive.drive(
             // Get the x speed. We are inverting this because Xbox controllers return
             // negative values when we push forward.
-            -m_driverController.getY(GenericHID.Hand.kLeft),
+            -m_driverController.getY(GenericHID.Hand.kLeft) * DriveConstants.kMaxSpeedMetersPerSecond,
 
             // Get the y speed or sideways/strafe speed. We are inverting this because
             // we want a positive value when we pull to the left. Xbox controllers
             // return positive values when you pull to the right by default.
-            -m_driverController.getX(GenericHID.Hand.kLeft),
+            -m_driverController.getX(GenericHID.Hand.kLeft) * DriveConstants.kMaxSpeedMetersPerSecond,
 
             // Get the rate of angular rotation. We are inverting this because we want a
             // positive value when we pull to the left (remember, CCW is positive in
@@ -135,7 +136,7 @@ public class RobotContainer {
             new InstantCommand(m_sequencer::stop, m_sequencer)));
 
     // Activate Intake via Operator Left Axis/Trigger
-    new HanTrigger(HanTriggers.OP_TRIG_LEFT).whileActiveOnce(new IntakeSeqCommand(m_intake, m_sequencer));
+    new HanTrigger(HanTriggers.OP_TRIG_LEFT).whileActiveContinuous(new IntakeSeqCommand(m_intake, m_sequencer));
 
     // Activate Shooter via Operator Right Axis/Trigger
     new HanTrigger(HanTriggers.OP_TRIG_RIGHT).whileActiveOnce(new ShootSeqCommand(m_shootclimb, m_sequencer));
@@ -155,6 +156,17 @@ public class RobotContainer {
     new ModeTrigger(HanMode.MODE_SHOOT).whileActiveOnce(new InstantCommand(m_shootclimb::modeShoot, m_shootclimb));
     new ModeTrigger(HanMode.MODE_CLIMB).whileActiveOnce(new InstantCommand(m_shootclimb::modeClimb, m_shootclimb));
 
+    /*
+    new JoystickButton(m_operatorController, 8)
+    // .whenPressed(new InstantCommand(m_ShootClimbSubsystem::on,
+    // m_ShootClimbSubsystem))
+
+    
+      .toggleWhenPressed(new ParallelCommandGroup[] {
+        new InstantCommand(m_shootclimb::modeShoot, m_shootclimb)
+
+    });
+    */
   }
 
   public _NamedAutoMode getNamedAutonomousCommand(String autoSelected) throws _NotImplementedProperlyException {

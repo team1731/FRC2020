@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
+
 import frc.robot.Constants;
 import frc.robot.Constants.OpConstants;
 
@@ -42,6 +44,8 @@ public class ShootClimbSubsystem extends SubsystemBase {
     //mTalonShoot = new PWMTalonFX(OpConstants.kMotorPWMShoot1);
     mTalonShoot1 = new TalonFX(OpConstants.kMotorCANShoot1);
     mTalonShoot2 = new TalonFX(OpConstants.kMotorCANShoot2);
+    mTalonShoot2.follow(mTalonShoot1);
+    mTalonShoot2.setInverted(TalonFXInvertType.OpposeMaster);
     mTalonShoot1.configFactoryDefault();
     mTalonShoot2.configFactoryDefault();
     /* Config sensor used for Primary PID [Velocity] */
@@ -80,6 +84,10 @@ public class ShootClimbSubsystem extends SubsystemBase {
     zMode = new DigitalOutput(5);
   }
 
+  public void testSpeed(){
+    System.out.println("testSpeed");
+  }
+  
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
