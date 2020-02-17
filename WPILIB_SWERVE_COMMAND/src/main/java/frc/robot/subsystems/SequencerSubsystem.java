@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.OpConstants;
 import edu.wpi.first.wpilibj.PWMTalonFX;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Timer;
+//import edu.wpi.first.wpilibj.Timer;
 
 public class SequencerSubsystem extends SubsystemBase {
 
@@ -20,12 +20,12 @@ public class SequencerSubsystem extends SubsystemBase {
   private DigitalInput mLowSensor;
   private DigitalInput mMidSensor;
   private DigitalInput mHighSensor;
-  private Timer mTimer;
-  private double elapsed;
-  private boolean startDelay;
-  private boolean mLowSensorCur;
-  private boolean mLowSensorLast; // does robot want to index balls - mode
-  private int mPowerCellCount;
+  //private Timer mTimer;
+  //private double elapsed;
+  //private boolean startDelay;
+  //private boolean mLowSensorCur;
+  //private boolean mLowSensorLast; // does robot want to index balls - mode
+  //private int mPowerCellCount;
 
   /**
    * Creates a new SequencerSubsystem.
@@ -35,47 +35,18 @@ public class SequencerSubsystem extends SubsystemBase {
     mLowSensor = new DigitalInput(OpConstants.kLowSequencer);
     mMidSensor = new DigitalInput(OpConstants.kMidSequencer);
     mHighSensor = new DigitalInput(OpConstants.kHighSequencer);
-    mTimer = new Timer();
-    mTimer.start();
-    startDelay = false;
-    mLowSensorCur = mLowSensor.get();
-    mLowSensorLast = mLowSensorCur;
-    mPowerCellCount = 0;
+    //mTimer = new Timer();
+    //mTimer.start();
+    //startDelay = false;
+    //mLowSensorCur = mLowSensor.get();
+    //mLowSensorLast = mLowSensorCur;
+    //mPowerCellCount = 0;
   }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    mLowSensorCur = mLowSensor.get();
-    if (startDelay) {
-      if (mTimer.get() - elapsed > OpConstants.kSeqIntakeDelay) {
-        mTalonSeq.setSpeed(0);
-        startDelay = false;
-      }
-    }
-    
   }
-
-  public void addPowerCell() {
-    if (mLowSensorCur) {
-        startDelay = true;
-        elapsed = mTimer.get();
-        // incr count at end of intaking powercell
-        if (!mLowSensorLast) {
-          mPowerCellCount++;
-        }
-    } else {
-        if (mPowerCellCount < OpConstants.kMaxPowerCells) {
-            mTalonSeq.setSpeed(OpConstants.kMotorSeqFwdIntakeSpeed);
-            // incr count at beginning of intaking powercell
-            //if (mLowSensorLast) {
-            //    mPowerCellCount++;
-            //}
-        }
-    }
-    mLowSensorLast = mLowSensorCur;
-  }
-
+  
   /**
    * For Shooting: Enables the Sequencer by turning on motor.
    */
@@ -86,7 +57,7 @@ public class SequencerSubsystem extends SubsystemBase {
     else{
       mTalonSeq.setSpeed(OpConstants.kMotorSeqFwdIntakeSpeed);
     }
-    mPowerCellCount = 0;
+    //mPowerCellCount = 0;
   }
 
   /**
@@ -94,7 +65,7 @@ public class SequencerSubsystem extends SubsystemBase {
    */
   public void reverse() {
     mTalonSeq.setSpeed(OpConstants.kMotorSeqRevShootSpeed);
-    mPowerCellCount = 0;
+    //mPowerCellCount = 0;
   }
 
   /**
@@ -116,6 +87,7 @@ public class SequencerSubsystem extends SubsystemBase {
     return !mHighSensor.get();
   }
 
+  /*
   public boolean getMaxPowerCells() {
     return(mPowerCellCount >= OpConstants.kMaxPowerCells);
   }
@@ -123,4 +95,38 @@ public class SequencerSubsystem extends SubsystemBase {
   public int getPowerCellCount() {
     return(mPowerCellCount);
   }
+
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+    mLowSensorCur = mLowSensor.get();
+    if (startDelay) {
+      if (mTimer.get() - elapsed > OpConstants.kSeqIntakeDelay) {
+        mTalonSeq.setSpeed(0);
+        startDelay = false;
+      }
+    }
+  }
+
+  public void addPowerCell() {
+    if (mLowSensorCur) {
+        startDelay = true;
+        elapsed = mTimer.get();
+        // incr count at end of intaking powercell
+        if (!mLowSensorLast) {
+          mPowerCellCount++;
+        }
+    } else {
+        if (mPowerCellCount < OpConstants.kMaxPowerCells) {
+            mTalonSeq.setSpeed(OpConstants.kMotorSeqFwdIntakeSpeed);
+            // incr count at beginning of intaking powercell
+            //if (mLowSensorLast) {
+            //    mPowerCellCount++;
+            //}
+        }
+    }
+    mLowSensorLast = mLowSensorCur;
+  }
+  */
+
 }

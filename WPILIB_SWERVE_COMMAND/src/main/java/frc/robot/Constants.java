@@ -135,7 +135,7 @@ public final class Constants {
         public static final double kMotorShootPercent = 0.50;   // check shooting motor percent
         public static final double kMotorClimbPercent = 0.3;
         public static final int kMaxPowerCells = 3;
-        public static final double kSeqIntakeDelay = 2.5;
+        public static final double kSeqResetDelay = 2.0;
 
         // ColorWheel
         public static final int kColorWheelTalonFX = 8;

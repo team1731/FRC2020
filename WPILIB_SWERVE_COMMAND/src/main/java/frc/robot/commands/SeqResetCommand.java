@@ -7,61 +7,51 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SequencerSubsystem;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj.Timer;
+
+import frc.robot.Constants.OpConstants;
 
 /**
  * An example command that uses an example subsystem.
  */
-public class IntakeSeqCommand extends CommandBase {
+public class SeqResetCommand extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final IntakeSubsystem m_IntakeSubsystem;
   private final SequencerSubsystem m_SeqSubsystem;
+  private Timer mTimer;
+  double elapsed;
 
   /**
-   * Creates a new Intake Sequence Command.
+   * Creates a new ExampleCommand.
    *
    * @param intakeSubsystem The intake subsystem this command will run on
    * @param seqSubsystem The sequencer subsystem this command will run on
    */
-  public IntakeSeqCommand(IntakeSubsystem intakeSubsystem, SequencerSubsystem seqSubsystem) {
-    m_IntakeSubsystem = intakeSubsystem;
+  public SeqResetCommand(SequencerSubsystem seqSubsystem) {
     m_SeqSubsystem = seqSubsystem;
+    mTimer = new Timer();
+  
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(intakeSubsystem, seqSubsystem);
+    addRequirements(seqSubsystem);
   }
 
   // Called when the command is initially scheduled.
   // If it is used as Default command then it gets call all the time
   @Override
   public void initialize() {
-    //m_IntakeSubsystem.extend();
     //m_SeqSubsystem.stop();
+    mTimer.start();
+    elapsed = mTimer.get();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // get necessary input
-    //if (!m_SeqSubsystem.getMaxPowerCells()) {
-      //m_SeqSubsystem.addPowerCell();
-    //}
-    
-    // if low and high not tripped do something
-    // if they are both tripped we do NOTHING
-    if(!m_SeqSubsystem.getLowSensor() && !m_SeqSubsystem.getHighSensor()){
-      //do something
-      m_IntakeSubsystem.extend();
-      System.out.println("intake extended");
-    }
-    else if (m_SeqSubsystem.getLowSensor() && m_SeqSubsystem.getHighSensor()){
-      m_IntakeSubsystem.retract();
-    }
-    if((m_SeqSubsystem.getLowSensor() || m_SeqSubsystem.getMidSensor()) && !m_SeqSubsystem.getHighSensor()){
-      m_SeqSubsystem.forward(false); // false indicates forward intaking speed
-    }
-    else{
+    // if mid sensor has not tripped then reset balls back to mid sensor (tripped)
+    if(!m_SeqSubsystem.getMidSensor()) {
+      m_SeqSubsystem.reverse();
+    } else {
       m_SeqSubsystem.stop();
     }
   }
@@ -69,14 +59,18 @@ public class IntakeSeqCommand extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    System.out.println("IntakeSequenceCommand end interrupted=" + (interrupted?"true":"false"));
-    m_IntakeSubsystem.retract();
+    System.out.println("SeqResetCommand end interrupted=" + (interrupted?"true":"false"));
     m_SeqSubsystem.stop();
+    mTimer.stop();
   }
 
-  // Returns true when the command should end.
+  // Returns true when the command should end after 2 seconds.
   @Override
   public boolean isFinished() {
-    return false; //m_SeqSubsystem.getMaxPowerCells();
+    boolean result = false;
+    if (mTimer.get() - elapsed > OpConstants.kSeqResetDelay) {
+      result = true;
+    }
+    return result;
   }
 }

@@ -7,12 +7,11 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.GenericHID.Hand;
-
 import java.util.HashMap;
 import java.util.Map;
 
-import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -53,7 +52,8 @@ public class RobotContainer {
   Map<String, _NamedAutoMode> nameAutoModeMap;
 
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
-  XboxController m_operatorController = new XboxController(OIConstants.kOperatorControllerPort);
+  //XboxController m_operatorController = new XboxController(OIConstants.kOperatorControllerPort);
+  Joystick m_operatorController = new Joystick(OIConstants.kOperatorControllerPort);
 
   private DriveSubsystem m_robotDrive;
   private IntakeSubsystem m_intake;
@@ -96,18 +96,18 @@ public class RobotContainer {
         new RunCommand(() -> m_robotDrive.drive(
             // Get the x speed. We are inverting this because Xbox controllers return
             // negative values when we push forward.
-            -m_driverController.getY(GenericHID.Hand.kLeft) * DriveConstants.kMaxSpeedMetersPerSecond,
+            -m_driverController.getY(Hand.kLeft) * DriveConstants.kMaxSpeedMetersPerSecond,
 
             // Get the y speed or sideways/strafe speed. We are inverting this because
             // we want a positive value when we pull to the left. Xbox controllers
             // return positive values when you pull to the right by default.
-            -m_driverController.getX(GenericHID.Hand.kLeft) * DriveConstants.kMaxSpeedMetersPerSecond,
+            -m_driverController.getX(Hand.kLeft) * DriveConstants.kMaxSpeedMetersPerSecond,
 
             // Get the rate of angular rotation. We are inverting this because we want a
             // positive value when we pull to the left (remember, CCW is positive in
             // mathematics). Xbox controllers return positive values when you pull to
             // the right by default.
-            -m_driverController.getX(GenericHID.Hand.kRight), true),
+            -m_driverController.getX(Hand.kRight), true),
 
             m_robotDrive));
   }
@@ -128,6 +128,10 @@ public class RobotContainer {
     // new JoystickButton(m_driverController, Button.kA.value)
     // .whenPressed(new TurnToAngleProfiled(30, m_robotDrive).withTimeout(5));
 
+    // Activate Intake via Operator Left Front Top - Up is Intaking, Down is Reset 
+    new JoystickButton(m_operatorController, 3).whileActiveContinuous(new IntakeSeqCommand(m_intake, m_sequencer));
+    new JoystickButton(m_operatorController, 2).whileActiveContinuous(new SeqResetCommand(m_sequencer), true);
+
     // Intake & Sequencer ejects works will button is held
     new JoystickButton(m_operatorController, 1)
         .whenHeld(new ParallelCommandGroup(new InstantCommand(m_intake::eject, m_intake),
@@ -136,7 +140,7 @@ public class RobotContainer {
             new InstantCommand(m_sequencer::stop, m_sequencer)));
 
     // Activate Intake via Operator Left Axis/Trigger
-    new HanTrigger(HanTriggers.OP_TRIG_LEFT).whileActiveContinuous(new IntakeSeqCommand(m_intake, m_sequencer));
+    //new HanTrigger(HanTriggers.OP_TRIG_LEFT).whileActiveContinuous(new IntakeSeqCommand(m_intake, m_sequencer));
 
     // Activate Shooter via Operator Right Axis/Trigger
     new HanTrigger(HanTriggers.OP_TRIG_RIGHT).whileActiveOnce(new ShootSeqCommand(m_shootclimb, m_sequencer));
@@ -273,10 +277,10 @@ public class RobotContainer {
           triggerValue = m_driverController.getTriggerAxis(Hand.kRight);
           break;
         case OP_TRIG_LEFT:
-          triggerValue = m_operatorController.getTriggerAxis(Hand.kLeft);
+          //triggerValue = m_operatorController.getTriggerAxis(Hand.kLeft);
           break;
         case OP_TRIG_RIGHT:
-          triggerValue = m_operatorController.getTriggerAxis(Hand.kRight);
+          //triggerValue = m_operatorController.getTriggerAxis(Hand.kRight);
           break;
       }
       return (Math.abs(triggerValue) > 0.5);
@@ -291,8 +295,8 @@ public class RobotContainer {
     }
 
     public boolean get() {
-      boolean left = m_operatorController.getXButton();
-      boolean right = m_operatorController.getYButton();
+      boolean left = m_operatorController.getRawButton(1);
+      boolean right = m_operatorController.getRawButton(12);
       switch (mode) {
         case MODE_SHOOT:
           result = (left && right);
