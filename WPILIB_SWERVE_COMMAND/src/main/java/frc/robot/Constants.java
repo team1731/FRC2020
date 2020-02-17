@@ -166,23 +166,30 @@ public final class Constants {
             TEAM, RED, BLUE, GREEN, YELLOW, ORANGE, PURPLE, RAINBOW
         }
 
-        // PCM 0 SOLENOIDS
-        // pairs b4-t3, b5-t2, b6-t4, b7-t5, t0-t6, t1-t7
-        public static final int kShooting = 4; //ok
-        public static final int kClimbing = 5; //ok 
+        // in order of pneumatic actuators (top to bottom)
+        // PCM  terminals     function
+        //  0      6-7    ==   spare
+        //  0      4-5    ==   climb clutch
+        //  1      0-1    ==   color wheel
+        //  1      2-3    ==   climber arms
+        //  1      4-5    ==   shooter hood
+        //  1      6-7    ==   intake
 
-        public static final int kClimbExtend = 4; 
-        public static final int kClimbRetract = 5; 
-        public static final int kHoodExtend = 6; 
-        public static final int kHoodRetract = 7; 
+        // PCM 0 SOLENOIDS
+        public static final int k0SpareLeft = 6;
+        public static final int k0SpareRight = 7;
+        public static final int k0Shooting = 4; //ok
+        public static final int k0Climbing = 5; //ok 
 
         // PCM 1 SOLENOIDS
-        public static final int kIntakeExtend = 6; //ok
-        public static final int kIntakeRetract = 7; //ok
-
-        public static final int kColorWheelExtend = 0; 
-        public static final int kColorWheelRetract = 1; 
-        // pairs b4-t3, b5-t2, b6-t4, b7-t5, t0-t6, t1-t7 
+        public static final int k1ColorWheelExtend = 0; 
+        public static final int k1ColorWheelRetract = 1; 
+        public static final int k1ClimbExtend = 2; 
+        public static final int k1ClimbRetract = 3; 
+        public static final int k1HoodExtend = 4; 
+        public static final int k1HoodRetract = 5; 
+        public static final int k1IntakeExtend = 6; //ok
+        public static final int k1IntakeRetract = 7; //ok
 
         // ColorWheel
         // Note: Any example colors should be calibrated as the user needs, these are here as a basic example.

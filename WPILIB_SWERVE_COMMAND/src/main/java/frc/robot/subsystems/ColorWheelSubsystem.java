@@ -75,7 +75,7 @@ public class ColorWheelSubsystem extends SubsystemBase {
   public ColorWheelSubsystem() {
     
     mTalonFX = new PWMTalonFX(OpConstants.kColorWheelTalonFX);
-    //mColorWheelSolenoid = Constants.makeDoubleSolenoidForIds(1, OpConstants.kColorWheelRetract, OpConstants.kColorWheelExtend);
+    mColorWheelSolenoid = Constants.makeDoubleSolenoidForIds(1, OpConstants.k1ColorWheelRetract, OpConstants.k1ColorWheelExtend);
     i2cPort = I2C.Port.kOnboard;
     mColorSensor = new ColorSensorV3(i2cPort);
     mColorMatcher = new ColorMatch();
