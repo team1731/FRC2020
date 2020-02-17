@@ -176,10 +176,10 @@ public final class Constants {
         public static final int kHoodRetract = 7; 
 
         // PCM 1 SOLENOIDS
-        public static final int kIntakeExtend = 0; 
-        public static final int kIntakeRetract = 1; 
-        public static final int kColorWheelExtend = 6; 
-        public static final int kColorWheelRetract = 7; 
+        public static final int kIntakeExtend = 6; 
+        public static final int kIntakeRetract = 7; 
+        public static final int kColorWheelExtend = 0; 
+        public static final int kColorWheelRetract = 1; 
         // pairs b4-t3, b5-t2, b6-t4, b7-t5, t0-t6, t1-t7 
 
         // ColorWheel
