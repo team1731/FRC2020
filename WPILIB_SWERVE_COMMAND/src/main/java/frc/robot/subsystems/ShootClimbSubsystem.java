@@ -44,8 +44,8 @@ public class ShootClimbSubsystem extends SubsystemBase {
     //mTalonShoot = new PWMTalonFX(OpConstants.kMotorPWMShoot1);
     mTalonShoot1 = new TalonFX(OpConstants.kMotorCANShoot1);
     mTalonShoot2 = new TalonFX(OpConstants.kMotorCANShoot2);
-    mTalonShoot2.follow(mTalonShoot1);
-    mTalonShoot2.setInverted(TalonFXInvertType.OpposeMaster);
+    /////////////////////////////////////////////////////////////mTalonShoot2.follow(mTalonShoot1);
+    /////////////////////////////////////////////////////////////mTalonShoot2.setInverted(TalonFXInvertType.OpposeMaster);
     mTalonShoot1.configFactoryDefault();
     mTalonShoot2.configFactoryDefault();
     /* Config sensor used for Primary PID [Velocity] */
