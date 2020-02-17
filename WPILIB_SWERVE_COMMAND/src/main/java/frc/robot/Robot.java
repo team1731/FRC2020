@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -61,6 +62,9 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     //JevoisVisionServer.getInstance();
 
+    CameraServer camServer = CameraServer.getInstance();
+    camServer.startAutomaticCapture();
+    
     m_robotDrive = new DriveSubsystem();
     m_targeting = new TargetingSubsystem();
     m_vision = null; //new JevoisVisionSubsystem();
