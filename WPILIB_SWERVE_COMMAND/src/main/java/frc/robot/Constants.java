@@ -168,16 +168,18 @@ public final class Constants {
 
         // PCM 0 SOLENOIDS
         // pairs b4-t3, b5-t2, b6-t4, b7-t5, t0-t6, t1-t7
-        public static final int kShooting = 2; 
-        public static final int kClimbing = 3; 
+        public static final int kShooting = 4; //ok
+        public static final int kClimbing = 5; //ok 
+
         public static final int kClimbExtend = 4; 
         public static final int kClimbRetract = 5; 
         public static final int kHoodExtend = 6; 
         public static final int kHoodRetract = 7; 
 
         // PCM 1 SOLENOIDS
-        public static final int kIntakeExtend = 6; 
-        public static final int kIntakeRetract = 7; 
+        public static final int kIntakeExtend = 6; //ok
+        public static final int kIntakeRetract = 7; //ok
+
         public static final int kColorWheelExtend = 0; 
         public static final int kColorWheelRetract = 1; 
         // pairs b4-t3, b5-t2, b6-t4, b7-t5, t0-t6, t1-t7 
