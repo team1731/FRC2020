@@ -132,21 +132,21 @@ public class RobotContainer {
     new JoystickButton(m_operatorController, 3).whileActiveContinuous(new IntakeSeqCommand(m_intake, m_sequencer));
     new JoystickButton(m_operatorController, 2).whileActiveContinuous(new SeqResetCommand(m_sequencer), true);
 
-    new JoystickButton(m_operatorController, 11)
+    new JoystickButton(m_operatorController, 10)
       .whenActive(new InstantCommand(m_shootclimb::enableShooting, m_shootclimb))
       .whenInactive(new InstantCommand(m_shootclimb::disable, m_shootclimb));
 
 
     // Shooting Enabled
-    new JoystickButton(m_operatorController, 10).whileActiveContinuous(new ShootSeqCommand(m_shootclimb, m_sequencer), true);
+    new JoystickButton(m_operatorController, 12).whileActiveContinuous(new ShootSeqCommand(m_shootclimb, m_sequencer), true);
     //new ModeTrigger(HanMode.MODE_SHOOT).whenActive(
     //  new InstantCommand(m_shootclimb::enableShooting, m_shootclimb)
     //);
 
     // Climbing Command
-    new ModeTrigger(HanMode.MODE_CLIMB).whileActiveContinuous(
-      new ClimbingCommand(m_shootclimb, () -> m_operatorController.getRawAxis(1)), true
-    );
+    //new ModeTrigger(HanMode.MODE_CLIMB).whileActiveContinuous(
+    //  new ClimbingCommand(m_shootclimb, () -> m_operatorController.getRawAxis(1)), true
+    //);
 
     /*
     // Intake & Sequencer ejects works will button is held
