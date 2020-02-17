@@ -132,6 +132,17 @@ public class RobotContainer {
     new JoystickButton(m_operatorController, 3).whileActiveContinuous(new IntakeSeqCommand(m_intake, m_sequencer));
     new JoystickButton(m_operatorController, 2).whileActiveContinuous(new SeqResetCommand(m_sequencer), true);
 
+    // Shooting Enabled
+    new ModeTrigger(HanMode.MODE_SHOOT).whileActiveOnce(
+      new InstantCommand(m_shootclimb::enableShooting, m_shootclimb)
+    );
+
+    // Climbing Command
+    new ModeTrigger(HanMode.MODE_CLIMB).whileActiveContinuous(
+      new ClimbingCommand(m_shootclimb, () -> m_operatorController.getRawAxis(1)), true
+    );
+
+    /*
     // Intake & Sequencer ejects works will button is held
     new JoystickButton(m_operatorController, 1)
         .whenHeld(new ParallelCommandGroup(new InstantCommand(m_intake::eject, m_intake),
@@ -143,11 +154,7 @@ public class RobotContainer {
     //new HanTrigger(HanTriggers.OP_TRIG_LEFT).whileActiveContinuous(new IntakeSeqCommand(m_intake, m_sequencer));
 
     // Activate Shooter via Operator Right Axis/Trigger
-    new HanTrigger(HanTriggers.OP_TRIG_RIGHT).whileActiveOnce(new ShootSeqCommand(m_shootclimb, m_sequencer));
-
-    // Climbing Mode
-    new StickTrigger()
-        .whileActiveContinuous(new ClimbingCommand(m_shootclimb, () -> m_operatorController.getRawAxis(1)));
+    //new HanTrigger(HanTriggers.OP_TRIG_RIGHT).whileActiveOnce(new ShootSeqCommand(m_shootclimb, m_sequencer));
 
     // Select Shoot or Climb Mode
     new JoystickButton(m_operatorController, 3).whenPressed(new InstantCommand(m_shootclimb::modeClimb, m_shootclimb));
@@ -157,10 +164,7 @@ public class RobotContainer {
         // .whenPressed(new InstantCommand(m_ShootClimbSubsystem::on,
         // m_ShootClimbSubsystem))
         .whenReleased(new InstantCommand(m_shootclimb::modeShoot, m_shootclimb));
-    new ModeTrigger(HanMode.MODE_SHOOT).whileActiveOnce(new InstantCommand(m_shootclimb::modeShoot, m_shootclimb));
-    new ModeTrigger(HanMode.MODE_CLIMB).whileActiveOnce(new InstantCommand(m_shootclimb::modeClimb, m_shootclimb));
 
-    /*
     new JoystickButton(m_operatorController, 8)
     // .whenPressed(new InstantCommand(m_ShootClimbSubsystem::on,
     // m_ShootClimbSubsystem))
@@ -254,7 +258,7 @@ public class RobotContainer {
       //v = operatorController.getX(Hand.kRight);
       //x = operatorController.getRawAxis(0);
       double y = m_operatorController.getRawAxis(1);
-      return Math.abs(y) < 0.1 ? false : true; 
+      return Math.abs(y) < 0.2 ? false : true; 
     }
   }
 
@@ -299,10 +303,10 @@ public class RobotContainer {
       boolean right = m_operatorController.getRawButton(12);
       switch (mode) {
         case MODE_SHOOT:
-          result = (left && right);
+          result = ((!left) && (!right));
           break;
         case MODE_CLIMB:
-          result = ((!left) && (!right));
+          result = (left && right);
           break;
       }
       //double v = operatorController.getY(Hand.kRight);
