@@ -135,7 +135,7 @@ public class RobotContainer {
             new InstantCommand(m_sequencer::stop, m_sequencer)));
 
     // Activate Intake via Operator Left Axis/Trigger
-    new HanTrigger(HanTriggers.OP_TRIG_LEFT).whileActiveOnce(new IntakeSeqCommand(m_intake, m_sequencer));
+    new HanTrigger(HanTriggers.OP_TRIG_LEFT).whileActiveContinuous(new IntakeSeqCommand(m_intake, m_sequencer));
 
     // Activate Shooter via Operator Right Axis/Trigger
     new HanTrigger(HanTriggers.OP_TRIG_RIGHT).whileActiveOnce(new ShootSeqCommand(m_shootclimb, m_sequencer));
@@ -153,6 +153,17 @@ public class RobotContainer {
         // m_ShootClimbSubsystem))
         .whenReleased(new InstantCommand(m_shootclimb::modeShoot, m_shootclimb));
 
+    /*
+    new JoystickButton(m_operatorController, 8)
+    // .whenPressed(new InstantCommand(m_ShootClimbSubsystem::on,
+    // m_ShootClimbSubsystem))
+
+    
+      .toggleWhenPressed(new ParallelCommandGroup[] {
+        new InstantCommand(m_shootclimb::modeShoot, m_shootclimb)
+
+    });
+    */
   }
 
   public _NamedAutoMode getNamedAutonomousCommand(String autoSelected) throws _NotImplementedProperlyException {

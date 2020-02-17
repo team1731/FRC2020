@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.OpConstants;
@@ -19,7 +21,7 @@ public class IntakeSubsystem extends SubsystemBase {
    */
 	public IntakeSubsystem() {
     mTalonIntake = new PWMTalonFX(OpConstants.kMotorPWMIntake);
-    mIntakeSolenoid = Constants.makeDoubleSolenoidForIds(0, OpConstants.kIntakeRetract, OpConstants.kIntakeExtend);
+    mIntakeSolenoid = Constants.makeDoubleSolenoidForIds(1, OpConstants.kIntakeRetract, OpConstants.kIntakeExtend);
     mTalonState = "Off";
   }
 

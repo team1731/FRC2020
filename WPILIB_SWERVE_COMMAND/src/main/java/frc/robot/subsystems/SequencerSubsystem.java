@@ -18,6 +18,8 @@ public class SequencerSubsystem extends SubsystemBase {
 
   private final PWMTalonFX mTalonSeq;
   private DigitalInput mLowSensor;
+  private DigitalInput mMidSensor;
+  private DigitalInput mHighSensor;
   private Timer mTimer;
   private double elapsed;
   private boolean startDelay;
@@ -31,6 +33,8 @@ public class SequencerSubsystem extends SubsystemBase {
   public SequencerSubsystem() {
     mTalonSeq = new PWMTalonFX(OpConstants.kMotorPWMSeq);
     mLowSensor = new DigitalInput(OpConstants.kLowSequencer);
+    mMidSensor = new DigitalInput(OpConstants.kMidSequencer);
+    mHighSensor = new DigitalInput(OpConstants.kHighSequencer);
     mTimer = new Timer();
     mTimer.start();
     startDelay = false;
@@ -62,7 +66,7 @@ public class SequencerSubsystem extends SubsystemBase {
         }
     } else {
         if (mPowerCellCount < OpConstants.kMaxPowerCells) {
-            mTalonSeq.setSpeed(OpConstants.kMotorSeqFwdSpeed);
+            mTalonSeq.setSpeed(OpConstants.kMotorSeqFwdIntakeSpeed);
             // incr count at beginning of intaking powercell
             //if (mLowSensorLast) {
             //    mPowerCellCount++;
@@ -75,8 +79,13 @@ public class SequencerSubsystem extends SubsystemBase {
   /**
    * For Shooting: Enables the Sequencer by turning on motor.
    */
-  public void forward() {
-    mTalonSeq.setSpeed(OpConstants.kMotorSeqFwdSpeed);
+  public void forward(boolean shooting) {
+    if(shooting){
+      mTalonSeq.setSpeed(OpConstants.kMotorSeqFwdShootSpeed);
+    }
+    else{
+      mTalonSeq.setSpeed(OpConstants.kMotorSeqFwdIntakeSpeed);
+    }
     mPowerCellCount = 0;
   }
 
@@ -84,7 +93,7 @@ public class SequencerSubsystem extends SubsystemBase {
    * For Ejecting balls: Reverses the motor.
    */
   public void reverse() {
-    mTalonSeq.setSpeed(OpConstants.kMotorSeqRevSpeed);
+    mTalonSeq.setSpeed(OpConstants.kMotorSeqRevShootSpeed);
     mPowerCellCount = 0;
   }
 
@@ -96,7 +105,15 @@ public class SequencerSubsystem extends SubsystemBase {
   }
 
   public boolean getLowSensor() {
-    return(mLowSensorCur);
+    return !mLowSensor.get(); //(mLowSensorCur);
+  }
+
+  public boolean getMidSensor() {
+    return !mMidSensor.get();
+  }
+
+  public boolean getHighSensor() {
+    return !mHighSensor.get();
   }
 
   public boolean getMaxPowerCells() {

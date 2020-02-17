@@ -124,13 +124,15 @@ public final class Constants {
         public static final int kMotorPWMShoot2 = 3;       // Shooter Motor Two
         public static final int kMotorCANShoot1 = 7;
         public static final int kMotorCANShoot2 = 8;
-        public static final double kMotorSeqFwdSpeed = -0.4;   // forward or backward
-        public static final double kMotorSeqRevSpeed = 0.4;   // forward or backward
-        public static final double kMotorIntakeFwdSpeed = 0.2;   // forward or backward
-        public static final double kMotorIntakeRevSpeed = -0.2;   // forward or backward
+        public static final double kMotorSeqFwdIntakeSpeed = -0.6;   // forward or backward
+        public static final double kMotorSeqRevIntakeSpeed = 0.4;   // forward or backward
+        public static final double kMotorSeqFwdShootSpeed = -1.0;   // forward or backward
+        public static final double kMotorSeqRevShootSpeed = 0.4;   // forward or backward
+        public static final double kMotorIntakeFwdSpeed = 1.0;   // forward or backward
+        public static final double kMotorIntakeRevSpeed = -1.0;   // forward or backward
         public static final double kMotorShootSpeed1 = -0.3;   // forward or backward
         public static final double kMotorShootSpeed2 = 0.3;
-        public static final double kMotorShootPercent = 0.20;   // check shooting motor percent
+        public static final double kMotorShootPercent = 0.50;   // check shooting motor percent
         public static final double kMotorClimbPercent = 0.3;
         public static final int kMaxPowerCells = 3;
         public static final double kSeqIntakeDelay = 2.5;
@@ -143,7 +145,8 @@ public final class Constants {
 
         // Digital Input/Outputs
         public static int kLowSequencer = 0;
-        public static int kHighSequencer = 1;
+        public static int kMidSequencer = 1;
+        public static int kHighSequencer = 2;
 
         public static int kArduinoLed0 = 7;
         public static int kArduinoLed1 = 8;
@@ -165,8 +168,6 @@ public final class Constants {
 
         // PCM 0 SOLENOIDS
         // pairs b4-t3, b5-t2, b6-t4, b7-t5, t0-t6, t1-t7
-        public static final int kIntakeExtend = 0; 
-        public static final int kIntakeRetract = 1; 
         public static final int kShooting = 2; 
         public static final int kClimbing = 3; 
         public static final int kClimbExtend = 4; 
@@ -175,6 +176,8 @@ public final class Constants {
         public static final int kHoodRetract = 7; 
 
         // PCM 1 SOLENOIDS
+        public static final int kIntakeExtend = 0; 
+        public static final int kIntakeRetract = 1; 
         public static final int kColorWheelExtend = 6; 
         public static final int kColorWheelRetract = 7; 
         // pairs b4-t3, b5-t2, b6-t4, b7-t5, t0-t6, t1-t7 
