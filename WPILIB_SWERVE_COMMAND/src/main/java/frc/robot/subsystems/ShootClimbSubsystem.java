@@ -94,12 +94,12 @@ public class ShootClimbSubsystem extends SubsystemBase {
 			 * 2048(FX) 4096(SRX) Units/Rev * 500 RPM / 600 100ms/min in either direction:
 			 * velocity setpoint is in units/100ms
     */
-    double velocity = 0.5; // guessing between -1.0 to 1.0
+    double velocity = 0.2; // guessing between -1.0 to 1.0
 		double targetVelocity_UnitsPer100ms = velocity * 500.0 * 2048 / 600;
 		/* 500 RPM in either direction */
 		//mTalonShoot1.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
-    mTalonShoot1.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
-    //mTalonShoot1.set(ControlMode.PercentOutput,OpConstants.kMotorShootPercent);
+    //mTalonShoot1.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
+    mTalonShoot1.set(ControlMode.PercentOutput,OpConstants.kMotorShootPercent);
     //mTalonShoot2.set(ControlMode.PercentOutput,OpConstants.kMotorShootPercent);
   }
   public void enableClimbing() {
@@ -127,7 +127,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
     //mShootHoodSolenoid.set(DoubleSolenoid.Value.kReverse);
     //mTalonShoot.setSpeed(0);
     mTalonShoot1.set(ControlMode.PercentOutput, 0);
-    mTalonShoot2.set(ControlMode.PercentOutput, 0);
+    //mTalonShoot2.set(ControlMode.PercentOutput, 0);
   }
 
   public void hoodRetract() {
