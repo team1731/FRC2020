@@ -133,13 +133,13 @@ public class DriveSubsystem extends SubsystemBase {
     double ySpeedAdjusted = ySpeed;
     double rotAdjusted = rot;
     // DEADBAND
-    if(Math.abs(xSpeedAdjusted) < 0.1){
+    if(Math.abs(xSpeedAdjusted) < 0.2){
       xSpeedAdjusted = 0;
     }
-    if(Math.abs(ySpeedAdjusted) < 0.1){
+    if(Math.abs(ySpeedAdjusted) < 0.2){
       ySpeedAdjusted = 0;
     }
-    if(Math.abs(rotAdjusted) < 0.1){
+    if(Math.abs(rotAdjusted) < 0.2){
       rotAdjusted = 0;
     }
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(

@@ -21,7 +21,7 @@ public class IntakeSubsystem extends SubsystemBase {
    */
 	public IntakeSubsystem() {
     mTalonIntake = new PWMTalonFX(OpConstants.kMotorPWMIntake);
-    mIntakeSolenoid = Constants.makeDoubleSolenoidForIds(1, OpConstants.kIntakeRetract, OpConstants.kIntakeExtend);
+    mIntakeSolenoid = Constants.makeDoubleSolenoidForIds(1, OpConstants.k1IntakeRetract, OpConstants.k1IntakeExtend);
     mTalonState = "Off";
   }
 

@@ -35,14 +35,14 @@ public class ShootClimbSubsystem extends SubsystemBase {
    * Creates a new ExampleSubsystem.
    */
   public ShootClimbSubsystem() {
-    //mShootClimbSolenoid = Constants.makeDoubleSolenoidForIds(0, OpConstants.kShooting, OpConstants.kClimbing);
-    //mClimberSolenoid = Constants.makeDoubleSolenoidForIds(0, OpConstants.kClimbRetract, OpConstants.kClimbExtend);
-    //mShootHoodSolenoid = Constants.makeDoubleSolenoidForIds(0, OpConstants.kHoodRetract, OpConstants.kHoodExtend);
+    mShootClimbSolenoid = Constants.makeDoubleSolenoidForIds(0, OpConstants.k0Shooting, OpConstants.k0Climbing);
+    mClimberSolenoid = Constants.makeDoubleSolenoidForIds(1, OpConstants.k1ClimbRetract, OpConstants.k1ClimbExtend);
+    mShootHoodSolenoid = Constants.makeDoubleSolenoidForIds(1, OpConstants.k1HoodRetract, OpConstants.k1HoodExtend);
     //mTalonShoot = new PWMTalonFX(OpConstants.kMotorPWMShoot1);
     mTalonShoot1 = new TalonFX(OpConstants.kMotorCANShoot1);
     mTalonShoot2 = new TalonFX(OpConstants.kMotorCANShoot2);
-    mTalonShoot2.follow(mTalonShoot1);
-    mTalonShoot2.setInverted(TalonFXInvertType.OpposeMaster);
+    /////////////////////////////////////////////////////////////mTalonShoot2.follow(mTalonShoot1);
+    /////////////////////////////////////////////////////////////mTalonShoot2.setInverted(TalonFXInvertType.OpposeMaster);
     mTalonShoot1.configFactoryDefault();
     mTalonShoot2.configFactoryDefault();
     /* Config sensor used for Primary PID [Velocity] */
