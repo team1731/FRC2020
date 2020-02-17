@@ -65,6 +65,7 @@ public class RobotContainer {
   public enum HanTriggers {
     DR_TRIG_LEFT, DR_TRIG_RIGHT, OP_TRIG_LEFT, OP_TRIG_RIGHT
   }
+  public enum HanMode { MODE_SHOOT, MODE_CLIMB }
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -151,6 +152,8 @@ public class RobotContainer {
         // .whenPressed(new InstantCommand(m_ShootClimbSubsystem::on,
         // m_ShootClimbSubsystem))
         .whenReleased(new InstantCommand(m_shootclimb::modeShoot, m_shootclimb));
+    new ModeTrigger(HanMode.MODE_SHOOT).whileActiveOnce(new InstantCommand(m_shootclimb::modeShoot, m_shootclimb));
+    new ModeTrigger(HanMode.MODE_CLIMB).whileActiveOnce(new InstantCommand(m_shootclimb::modeClimb, m_shootclimb));
 
   }
 
@@ -265,6 +268,29 @@ public class RobotContainer {
           break;
       }
       return (Math.abs(triggerValue) > 0.5);
+    }
+  }
+
+  public class ModeTrigger extends Trigger {
+    HanMode mode;
+    boolean result;
+    public ModeTrigger (HanMode mode) {
+      this.mode = mode;
+    }
+
+    public boolean get() {
+      boolean left = m_operatorController.getXButton();
+      boolean right = m_operatorController.getYButton();
+      switch (mode) {
+        case MODE_SHOOT:
+          result = (left && right);
+          break;
+        case MODE_CLIMB:
+          result = ((!left) && (!right));
+          break;
+      }
+      //double v = operatorController.getY(Hand.kRight);
+      return result; 
     }
   }
 
