@@ -49,10 +49,10 @@ public class SeqResetCommand extends CommandBase {
   @Override
   public void execute() {
     // if mid sensor has not tripped then reset balls back to mid sensor (tripped)
-    if(!m_SeqSubsystem.getMidSensor()) {
-      m_SeqSubsystem.reverse();
-    } else {
+    if(m_SeqSubsystem.tripMidSensor()) {
       m_SeqSubsystem.stop();
+    } else {
+      m_SeqSubsystem.reverse();
     }
   }
 
