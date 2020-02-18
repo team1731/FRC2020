@@ -10,6 +10,8 @@ package frc.robot.subsystems;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 //import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
@@ -21,9 +23,12 @@ import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.DriveConstants;
+import frc.robot.commands.TurnToAngleProfiled;
 import frc.robot.util.DebugOutput;
 import frc.robot.util.ReflectingCSVWriter;
 
@@ -32,6 +37,11 @@ public class DriveSubsystem extends SubsystemBase {
 
   private final ReflectingCSVWriter<DebugOutput> mCSVWriter;
   private final DebugOutput debugOutput = new DebugOutput();
+  private final ProfiledPIDController headingController = new ProfiledPIDController(
+    DriveConstants.kTurnP, DriveConstants.kTurnI, DriveConstants.kTurnD, 
+    new TrapezoidProfile.Constraints(DriveConstants.kMaxTurnVelocity, DriveConstants.kMaxTurnAcceleration));
+  
+  private double headingControllerOutput = 0;
   
   //Robot swerve modules
   private final SwerveModule m_frontLeft = 
@@ -64,6 +74,9 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public DriveSubsystem() {
     mCSVWriter = new ReflectingCSVWriter<>(this.getName(), DebugOutput.class);
+
+    headingController.setTolerance(DriveConstants.kTurnToleranceDeg, DriveConstants.kTurnRateToleranceDegPerS);
+    headingController.enableContinuousInput(-180, 180);
   }
 
   
@@ -77,11 +90,20 @@ public class DriveSubsystem extends SubsystemBase {
     return Rotation2d.fromDegrees(m_gyro.getAngle() * (DriveConstants.kGyroReversed ? -1.0 : 1.0));
   }
 
+  /**
+   * @return the headingControllerOutput
+   */
+  public double getHeadingControllerOutput() {
+    return headingControllerOutput;
+  }
+
   @Override
   public void periodic() {
     if(mCSVWriter.isSuspended()){
       mCSVWriter.resume();
     }
+
+    headingControllerOutput = headingController.calculate(getHeading());
 
     // Update the odometry in the periodic block
     double headingRadians = Math.toRadians(getHeading());
@@ -128,10 +150,10 @@ public class DriveSubsystem extends SubsystemBase {
    * @param fieldRelative Whether the provided x and y speeds are relative to the field.
    */
   @SuppressWarnings("ParameterName")
-  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+  public void drive(double xSpeed, double ySpeed, double rightX, double rightY, boolean fieldRelative) {
     double xSpeedAdjusted = xSpeed;
     double ySpeedAdjusted = ySpeed;
-    double rotAdjusted = rot;
+    //double rotAdjusted = rot;
     // DEADBAND
     if(Math.abs(xSpeedAdjusted) < 0.2){
       xSpeedAdjusted = 0;
@@ -139,13 +161,18 @@ public class DriveSubsystem extends SubsystemBase {
     if(Math.abs(ySpeedAdjusted) < 0.2){
       ySpeedAdjusted = 0;
     }
-    if(Math.abs(rotAdjusted) < 0.2){
-      rotAdjusted = 0;
-    }
+    //if(Math.abs(rotAdjusted) < 0.2){
+    //  rotAdjusted = 0;
+    //}
+
+    double rot = getStickAngle(rightX, rightY);
+    headingController.setGoal(rot);
+
+    //Replaced rotAdjusted with headingControllerOutput
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
-          xSpeedAdjusted, ySpeedAdjusted, rotAdjusted, getAngle())
-            : new ChassisSpeeds(xSpeedAdjusted, ySpeedAdjusted, rotAdjusted)
+          xSpeedAdjusted, ySpeedAdjusted, headingControllerOutput, getAngle())
+            : new ChassisSpeeds(xSpeedAdjusted, ySpeedAdjusted, headingControllerOutput)
     );
     SwerveDriveKinematics.normalizeWheelSpeeds(swerveModuleStates,
                                                DriveConstants.kMaxSpeedMetersPerSecond);
@@ -153,6 +180,47 @@ public class DriveSubsystem extends SubsystemBase {
     m_frontRight.setDesiredState(swerveModuleStates[1]);
     m_rearLeft.setDesiredState(swerveModuleStates[2]);
     m_rearRight.setDesiredState(swerveModuleStates[3]);
+  }
+
+  /**
+   * Turns the robot to a heading read from the gyro
+   * @param heading The gyro angle from -180 to 180
+   */
+  public double getStickAngle(double stickX, double stickY){
+      double gyroAngle = getHeading(); //This needs to be throught through
+      double stickAngle = Math.atan2(stickY, stickX);
+
+      SmartDashboard.putNumber("Raw angle from atan2", stickAngle);
+
+      //Don't know of Math.atan2 does this automatically. Check smartdashboard
+      /*
+      if((stickX < 0 && stickY >= 0) || (stickX < 0 && stickY < 0)){
+        stickAngle += 180;
+      } else if(stickX > 0 && stickY < 0){
+        stickAngle += 360;
+      }
+      */
+
+      //TODO: Need some more math so that the angle is clamped between -180 and 180 (SCH2020)
+      return stickAngle;
+
+      /*
+      var x = $j('#x').val();
+ 	var y = $j('#y').val();
+ 	var r = Math.pow((Math.pow(x,2) + Math.pow(y,2)),0.5);
+ 	var theta = Math.atan(y/x)*360/2/Math.PI;
+ 	if (x >= 0 && y >= 0) {
+ 		theta = theta;
+ 	} else if (x < 0 && y >= 0) {
+ 		theta = 180 + theta;
+ 	} else if (x < 0 && y < 0) {
+ 		theta = 180 + theta;
+ 	} else if (x > 0 && y < 0) {
+ 		theta = 360 + theta;
+   } 
+   */
+      
+      
   }
 
   /**

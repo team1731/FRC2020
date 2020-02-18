@@ -70,6 +70,10 @@ public class JevoisVisionServer {
             }
         }
 
+        /**
+         * @deprecated Broken and unreliable. Much unlike my OLD RELIABLE essential oil I got from Jackson
+         */
+        @Deprecated
         private boolean SafeToParse(String message){
             if(message.length() > 1){
                 return message.charAt(0) == '{' && message.charAt(message.length()-3) == '}' && message.contains("{\"DeltaTime\"") && message.contains("\"Y\"") && message.contains("\"Z\"");
@@ -125,7 +129,7 @@ public class JevoisVisionServer {
             if(targetInfoArray.size() > 0){ 
                 sentTimes++;
                 if(dashboardCounter >= 10){
-                 //   SmartDashboard.putString("JevoisVisionServerUpdate", "Sent: "+sentTimes);
+                    SmartDashboard.putString("JevoisVisionServerUpdate", "Sent: "+sentTimes);
                 }
                 mJevoisVisionProcessor.gotUpdate(new JevoisVisionUpdate(Timer.getFPGATimestamp()-visionCamDeltaTime, targetInfoArray));
 
@@ -146,7 +150,7 @@ public class JevoisVisionServer {
                 connectionAttempt++;
                // SmartDashboard.putString("JevoisVisionServerOutput", "Attempting Jevois connection... ("+connectionAttempt+")");
                 
-                visionCam = new SerialPort(115200, SerialPort.Port.kMXP);
+                visionCam = new SerialPort(230400, SerialPort.Port.kMXP);
                 visionCam.setTimeout(5);
 
                 if(visionCam != null){
@@ -170,10 +174,13 @@ public class JevoisVisionServer {
 
 
         String lastDashboardMessage = "";
+        int crashtrackCount = 0;
 
         @Override
         public void runCrashTracked() {
-            while (true) {
+            crashtrackCount++;
+            SmartDashboard.putNumber("Vision_crashTrackedCount", crashtrackCount);
+            //while (true) {
                 String dashboardMessage = "";
                 visionCamAvailable = visionCam != null;
                 try {
@@ -184,8 +191,8 @@ public class JevoisVisionServer {
                     } else {
                         dashboardMessage = "visionCamAvailable == false. Lost connection";
                         AttemptJevoisConnection();
-                        //return;
-                        break;
+                        return;
+                        //break;
                     }
                     if(lastDashboardMessage != dashboardMessage){
                       //  SmartDashboard.putString("JevoisVisionServerOutput", dashboardMessage);
@@ -202,7 +209,7 @@ public class JevoisVisionServer {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            }
+            //}
         }
     }
 
@@ -220,8 +227,12 @@ public class JevoisVisionServer {
 
 
 
-
+    /**
+     * @deprecated Literally just use getFPGATimestamp @see Timer.getFPGATimestamp()
+     */
+    @Deprecated
     private double getTimestamp() {
+        // Not sure why this is here?
         if (m_use_java_time) {
             return System.currentTimeMillis();
         } else {

@@ -107,7 +107,11 @@ public class RobotContainer {
             // positive value when we pull to the left (remember, CCW is positive in
             // mathematics). Xbox controllers return positive values when you pull to
             // the right by default.
-            -m_driverController.getX(Hand.kRight), true),
+            -m_driverController.getX(Hand.kRight),
+
+            -m_driverController.getY(Hand.kRight), 
+            
+            true),
 
             m_robotDrive));
   }

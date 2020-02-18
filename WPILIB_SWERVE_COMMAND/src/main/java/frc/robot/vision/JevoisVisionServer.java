@@ -52,7 +52,7 @@ public class JevoisVisionServer {
             s_instance = new JevoisVisionServer();
 
         }
-        return  s_instance;
+        return s_instance;
     }
 
     public SerialPort getVisionCam(){
