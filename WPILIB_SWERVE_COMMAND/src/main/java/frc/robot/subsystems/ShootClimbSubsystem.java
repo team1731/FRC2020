@@ -103,7 +103,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
 		/* 500 RPM in either direction */
 		//mTalonShoot1.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
     //mTalonShoot1.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
-    mTalonShoot1.set(ControlMode.PercentOutput, 0.1); //OpConstants.kMotorShootPercent);
+    mTalonShoot1.set(ControlMode.PercentOutput, 0.5); //OpConstants.kMotorShootPercent);
     //mTalonShoot2.set(ControlMode.PercentOutput,OpConstants.kMotorShootPercent);
   }
   public void enableClimbing() {
