@@ -171,6 +171,7 @@ public class Robot extends TimedRobot {
     m_robotDrive.resumeCSVWriter();
 
     String DEFAULT_AUTO_CODE = "T4"; // DEFAULT AUTO MODE if Drive Team is unable to set the mode via Dashboard
+                                     //                   NOTE: also useful if trying to run in the simulator!
     String autoCode = DEFAULT_AUTO_CODE;
     if (RobotBase.isReal()) {
       autoCode = SmartDashboard.getString("Auto Code", autoCode);
