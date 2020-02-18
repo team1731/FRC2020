@@ -124,7 +124,7 @@ public final class Constants {
         public static final int kMotorPWMShoot2 = 3;       // Shooter Motor Two
         public static final int kMotorCANShoot1 = 7;
         public static final int kMotorCANShoot2 = 8;
-        public static final double kMotorSeqFwdIntakeSpeed = -0.6;   // forward or backward
+        public static final double kMotorSeqFwdIntakeSpeed = -0.5;   // forward or backward
         public static final double kMotorSeqRevIntakeSpeed = 0.4;   // forward or backward
         public static final double kMotorSeqFwdShootSpeed = -1.0;   // forward or backward
         public static final double kMotorSeqRevShootSpeed = 0.4;   // forward or backward
@@ -135,7 +135,7 @@ public final class Constants {
         public static final double kMotorShootPercent = 0.50;   // check shooting motor percent
         public static final double kMotorClimbPercent = 0.3;
         public static final int kMaxPowerCells = 3;
-        public static final double kSeqIntakeDelay = 2.5;
+        public static final double kSeqResetDelay = 2.0;
 
         // ColorWheel
         public static final int kColorWheelTalonFX = 8;
