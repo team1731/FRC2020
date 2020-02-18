@@ -37,13 +37,15 @@ public class ShootSeqCommand extends CommandBase {
   @Override
   public void initialize() {
     shootSubsystem.hoodExtend();
-    seqSubsystem.forward(true);
     //seqSubsystem.stop();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    if (true) { // check if shooter velocity is UP
+      seqSubsystem.forward(true);
+    }
     // get necessary input
     //if (!m_SeqSubsystem.getMaxPowerCells()) {
     //}

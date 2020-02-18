@@ -132,13 +132,20 @@ public class RobotContainer {
     new JoystickButton(m_operatorController, 3).whileActiveContinuous(new IntakeSeqCommand(m_intake, m_sequencer));
     new JoystickButton(m_operatorController, 2).whileActiveContinuous(new SeqResetCommand(m_sequencer), true);
 
-    new JoystickButton(m_operatorController, 10)
+    new JoystickButton(m_operatorController, 8)
       .whenActive(new InstantCommand(m_shootclimb::enableShooting, m_shootclimb))
       .whenInactive(new InstantCommand(m_shootclimb::disable, m_shootclimb));
 
+    // Climbing Command - CURRENT
+    //new JoystickButton(m_operatorController, 9)
+    //  .whileActiveContinuous(
+    //    new ClimbingCommand(m_shootclimb, () -> m_operatorController.getRawAxis(1)), true
+    //  );
 
     // Shooting Enabled
-    new JoystickButton(m_operatorController, 12).whileActiveContinuous(new ShootSeqCommand(m_shootclimb, m_sequencer), true);
+    new JoystickButton(m_operatorController, 12).whileActiveContinuous(
+      new ShootSeqCommand(m_shootclimb, m_sequencer), true
+    );
     //new ModeTrigger(HanMode.MODE_SHOOT).whenActive(
     //  new InstantCommand(m_shootclimb::enableShooting, m_shootclimb)
     //);
