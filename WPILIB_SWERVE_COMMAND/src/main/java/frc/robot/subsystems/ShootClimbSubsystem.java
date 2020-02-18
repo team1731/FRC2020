@@ -49,12 +49,14 @@ public class ShootClimbSubsystem extends SubsystemBase {
     mTalonShoot2.configFactoryDefault();
 
     //make both shooter motors run
-    mTalonShoot2.follow(mTalonShoot1);
-    mTalonShoot2.setInverted(TalonFXInvertType.OpposeMaster);
+    //mTalonShoot2.follow(mTalonShoot1);
+    //mTalonShoot2.setInverted(TalonFXInvertType.OpposeMaster);
+    mTalonShoot1.setInverted(TalonFXInvertType.Clockwise);
+    mTalonShoot2.setInverted(TalonFXInvertType.CounterClockwise);
 
     /* Config sensor used for Primary PID [Velocity] */
-    mTalonShoot1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, OpConstants.kPIDLoopIdx, OpConstants.kTimeoutMs);
-    mTalonShoot2.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, OpConstants.kPIDLoopIdx, OpConstants.kTimeoutMs);
+    mTalonShoot1.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, OpConstants.kPIDLoopIdx, OpConstants.kTimeoutMs);
+    mTalonShoot2.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, OpConstants.kPIDLoopIdx, OpConstants.kTimeoutMs);
     /** Phase sensor accordingly. 
       * Positive Sensor Reading should match Green (blinking) Leds on Talon
     */
@@ -101,6 +103,10 @@ public class ShootClimbSubsystem extends SubsystemBase {
   }
 
   public void enableShooting() {
+    this.enableShooting(OpConstants.kMotorShootPercent);
+  }
+
+  public void enableShooting(double shootPercent_0_to_1) {
     mColor1.set(true);
     //mShootClimbSolenoid.set(DoubleSolenoid.Value.kReverse);
     //mTalonShoot.setSpeed(0.7);
@@ -108,14 +114,23 @@ public class ShootClimbSubsystem extends SubsystemBase {
 			 * Convert 500 RPM to units / 100ms.
 			 * 2048(FX) 4096(SRX) Units/Rev * 500 RPM / 600 100ms/min in either direction:
 			 * velocity setpoint is in units/100ms
+       * ==> 11425 is measured velocity at 80% / 0.8 = 9140/0.8
+       * ==> 3347 is 11425 * 600 * 2048 == max speed in ticks per 100ms
+       * ==> shootPercent is 0 to 1, so 100% == put in a value of 1.0
     */
-    double velocity = 0.5; // guessing between -1.0 to 1.0
-		double targetVelocity_UnitsPer100ms = velocity * 500.0 * 2048 / 600;
+		double targetVelocity_UnitsPer100ms = shootPercent_0_to_1 * 3347 * 2048 / 600;
 		/* 500 RPM in either direction */
 		//mTalonShoot1.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
-    mTalonShoot1.set(ControlMode.PercentOutput,OpConstants.kMotorShootPercent);
-    //mTalonShoot2.set(ControlMode.PercentOutput,OpConstants.kMotorShootPercent);
+    //mTalonShoot1.set(ControlMode.PercentOutput,OpConstants.kMotorShootPercent);
+
+    // mTalonShoot1.set(ControlMode.PercentOutput, shootPercent_0_to_1);
+    // mTalonShoot2.set(ControlMode.PercentOutput, shootPercent_0_to_1);
+
+ 		mTalonShoot1.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
+		mTalonShoot2.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
+
   }
+
   public void enableClimbing() {
     mColor1.set(false);
     //mShootClimbSolenoid.set(DoubleSolenoid.Value.kForward);
@@ -174,4 +189,12 @@ public class ShootClimbSubsystem extends SubsystemBase {
       extendRetract = zVal;
     }
   }
+
+  public double getShootMotor1Velocity() {
+    if(mTalonShoot1 == null){
+      return 0;
+    }
+    return mTalonShoot1.getSelectedSensorVelocity();
+  }
+
 }
