@@ -150,6 +150,19 @@ public class DriveSubsystem extends SubsystemBase {
    * @param fieldRelative Whether the provided x and y speeds are relative to the field.
    */
   @SuppressWarnings("ParameterName")
+  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative){
+    drive(xSpeed, ySpeed, 0, 0, fieldRelative);
+  }
+
+  /**
+   * Method to drive the robot using joystick info.
+   *
+   * @param xSpeed        Speed of the robot in the x direction (forward).
+   * @param ySpeed        Speed of the robot in the y direction (sideways).
+   * @param rot           Angular rate of the robot.
+   * @param fieldRelative Whether the provided x and y speeds are relative to the field.
+   */
+  @SuppressWarnings("ParameterName")
   public void drive(double xSpeed, double ySpeed, double rightX, double rightY, boolean fieldRelative) {
     double xSpeedAdjusted = xSpeed;
     double ySpeedAdjusted = ySpeed;
