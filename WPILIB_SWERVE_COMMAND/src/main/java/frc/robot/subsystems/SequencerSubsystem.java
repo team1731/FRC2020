@@ -75,15 +75,15 @@ public class SequencerSubsystem extends SubsystemBase {
     mTalonSeq.setSpeed(0);
   }
 
-  public boolean tripLowSensor() {
+  public boolean lowSensorHasBall() {
     return !mLowSensor.get();
   }
 
-  public boolean tripMidSensor() {
+  public boolean midSensorHasBall() {
     return !mMidSensor.get();
   }
 
-  public boolean tripHighSensor() {
+  public boolean highSensorHasBall() {
     return !mHighSensor.get();
   }
 

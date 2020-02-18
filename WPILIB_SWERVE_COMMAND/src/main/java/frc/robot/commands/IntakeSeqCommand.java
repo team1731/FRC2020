@@ -53,14 +53,14 @@ public class IntakeSeqCommand extends CommandBase {
   @Override
   public void execute() {
     // get necessary input
-    if (m_SeqSubsystem.tripHighSensor()) {
+    if (m_SeqSubsystem.highSensorHasBall()) {
       m_SeqSubsystem.stop();
       m_IntakeSubsystem.inactive();
     } else {
-      if (!m_SeqSubsystem.tripLowSensor() && !m_SeqSubsystem.tripMidSensor()) {
+      if (!m_SeqSubsystem.lowSensorHasBall() && !m_SeqSubsystem.midSensorHasBall()) {
         m_SeqSubsystem.stop();
         m_IntakeSubsystem.active();
-      } else if (m_SeqSubsystem.tripLowSensor() && m_SeqSubsystem.tripMidSensor()) {
+      } else if (m_SeqSubsystem.lowSensorHasBall() && m_SeqSubsystem.midSensorHasBall()) {
         m_SeqSubsystem.forward(false);
         m_IntakeSubsystem.inactive();
       } else {
@@ -106,6 +106,6 @@ public class IntakeSeqCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_SeqSubsystem.tripHighSensor(); //m_SeqSubsystem.getMaxPowerCells();
+    return m_SeqSubsystem.highSensorHasBall(); //m_SeqSubsystem.getMaxPowerCells();
   }
 }
