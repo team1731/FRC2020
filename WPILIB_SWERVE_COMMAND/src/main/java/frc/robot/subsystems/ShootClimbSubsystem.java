@@ -51,8 +51,8 @@ public class ShootClimbSubsystem extends SubsystemBase {
     //make both shooter motors run
     //mTalonShoot2.follow(mTalonShoot1);
     //mTalonShoot2.setInverted(TalonFXInvertType.OpposeMaster);
-    mTalonShoot1.setInverted(TalonFXInvertType.Clockwise);
-    mTalonShoot2.setInverted(TalonFXInvertType.CounterClockwise);
+    mTalonShoot1.setInverted(TalonFXInvertType.CounterClockwise);
+    mTalonShoot2.setInverted(TalonFXInvertType.Clockwise);
 
     /* Config sensor used for Primary PID [Velocity] */
     mTalonShoot1.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, OpConstants.kPIDLoopIdx, OpConstants.kTimeoutMs);
