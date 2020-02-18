@@ -36,7 +36,7 @@ public class IntakeSeqCommand extends CommandBase {
   // If it is used as Default command then it gets call all the time
   @Override
   public void initialize() {
-    //m_IntakeSubsystem.extend();
+    m_IntakeSubsystem.extend();
     //m_SeqSubsystem.stop();
   }
 
@@ -50,12 +50,17 @@ public class IntakeSeqCommand extends CommandBase {
     
     // if low and high not tripped do something
     // if they are both tripped we do NOTHING
-    if(!m_SeqSubsystem.getLowSensor() && !m_SeqSubsystem.getHighSensor()){
+    if(!m_SeqSubsystem.getLowSensor() && !m_SeqSubsystem.getHighSensor() ){
       //do something
-      m_IntakeSubsystem.extend();
+      if (m_SeqSubsystem.getLowSensor() ||  m_SeqSubsystem.getMidSensor()) {
+        m_IntakeSubsystem.inactive();
+      } else {
+        m_IntakeSubsystem.active();
+      }
       System.out.println("intake extended");
     }
     else if (m_SeqSubsystem.getLowSensor() && m_SeqSubsystem.getHighSensor()){
+      m_IntakeSubsystem.inactive();
       m_IntakeSubsystem.retract();
     }
     if((m_SeqSubsystem.getLowSensor() || m_SeqSubsystem.getMidSensor()) && !m_SeqSubsystem.getHighSensor()){
