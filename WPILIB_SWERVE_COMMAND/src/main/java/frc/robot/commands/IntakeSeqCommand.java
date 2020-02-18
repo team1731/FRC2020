@@ -72,21 +72,21 @@ public class IntakeSeqCommand extends CommandBase {
     /*
     // if low and high not tripped do something
     // if they are both tripped we do NOTHING
-    if(!m_SeqSubsystem.getLowSensor() && !m_SeqSubsystem.getHighSensor() ){
+    if(!m_SeqSubsystem.lowSensorHasBall() && !m_SeqSubsystem.highSensorHasBall() ){
       //do something
-      if (m_SeqSubsystem.getLowSensor() ||  m_SeqSubsystem.getMidSensor()) {
+      if (m_SeqSubsystem.lowSensorHasBall() ||  m_SeqSubsystem.midSensorHasBall()) {
         m_IntakeSubsystem.inactive();
       } else {
         m_IntakeSubsystem.active();
       }
       System.out.println("intake extended");
     }
-    else if (m_SeqSubsystem.getLowSensor() && m_SeqSubsystem.getHighSensor()){
+    else if (m_SeqSubsystem.lowSensorHasBall() && m_SeqSubsystem.highSensorHasBall()){
       m_IntakeSubsystem.inactive();
       m_IntakeSubsystem.retract();
     }
-    if((m_SeqSubsystem.getLowSensor() || m_SeqSubsystem.getMidSensor()) && !m_SeqSubsystem.getHighSensor()){
-      m_SeqSubsystem.forward(false); // false indicates forward intaking speed
+    if((m_SeqSubsystem.lowSensorHasBall() || m_SeqSubsystem.midSensorHasBall()) && !m_SeqSubsystem.highSensorHasBall()){
+      m_SeqSubsystem.forward(false); // false indicates forward intaking speed (i.e., NOT shooting)
     }
     else{
       m_SeqSubsystem.stop();
