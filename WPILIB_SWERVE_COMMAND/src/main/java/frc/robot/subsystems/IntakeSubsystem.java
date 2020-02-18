@@ -35,6 +35,15 @@ public class IntakeSubsystem extends SubsystemBase {
    */
   public void extend() {
     mIntakeSolenoid.set(DoubleSolenoid.Value.kForward);
+    mTalonState = "Extending/Fwd";
+  }
+
+  public void active() {
+    mTalonIntake.setSpeed(OpConstants.kMotorIntakeFwdSpeed);
+    mTalonState = "Extending/Fwd";
+  }
+
+  public void inactive() {
     mTalonIntake.setSpeed(OpConstants.kMotorIntakeFwdSpeed);
     mTalonState = "Extending/Fwd";
   }
