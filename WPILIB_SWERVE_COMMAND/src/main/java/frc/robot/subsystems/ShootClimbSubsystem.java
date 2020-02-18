@@ -142,23 +142,23 @@ public class ShootClimbSubsystem extends SubsystemBase {
   public void disable() {
     //mShootClimbSolenoid.set(DoubleSolenoid.Value.kReverse);
     //mClimberSolenoid.set(DoubleSolenoid.Value.kReverse);
-    //mShootHoodSolenoid.set(DoubleSolenoid.Value.kReverse);
+    mShootHoodSolenoid.set(DoubleSolenoid.Value.kReverse);
     //mTalonShoot.setSpeed(0);
     mTalonShoot1.set(ControlMode.PercentOutput, 0);
     //mTalonShoot2.set(ControlMode.PercentOutput, 0);
   }
 
   public void hoodRetract() {
-    //mShootHoodSolenoid.set(DoubleSolenoid.Value.kReverse);
+    mShootHoodSolenoid.set(DoubleSolenoid.Value.kReverse);
   }
 
   public void hoodExtend() {
-    //mShootHoodSolenoid.set(DoubleSolenoid.Value.kForward);
+    mShootHoodSolenoid.set(DoubleSolenoid.Value.kForward);
   }
 
   public void setClimber(double percentOut) {
     mTalonShoot1.set(ControlMode.PercentOutput, percentOut);
-    //mTalonShoot2.set(ControlMode.PercentOutput, percentOut);
+    mTalonShoot2.set(ControlMode.PercentOutput, percentOut);
   }
 
 }

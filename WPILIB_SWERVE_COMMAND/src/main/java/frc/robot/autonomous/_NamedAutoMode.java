@@ -3,6 +3,7 @@ package frc.robot.autonomous;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class _NamedAutoMode {
+    public String code = "M1";
     public String name = "UNKNOWN";
     public _DelayableStrafingAutoMode delayableStrafingAutoMode;
     
@@ -23,6 +24,7 @@ public class _NamedAutoMode {
                 if(name.charAt(2) != '_'){
                     throw new _NotImplementedProperlyException();
                 }
+                code = name.substring(0, 2);
             }
             else {
                 throw new _NotImplementedProperlyException("You must supply a _DelayableStrafingAutoMode object!");

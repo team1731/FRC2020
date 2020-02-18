@@ -141,10 +141,11 @@ public double getDriveEncoderPosition(){
     //return new SwerveModuleState(m_driveEncoder.getRate(), new Rotation2d(m_turningEncoder.get()));
         //FIXME: apply any needed unit convertion here...
     double velocity = 0;
+    double azimuth = 0;
     if(RobotBase.isReal()){ // RPM/60 is RPS *PI*D is inches/s * 39.37 is meter/s but it's 5.5 ticks/rev
        velocity = (m_driveEncoder.getVelocity() * Math.PI * 3.0) / (39.37 * 60.0 * 5.5);
+       azimuth = -m_turningEncoder.getPosition();
     }
-    double azimuth = -m_turningEncoder.getPosition();
     double azimuthPercent = Math.IEEEremainder(azimuth, kTICKS)/16.0;
 
     if(RobotBase.isReal()){

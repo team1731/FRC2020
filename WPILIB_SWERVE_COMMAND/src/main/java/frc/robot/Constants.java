@@ -142,6 +142,7 @@ public final class Constants {
 
         // Shooter
         public static final int kShooterVictor = 3;
+        public static final int kShootMinVelocity = 1000;
 
         // Digital Input/Outputs
         public static int kLowSequencer = 0;
