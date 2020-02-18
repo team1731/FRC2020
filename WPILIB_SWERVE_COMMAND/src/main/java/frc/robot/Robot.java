@@ -170,7 +170,8 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_robotDrive.resumeCSVWriter();
 
-    String DEFAULT_AUTO_CODE = "F1"; // DEFAULT AUTO MODE if Drive Team is unable to set the mode via Dashboard
+    String DEFAULT_AUTO_CODE = "T4"; // DEFAULT AUTO MODE if Drive Team is unable to set the mode via Dashboard
+                                     //                   NOTE: also useful if trying to run in the simulator!
     String autoCode = DEFAULT_AUTO_CODE;
     if (RobotBase.isReal()) {
       autoCode = SmartDashboard.getString("Auto Code", autoCode);
@@ -219,7 +220,9 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
 
-    SmartDashboard.putBoolean("LowSensor",  m_sequencer.getLowSensor());
+    SmartDashboard.putBoolean("LowSensor",  m_sequencer.lowSensorHasBall());
+    SmartDashboard.putBoolean("MidSensor",  m_sequencer.midSensorHasBall());
+    SmartDashboard.putBoolean("HighSensor",  m_sequencer.highSensorHasBall());
     //SmartDashboard.putNumber("PowerCellCount",  (double)m_sequencer.getPowerCellCount());
     SmartDashboard.putString("Intake State",  m_intake.getIntakeState());
   }

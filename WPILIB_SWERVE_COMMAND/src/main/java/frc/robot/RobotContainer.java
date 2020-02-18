@@ -148,7 +148,7 @@ public class RobotContainer {
 
     // Shooting Enabled
     new JoystickButton(m_operatorController, 12).whileActiveContinuous(
-      new ShootSeqCommand(m_shootclimb, m_sequencer), true
+      new ShootSeqCommand(m_shootclimb, m_sequencer), true //<---NOTE: we think this got called at least once when we ran autonomous
     );
     //new ModeTrigger(HanMode.MODE_SHOOT).whenActive(
     //  new InstantCommand(m_shootclimb::enableShooting, m_shootclimb)
@@ -236,35 +236,35 @@ public class RobotContainer {
       // DEFAULT AUTO -- MOVE FORWARD
       //
       mode = new _NamedAutoMode(new F1_Move_Forward(m_robotDrive));
-      myMap.put(mode.name, mode);
+      myMap.put(mode.code, mode);
 
       // TEST AUTO ROUTINES
       //
       mode = new _NamedAutoMode(new T1_Move_Forward(m_robotDrive));
-      myMap.put(mode.name, mode);
+      myMap.put(mode.code, mode);
 
       mode = new _NamedAutoMode(new T2_BwdPickup2Balls(m_robotDrive));
-      myMap.put(mode.name, mode);
+      myMap.put(mode.code, mode);
 
       mode = new _NamedAutoMode(new T3_BwdPickup2BallsAndShoot(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
-      myMap.put(mode.name, mode);
+      myMap.put(mode.code, mode);
                     
       mode = new _NamedAutoMode(new T4_AimAndShoot(m_robotDrive, m_sequencer, m_shootclimb, m_vision, m_targeting));
-      myMap.put(mode.name, mode);
+      myMap.put(mode.code, mode);
 
       // FOR HAYMARKET: R1, L1, M1, M3
       //
       mode = new _NamedAutoMode(new R1_Placeholder(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
-      myMap.put(mode.name, mode);
+      myMap.put(mode.code, mode);
 
       mode = new _NamedAutoMode(new L1_Placeholder(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
-      myMap.put(mode.name, mode);
+      myMap.put(mode.code, mode);
 
       mode = new _NamedAutoMode(new M1_Placeholder(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
-      myMap.put(mode.name, mode);
+      myMap.put(mode.code, mode);
                     
       mode = new _NamedAutoMode(new M3_Placeholder(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
-      myMap.put(mode.name, mode);
+      myMap.put(mode.code, mode);
 
       return myMap;
   }

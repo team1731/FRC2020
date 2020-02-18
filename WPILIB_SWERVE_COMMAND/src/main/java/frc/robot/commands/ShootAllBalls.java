@@ -8,7 +8,9 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.ShootClimbSubsystem;
+import frc.robot.Constants;
 import frc.robot.subsystems.SequencerSubsystem;
+import edu.wpi.first.wpilibj.Timer;
 //import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
@@ -27,7 +29,7 @@ public class ShootAllBalls extends WaitCommand {
    * @param seqSubsystem The sequencer subsystem this command will run on
    */
   public ShootAllBalls(ShootClimbSubsystem shootClimbSubsystem, SequencerSubsystem sequenceSubsystem) {
-    super(5);  // how many seconds to enable sequencer and keep hood open for shooting - extends WaitCommand
+    super(3);  // how many seconds to enable sequencer and keep hood open for shooting - extends WaitCommand
     shootSubsystem = shootClimbSubsystem;
     seqSubsystem = sequenceSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
@@ -38,19 +40,25 @@ public class ShootAllBalls extends WaitCommand {
   // If it is used as Default command then it gets call all the time
   @Override
   public void initialize() {
-    shootSubsystem.hoodExtend();
-    seqSubsystem.forward(true);
     super.initialize();
+    shootSubsystem.hoodExtend();
+    shootSubsystem.enableShooting(); //turn on shoot motors
   }
 
-  /*/ Called every time the scheduler runs while the command is scheduled.
+  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    double shootMotorVelocity = shootSubsystem.getShootMotor1Velocity();
+    if(shootMotorVelocity > Constants.OpConstants.kShootMinVelocity){
+      seqSubsystem.forward(true);
+    }
+    System.out.println("ShootMotorVelocity=" + shootMotorVelocity);
   }
-  */
+  
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    System.out.println("ShootAllBalls - end. interrupted=" + interrupted);
     seqSubsystem.stop();
     shootSubsystem.hoodRetract();
   }

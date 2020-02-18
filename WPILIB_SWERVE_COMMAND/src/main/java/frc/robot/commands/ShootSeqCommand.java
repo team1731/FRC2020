@@ -8,8 +8,11 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.ShootClimbSubsystem;
+import frc.robot.Constants.OpConstants;
 import frc.robot.subsystems.SequencerSubsystem;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 /**
  * An example command that uses an example subsystem.
@@ -18,6 +21,7 @@ public class ShootSeqCommand extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final ShootClimbSubsystem shootSubsystem;
   private final SequencerSubsystem seqSubsystem;
+  private double startTime;
 
   /**
    * Creates a new ExampleCommand.
@@ -36,6 +40,8 @@ public class ShootSeqCommand extends CommandBase {
   // If it is used as Default command then it gets call all the time
   @Override
   public void initialize() {
+    startTime = Timer.getFPGATimestamp();
+    System.out.println("starttime = " + startTime);
     shootSubsystem.hoodExtend();
     //seqSubsystem.stop();
   }
@@ -43,8 +49,14 @@ public class ShootSeqCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (true) { // check if shooter velocity is UP
+    double shootMotorVelocity = shootSubsystem.getShootMotor1Velocity();
+    System.out.println("shoot motor velocity = " + shootMotorVelocity);
+    if(shootMotorVelocity > OpConstants.kShootMinVelocity){
+      System.out.println("calling seqSubSystem.forward(true);");
       seqSubsystem.forward(true);
+    }
+    else{
+      System.out.println("waiting for shoot motor to come up to speed");
     }
     // get necessary input
     //if (!m_SeqSubsystem.getMaxPowerCells()) {
@@ -61,6 +73,9 @@ public class ShootSeqCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    double curTime = Timer.getFPGATimestamp();
+    double elapsed = curTime - startTime;
+    System.out.println("curtime = " + curTime + ", elapsed=" + elapsed);
+    return  elapsed >= 1;
   }
 }
