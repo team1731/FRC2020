@@ -98,13 +98,14 @@ public class IntakeSeqCommand extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     System.out.println("IntakeSequenceCommand end interrupted=" + (interrupted?"true":"false"));
-    m_IntakeSubsystem.retract();
     m_SeqSubsystem.stop();
+    m_IntakeSubsystem.inactive();
+    m_IntakeSubsystem.retract();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false; //m_SeqSubsystem.getMaxPowerCells();
+    return m_SeqSubsystem.tripHighSensor(); //m_SeqSubsystem.getMaxPowerCells();
   }
 }
