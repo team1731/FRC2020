@@ -16,8 +16,8 @@ public class T4_AimAndShoot extends _DelayableStrafingAutoMode {
         SequentialCommandGroup commandGroup = new SequentialCommandGroup(
             new InstantCommand(m_shootclimb::enableShooting, m_shootclimb),
             //new Aim(m_robotDrive, m_vision, m_targeting)),
-            new ShootSeqCommand(m_shootclimb, m_sequence));
+            new ShootSeqCommand(m_shootclimb, m_sequence).withTimeout(2));
         //command = commandGroup.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
-        command = commandGroup.andThen(() -> m_robotDrive.drive(0, 0, 0, false)).andThen(() -> commandGroup.cancel());
+        command = commandGroup.andThen(() -> m_robotDrive.drive(0, 0, 0, false)).andThen(() -> m_shootclimb.stopShooting());
     }
 }

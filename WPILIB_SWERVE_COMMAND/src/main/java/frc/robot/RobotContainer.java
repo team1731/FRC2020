@@ -132,11 +132,12 @@ public class RobotContainer {
     new HanTrigger(HanTriggers.DR_TRIG_LEFT).whileActiveContinuous(new IntakeSeqCommand(m_intake, m_sequencer));
     // Activate Intake via Operator Left Front Top - Up is Intaking, Down is Reset 
     //new JoystickButton(m_operatorController, 3).whileActiveContinuous(new IntakeSeqCommand(m_intake, m_sequencer));
-    new JoystickButton(m_driverController, 2).whileActiveContinuous(new SeqResetCommand(m_sequencer), true);
+    new JoystickButton(m_driverController, 2)
+    .whileActiveContinuous(new SeqResetCommand(m_sequencer), true);
 
     new JoystickButton(m_operatorController, 8)
       .whenActive(new InstantCommand(m_shootclimb::enableShooting, m_shootclimb))
-      .whenInactive(new InstantCommand(m_shootclimb::disable, m_shootclimb));
+      .whenInactive(new InstantCommand(m_shootclimb::stopShooting, m_shootclimb));
 
     // Climbing Command - CURRENT
     //new JoystickButton(m_operatorController, 9)
