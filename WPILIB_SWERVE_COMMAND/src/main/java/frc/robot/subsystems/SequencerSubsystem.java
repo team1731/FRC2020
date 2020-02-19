@@ -76,7 +76,7 @@ public class SequencerSubsystem extends SubsystemBase {
   }
 
   public boolean lowSensorHasBall() {
-    return !mLowSensor.get(); //(mLowSensorCur);
+    return !mLowSensor.get();
   }
 
   public boolean midSensorHasBall() {

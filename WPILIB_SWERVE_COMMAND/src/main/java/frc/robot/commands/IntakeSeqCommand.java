@@ -4,7 +4,16 @@
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
+/* Intake Motor (I), Sequence Motor (S)
+  Hi Mid Lo | I S
+   0  0  0  | 1 0
+   0  0  1  | 1 1
+   0  1  0  | 1 1
+   0  1  1  | 0 1
+   1  X  X  | 0 0
 
+   If you switch case 2 & 3, then spacing will be ball width, now it's sensor width
+*/
 package frc.robot.commands;
 
 import frc.robot.subsystems.IntakeSubsystem;
@@ -44,10 +53,23 @@ public class IntakeSeqCommand extends CommandBase {
   @Override
   public void execute() {
     // get necessary input
-    //if (!m_SeqSubsystem.getMaxPowerCells()) {
-      //m_SeqSubsystem.addPowerCell();
-    //}
+    if (m_SeqSubsystem.highSensorHasBall()) {
+      m_SeqSubsystem.stop();
+      m_IntakeSubsystem.inactive();
+    } else {
+      if (!m_SeqSubsystem.lowSensorHasBall() && !m_SeqSubsystem.midSensorHasBall()) {
+        m_SeqSubsystem.stop();
+        m_IntakeSubsystem.active();
+      } else if (m_SeqSubsystem.lowSensorHasBall() && m_SeqSubsystem.midSensorHasBall()) {
+        m_SeqSubsystem.forward(false);
+        m_IntakeSubsystem.inactive();
+      } else {
+        m_SeqSubsystem.forward(false);
+        m_IntakeSubsystem.active();
+      }
+    }
     
+    /*
     // if low and high not tripped do something
     // if they are both tripped we do NOTHING
     if(!m_SeqSubsystem.lowSensorHasBall() && !m_SeqSubsystem.highSensorHasBall() ){
@@ -69,19 +91,21 @@ public class IntakeSeqCommand extends CommandBase {
     else{
       m_SeqSubsystem.stop();
     }
+    */
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     System.out.println("IntakeSequenceCommand end interrupted=" + (interrupted?"true":"false"));
-    m_IntakeSubsystem.retract();
     m_SeqSubsystem.stop();
+    m_IntakeSubsystem.inactive();
+    m_IntakeSubsystem.retract();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false; //m_SeqSubsystem.getMaxPowerCells();  //RDB NOTE: return false was sufficient for teleop but what about auto????
+    return m_SeqSubsystem.highSensorHasBall(); //m_SeqSubsystem.getMaxPowerCells();
   }
 }
