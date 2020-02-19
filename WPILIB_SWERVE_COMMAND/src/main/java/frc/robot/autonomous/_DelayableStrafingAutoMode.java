@@ -42,11 +42,15 @@ public class _DelayableStrafingAutoMode {
         return command;
     }
 
-    List<Trajectory.State> unrotateTrajectory(List<Trajectory.State> oldStates){
+    List<Trajectory.State> unrotateTrajectory(List<Trajectory.State> oldStates, double finalRotationDegrees){
         List<Trajectory.State> newStates = new ArrayList<Trajectory.State>();
+        int i = 0;
         for(Trajectory.State state : oldStates){
-          Rotation2d newRot = state.poseMeters.getRotation().rotateBy(new Rotation2d(-state.poseMeters.getRotation().getRadians()));
-          Pose2d newPose = new Pose2d(state.poseMeters.getTranslation(), newRot);
+          //Rotation2d newRot = state.poseMeters.getRotation().rotateBy(new Rotation2d(-state.poseMeters.getRotation().getRadians()));
+          Pose2d newPose = i++ == oldStates.size()-1 ? 
+          new Pose2d(state.poseMeters.getTranslation(), new Rotation2d(Math.toRadians(finalRotationDegrees))) : 
+          new Pose2d(state.poseMeters.getTranslation(), new Rotation2d(0));
+
           newStates.add(new Trajectory.State(state.timeSeconds, 
                                             state.velocityMetersPerSecond, 
                                             state.accelerationMetersPerSecondSq, 

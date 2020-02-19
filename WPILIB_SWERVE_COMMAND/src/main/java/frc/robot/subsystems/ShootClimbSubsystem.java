@@ -10,6 +10,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 import edu.wpi.first.wpilibj.PWMTalonFX;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -81,6 +82,8 @@ public class ShootClimbSubsystem extends SubsystemBase {
 		mTalonShoot2.config_kD(OpConstants.kPIDLoopIdx, OpConstants.kGains_Velocity.kD, OpConstants.kTimeoutMs);
 
     extendRetract = 0;
+
+    SmartDashboard.putNumber("ShootingPercent", 0.5);
   }
 
   public void testSpeed(){
@@ -97,7 +100,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
   }
   
   public void enableShooting() {
-    this.enableShooting(0.5);
+    this.enableShooting(SmartDashboard.getNumber("ShootingPercent", 0.5));
   }
   
   public void enableShooting(double shootMotorPercent_0_to_1) {
@@ -111,13 +114,20 @@ public class ShootClimbSubsystem extends SubsystemBase {
        * ==> 3347 is 11425 * 600 * 2048 == max speed in ticks per 100ms
        * ==> shootPercent is 0 to 1, so 100% == put in a value of 1.0
     */
-    double velocity = 0.1; // guessing between -1.0 to 1.0
-		double targetVelocity_UnitsPer100ms = velocity * 500.0 * 2048 / 600;
-		/* 500 RPM in either direction */
+    //double velocity = 0.1; // guessing between -1.0 to 1.0
+		//double targetVelocity_UnitsPer100ms = shootMotorPercent_0_to_1 * 11425.0 * 2048 / 600;
+    /* 500 RPM in either direction */
 		//mTalonShoot1.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
-    //mTalonShoot1.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
-    mTalonShoot1.set(ControlMode.PercentOutput, shootMotorPercent_0_to_1); //OpConstants.kMotorShootPercent);
-    //mTalonShoot2.set(ControlMode.PercentOutput,OpConstants.kMotorShootPercent);
+    //mTalonShoot2.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
+    mTalonShoot1.set(ControlMode.PercentOutput, shootMotorPercent_0_to_1);
+    mTalonShoot2.set(ControlMode.PercentOutput, shootMotorPercent_0_to_1);
+    hoodExtend();
+  }
+
+  public void stopShooting(){
+    mTalonShoot1.set(ControlMode.PercentOutput, 0);
+    mTalonShoot2.set(ControlMode.PercentOutput, 0);
+    hoodRetract();
   }
 
   public void enableClimbing() {
@@ -139,13 +149,20 @@ public class ShootClimbSubsystem extends SubsystemBase {
     }
   }
 
+  /**
+   * @deprecated Naming scheme is bad. Replaced with stopShooting()
+   * @see stopShooting()
+   */
+  @Deprecated
   public void disable() {
     //mShootClimbSolenoid.set(DoubleSolenoid.Value.kReverse);
     //mClimberSolenoid.set(DoubleSolenoid.Value.kReverse);
-    mShootHoodSolenoid.set(DoubleSolenoid.Value.kReverse);
+    //mShootHoodSolenoid.set(DoubleSolenoid.Value.kReverse);
     //mTalonShoot.setSpeed(0);
-    mTalonShoot1.set(ControlMode.PercentOutput, 0);
+    //mTalonShoot1.set(ControlMode.Velocity, 0);
+    stopShooting();
     //mTalonShoot2.set(ControlMode.PercentOutput, 0);
+    //hoodRetract();
   }
 
   public void hoodRetract() {
