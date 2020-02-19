@@ -67,15 +67,18 @@ public class ShootSeqCommand extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     seqSubsystem.stop();
-    shootSubsystem.hoodRetract();
+    //shootSubsystem.hoodRetract();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    /*
     double curTime = Timer.getFPGATimestamp();
     double elapsed = curTime - startTime;
     System.out.println("curtime = " + curTime + ", elapsed=" + elapsed);
     return  elapsed >= 1;
+    */
+    return false;
   }
 }

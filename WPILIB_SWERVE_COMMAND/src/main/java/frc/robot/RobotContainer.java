@@ -132,13 +132,16 @@ public class RobotContainer {
     // new JoystickButton(m_driverController, Button.kA.value)
     // .whenPressed(new TurnToAngleProfiled(30, m_robotDrive).withTimeout(5));
 
+    // Activate Intake via Operator Left Axis/Trigger
+    new HanTrigger(HanTriggers.DR_TRIG_LEFT).whileActiveContinuous(new IntakeSeqCommand(m_intake, m_sequencer));
     // Activate Intake via Operator Left Front Top - Up is Intaking, Down is Reset 
-    new JoystickButton(m_operatorController, 3).whileActiveContinuous(new IntakeSeqCommand(m_intake, m_sequencer));
-    new JoystickButton(m_operatorController, 2).whileActiveContinuous(new SeqResetCommand(m_sequencer), true);
+    //new JoystickButton(m_operatorController, 3).whileActiveContinuous(new IntakeSeqCommand(m_intake, m_sequencer));
+    new JoystickButton(m_driverController, 2)
+    .whileActiveContinuous(new SeqResetCommand(m_sequencer), true);
 
     new JoystickButton(m_operatorController, 8)
       .whenActive(new InstantCommand(m_shootclimb::enableShooting, m_shootclimb))
-      .whenInactive(new InstantCommand(m_shootclimb::disable, m_shootclimb));
+      .whenInactive(new InstantCommand(m_shootclimb::stopShooting, m_shootclimb));
 
     // Climbing Command - CURRENT
     //new JoystickButton(m_operatorController, 9)
@@ -146,10 +149,12 @@ public class RobotContainer {
     //    new ClimbingCommand(m_shootclimb, () -> m_operatorController.getRawAxis(1)), true
     //  );
 
-    // Shooting Enabled
-    new JoystickButton(m_operatorController, 12).whileActiveContinuous(
-      new ShootSeqCommand(m_shootclimb, m_sequencer), true //<---NOTE: we think this got called at least once when we ran autonomous
-    );
+    // Activate Shooter via Operator Right Axis/Trigger
+    new HanTrigger(HanTriggers.DR_TRIG_RIGHT).whileActiveContinuous(new ShootSeqCommand(m_shootclimb, m_sequencer));
+    // Shooting
+    //new JoystickButton(m_operatorController, 12).whileActiveContinuous(
+    //  new ShootSeqCommand(m_shootclimb, m_sequencer), true //<---NOTE: we think this got called at least once when we ran autonomous
+    //);
     //new ModeTrigger(HanMode.MODE_SHOOT).whenActive(
     //  new InstantCommand(m_shootclimb::enableShooting, m_shootclimb)
     //);
