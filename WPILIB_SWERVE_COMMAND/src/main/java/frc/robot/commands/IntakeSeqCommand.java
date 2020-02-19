@@ -76,7 +76,7 @@ public class IntakeSeqCommand extends CommandBase {
     }
     
     
-    // if low and high not tripped do something
+    /* if low and high not tripped do something
     // if they are both tripped we do NOTHING
     if(!m_SeqSubsystem.lowSensorHasBall() && !m_SeqSubsystem.highSensorHasBall() ){
       //do something
@@ -97,7 +97,7 @@ public class IntakeSeqCommand extends CommandBase {
     else{
       m_SeqSubsystem.stop();
     }
-    
+    */
   }
 
   // Called once the command ends or is interrupted.
