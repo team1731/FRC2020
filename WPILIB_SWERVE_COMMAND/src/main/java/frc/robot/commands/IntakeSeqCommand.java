@@ -5,12 +5,15 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 /* Intake Motor (I), Sequence Motor (S)
-  Hi Mid Lo | I S
-   0  0  0  | 1 0
-   0  0  1  | 1 1
-   0  1  0  | 1 1
-   0  1  1  | 0 1
-   1  X  X  | 0 0
+  Hi Mid Lo | iU/D iR Seq
+   0  0  0  |   D   R  Off
+   0  0  1  |   D   R  Off
+   0  1  0  |   D   -  On
+   0  1  1  |   D   R  Off
+   1  0  0  |   D   -  On
+   1  0  1  |   U   -  Off
+   1  1  0  |   D   -  On
+   1  1  1  |   U   -  Off
 
    If you switch case 2 & 3, then spacing will be ball width, now it's sensor width
 */
@@ -27,6 +30,9 @@ public class IntakeSeqCommand extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final IntakeSubsystem m_IntakeSubsystem;
   private final SequencerSubsystem m_SeqSubsystem;
+  private boolean low;
+  private boolean mid;
+  private boolean high;
 
   /**
    * Creates a new Intake Sequence Command.
@@ -52,24 +58,23 @@ public class IntakeSeqCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // get necessary input
-    /*
-    if (m_SeqSubsystem.highSensorHasBall()) {
+    low = m_SeqSubsystem.lowSensorHasBall();
+    mid = m_SeqSubsystem.midSensorHasBall();
+    high = m_SeqSubsystem.highSensorHasBall();
+    if (!low && ((!mid && !high) || (!mid && high) || (mid && high))) {
+      m_IntakeSubsystem.extend();
+      m_IntakeSubsystem.active();
       m_SeqSubsystem.stop();
+    } else if (!high && ((!low && mid) || (low && !mid) || (low && mid))) {
+      m_IntakeSubsystem.extend();
       m_IntakeSubsystem.inactive();
-    } else {
-      if (!m_SeqSubsystem.lowSensorHasBall() && !m_SeqSubsystem.midSensorHasBall()) {
-        m_SeqSubsystem.stop();
-        m_IntakeSubsystem.active();
-      } else if (m_SeqSubsystem.lowSensorHasBall() && m_SeqSubsystem.midSensorHasBall()) {
-        m_SeqSubsystem.forward(false);
-        m_IntakeSubsystem.inactive();
-      } else {
-        m_SeqSubsystem.forward(false);
-        m_IntakeSubsystem.active();
-      }
+      m_SeqSubsystem.forward(false);;
+    } else if (low && high) {
+      m_IntakeSubsystem.retract();
+      m_IntakeSubsystem.inactive();
+      m_SeqSubsystem.stop();
     }
-    */
+    
     
     // if low and high not tripped do something
     // if they are both tripped we do NOTHING
