@@ -99,9 +99,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if(mCSVWriter.isSuspended()){
-      mCSVWriter.resume();
-    }
+    resumeCSVWriter();
 
     headingControllerOutput = headingController.calculate(getHeading());
 
@@ -178,8 +176,11 @@ public class DriveSubsystem extends SubsystemBase {
     //  rotAdjusted = 0;
     //}
 
-    double rot = getStickAngle(rightX, rightY);
-    headingController.setGoal(rot);
+    //If the stick is released, don't change the rotation
+    if(rightX != 0 && rightY != 0){
+      double rot = getStickAngle(rightX, rightY);
+      headingController.setGoal(rot);
+    }
 
     //Replaced rotAdjusted with headingControllerOutput
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
@@ -200,10 +201,9 @@ public class DriveSubsystem extends SubsystemBase {
    * @param heading The gyro angle from -180 to 180
    */
   public double getStickAngle(double stickX, double stickY){
-      double gyroAngle = getHeading(); //This needs to be throught through
       double stickAngle = Math.atan2(stickY, stickX);
 
-      SmartDashboard.putNumber("Raw angle from atan2", stickAngle);
+      SmartDashboard.putNumber("getStickAngle Raw", stickAngle);
 
       //Don't know of Math.atan2 does this automatically. Check smartdashboard
       /*
@@ -214,9 +214,17 @@ public class DriveSubsystem extends SubsystemBase {
       }
       */
 
-      //TODO: Need some more math so that the angle is clamped between -180 and 180 (SCH2020)
+      //If the angle is greater than 180, mirror and invert it to keep the -180-180 heading angle (see getHeading())
+      if(stickAngle > 180){
+            stickAngle -= 360;
+      }
+
+      SmartDashboard.putNumber("getStickAngle Clamped", stickAngle);
+
       return stickAngle;
 
+      //JavaScript from a cartesian to polar coordinate converter:
+      //Tbh drives me mad just a little with the lack of an OR and the fact that there's an if statement that just does nothing
       /*
       var x = $j('#x').val();
  	var y = $j('#y').val();

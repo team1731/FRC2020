@@ -36,7 +36,6 @@ public class TurnToAngleProfiled extends ProfiledPIDCommand {
         // Set reference to target
         targetAngleDegrees,
         // Pipe output to turn robot
-        // TODO: I'm concerned that the 0, 0 may override driver input. Keep an eye on this (SCH2020)
         (output, setpoint) -> drive.drive(0, 0, -output, false), // (output, setpoint) -> drive.arcadeDrive(0, output),
         // Require the drive
         drive);

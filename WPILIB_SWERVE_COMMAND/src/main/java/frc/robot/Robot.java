@@ -67,7 +67,8 @@ public class Robot extends TimedRobot {
     
     m_robotDrive = new DriveSubsystem();
     m_targeting = new TargetingSubsystem();
-    m_vision = null; //new JevoisVisionSubsystem();
+    m_vision = JevoisVisionSubsystem.getInstance(); //new JevoisVisionSubsystem();
+    m_vision.setDriveSubsystem(m_robotDrive);
     m_intake = new IntakeSubsystem();
     m_sequencer = new SequencerSubsystem();
     m_shootclimb = new ShootClimbSubsystem();
