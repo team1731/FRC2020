@@ -31,11 +31,13 @@ public class ShootClimbSubsystem extends SubsystemBase {
 
   private boolean modeClimbing;
   private double extendRetract;
-  
+  private double shootPercent;
+
   /**
    * Creates a new ExampleSubsystem.
    */
   public ShootClimbSubsystem() {
+
     mShootClimbSolenoid = Constants.makeDoubleSolenoidForIds(0, OpConstants.k0Shooting, OpConstants.k0Climbing);
     mClimberSolenoid = Constants.makeDoubleSolenoidForIds(1, OpConstants.k1ClimbRetract, OpConstants.k1ClimbExtend);
     mShootHoodSolenoid = Constants.makeDoubleSolenoidForIds(1, OpConstants.k1HoodRetract, OpConstants.k1HoodExtend);
@@ -58,8 +60,8 @@ public class ShootClimbSubsystem extends SubsystemBase {
     /** Phase sensor accordingly. 
       * Positive Sensor Reading should match Green (blinking) Leds on Talon
     */
-		mTalonShoot1.setSensorPhase(true);
-		mTalonShoot2.setSensorPhase(true);
+		mTalonShoot1.setSensorPhase(false);
+		mTalonShoot2.setSensorPhase(false);
 
 		/* Config the peak and nominal outputs */
 		mTalonShoot1.configNominalOutputForward(0, OpConstants.kTimeoutMs);
@@ -93,6 +95,8 @@ public class ShootClimbSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    //shootPercent = SmartDashboard.getNumber("ShootingPercent", 0.5);
+    //enableShooting(shootPercent);
   }
 
   public double getShootMotor1Velocity() {
@@ -115,12 +119,13 @@ public class ShootClimbSubsystem extends SubsystemBase {
        * ==> shootPercent is 0 to 1, so 100% == put in a value of 1.0
     */
     //double velocity = 0.1; // guessing between -1.0 to 1.0
-		//double targetVelocity_UnitsPer100ms = shootMotorPercent_0_to_1 * 11425.0 * 2048 / 600;
+		double targetVelocity_UnitsPer100ms = shootMotorPercent_0_to_1 * 11425.0 * 2048 / 600;
     /* 500 RPM in either direction */
 		//mTalonShoot1.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
     //mTalonShoot2.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
-    mTalonShoot1.set(ControlMode.PercentOutput, shootMotorPercent_0_to_1);
-    mTalonShoot2.set(ControlMode.PercentOutput, shootMotorPercent_0_to_1);
+    //shootMotorPercent_0_to_1 = shootPercent;
+    mTalonShoot1.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
+    mTalonShoot2.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
     hoodExtend();
   }
 
