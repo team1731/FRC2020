@@ -62,18 +62,22 @@ public class IntakeSeqCommand extends CommandBase {
     mid = m_SeqSubsystem.midSensorHasBall();
     high = m_SeqSubsystem.highSensorHasBall();
     if (!low && ((!mid && !high) || (!mid && high) || (mid && high))) {
+      //System.out.println("case A");
       m_IntakeSubsystem.extend();
       m_IntakeSubsystem.active();
       m_SeqSubsystem.stop();
     } else if (!high && ((!low && mid) || (low && !mid) || (low && mid))) {
+      //System.out.println("case B");
       m_IntakeSubsystem.extend();
       m_IntakeSubsystem.inactive();
       m_SeqSubsystem.forward(false);;
     } else if (low && high) {
+      //System.out.println("case C");
       m_IntakeSubsystem.retract();
       m_IntakeSubsystem.inactive();
       m_SeqSubsystem.stop();
     }
+
     
     
     /* if low and high not tripped do something
@@ -112,6 +116,6 @@ public class IntakeSeqCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_SeqSubsystem.highSensorHasBall(); //m_SeqSubsystem.getMaxPowerCells();
+    return false; //m_SeqSubsystem.highSensorHasBall(); //m_SeqSubsystem.getMaxPowerCells();
   }
 }

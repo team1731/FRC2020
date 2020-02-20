@@ -213,6 +213,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    m_sequencer.setBallCount((int)SmartDashboard.getNumber("BALL COUNT", 3));
     m_robotDrive.resumeCSVWriter();
 
     // This makes sure that the autonomous stops running when
