@@ -79,6 +79,6 @@ public class ShootSeqCommand extends CommandBase {
     System.out.println("curtime = " + curTime + ", elapsed=" + elapsed);
     return  elapsed >= 1;
     */
-    return false;
+    return seqSubsystem.getPowerCellCount() == 0;
   }
 }

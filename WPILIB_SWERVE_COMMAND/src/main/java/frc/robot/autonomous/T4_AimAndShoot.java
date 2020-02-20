@@ -1,5 +1,7 @@
 package frc.robot.autonomous;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -17,6 +19,18 @@ public class T4_AimAndShoot extends _DelayableStrafingAutoMode {
             new InstantCommand(m_shootclimb::enableShooting, m_shootclimb),
             //new Aim(m_robotDrive, m_vision, m_targeting)),
             new ShootSeqCommand(m_shootclimb, m_sequence).withTimeout(2));
+//        CommandScheduler.getInstance().onCommandFinish(command -> Shuffleboard.addEventMarker(
+ //           "Command finished", command.getName(), EventImportance.kNormal));
+        commandGroup.beforeStarting(new Runnable(){
+            @Override
+            public void run() {
+                m_sequence.setBallCount((int)SmartDashboard.getNumber("BALL COUNT", 3));
+            }
+        }, m_sequence);
+        CommandScheduler.getInstance().onCommandExecute(command -> SmartDashboard.putString(
+            "T4_AimAndShoot", "RUNNING"));
+        CommandScheduler.getInstance().onCommandFinish(command -> SmartDashboard.putString(
+            "T4_AimAndShoot", "FINISHED"));
         //command = commandGroup.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
         command = commandGroup.andThen(() -> m_robotDrive.drive(0, 0, 0, false)).andThen(() -> m_shootclimb.stopShooting());
     }

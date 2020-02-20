@@ -45,6 +45,10 @@ public class SequencerSubsystem extends SubsystemBase {
     mPowerCellCount = 0;
   }
 
+  public void setBallCount(int numBalls){
+    mPowerCellCount = numBalls;
+  }
+
   @Override
   public void periodic() {
     // Decrementing ball count
