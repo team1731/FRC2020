@@ -16,22 +16,13 @@ import frc.robot.subsystems.TargetingSubsystem;
 public class T4_AimAndShoot extends _DelayableStrafingAutoMode {  
     public T4_AimAndShoot(DriveSubsystem m_robotDrive, SequencerSubsystem m_sequence, ShootClimbSubsystem m_shootclimb, JevoisVisionSubsystem m_vision, TargetingSubsystem m_targeting) {
         SequentialCommandGroup commandGroup = new SequentialCommandGroup(
-            new InstantCommand(m_shootclimb::enableShooting, m_shootclimb),
+            new InstantCommand(m_shootclimb::enableShooting, m_shootclimb).withTimeout(3),
             //new Aim(m_robotDrive, m_vision, m_targeting)),
-            new ShootSeqCommand(m_shootclimb, m_sequence).withTimeout(2));
-//        CommandScheduler.getInstance().onCommandFinish(command -> Shuffleboard.addEventMarker(
- //           "Command finished", command.getName(), EventImportance.kNormal));
-        commandGroup.beforeStarting(new Runnable(){
-            @Override
-            public void run() {
-                m_sequence.setBallCount((int)SmartDashboard.getNumber("BALL COUNT", 3));
-            }
-        }, m_sequence);
+            new ShootSeqCommand(m_shootclimb, m_sequence).withTimeout(4));
         CommandScheduler.getInstance().onCommandExecute(command -> SmartDashboard.putString(
             "T4_AimAndShoot", "RUNNING"));
         CommandScheduler.getInstance().onCommandFinish(command -> SmartDashboard.putString(
             "T4_AimAndShoot", "FINISHED"));
-        //command = commandGroup.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
-        command = commandGroup.andThen(() -> m_robotDrive.drive(0, 0, 0, false)).andThen(() -> m_shootclimb.stopShooting());
+        command = commandGroup.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
     }
 }

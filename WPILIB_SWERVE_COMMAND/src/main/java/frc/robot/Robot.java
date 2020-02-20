@@ -171,6 +171,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_robotDrive.resumeCSVWriter();
+    m_sequencer.setBallCount((int)SmartDashboard.getNumber("BALL COUNT", 3));
 
     String DEFAULT_AUTO_CODE = "T4"; // DEFAULT AUTO MODE if Drive Team is unable to set the mode via Dashboard
                                      //                   NOTE: also useful if trying to run in the simulator!
