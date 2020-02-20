@@ -225,7 +225,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("LowSensor",  m_sequencer.lowSensorHasBall());
     SmartDashboard.putBoolean("MidSensor",  m_sequencer.midSensorHasBall());
     SmartDashboard.putBoolean("HighSensor",  m_sequencer.highSensorHasBall());
-    //SmartDashboard.putNumber("PowerCellCount",  (double)m_sequencer.getPowerCellCount());
+    SmartDashboard.putNumber("PowerCellCount",  (double)m_sequencer.getPowerCellCount());
     SmartDashboard.putString("Intake State",  m_intake.getIntakeState());
   }
 

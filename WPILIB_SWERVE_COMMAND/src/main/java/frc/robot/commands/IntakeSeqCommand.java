@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 /* Intake Motor (I), Sequence Motor (S)
-  Hi Mid Lo | iU/D iR Seq
+  Lo Mid Hi | iU/D iR Seq
    0  0  0  |   D   R  Off
    0  0  1  |   D   R  Off
    0  1  0  |   D   -  On
