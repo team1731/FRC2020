@@ -36,6 +36,7 @@ import frc.robot.subsystems.TargetingSubsystem;
 import frc.robot.subsystems.ShootClimbSubsystem;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -154,6 +155,11 @@ public class RobotContainer {
     //new ModeTrigger(HanMode.MODE_SHOOT).whenActive(
     //  new InstantCommand(m_shootclimb::enableShooting, m_shootclimb)
     //);
+
+    // Sequencer ejects works will button is held
+    new JoystickButton(m_driverController, 7)
+    .whenHeld(new InstantCommand(m_sequencer::reverse, m_sequencer))
+    .whenReleased(new InstantCommand(m_sequencer::stop, m_sequencer));
 
     // Climbing Command
     //new ModeTrigger(HanMode.MODE_CLIMB).whileActiveContinuous(

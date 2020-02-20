@@ -27,6 +27,7 @@ public class SequencerSubsystem extends SubsystemBase {
   private boolean mLastLowHasBall; // does robot want to index balls - mode
   private boolean mLastHighHasBall; // does robot want to index balls - mode
   private int mPowerCellCount;
+  private int mDelayCount;
 
   /**
    * Creates a new SequencerSubsystem.
@@ -43,6 +44,7 @@ public class SequencerSubsystem extends SubsystemBase {
     mLastLowHasBall = lowSensorHasBall();
     mLastHighHasBall = highSensorHasBall();
     mPowerCellCount = 0;
+    mDelayCount = 0;
   }
 
   @Override
@@ -64,8 +66,11 @@ public class SequencerSubsystem extends SubsystemBase {
       }
     }
 
-    mLastLowHasBall = lowSensorHasBall();
-    mLastHighHasBall = highSensorHasBall();
+    //if (mDelayCount++ >= 2) {
+      mLastLowHasBall = lowSensorHasBall();
+      mLastHighHasBall = highSensorHasBall();
+      mDelayCount = 0;
+    //}
   }
   
   /**
@@ -86,7 +91,7 @@ public class SequencerSubsystem extends SubsystemBase {
    */
   public void reverse() {
     mTalonSeq.setSpeed(OpConstants.kMotorSeqRevShootSpeed);
-    //mPowerCellCount = 0;
+    mPowerCellCount = 0;
   }
 
   /**
