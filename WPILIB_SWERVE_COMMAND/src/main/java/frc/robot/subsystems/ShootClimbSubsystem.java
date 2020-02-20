@@ -9,13 +9,15 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
-import edu.wpi.first.wpilibj.PWMTalonFX;
+// import edu.wpi.first.wpilibj.PWMTalonFX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
+// import frc.robot.util.ReflectingCSVWriter;
+
 
 import frc.robot.Constants;
 import frc.robot.Constants.OpConstants;
@@ -137,18 +139,6 @@ public class ShootClimbSubsystem extends SubsystemBase {
     //mTalonShoot2.set(ControlMode.PercentOutput,OpConstants.kMotorShootPercent);
   }
 
-  public void climbExtend() {
-    if (modeClimbing) {
-      //mClimberSolenoid.set(DoubleSolenoid.Value.kForward);
-    }
-  }
-
-  public void climbRetract() {
-    if (modeClimbing) {
-     // mClimberSolenoid.set(DoubleSolenoid.Value.kReverse);
-    }
-  }
-
   /**
    * @deprecated Naming scheme is bad. Replaced with stopShooting()
    * @see stopShooting()
@@ -174,8 +164,31 @@ public class ShootClimbSubsystem extends SubsystemBase {
   }
 
   public void setClimber(double percentOut) {
-    mTalonShoot1.set(ControlMode.PercentOutput, percentOut);
-    mTalonShoot2.set(ControlMode.PercentOutput, percentOut);
+    double output = Math.abs(percentOut); // useful to get deadband
+ 
+    // if within deadband then set output to Zero
+    if (output < OpConstants.kJoystickDeadband) {
+      output = 0;
+    } else if (output > OpConstants.kClimbMax) {
+    // if within deadband then set output to Zero
+      if (percentOut > 0) output = OpConstants.kClimbMax;  // extending
+      if (percentOut < 0) output = -OpConstants.kClimbMax; // retractiing
+    }
+
+    mTalonShoot1.set(ControlMode.PercentOutput, output);
+    mTalonShoot2.set(ControlMode.PercentOutput, output);
+  }
+
+  public void climbExtend() {
+    // if (modeClimbing) {
+    mClimberSolenoid.set(DoubleSolenoid.Value.kForward);
+    // }
+  }
+
+  public void climbRetract() {
+    // if (modeClimbing) {
+    mClimberSolenoid.set(DoubleSolenoid.Value.kReverse);
+    // }
   }
 
 }

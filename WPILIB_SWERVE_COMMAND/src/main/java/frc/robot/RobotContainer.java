@@ -141,12 +141,18 @@ public class RobotContainer {
       .whenInactive(new InstantCommand(m_shootclimb::stopShooting, m_shootclimb));
 
     // Climbing Command - CURRENT
-    //new JoystickButton(m_operatorController, 9)
-    //  .whileActiveContinuous(
-    //    new ClimbingCommand(m_shootclimb, () -> m_operatorController.getRawAxis(1)), true
-    //  );
+    new JoystickButton(m_operatorController, 9)
+     .whileActiveContinuous(
+       new ClimbingCommand(m_shootclimb, () -> m_operatorController.getRawAxis(1)), true
+     );
+    // Climber Extend
+    new JoystickButton(m_operatorController, 1)
+     .whileActiveOnce(new InstantCommand(m_shootclimb::climbExtend, m_shootclimb));
+    // Climber Retract
+    new JoystickButton(m_operatorController, 2)
+     .whileActiveOnce(new InstantCommand(m_shootclimb::climbRetract, m_shootclimb));
 
-    // Activate Shooter via Operator Right Axis/Trigger
+     // Activate Shooter via Operator Right Axis/Trigger
     new HanTrigger(HanTriggers.DR_TRIG_RIGHT).whileActiveContinuous(new ShootSeqCommand(m_shootclimb, m_sequencer));
     // Shooting
     //new JoystickButton(m_operatorController, 12).whileActiveContinuous(
