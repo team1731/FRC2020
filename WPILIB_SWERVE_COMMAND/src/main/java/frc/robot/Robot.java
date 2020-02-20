@@ -156,6 +156,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     m_robotDrive.suspendCSVWriter();
+    m_vision.StopCameraDataStream();
   }
 
   @Override
@@ -170,6 +171,8 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_robotDrive.resumeCSVWriter();
+
+    m_vision.StartCameraDataStream();
 
     String DEFAULT_AUTO_CODE = "T4"; // DEFAULT AUTO MODE if Drive Team is unable to set the mode via Dashboard
                                      //                   NOTE: also useful if trying to run in the simulator!
@@ -212,6 +215,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     m_robotDrive.resumeCSVWriter();
+
+    m_vision.StartCameraDataStream();
 
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to

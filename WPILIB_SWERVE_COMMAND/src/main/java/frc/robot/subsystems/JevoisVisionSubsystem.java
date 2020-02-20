@@ -94,8 +94,8 @@ public class JevoisVisionSubsystem extends SubsystemBase {
     public void addVisionUpdate(double timestamp, List<TargetInfo> vision_update) {
         List<Translation2d> field_to_goals = new ArrayList<>();
         Pose2d field_to_camera = null;
-        Rotation2d camera_pitch_correction_ = Rotation2d.fromDegrees(-VisionConstants.kCameraPitchAngleDegrees);;
-        Rotation2d camera_yaw_correction_ = Rotation2d.fromDegrees(-VisionConstants.kCameraYawAngleDegrees);;
+        Rotation2d camera_pitch_correction_ = Rotation2d.fromDegrees(-VisionConstants.kCameraPitchAngleDegrees);
+        Rotation2d camera_yaw_correction_ = Rotation2d.fromDegrees(-VisionConstants.kCameraYawAngleDegrees);
         double differential_height_ = VisionConstants.kBoilerTargetTopHeight - VisionConstants.kCameraZOffset;
 
         //RigidTransform2d field_to_camera = getFieldToCamera(timestamp);

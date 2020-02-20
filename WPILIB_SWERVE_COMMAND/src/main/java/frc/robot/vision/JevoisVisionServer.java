@@ -185,6 +185,7 @@ public class JevoisVisionServer {
 
         @Override
         public void run() {
+            //There was a while true loop in here... maybe run this through a looper instead if this doesn't keep going?
             String dashboardMessage = "";
             visionCamAvailable = visionCam != null;
             try {
@@ -204,7 +205,9 @@ public class JevoisVisionServer {
             } catch (Exception e){
                 try{
                     Thread.sleep(50);
-                } catch (InterruptedException ie){}
+                } catch (InterruptedException ie){
+                    e.printStackTrace();
+                }
                 AttemptJevoisConnection();
             }
             try {

@@ -139,6 +139,10 @@ public class RobotContainer {
     new JoystickButton(m_driverController, 2)
     .whileActiveContinuous(new SeqResetCommand(m_sequencer), true);
 
+    //Map right bumper to rotation lock to power port
+    new JoystickButton(m_driverController, 6)
+      .whenActive(new RotToPowerPortCommand(m_vision, m_robotDrive, m_driverController));
+
     new JoystickButton(m_operatorController, 8)
       .whenActive(new InstantCommand(m_shootclimb::enableShooting, m_shootclimb))
       .whenInactive(new InstantCommand(m_shootclimb::stopShooting, m_shootclimb));

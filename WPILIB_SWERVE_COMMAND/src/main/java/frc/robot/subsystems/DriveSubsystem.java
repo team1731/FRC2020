@@ -42,6 +42,8 @@ public class DriveSubsystem extends SubsystemBase {
     new TrapezoidProfile.Constraints(DriveConstants.kMaxTurnVelocity, DriveConstants.kMaxTurnAcceleration));
   
   private double headingControllerOutput = 0;
+
+  private boolean stickControlledHeading = true;
   
   //Robot swerve modules
   private final SwerveModule m_frontLeft = 
@@ -177,7 +179,7 @@ public class DriveSubsystem extends SubsystemBase {
     //}
 
     //If the stick is released, don't change the rotation
-    if(rightX != 0 && rightY != 0){
+    if(stickControlledHeading && rightX != 0 && rightY != 0){
       double rot = getStickAngle(rightX, rightY);
       headingController.setGoal(rot);
     }
@@ -314,5 +316,17 @@ public class DriveSubsystem extends SubsystemBase {
     if(mCSVWriter.isSuspended()){
       mCSVWriter.resume();
     }
+  }
+
+  /**
+   * Determines if the right thumbstick on the driver controller can control the robot's orientation.
+   * Set to false if you want another subsystem to control the orientation in teleop (e.x. vision)
+   */
+  public void setStickControlledHeading(boolean controlledHeading){
+    stickControlledHeading = controlledHeading;
+  }
+
+  public void setHeadingControllerGoal(double newGoal){
+    headingController.setGoal(newGoal);
   }
 }
