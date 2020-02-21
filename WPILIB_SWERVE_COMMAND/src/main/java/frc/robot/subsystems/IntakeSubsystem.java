@@ -34,17 +34,17 @@ public class IntakeSubsystem extends SubsystemBase {
    * Enables the intake by extending solenoid & turning on motor.
    */
   public void extend() {
-    //mIntakeSolenoid.set(DoubleSolenoid.Value.kForward);
+    mIntakeSolenoid.set(DoubleSolenoid.Value.kForward);
     mTalonState = "Extending/Fwd";
   }
 
   public void active() {
-    //mTalonIntake.setSpeed(OpConstants.kMotorIntakeFwdSpeed);
+    mTalonIntake.setSpeed(OpConstants.kMotorIntakeFwdSpeed);
     mTalonState = "Extending/Fwd";
   }
 
   public void inactive() {
-    //mTalonIntake.setSpeed(OpConstants.kMotorIntakeFwdSpeed);
+    mTalonIntake.setSpeed(OpConstants.kMotorIntakeFwdSpeed);
     mTalonState = "Extending/Fwd";
   }
 
@@ -53,7 +53,7 @@ public class IntakeSubsystem extends SubsystemBase {
    */
   public void eject() {
     //mIntakeSolenoid.set(true);
-    //mTalonIntake.setSpeed(OpConstants.kMotorIntakeRevSpeed);
+    mTalonIntake.setSpeed(OpConstants.kMotorIntakeRevSpeed);
     mTalonState = "Ejecting/Rev";
   }
 
@@ -61,8 +61,8 @@ public class IntakeSubsystem extends SubsystemBase {
    * Enables the intake by retracting solenoid & turning off motor.
    */
   public void retract() {
-    //mIntakeSolenoid.set(DoubleSolenoid.Value.kReverse);
-    //mTalonIntake.setSpeed(0);
+    mIntakeSolenoid.set(DoubleSolenoid.Value.kReverse);
+    mTalonIntake.setSpeed(0);
     mTalonState = "Retracted/Off";
   }
 

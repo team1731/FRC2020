@@ -61,7 +61,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
       * Positive Sensor Reading should match Green (blinking) Leds on Talon
     */
 		mTalonShoot1.setSensorPhase(true);
-		mTalonShoot2.setSensorPhase(true);
+		mTalonShoot2.setSensorPhase(false);
 
 		/* Config the peak and nominal outputs */
 		mTalonShoot1.configNominalOutputForward(0, OpConstants.kTimeoutMs);
@@ -84,6 +84,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
 		mTalonShoot2.config_kD(OpConstants.kPIDLoopIdx, OpConstants.kGains_Velocity.kD, OpConstants.kTimeoutMs);
 
     extendRetract = 0;
+    shootMode();    
 
     SmartDashboard.putNumber("ShootingPercent", 0.5);
   }
@@ -130,6 +131,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
     mTalonShoot1.set(ControlMode.PercentOutput, 0);
     mTalonShoot2.set(ControlMode.PercentOutput, 0);
     hoodRetract();
+    shootMode();
   }
 
   public void enableClimbing() {
@@ -164,19 +166,26 @@ public class ShootClimbSubsystem extends SubsystemBase {
   }
 
   public void setClimber(double percentOut) {
-    double output = Math.abs(percentOut); // useful to get deadband
- 
+    double output = percentOut;
     // if within deadband then set output to Zero
-    if (output < OpConstants.kJoystickDeadband) {
+    if (Math.abs(output) < OpConstants.kJoystickDeadband) {
+      shootMode();
       output = 0;
-    } else if (output > OpConstants.kClimbMax) {
-    // if within deadband then set output to Zero
-      if (percentOut > 0) output = OpConstants.kClimbMax;  // extending
-      if (percentOut < 0) output = -OpConstants.kClimbMax; // retractiing
+    } else {
+      climbMode();
     }
+    //System.out.println("climb output = " + output);
+    mTalonShoot1.set(ControlMode.PercentOutput, output*OpConstants.kClimbMaxPercent);
+    mTalonShoot2.set(ControlMode.PercentOutput, output*OpConstants.kClimbMaxPercent);
+  }
 
-    mTalonShoot1.set(ControlMode.PercentOutput, output);
-    mTalonShoot2.set(ControlMode.PercentOutput, output);
+
+  public void shootMode() {
+    mShootClimbSolenoid.set(DoubleSolenoid.Value.kForward);
+  }
+
+  public void climbMode() {
+    mShootClimbSolenoid.set(DoubleSolenoid.Value.kReverse);
   }
 
   public void climbExtend() {

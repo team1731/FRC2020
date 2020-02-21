@@ -144,7 +144,7 @@ public final class Constants {
         public static final int kShooterVictor = 3;
         public static final int kShootMinVelocity = 5000;
 
-        public static final double kClimbMax = 0.4;
+        public static final double kClimbMaxPercent = 0.3;
         public static final double kJoystickDeadband = 0.2;
 
         // Digital Input/Outputs
