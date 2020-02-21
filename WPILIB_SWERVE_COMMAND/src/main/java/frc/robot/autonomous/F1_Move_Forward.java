@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.util.Utils;
 
 public class F1_Move_Forward extends _DelayableStrafingAutoMode {
   public F1_Move_Forward(DriveSubsystem m_robotDrive) {
@@ -40,21 +41,8 @@ public class F1_Move_Forward extends _DelayableStrafingAutoMode {
         config
     );
 
-    double duration = trajectory.getTotalTimeSeconds();
-    System.out.println("trajectory duration " +  duration);
-    for(int i=0; i<=(int)duration * 2; i++){
-      Trajectory.State state = trajectory.sample(i/2.0);
-      System.out.println("state " + i + "                 poseMetersX " + state.poseMeters.getTranslation().getX());
-      System.out.println("state " + i + "                 poseMetersY " + state.poseMeters.getTranslation().getY());
-      System.out.println("state " + i + "         poseMetersTheta Deg " + state.poseMeters.getRotation().getDegrees());
-      System.out.println("state " + i + "     velocityMetersPerSecond " + state.velocityMetersPerSecond);
-    }
-    Trajectory.State state = trajectory.sample(duration);
-    System.out.println("state (end)             poseMetersX " + state.poseMeters.getTranslation().getX());
-    System.out.println("state (end)             poseMetersY " + state.poseMeters.getTranslation().getY());
-    System.out.println("state (end)     poseMetersTheta Deg " + state.poseMeters.getRotation().getDegrees());
-    System.out.println("state (end) velocityMetersPerSecond " + state.velocityMetersPerSecond);
-
+    Utils.printTrajectory(trajectory);
+    
     SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
         trajectory,
         m_robotDrive::getPose, //Functional interface to feed supplier

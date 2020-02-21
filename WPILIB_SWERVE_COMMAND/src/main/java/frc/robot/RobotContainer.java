@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.autonomous.F1_Move_Forward;
 import frc.robot.autonomous.L1_Placeholder;
-import frc.robot.autonomous.M1_Placeholder;
+import frc.robot.autonomous.M1_Shoot3_Front3_Shoot3;
 import frc.robot.autonomous.M3_Placeholder;
 import frc.robot.autonomous.R1_Placeholder;
 import frc.robot.autonomous.T1_Move_Forward;
@@ -267,7 +267,7 @@ public class RobotContainer {
       mode = new _NamedAutoMode(new L1_Placeholder(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
       myMap.put(mode.code, mode);
 
-      mode = new _NamedAutoMode(new M1_Placeholder(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
+      mode = new _NamedAutoMode(new M1_Shoot3_Front3_Shoot3(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
       myMap.put(mode.code, mode);
                     
       mode = new _NamedAutoMode(new M3_Placeholder(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
