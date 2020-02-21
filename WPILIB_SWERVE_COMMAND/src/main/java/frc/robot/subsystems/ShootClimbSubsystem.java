@@ -16,8 +16,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
-// import frc.robot.util.ReflectingCSVWriter;
-
 
 import frc.robot.Constants;
 import frc.robot.Constants.OpConstants;
@@ -31,8 +29,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
   private final TalonFX mTalonShoot1;
   private final TalonFX mTalonShoot2;
 
-  private boolean modeClimbing;
-  private double extendRetract;
+  //private boolean modeClimbing;
   
   /**
    * Creates a new ExampleSubsystem.
@@ -83,7 +80,6 @@ public class ShootClimbSubsystem extends SubsystemBase {
 		mTalonShoot2.config_kI(OpConstants.kPIDLoopIdx, OpConstants.kGains_Velocity.kI, OpConstants.kTimeoutMs);
 		mTalonShoot2.config_kD(OpConstants.kPIDLoopIdx, OpConstants.kGains_Velocity.kD, OpConstants.kTimeoutMs);
 
-    extendRetract = 0;
     shootMode();    
 
     SmartDashboard.putNumber("ShootingPercent", 0.5);
@@ -139,22 +135,6 @@ public class ShootClimbSubsystem extends SubsystemBase {
     //mTalonShoot.setSpeed(0);
     mTalonShoot1.set(ControlMode.PercentOutput,OpConstants.kMotorShootPercent);
     //mTalonShoot2.set(ControlMode.PercentOutput,OpConstants.kMotorShootPercent);
-  }
-
-  /**
-   * @deprecated Naming scheme is bad. Replaced with stopShooting()
-   * @see stopShooting()
-   */
-  @Deprecated
-  public void disable() {
-    //mShootClimbSolenoid.set(DoubleSolenoid.Value.kReverse);
-    //mClimberSolenoid.set(DoubleSolenoid.Value.kReverse);
-    //mShootHoodSolenoid.set(DoubleSolenoid.Value.kReverse);
-    //mTalonShoot.setSpeed(0);
-    //mTalonShoot1.set(ControlMode.Velocity, 0);
-    stopShooting();
-    //mTalonShoot2.set(ControlMode.PercentOutput, 0);
-    //hoodRetract();
   }
 
   public void hoodRetract() {

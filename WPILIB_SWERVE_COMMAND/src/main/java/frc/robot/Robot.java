@@ -67,7 +67,7 @@ public class Robot extends TimedRobot {
     
     m_robotDrive = new DriveSubsystem();
     m_targeting = new TargetingSubsystem();
-    m_vision = null; //new JevoisVisionSubsystem();
+    m_vision = JevoisVisionSubsystem.getInstance();
     m_intake = new IntakeSubsystem();
     m_sequencer = new SequencerSubsystem();
     m_shootclimb = new ShootClimbSubsystem();
@@ -105,11 +105,13 @@ public class Robot extends TimedRobot {
     // initial SubSystems to at rest states
     m_intake.retract();
     m_sequencer.stop();
-    m_shootclimb.disable();
+    m_shootclimb.stopShooting();
     m_colorwheel.init();
     m_ledstring.init();
 
-    SmartDashboard.putString("Auto Code", "M1"); // XNDD (X=L,M,R,F) (N=1,2,3,4) (DD=0-99 [optional])
+    SmartDashboard.putString("BALL COUNT", "3"); // How much ammo we start with
+
+    SmartDashboard.putString("AUTO CODE", "M1"); // XNDD (X=L,M,R,F) (N=1,2,3,4) (DD=0-99 [optional])
                                                  // XN = one of Mark and Chuck's 10 auto modes plus new "forward" mode F
                                                  //      (and if it turns out we need a backward mode, B, we will add it)
                                                  // DD = up to 2 digits (0-9) signifying 2 possible delays (in seconds)
@@ -169,19 +171,20 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_robotDrive.resumeCSVWriter();
+    m_sequencer.setBallCount((int)SmartDashboard.getNumber("BALL COUNT", 3));
 
     String DEFAULT_AUTO_CODE = "T4"; // DEFAULT AUTO MODE if Drive Team is unable to set the mode via Dashboard
                                      //                   NOTE: also useful if trying to run in the simulator!
     String autoCode = DEFAULT_AUTO_CODE;
     if (RobotBase.isReal()) {
-      autoCode = SmartDashboard.getString("Auto Code", autoCode);
+      autoCode = SmartDashboard.getString("AUTO CODE", autoCode);
     }
-    System.out.println("Auto Code retrieved from Dashboard --> " + autoCode);
+    System.out.println("AUTO CODE retrieved from Dashboard --> " + autoCode);
     if(autoCode == null || autoCode.length() < 2){
       autoCode = DEFAULT_AUTO_CODE;
     }
     autoCode = autoCode.toUpperCase();
-    System.out.println("Auto Code being used by the software --> " + autoCode);
+    System.out.println("AUTO CODE being used by the software --> " + autoCode);
 
     try{
       _NamedAutoMode namedAutoCommand = m_robotContainer.getNamedAutonomousCommand(autoCode);
@@ -210,6 +213,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    m_sequencer.setBallCount((int)SmartDashboard.getNumber("BALL COUNT", 3));
     m_robotDrive.resumeCSVWriter();
 
     // This makes sure that the autonomous stops running when

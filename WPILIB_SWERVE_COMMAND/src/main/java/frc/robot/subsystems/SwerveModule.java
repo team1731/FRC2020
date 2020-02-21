@@ -181,7 +181,10 @@ public double getDriveEncoderPosition(){
     // meters per sec * 39.37 is inches/s * 60 is inches per min / PI*D is RPM * 5.5 is ticks
     double drive = (speedMetersPerSecond * 5.5 * 39.37  * 60.0) / (3.0 * Math.PI);
     //wheel.set(-angleDegrees/360, speedMetersPerSecond * 16.0 * 39.37  * 60.0 / 3.0 / Math.PI);
-    double azimuthPosition = m_turningEncoder.getPosition();
+    double azimuthPosition = 0;
+    if(RobotBase.isReal()){
+      azimuthPosition = m_turningEncoder.getPosition();
+    }
     double azimuthError = Math.IEEEremainder(azimuth - azimuthPosition, kTICKS);
 
     // minimize azimuth rotation, reversing drive if necessary

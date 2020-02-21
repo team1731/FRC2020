@@ -13,14 +13,14 @@ import java.util.Map;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.XboxController.Button;
+//import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.autonomous.F1_Move_Forward;
-import frc.robot.autonomous.L1_Placeholder;
-import frc.robot.autonomous.M1_Placeholder;
-import frc.robot.autonomous.M3_Placeholder;
-import frc.robot.autonomous.R1_Placeholder;
+import frc.robot.autonomous.L1_EnemyPair_Front3;
+import frc.robot.autonomous.M1_Shoot3_Front3_Shoot3;
+import frc.robot.autonomous.M3_Shoot3_Buddy5;
+import frc.robot.autonomous.R1_WholeSide10;
 import frc.robot.autonomous.T1_Move_Forward;
 import frc.robot.autonomous.T2_BwdPickup2Balls;
 import frc.robot.autonomous.T3_BwdPickup2BallsAndShoot;
@@ -35,8 +35,8 @@ import frc.robot.subsystems.SequencerSubsystem;
 import frc.robot.subsystems.TargetingSubsystem;
 import frc.robot.subsystems.ShootClimbSubsystem;
 
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.Command;
+//import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+//import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -247,12 +247,28 @@ public class RobotContainer {
   private Map<String, _NamedAutoMode> createNamedAutoModeMap() throws _NotImplementedProperlyException {
     _NamedAutoMode mode;
     Map<String, _NamedAutoMode> myMap = new HashMap<String, _NamedAutoMode>();
-
+      //
       // DEFAULT AUTO -- MOVE FORWARD
       //
       mode = new _NamedAutoMode(new F1_Move_Forward(m_robotDrive));
       myMap.put(mode.code, mode);
 
+      //
+      // FOR HAYMARKET: R1, L1, M1, M3
+      //
+      mode = new _NamedAutoMode(new R1_WholeSide10(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
+      myMap.put(mode.code, mode);
+
+      mode = new _NamedAutoMode(new L1_EnemyPair_Front3(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
+      myMap.put(mode.code, mode);
+
+      mode = new _NamedAutoMode(new M1_Shoot3_Front3_Shoot3(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
+      myMap.put(mode.code, mode);
+                    
+      mode = new _NamedAutoMode(new M3_Shoot3_Buddy5(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
+      myMap.put(mode.code, mode);
+
+      //
       // TEST AUTO ROUTINES
       //
       mode = new _NamedAutoMode(new T1_Move_Forward(m_robotDrive));
@@ -265,20 +281,6 @@ public class RobotContainer {
       myMap.put(mode.code, mode);
                     
       mode = new _NamedAutoMode(new T4_AimAndShoot(m_robotDrive, m_sequencer, m_shootclimb, m_vision, m_targeting));
-      myMap.put(mode.code, mode);
-
-      // FOR HAYMARKET: R1, L1, M1, M3
-      //
-      mode = new _NamedAutoMode(new R1_Placeholder(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
-      myMap.put(mode.code, mode);
-
-      mode = new _NamedAutoMode(new L1_Placeholder(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
-      myMap.put(mode.code, mode);
-
-      mode = new _NamedAutoMode(new M1_Placeholder(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
-      myMap.put(mode.code, mode);
-                    
-      mode = new _NamedAutoMode(new M3_Placeholder(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
       myMap.put(mode.code, mode);
 
       return myMap;

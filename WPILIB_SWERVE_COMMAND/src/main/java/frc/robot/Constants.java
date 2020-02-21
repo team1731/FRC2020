@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.util.Color;
 import com.revrobotics.ColorMatch;
-import frc.robot.Gains;
+//import frc.robot.Gains;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -134,7 +134,7 @@ public final class Constants {
         public static final double kMotorShootSpeed2 = 0.3;
         public static final double kMotorShootPercent = 0.50;   // check shooting motor percent
         public static final double kMotorClimbPercent = 0.3;
-        public static final int kMaxPowerCells = 3;
+        public static final int kMaxPowerCells = 5;
         public static final double kSeqResetDelay = 2.0;
 
         // ColorWheel
@@ -232,8 +232,8 @@ public final class Constants {
          * PID Gains may have to be adjusted based on the responsiveness of control loop.
          * kF: 1023 represents output value to Talon at 100%, 7200 represents Velocity units at 100% output
          * 
-         * 	                                    		          	  kP   kI   kD   kF             Iz    PeakOut */
-        public final static Gains kGains_Velocity = new Gains( 0.25, 0.001, 20, 1023.0/7200.0,  300,  1.00);
+         * 	                                    		          	  kP   kI   kD   kF     Iz    PeakOut */
+        public final static Gains kGains_Velocity = new Gains( 0/*0.0682*/, 0.000, 0, 0.07,  300,  1.00); //0.07 = .2 * 1023 / 2830;
         ///// End TalonFX
     }
 

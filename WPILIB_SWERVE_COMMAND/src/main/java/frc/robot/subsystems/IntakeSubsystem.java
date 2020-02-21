@@ -1,14 +1,10 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.OpConstants;
 import edu.wpi.first.wpilibj.PWMTalonFX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import frc.robot.util.DebugOutput;
-import frc.robot.util.ReflectingCSVWriter;
 
 public class IntakeSubsystem extends SubsystemBase {
 
@@ -52,7 +48,6 @@ public class IntakeSubsystem extends SubsystemBase {
    * Enables the intake by extending solenoid & turning on motor.
    */
   public void eject() {
-    //mIntakeSolenoid.set(true);
     mTalonIntake.setSpeed(OpConstants.kMotorIntakeRevSpeed);
     mTalonState = "Ejecting/Rev";
   }
