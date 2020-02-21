@@ -98,6 +98,7 @@ public class SequencerSubsystem extends SubsystemBase {
    */
   public void stop() {
     mTalonSeq.setSpeed(0);
+    mTalonSeq.stopMotor();
   }
 
   public boolean lowSensorHasBall() {
