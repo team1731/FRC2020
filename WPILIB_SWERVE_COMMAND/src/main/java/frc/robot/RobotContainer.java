@@ -145,19 +145,21 @@ public class RobotContainer {
      .whileActiveContinuous(
        new ClimbingCommand(m_shootclimb, () -> m_operatorController.getRawAxis(1)), true
      );
-    // Climber Extend
-    new JoystickButton(m_operatorController, 1)
-     .whileActiveOnce(new InstantCommand(m_shootclimb::climbExtend, m_shootclimb));
-    // Climber Retract
-    new JoystickButton(m_operatorController, 2)
-     .whileActiveOnce(new InstantCommand(m_shootclimb::climbRetract, m_shootclimb));
 
-     // Activate Shooter via Operator Right Axis/Trigger
-    new HanTrigger(HanTriggers.DR_TRIG_RIGHT).whileActiveContinuous(new ShootSeqCommand(m_shootclimb, m_sequencer));
+
+    // Climber Extend
+    //new JoystickButton(m_operatorController, 1)
+    // .whileActiveOnce(new InstantCommand(m_shootclimb::climbExtend, m_shootclimb));
+    // Climber Retract
+    //new JoystickButton(m_operatorController, 2)
+    // .whileActiveOnce(new InstantCommand(m_shootclimb::climbRetract, m_shootclimb));
+
+    // Activate Shooter via Operator Right Axis/Trigger
+    //new HanTrigger(HanTriggers.DR_TRIG_RIGHT).whileActiveContinuous(new ShootSeqCommand(m_shootclimb, m_sequencer));
     // Shooting
-    //new JoystickButton(m_operatorController, 12).whileActiveContinuous(
-    //  new ShootSeqCommand(m_shootclimb, m_sequencer), true //<---NOTE: we think this got called at least once when we ran autonomous
-    //);
+    new JoystickButton(m_operatorController, 12).whileActiveContinuous(
+      new ShootSeqCommand(m_shootclimb, m_sequencer), true //<---NOTE: we think this got called at least once when we ran autonomous
+    );
     //new ModeTrigger(HanMode.MODE_SHOOT).whenActive(
     //  new InstantCommand(m_shootclimb::enableShooting, m_shootclimb)
     //);

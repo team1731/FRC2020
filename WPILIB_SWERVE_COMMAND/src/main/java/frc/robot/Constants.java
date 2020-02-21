@@ -146,6 +146,7 @@ public final class Constants {
 
         public static final double kClimbMaxPercent = 0.3;
         public static final double kJoystickDeadband = 0.2;
+        public static final int kClimbJoystickInvert = -1;
 
         // Digital Input/Outputs
         public static int kLowSequencer = 0;
