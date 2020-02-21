@@ -50,7 +50,7 @@ public class T2_BwdPickup2Balls extends _DelayableStrafingAutoMode {
     );
 
     //TODO: Change the zero to the actual last rotation (SCH2020)
-    trajectory = new Trajectory(unrotateTrajectory(trajectory.getStates(), 0)); // make it pure strafe
+    trajectory = new Trajectory(unrotateTrajectory(trajectory.getStates(), 90)); // make it pure strafe
 
     double duration = trajectory.getTotalTimeSeconds();
     System.out.println("trajectory duration " +  duration);
