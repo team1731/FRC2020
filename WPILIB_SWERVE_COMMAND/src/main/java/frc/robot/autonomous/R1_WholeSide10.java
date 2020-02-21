@@ -26,19 +26,19 @@ import frc.robot.subsystems.ShootClimbSubsystem;
 import frc.robot.subsystems.TargetingSubsystem;
 import frc.robot.util.Utils;
 
-public class L1_EnemyPair_Front3 extends _DelayableStrafingAutoMode {
-    public L1_EnemyPair_Front3(DriveSubsystem m_robotDrive, IntakeSubsystem m_intake, SequencerSubsystem m_sequence,
+public class R1_WholeSide10 extends _DelayableStrafingAutoMode {
+    public R1_WholeSide10(DriveSubsystem m_robotDrive, IntakeSubsystem m_intake, SequencerSubsystem m_sequence,
             ShootClimbSubsystem m_shootclimb, JevoisVisionSubsystem m_vision, TargetingSubsystem m_targeting) {
-                
+
         TrajectoryConfig config =
             new TrajectoryConfig(AutoConstants.kMaxSpeedMetersPerSecond,
                                  AutoConstants.kMaxAccelerationMetersPerSecondSquared)
                 // Add kinematics to ensure max speed is actually obeyed
                 .setKinematics(DriveConstants.kDriveKinematics)
                 .setReversed(true);
-    
-        // BACKWARD TO ENEMY PAIR
-        Trajectory backwardToEnemyPair = TrajectoryGenerator.generateTrajectory(
+
+        // BACKWARD TO RAIL 2
+        Trajectory backwardToRail2 = TrajectoryGenerator.generateTrajectory(
             // Start at the origin facing the +X direction
             new Pose2d(0, 0, new Rotation2d(Math.PI/4)),
                 //  BACKWARD TO ENEMY PAIR
@@ -50,11 +50,11 @@ public class L1_EnemyPair_Front3 extends _DelayableStrafingAutoMode {
             config
         );
 
-        backwardToEnemyPair = new Trajectory(unrotateTrajectory(backwardToEnemyPair.getStates(), 90)); // make it pure strafe
-        Utils.printTrajectory(this.getClass().getSimpleName() + ": backwardToEnemyPair", backwardToEnemyPair);
-    
-        SwerveControllerCommand backwardToEnemyPairCommand = new SwerveControllerCommand(
-            backwardToEnemyPair,
+        backwardToRail2 = new Trajectory(unrotateTrajectory(backwardToRail2.getStates(), 90)); // make it pure strafe
+        Utils.printTrajectory(this.getClass().getSimpleName() + ": backwardToRail2", backwardToRail2);
+
+        SwerveControllerCommand backwardToRail2Command = new SwerveControllerCommand(
+            backwardToRail2,
             m_robotDrive::getPose,
             DriveConstants.kDriveKinematics,
             new PIDController(AutoConstants.kPXController, 0, 0),
@@ -64,10 +64,10 @@ public class L1_EnemyPair_Front3 extends _DelayableStrafingAutoMode {
             m_robotDrive::setModuleStates,
             m_robotDrive
         );
-    
-    
-        // STRAFE TO SHOOT LOCATION
-        Trajectory strafeToShootLocation = TrajectoryGenerator.generateTrajectory(
+
+
+        // STRAFE TO SHOOT LOCATION 1
+        Trajectory strafeToShootLocation1 = TrajectoryGenerator.generateTrajectory(
             // Start at the origin facing the +X direction
             new Pose2d(0, 0, new Rotation2d(Math.PI/4)),
                 //  STRAFE TO SHOOT LOCATION
@@ -78,12 +78,12 @@ public class L1_EnemyPair_Front3 extends _DelayableStrafingAutoMode {
             new Pose2d(-7.06,-3.01, new Rotation2d(0)),
             config
         );
-    
-        strafeToShootLocation = new Trajectory(unrotateTrajectory(strafeToShootLocation.getStates(), 90)); // make it pure strafe
-        Utils.printTrajectory(this.getClass().getSimpleName() + ": strafeToShootLocation", strafeToShootLocation);
 
-        SwerveControllerCommand strafeToShootLocationCommand = new SwerveControllerCommand(
-            strafeToShootLocation,
+        strafeToShootLocation1 = new Trajectory(unrotateTrajectory(strafeToShootLocation1.getStates(), 90)); // make it pure strafe
+        Utils.printTrajectory(this.getClass().getSimpleName() + ": strafeToShootLocation1", strafeToShootLocation1);
+
+        SwerveControllerCommand strafeToShootLocation1Command = new SwerveControllerCommand(
+            strafeToShootLocation1,
             m_robotDrive::getPose,
             DriveConstants.kDriveKinematics,
             new PIDController(AutoConstants.kPXController, 0, 0),
@@ -93,9 +93,9 @@ public class L1_EnemyPair_Front3 extends _DelayableStrafingAutoMode {
             m_robotDrive::setModuleStates,
             m_robotDrive
         );
-    
-        // BACKWARD TO PICKUP FRONT 3
-        Trajectory backwardToPickupFront3 = TrajectoryGenerator.generateTrajectory(
+
+        // BACKWARD TO PICKUP TRENCH 5
+        Trajectory backwardToPickupTrench5 = TrajectoryGenerator.generateTrajectory(
             // Start at the origin facing the +X direction
             new Pose2d(0, 0, new Rotation2d(Math.PI/4)),
                 //  BACKWARD TO PICKUP FRONT 3
@@ -106,18 +106,46 @@ public class L1_EnemyPair_Front3 extends _DelayableStrafingAutoMode {
             new Pose2d(-7.06,-3.01, new Rotation2d(0)),
             config
         );
-    
-        backwardToPickupFront3 = new Trajectory(unrotateTrajectory(backwardToPickupFront3.getStates(), 90)); // make it pure strafe
-        Utils.printTrajectory(this.getClass().getSimpleName() + ": backwardToPickupFront3", backwardToPickupFront3);
 
-        SwerveControllerCommand backwardToPickupFront3Command = new SwerveControllerCommand(
-            backwardToPickupFront3,
+        backwardToPickupTrench5 = new Trajectory(unrotateTrajectory(backwardToPickupTrench5.getStates(), 90)); // make it pure strafe
+        Utils.printTrajectory(this.getClass().getSimpleName() + ": backwardToPickupTrench5", backwardToPickupTrench5);
+
+        SwerveControllerCommand backwardToPickupTrench5Command = new SwerveControllerCommand(
+            backwardToPickupTrench5,
             m_robotDrive::getPose,
             DriveConstants.kDriveKinematics,
             new PIDController(AutoConstants.kPXController, 0, 0),
             new PIDController(AutoConstants.kPYController, 0, 0),
             new ProfiledPIDController(AutoConstants.kPThetaController, 0, 0,
-                                      AutoConstants.kThetaControllerConstraints),
+                                        AutoConstants.kThetaControllerConstraints),
+            m_robotDrive::setModuleStates,
+            m_robotDrive
+        );
+
+        // STRAFE TO SHOOT LOCATION 2
+        Trajectory strafeToShootLocation2 = TrajectoryGenerator.generateTrajectory(
+            // Start at the origin facing the +X direction
+            new Pose2d(0, 0, new Rotation2d(Math.PI/4)),
+                //  STRAFE TO SHOOT LOCATION
+                List.of(
+                    new Translation2d(-2,-3.11),
+                    new Translation2d(-3.93,-3.11)
+            ),
+            new Pose2d(-7.06,-3.01, new Rotation2d(0)),
+            config
+        );
+
+        strafeToShootLocation2 = new Trajectory(unrotateTrajectory(strafeToShootLocation2.getStates(), 90)); // make it pure strafe
+        Utils.printTrajectory(this.getClass().getSimpleName() + ": strafeToShootLocation2", strafeToShootLocation2);
+
+        SwerveControllerCommand strafeToShootLocation2Command = new SwerveControllerCommand(
+            strafeToShootLocation2,
+            m_robotDrive::getPose,
+            DriveConstants.kDriveKinematics,
+            new PIDController(AutoConstants.kPXController, 0, 0),
+            new PIDController(AutoConstants.kPYController, 0, 0),
+            new ProfiledPIDController(AutoConstants.kPThetaController, 0, 0,
+                                        AutoConstants.kThetaControllerConstraints),
             m_robotDrive::setModuleStates,
             m_robotDrive
         );
@@ -126,24 +154,26 @@ public class L1_EnemyPair_Front3 extends _DelayableStrafingAutoMode {
         SequentialCommandGroup commandGroup = new SequentialCommandGroup(
             new WaitCommand(getInitialDelaySeconds()),
 
-            // ENEMY PAIR
-            backwardToEnemyPairCommand,
+            // GET 2 OFF RAIL
+            backwardToRail2Command,
             new IntakeSeqCommand(m_intake, m_sequence),
 
-            strafeToShootLocationCommand,
+            strafeToShootLocation1Command,
 
-            // SHOOT
+            // SHOOT 5
             new InstantCommand(m_shootclimb::enableShooting, m_shootclimb).withTimeout(3),
             //new Aim(m_robotDrive, m_vision, m_targeting)),
             new ShootSeqCommandAuto(m_shootclimb, m_sequence).withTimeout(3),
 
             new WaitCommand(getSecondaryDelaySeconds()),
 
-            // FRONT 3
-            backwardToPickupFront3Command,
+            // TRENCH 5
+            backwardToPickupTrench5Command,
             new IntakeSeqCommand(m_intake, m_sequence),
 
-            // SHOOT
+            strafeToShootLocation2Command,
+
+            // SHOOT 5
             new InstantCommand(m_shootclimb::enableShooting, m_shootclimb).withTimeout(3),
             //new Aim(m_robotDrive, m_vision, m_targeting)),
             new ShootSeqCommandAuto(m_shootclimb, m_sequence).withTimeout(3)

@@ -29,7 +29,7 @@ public class T2_BwdPickup2Balls extends _DelayableStrafingAutoMode {
             .setReversed(true);
 
     // An example trajectory to follow.  All units in meters.
-    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+    Trajectory backwardPickup2Balls = TrajectoryGenerator.generateTrajectory(
         // Start at the origin facing the +X direction
         new Pose2d(0, 0, new Rotation2d(Math.PI/4)),
         
@@ -51,12 +51,12 @@ public class T2_BwdPickup2Balls extends _DelayableStrafingAutoMode {
     );
 
     //TODO: Change the zero to the actual last rotation (SCH2020)
-    trajectory = new Trajectory(unrotateTrajectory(trajectory.getStates(), 90)); // make it pure strafe
+    backwardPickup2Balls = new Trajectory(unrotateTrajectory(backwardPickup2Balls.getStates(), 90)); // make it pure strafe
 
-    Utils.printTrajectory(trajectory);
+    Utils.printTrajectory(this.getClass().getSimpleName() + ": backwardPickup2Balls", backwardPickup2Balls);
     
-    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-        trajectory,
+    SwerveControllerCommand backwardPickup2BallsCommand = new SwerveControllerCommand(
+        backwardPickup2Balls,
         m_robotDrive::getPose, //Functional interface to feed supplier
         DriveConstants.kDriveKinematics,
 
@@ -73,7 +73,7 @@ public class T2_BwdPickup2Balls extends _DelayableStrafingAutoMode {
     );
 
     // Run path following command, then stop at the end.
-    command = swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
+    command = backwardPickup2BallsCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
   }
 
   @Deprecated

@@ -20,6 +20,7 @@ import frc.robot.util.Utils;
 
 public class F1_Move_Forward extends _DelayableStrafingAutoMode {
   public F1_Move_Forward(DriveSubsystem m_robotDrive) {
+
     // Create config for trajectory
     TrajectoryConfig config =
         new TrajectoryConfig(AutoConstants.kMaxSpeedMetersPerSecond,
@@ -29,22 +30,21 @@ public class F1_Move_Forward extends _DelayableStrafingAutoMode {
             .setReversed(false);
 
     // An example trajectory to follow.  All units in meters.
-    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+    Trajectory moveForward = TrajectoryGenerator.generateTrajectory(
         // Start at the origin facing the +X direction
         new Pose2d(0, 0, new Rotation2d(0)),
         
         List.of(
           new Translation2d(0.5, 0)
     	),
-
-        new Pose2d(1, 0, new Rotation2d(0)),
-        config
+      new Pose2d(1, 0, new Rotation2d(0)),
+      config
     );
 
-    Utils.printTrajectory(trajectory);
+    Utils.printTrajectory(this.getClass().getSimpleName() + ": moveForward", moveForward);
     
-    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-        trajectory,
+    SwerveControllerCommand moveForwardCommand = new SwerveControllerCommand(
+        moveForward,
         m_robotDrive::getPose, //Functional interface to feed supplier
         DriveConstants.kDriveKinematics,
 
@@ -55,18 +55,13 @@ public class F1_Move_Forward extends _DelayableStrafingAutoMode {
                                   AutoConstants.kThetaControllerConstraints),
 
         m_robotDrive::setModuleStates,
-
         m_robotDrive
-
     );
 
     SequentialCommandGroup commandGroup = new SequentialCommandGroup(
       new WaitCommand(getInitialDelaySeconds()),
 
-      swerveControllerCommand,
-
-      new WaitCommand(getSecondaryDelaySeconds())
-      
+      moveForwardCommand
     );
 
     command = commandGroup.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
