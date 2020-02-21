@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.IntakeSeqCommand;
@@ -123,18 +124,26 @@ public class L1_EnemyPair_Front3 extends _DelayableStrafingAutoMode {
 
 
         SequentialCommandGroup commandGroup = new SequentialCommandGroup(
+            new WaitCommand(getInitialDelaySeconds()),
+
+            // ENEMY PAIR
             backwardToEnemyPairCommand,
             new IntakeSeqCommand(m_intake, m_sequence),
 
             strafeToShootLocationCommand,
 
+            // SHOOT
             new InstantCommand(m_shootclimb::enableShooting, m_shootclimb).withTimeout(3),
             //new Aim(m_robotDrive, m_vision, m_targeting)),
             new ShootSeqCommandAuto(m_shootclimb, m_sequence).withTimeout(3),
 
+            new WaitCommand(getSecondaryDelaySeconds()),
+
+            // FRONT 3
             backwardToPickupFront3Command,
             new IntakeSeqCommand(m_intake, m_sequence),
 
+            // SHOOT
             new InstantCommand(m_shootclimb::enableShooting, m_shootclimb).withTimeout(3),
             //new Aim(m_robotDrive, m_vision, m_targeting)),
             new ShootSeqCommandAuto(m_shootclimb, m_sequence).withTimeout(3)

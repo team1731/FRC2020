@@ -62,8 +62,12 @@ public class F1_Move_Forward extends _DelayableStrafingAutoMode {
 
     SequentialCommandGroup commandGroup = new SequentialCommandGroup(
       new WaitCommand(getInitialDelaySeconds()),
+
       swerveControllerCommand,
-      new WaitCommand(getSecondaryDelaySeconds()));
+
+      new WaitCommand(getSecondaryDelaySeconds())
+      
+    );
 
     command = commandGroup.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
 	}
