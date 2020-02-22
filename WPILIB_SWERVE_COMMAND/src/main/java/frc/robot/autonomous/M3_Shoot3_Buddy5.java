@@ -100,7 +100,7 @@ public class M3_Shoot3_Buddy5 extends _DelayableStrafingAutoMode {
             // SHOOT 3
             new InstantCommand(m_shootclimb::enableShooting, m_shootclimb).withTimeout(3),
             //new Aim(m_robotDrive, m_vision, m_targeting)),
-            new ShootSeqCommandAuto(m_sequence).withTimeout(3),
+            new ShootSeqCommandAuto(m_shootclimb, m_sequence).withTimeout(3),
 
             new WaitCommand(getSecondaryDelaySeconds()),
             
@@ -113,7 +113,7 @@ public class M3_Shoot3_Buddy5 extends _DelayableStrafingAutoMode {
             // SHOOT
             new InstantCommand(m_shootclimb::enableShooting, m_shootclimb).withTimeout(3),
             //new Aim(m_robotDrive, m_vision, m_targeting)),
-            new ShootSeqCommandAuto(m_sequence).withTimeout(3)
+            new ShootSeqCommandAuto(m_shootclimb, m_sequence).withTimeout(3)
 
         );
 

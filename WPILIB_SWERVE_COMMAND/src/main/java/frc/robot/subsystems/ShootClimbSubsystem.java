@@ -7,8 +7,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-
 // import edu.wpi.first.wpilibj.PWMTalonFX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -30,8 +30,6 @@ public class ShootClimbSubsystem extends SubsystemBase {
   //private final PWMTalonFX mTalonShoot;
   private final TalonFX mTalonShoot1;
   private final TalonFX mTalonShoot2;
-
-  //private boolean modeClimbing;
   
   /**
    * Creates a new ExampleSubsystem.
@@ -105,12 +103,13 @@ public class ShootClimbSubsystem extends SubsystemBase {
   }
   
   public void enableShooting() {
-    this.enableShooting(SmartDashboard.getNumber("ShootingPercent", 0.5));
+    // this is for Autonomous
+    this.spinShooter(SmartDashboard.getNumber("ShootingPercent", 0.5));
+    hoodExtend();
   }
   
-  public void enableShooting(double shootMotorPercent_0_to_1) {
-    //mShootClimbSolenoid.set(DoubleSolenoid.Value.kReverse);
-    //mTalonShoot.setSpeed(0.7);
+  public void spinShooter(double shootMotorPercent_0_to_1) {
+		double targetVelocity_UnitsPer100ms = shootMotorPercent_0_to_1 * 3000.0 * 2048 / 600;
     /**
 			 * Convert 500 RPM to units / 100ms.
 			 * 2048(FX) 4096(SRX) Units/Rev * 500 RPM / 600 100ms/min in either direction:
@@ -119,20 +118,21 @@ public class ShootClimbSubsystem extends SubsystemBase {
        * ==> 3347 is 11425 * 600 * 2048 == max speed in ticks per 100ms
        * ==> shootPercent is 0 to 1, so 100% == put in a value of 1.0
     */
-    //double velocity = 0.1; // guessing between -1.0 to 1.0
-		double targetVelocity_UnitsPer100ms = shootMotorPercent_0_to_1 * 3000.0 * 2048 / 600;
     /* 500 RPM in either direction */
 		mTalonShoot1.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
     mTalonShoot2.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
     SmartDashboard.putNumber("bdltargetvelocity", targetVelocity_UnitsPer100ms);
     SmartDashboard.putNumber("talon1Velocity", mTalonShoot1.getSelectedSensorVelocity());
     SmartDashboard.putNumber("talon1Velocity2", mTalonShoot2.getSelectedSensorVelocity());
+  }
+
+  //public void enableShooting(double shootMotorPercent_0_to_1) {
+    //mShootClimbSolenoid.set(DoubleSolenoid.Value.kReverse);
 
     //mTalonShoot1.set(ControlMode.PercentOutput, shootMotorPercent_0_to_1);
     //mTalonShoot2.set(ControlMode.PercentOutput, shootMotorPercent_0_to_1);
-    hoodExtend();
-    m_ledstring.option(LedOption.SHOOT);
-  }
+  //  hoodExtend();
+  //}
 
   public void stopShooting(){
     mTalonShoot1.set(ControlMode.PercentOutput, 0);
@@ -141,13 +141,10 @@ public class ShootClimbSubsystem extends SubsystemBase {
     shootMode();
   }
 
-  public void enableClimbing() {
-    //mShootClimbSolenoid.set(DoubleSolenoid.Value.kForward);
-    //mTalonShoot.setSpeed(0);
-    mTalonShoot1.set(ControlMode.PercentOutput,OpConstants.kMotorShootPercent);
-    //mTalonShoot2.set(ControlMode.PercentOutput,OpConstants.kMotorShootPercent);
-    m_ledstring.option(LedOption.CLIMB);
-  }
+  //public void enableClimbing() {
+  //  mTalonShoot1.set(ControlMode.PercentOutput,OpConstants.kMotorShootPercent);
+  //  mTalonShoot2.set(ControlMode.PercentOutput,OpConstants.kMotorShootPercent);
+  //}
 
   public void hoodRetract() {
     mShootHoodSolenoid.set(DoubleSolenoid.Value.kReverse);

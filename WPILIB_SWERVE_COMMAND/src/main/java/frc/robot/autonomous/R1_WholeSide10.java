@@ -163,7 +163,7 @@ public class R1_WholeSide10 extends _DelayableStrafingAutoMode {
             // SHOOT 5
             new InstantCommand(m_shootclimb::enableShooting, m_shootclimb).withTimeout(3),
             //new Aim(m_robotDrive, m_vision, m_targeting)),
-            new ShootSeqCommandAuto(m_sequence).withTimeout(3),
+            new ShootSeqCommandAuto(m_shootclimb, m_sequence).withTimeout(3),
 
             new WaitCommand(getSecondaryDelaySeconds()),
 
@@ -176,7 +176,7 @@ public class R1_WholeSide10 extends _DelayableStrafingAutoMode {
             // SHOOT 5
             new InstantCommand(m_shootclimb::enableShooting, m_shootclimb).withTimeout(3),
             //new Aim(m_robotDrive, m_vision, m_targeting)),
-            new ShootSeqCommandAuto(m_sequence).withTimeout(3)
+            new ShootSeqCommandAuto(m_shootclimb, m_sequence).withTimeout(3)
 
         );
 

@@ -137,23 +137,27 @@ public class RobotContainer {
     new HanTrigger(HanTriggers.DR_TRIG_LEFT).whileActiveContinuous(new IntakeSeqCommand(m_intake, m_sequencer));
     // Activate Intake via Operator Left Front Top - Up is Intaking, Down is Reset 
     //new JoystickButton(m_operatorController, 3).whileActiveContinuous(new IntakeSeqCommand(m_intake, m_sequencer));
-    new JoystickButton(m_driverController, 2)
-    .whileActiveContinuous(new SeqResetCommand(m_sequencer), true);
+    new JoystickButton(m_driverController, 2).whileActiveContinuous(new SeqResetCommand(m_sequencer), true);
 
     //Map right bumper to rotation lock to power port
     new JoystickButton(m_driverController, 6)
       .whenActive(new RotToPowerPortCommand(m_vision, m_robotDrive, m_driverController));
 
-    new JoystickButton(m_operatorController, 8)
+    new JoystickButton(m_operatorController, 8) // convert -1 to +1 TO 0 to 1
+      .whenActive(() -> m_shootclimb.spinShooter((m_operatorController.getRawAxis(4)+1)/2))
+      .whenInactive(() -> m_shootclimb.stopShooting());
       //.whenActive(new InstantCommand(m_shootclimb::enableShooting, m_shootclimb))
-      .whileActiveContinuous(new JoystickShooter(m_shootclimb, () -> m_operatorController.getRawAxis(4)), false
+      //.whileActiveContinuous(new JoystickShooter(m_shootclimb, () -> m_operatorController.getRawAxis(4)), false
+      //.whileActiveContinuous(new ShootSeqCommand(m_shootclimb, m_sequencer, () -> m_operatorController.getRawAxis(4)), false
+    //);
+    new JoystickButton(m_operatorController, 12).whileActiveContinuous(
+      new ShootSeqCommand(m_shootclimb ,m_sequencer), true
     );
 
     // Climbing Command - CURRENT
-    new JoystickButton(m_operatorController, 9)
-     .whileActiveContinuous(
+    new JoystickButton(m_operatorController, 9).whileActiveContinuous(
        new ClimbingCommand(m_shootclimb, () -> m_operatorController.getRawAxis(1)), true
-     );
+    );
 
 
     // Climber Extend
@@ -164,11 +168,8 @@ public class RobotContainer {
     // .whileActiveOnce(new InstantCommand(m_shootclimb::climbRetract, m_shootclimb));
 
     // Activate Shooter via Operator Right Axis/Trigger
-    new HanTrigger(HanTriggers.DR_TRIG_RIGHT).whileActiveContinuous(new ShootSeqCommand(m_sequencer));
+    //new HanTrigger(HanTriggers.DR_TRIG_RIGHT).whileActiveContinuous(new ShootSeqCommand(m_sequencer));
     // Shooting
-    //new JoystickButton(m_operatorController, 12).whileActiveContinuous(
-    //  new ShootSeqCommand(m_shootclimb, m_sequencer), true //<---NOTE: we think this got called at least once when we ran autonomous
-    //);
     //new ModeTrigger(HanMode.MODE_SHOOT).whenActive(
     //  new InstantCommand(m_shootclimb::enableShooting, m_shootclimb)
     //);

@@ -268,7 +268,8 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
     double shootMotorPercent_0_to_1 = SmartDashboard.getNumber("Shoot Motor % (0-1)", 0.5);
-    m_shootclimb.enableShooting(shootMotorPercent_0_to_1);
+    m_shootclimb.hoodExtend();
+    m_shootclimb.spinShooter(shootMotorPercent_0_to_1);
     SmartDashboard.putNumber("Shoot Motor 1 Vel", m_shootclimb.getShootMotor1Velocity());
   }
 }
