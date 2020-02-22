@@ -8,7 +8,9 @@
 package frc.robot.commands;
 
 import frc.robot.Constants.OpConstants;
+import frc.robot.Constants.OpConstants.LedOption;
 import frc.robot.subsystems.ShootClimbSubsystem;
+import frc.robot.subsystems.LedStringSubsystem;
 import frc.robot.subsystems.SequencerSubsystem;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -18,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
  */
 public class ShootSeqCommand extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
+  private final LedStringSubsystem m_ledstring;
   private final ShootClimbSubsystem shootSubsystem;
   private final SequencerSubsystem seqSubsystem;
   private double startTime;
@@ -28,7 +31,8 @@ public class ShootSeqCommand extends CommandBase {
    * @param intakeSubsystem The intake subsystem this command will run on
    * @param seqSubsystem The sequencer subsystem this command will run on
    */
-  public ShootSeqCommand(ShootClimbSubsystem shoot, SequencerSubsystem seq) {
+  public ShootSeqCommand(LedStringSubsystem m_ledstring, ShootClimbSubsystem shoot, SequencerSubsystem seq) {
+    this.m_ledstring = m_ledstring;
     shootSubsystem = shoot;
     seqSubsystem = seq;
     // Use addRequirements() here to declare subsystem dependencies.
@@ -53,6 +57,7 @@ public class ShootSeqCommand extends CommandBase {
     if(shootMotorVelocity > OpConstants.kShootMinVelocity){
       System.out.println("calling seqSubSystem.forward(true);");
       seqSubsystem.forward(true);
+      m_ledstring.option(LedOption.SHOOT);
     }
     else{
       System.out.println("waiting for shoot motor to come up to speed");

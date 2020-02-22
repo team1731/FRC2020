@@ -86,7 +86,7 @@ public class Robot extends TimedRobot {
     // and put our
     // autonomous chooser on the dashboard.
     try{
-      m_robotContainer = new RobotContainer(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_targeting, m_vision);
+      m_robotContainer = new RobotContainer(m_ledstring, m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_targeting, m_vision);
     }
     catch(_NotImplementedProperlyException e){
       System.err.println("UNABLE TO INITIALILZE AUTONOMOUS -- ABORTING -- FIX YOUR SOFTWARE!!! ==> " + e.getMessage());
