@@ -72,7 +72,7 @@ public final class Constants {
         public static int kArduino_YELLW = 7; // yellow wipe
 
         public enum LedOption {
-            TEAM, RED, BLUE, GREEN, YELLOW, ORANGE, PURPLE, RAINBOW
+            TEAM, RED, BLUE, GREEN, YELLOW, ORANGE, PURPLE, RAINBOW, FULL, CLIMB, SHOOT, INTAKE, INTAKEBALL, WHEEL, BALLONE, BALLTWO, BALLTHREE, BALLFOUR
         }
 
         // PCM 0 SOLENOIDS
