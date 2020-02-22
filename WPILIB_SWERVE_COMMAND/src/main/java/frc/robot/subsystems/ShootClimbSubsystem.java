@@ -19,9 +19,11 @@ import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 
 import frc.robot.Constants;
 import frc.robot.Constants.OpConstants;
+import frc.robot.Constants.OpConstants.LedOption;
 
 public class ShootClimbSubsystem extends SubsystemBase {
 
+  private final LedStringSubsystem m_ledstring;
   private DoubleSolenoid mShootClimbSolenoid;
   private DoubleSolenoid mClimberSolenoid;
   private DoubleSolenoid mShootHoodSolenoid;
@@ -33,9 +35,10 @@ public class ShootClimbSubsystem extends SubsystemBase {
   
   /**
    * Creates a new ExampleSubsystem.
+ * @param m_ledstring
    */
-  public ShootClimbSubsystem() {
-
+  public ShootClimbSubsystem(LedStringSubsystem m_ledstring) {
+    this.m_ledstring = m_ledstring;
     mShootClimbSolenoid = Constants.makeDoubleSolenoidForIds(0, OpConstants.k0Shooting, OpConstants.k0Climbing);
     mClimberSolenoid = Constants.makeDoubleSolenoidForIds(1, OpConstants.k1ClimbRetract, OpConstants.k1ClimbExtend);
     mShootHoodSolenoid = Constants.makeDoubleSolenoidForIds(1, OpConstants.k1HoodRetract, OpConstants.k1HoodExtend);
@@ -128,6 +131,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
     //mTalonShoot1.set(ControlMode.PercentOutput, shootMotorPercent_0_to_1);
     //mTalonShoot2.set(ControlMode.PercentOutput, shootMotorPercent_0_to_1);
     hoodExtend();
+    m_ledstring.option(LedOption.SHOOT);
   }
 
   public void stopShooting(){
@@ -142,6 +146,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
     //mTalonShoot.setSpeed(0);
     mTalonShoot1.set(ControlMode.PercentOutput,OpConstants.kMotorShootPercent);
     //mTalonShoot2.set(ControlMode.PercentOutput,OpConstants.kMotorShootPercent);
+    m_ledstring.option(LedOption.CLIMB);
   }
 
   public void hoodRetract() {

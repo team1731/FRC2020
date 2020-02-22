@@ -3,19 +3,23 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.OpConstants;
+import frc.robot.Constants.OpConstants.LedOption;
 import edu.wpi.first.wpilibj.PWMTalonFX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public class IntakeSubsystem extends SubsystemBase {
 
+  private final LedStringSubsystem m_ledstring;
   private final PWMTalonFX mTalonIntake;
   private final DoubleSolenoid mIntakeSolenoid;
   private String mTalonState;
   
   /**
    * Creates a new IntakeSubsystem.
+ * @param m_ledstring
    */
-	public IntakeSubsystem() {
+	public IntakeSubsystem(LedStringSubsystem m_ledstring) {
+    this.m_ledstring = m_ledstring;
     mTalonIntake = new PWMTalonFX(OpConstants.kMotorPWMIntake);
     mIntakeSolenoid = Constants.makeDoubleSolenoidForIds(1, OpConstants.k1IntakeRetract, OpConstants.k1IntakeExtend);
     mTalonState = "Off";
@@ -37,6 +41,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public void active() {
     mTalonIntake.setSpeed(OpConstants.kMotorIntakeFwdSpeed);
     mTalonState = "Intake Fwd";
+    m_ledstring.option(LedOption.INTAKE);
   }
 
   public void inactive() {
