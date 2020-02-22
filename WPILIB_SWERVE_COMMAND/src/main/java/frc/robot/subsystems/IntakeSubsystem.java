@@ -1,14 +1,10 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.OpConstants;
 import edu.wpi.first.wpilibj.PWMTalonFX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import frc.robot.util.DebugOutput;
-import frc.robot.util.ReflectingCSVWriter;
 
 public class IntakeSubsystem extends SubsystemBase {
 
@@ -35,17 +31,18 @@ public class IntakeSubsystem extends SubsystemBase {
    */
   public void extend() {
     mIntakeSolenoid.set(DoubleSolenoid.Value.kForward);
-    mTalonState = "Extending/Fwd";
+    mTalonState = "Intake Extend";
   }
 
   public void active() {
     mTalonIntake.setSpeed(OpConstants.kMotorIntakeFwdSpeed);
-    mTalonState = "Extending/Fwd";
+    mTalonState = "Intake Fwd";
   }
 
   public void inactive() {
-    mTalonIntake.setSpeed(OpConstants.kMotorIntakeFwdSpeed);
-    mTalonState = "Extending/Fwd";
+    mTalonIntake.setSpeed(0);
+    //mTalonIntake.stopMotor();
+    mTalonState = "Intake Stop";
   }
 
   /**
@@ -53,7 +50,7 @@ public class IntakeSubsystem extends SubsystemBase {
    */
   public void eject() {
     mTalonIntake.setSpeed(OpConstants.kMotorIntakeRevSpeed);
-    mTalonState = "Ejecting/Rev";
+    mTalonState = "Intake Rev";
   }
 
   /**
@@ -62,7 +59,8 @@ public class IntakeSubsystem extends SubsystemBase {
   public void retract() {
     mIntakeSolenoid.set(DoubleSolenoid.Value.kReverse);
     mTalonIntake.setSpeed(0);
-    mTalonState = "Retracted/Off";
+    //mTalonIntake.stopMotor();
+    mTalonState = "Intake Retracted/Off";
   }
 
   public String getIntakeState() {

@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.util.Color;
 import com.revrobotics.ColorMatch;
-import frc.robot.Gains;
+//import frc.robot.Gains;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -143,6 +143,10 @@ public final class Constants {
         // Shooter
         public static final int kShooterVictor = 3;
         public static final int kShootMinVelocity = 5000;
+
+        public static final double kClimbMaxPercent = 0.3;
+        public static final double kJoystickDeadband = 0.2;
+        public static final int kClimbJoystickInvert = -1;
 
         // Digital Input/Outputs
         public static int kLowSequencer = 0;
