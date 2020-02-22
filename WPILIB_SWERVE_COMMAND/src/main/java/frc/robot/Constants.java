@@ -70,7 +70,9 @@ public final class Constants {
     public static final double kaVoltSecondsSquaredPerMeter = 0.15;
 
     public static final double kMaxSpeedMetersPerSecond = 3;
+
   }
+
 
   public static final class ModuleConstants {
     public static final double kMaxModuleAngularSpeedRadiansPerSecond = 2 * Math.PI;
@@ -168,9 +170,9 @@ public final class Constants {
         public static int kArduino_YELLW = 7; // yellow wipe
 
         public enum LedOption {
-            TEAM, RED, BLUE, GREEN, YELLOW, ORANGE, PURPLE, RAINBOW
+          TEAM, RED, BLUE, GREEN, YELLOW, ORANGE, PURPLE, RAINBOW, FULL, CLIMB, SHOOT, INTAKE, INTAKEBALL, WHEEL, BALLONE, BALLTWO, BALLTHREE, BALLFOUR
         }
-
+    
         // in order of pneumatic actuators (top to bottom)
         // PCM  terminals     function
         //  0      6-7    ==   spare
