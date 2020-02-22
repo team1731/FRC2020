@@ -135,7 +135,7 @@ public class L1_EnemyPair_Front3 extends _DelayableStrafingAutoMode {
             // SHOOT
             new InstantCommand(m_shootclimb::enableShooting, m_shootclimb).withTimeout(3),
             //new Aim(m_robotDrive, m_vision, m_targeting)),
-            new ShootSeqCommandAuto(m_shootclimb, m_sequence).withTimeout(3),
+            new ShootSeqCommandAuto(m_sequence).withTimeout(3),
 
             new WaitCommand(getSecondaryDelaySeconds()),
 
@@ -146,7 +146,7 @@ public class L1_EnemyPair_Front3 extends _DelayableStrafingAutoMode {
             // SHOOT
             new InstantCommand(m_shootclimb::enableShooting, m_shootclimb).withTimeout(3),
             //new Aim(m_robotDrive, m_vision, m_targeting)),
-            new ShootSeqCommandAuto(m_shootclimb, m_sequence).withTimeout(3)
+            new ShootSeqCommandAuto(m_sequence).withTimeout(3)
 
         );
 

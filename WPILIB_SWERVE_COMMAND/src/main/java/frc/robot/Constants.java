@@ -144,7 +144,7 @@ public final class Constants {
 
         // Shooter
         public static final int kShooterVictor = 3;
-        public static final int kShootMinVelocity = 5000;
+        public static final int kShootMinVelocity = 1000;
 
         public static final double kClimbMaxPercent = 0.3;
         public static final double kJoystickDeadband = 0.2;
@@ -234,8 +234,8 @@ public final class Constants {
          * PID Gains may have to be adjusted based on the responsiveness of control loop.
          * kF: 1023 represents output value to Talon at 100%, 7200 represents Velocity units at 100% output
          * 
-         * 	                                    		          	  kP   kI   kD   kF     Iz    PeakOut */
-        public final static Gains kGains_Velocity = new Gains( 0/*0.0682*/, 0.000, 0, 0.07,  300,  1.00); //0.07 = .2 * 1023 / 2830;
+         * 	                                    		          	  kP   kI   kD   kF             Iz    PeakOut */
+        public final static Gains kGains_Velocity = new Gains( 8.0, 0, 0, .07,  300,  1.00);
         ///// End TalonFX
     }
 
