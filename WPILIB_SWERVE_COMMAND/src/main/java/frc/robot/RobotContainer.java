@@ -169,6 +169,8 @@ public class RobotContainer {
     .whenHeld(new InstantCommand(m_sequencer::reverse, m_sequencer))
     .whenReleased(new InstantCommand(m_sequencer::stop, m_sequencer));
 
+    new JoystickButton(m_driverController, 8).whenPressed(new InstantCommand(m_robotDrive::resetEncoders, m_robotDrive));
+
     // Climbing Command
     //new ModeTrigger(HanMode.MODE_CLIMB).whileActiveContinuous(
     //  new ClimbingCommand(m_shootclimb, () -> m_operatorController.getRawAxis(1)), true

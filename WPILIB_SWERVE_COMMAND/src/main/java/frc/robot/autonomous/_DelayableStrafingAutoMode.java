@@ -42,15 +42,20 @@ public class _DelayableStrafingAutoMode {
         return command;
     }
 
+    /**
+     * @param oldStates -- original list of states from the (calculated) trajectory
+     * @param finalRotationDegrees -- desired final pose rotation -- to assign to last state in list
+     * @return -- list of fixed-up (unrotated) states (except for the last one in the list)
+     */
     List<Trajectory.State> unrotateTrajectory(List<Trajectory.State> oldStates, double finalRotationDegrees){
         List<Trajectory.State> newStates = new ArrayList<Trajectory.State>();
         int i = 0;
         for(Trajectory.State state : oldStates){
-          //Rotation2d newRot = state.poseMeters.getRotation().rotateBy(new Rotation2d(-state.poseMeters.getRotation().getRadians()));
-          Pose2d newPose = i++ == oldStates.size()-1 ? 
-          new Pose2d(state.poseMeters.getTranslation(), new Rotation2d(Math.toRadians(finalRotationDegrees))) : 
-          new Pose2d(state.poseMeters.getTranslation(), new Rotation2d(0));
-
+          //instead of rotating the pose by its inverse (dumb)...
+          //  Rotation2d newRot = state.poseMeters.getRotation().rotateBy(new Rotation2d(-state.poseMeters.getRotation().getRadians()));
+          //simply assign a new Rotation having 0 degrees...
+          double rotationDegrees = i++ == oldStates.size()-1 ? finalRotationDegrees : 0;
+          Pose2d newPose = new Pose2d(state.poseMeters.getTranslation(), new Rotation2d(Math.toRadians(rotationDegrees)));
           newStates.add(new Trajectory.State(state.timeSeconds, 
                                             state.velocityMetersPerSecond, 
                                             state.accelerationMetersPerSecondSq, 

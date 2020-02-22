@@ -60,12 +60,16 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    //JevoisVisionServer.getInstance();
-
+    
     CameraServer camServer = CameraServer.getInstance();
     camServer.startAutomaticCapture();
     
-    m_robotDrive = new DriveSubsystem();
+    leftFrontAbsEncoder = new AnalogInput(0);
+    rightFrontAbsEncoder = new AnalogInput(1);
+    leftRearAbsEncoder = new AnalogInput(2);
+    rightRearAbsEncoder = new AnalogInput(3);
+
+    m_robotDrive = new DriveSubsystem(leftFrontAbsEncoder, rightFrontAbsEncoder, leftRearAbsEncoder, rightRearAbsEncoder);
     m_targeting = new TargetingSubsystem();
     m_vision = JevoisVisionSubsystem.getInstance();
     m_intake = new IntakeSubsystem();
@@ -88,18 +92,12 @@ public class Robot extends TimedRobot {
       return;
     }
 
-    leftFrontAbsEncoder = new AnalogInput(0);
-    rightFrontAbsEncoder = new AnalogInput(1);
-    leftRearAbsEncoder = new AnalogInput(2);
-    rightRearAbsEncoder = new AnalogInput(3);
-
     if(RobotBase.isReal()){
       if(leftFrontAbsEncoder == null || rightFrontAbsEncoder == null || leftRearAbsEncoder == null || rightRearAbsEncoder == null){
         System.err.println("At least one absolute encoder (AnalogInput(0)--AnalogInput(3) is NULL!!! -- Aborting!!!");
         return;
       }
-      m_robotDrive.resetEncoders(leftFrontAbsEncoder.getVoltage(), rightFrontAbsEncoder.getVoltage(),
-      leftRearAbsEncoder.getVoltage(), rightRearAbsEncoder.getVoltage());
+      m_robotDrive.resetEncoders();
     }
 
     // initial SubSystems to at rest states
@@ -171,35 +169,33 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_robotDrive.resumeCSVWriter();
-    m_sequencer.setBallCount((int)SmartDashboard.getNumber("BALL COUNT", 3));
+    m_sequencer.setPowerCellCount((int) SmartDashboard.getNumber("BALL COUNT", 3));
 
     String DEFAULT_AUTO_CODE = "T4"; // DEFAULT AUTO MODE if Drive Team is unable to set the mode via Dashboard
-                                     //                   NOTE: also useful if trying to run in the simulator!
+                                     // NOTE: also useful if trying to run in the simulator!
     String autoCode = DEFAULT_AUTO_CODE;
     if (RobotBase.isReal()) {
       autoCode = SmartDashboard.getString("AUTO CODE", autoCode);
     }
     System.out.println("AUTO CODE retrieved from Dashboard --> " + autoCode);
-    if(autoCode == null || autoCode.length() < 2){
+    if (autoCode == null || autoCode.length() < 2) {
       autoCode = DEFAULT_AUTO_CODE;
     }
     autoCode = autoCode.toUpperCase();
     System.out.println("AUTO CODE being used by the software --> " + autoCode);
 
-    try{
+    try {
       _NamedAutoMode namedAutoCommand = m_robotContainer.getNamedAutonomousCommand(autoCode);
       m_autonomousCommand = namedAutoCommand.getCommand();
 
       // schedule the autonomous command (example)
-      if(m_autonomousCommand == null){
+      if (m_autonomousCommand == null) {
         System.out.println("SOMETHING WENT WRONG - UNABLE TO RUN AUTONOMOUS! CHECK SOFTWARE!");
-      }
-      else{
+      } else {
         System.out.println("Running actual autonomous mode --> " + namedAutoCommand.name);
         m_autonomousCommand.schedule();
       }
-    }
-    catch(_NotImplementedProperlyException e){
+    } catch (_NotImplementedProperlyException e) {
       System.err.println("CANNOT RUN AUTONOMOUS COMMAND! ==> " + e.getMessage());
     }
   }
@@ -213,7 +209,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    m_sequencer.setBallCount((int)SmartDashboard.getNumber("BALL COUNT", 3));
+    m_sequencer.setPowerCellCount((int) SmartDashboard.getNumber("CELL COUNT", 3));
     m_robotDrive.resumeCSVWriter();
 
     // This makes sure that the autonomous stops running when

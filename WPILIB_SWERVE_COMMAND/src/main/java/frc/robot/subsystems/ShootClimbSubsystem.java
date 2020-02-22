@@ -29,6 +29,8 @@ public class ShootClimbSubsystem extends SubsystemBase {
   private final TalonFX mTalonShoot1;
   private final TalonFX mTalonShoot2;
 
+  //private boolean modeClimbing;
+  
   /**
    * Creates a new ExampleSubsystem.
    */

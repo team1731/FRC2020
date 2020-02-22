@@ -45,7 +45,7 @@ public class SequencerSubsystem extends SubsystemBase {
     mPowerCellCount = 0;
   }
 
-  public void setBallCount(int numBalls){
+  public void setPowerCellCount(int numBalls){
     mPowerCellCount = numBalls;
   }
 
