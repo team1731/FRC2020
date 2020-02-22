@@ -71,7 +71,8 @@ public class Robot extends TimedRobot {
 
     m_robotDrive = new DriveSubsystem(leftFrontAbsEncoder, rightFrontAbsEncoder, leftRearAbsEncoder, rightRearAbsEncoder);
     m_targeting = new TargetingSubsystem();
-    m_vision = JevoisVisionSubsystem.getInstance();
+    m_vision = JevoisVisionSubsystem.getInstance(); //new JevoisVisionSubsystem();
+    m_vision.setDriveSubsystem(m_robotDrive);
     m_intake = new IntakeSubsystem();
     m_sequencer = new SequencerSubsystem();
     m_shootclimb = new ShootClimbSubsystem();
@@ -155,6 +156,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     m_robotDrive.suspendCSVWriter();
+    m_vision.StopCameraDataStream();
   }
 
   @Override
@@ -170,6 +172,8 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_robotDrive.resumeCSVWriter();
     m_sequencer.setPowerCellCount((int) SmartDashboard.getNumber("BALL COUNT", 3));
+
+    m_vision.StartCameraDataStream();
 
     String DEFAULT_AUTO_CODE = "T4"; // DEFAULT AUTO MODE if Drive Team is unable to set the mode via Dashboard
                                      // NOTE: also useful if trying to run in the simulator!
@@ -211,6 +215,8 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     m_sequencer.setPowerCellCount((int) SmartDashboard.getNumber("CELL COUNT", 3));
     m_robotDrive.resumeCSVWriter();
+
+    m_vision.StartCameraDataStream();
 
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to

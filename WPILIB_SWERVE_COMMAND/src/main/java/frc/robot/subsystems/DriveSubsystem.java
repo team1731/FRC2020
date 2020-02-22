@@ -10,6 +10,8 @@ package frc.robot.subsystems;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 //import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
@@ -21,9 +23,12 @@ import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.DriveConstants;
+import frc.robot.commands.TurnToAngleProfiled;
 import frc.robot.util.DebugOutput;
 import frc.robot.util.ReflectingCSVWriter;
 
@@ -32,6 +37,14 @@ public class DriveSubsystem extends SubsystemBase {
 
   private final ReflectingCSVWriter<DebugOutput> mCSVWriter;
   private final DebugOutput debugOutput = new DebugOutput();
+  private final ProfiledPIDController headingController = new ProfiledPIDController(
+    DriveConstants.kTurnP, DriveConstants.kTurnI, DriveConstants.kTurnD,
+    new TrapezoidProfile.Constraints(DriveConstants.kMaxTurnVelocity, DriveConstants.kMaxTurnAcceleration));
+  
+  private double headingControllerOutput = 0;
+
+  private boolean stickControlledHeading = true;
+  
   private final AnalogInput leftFrontAbsEncoder;
   private final AnalogInput rightFrontAbsEncoder;
   private final AnalogInput leftRearAbsEncoder;
@@ -85,11 +98,20 @@ public class DriveSubsystem extends SubsystemBase {
     return Rotation2d.fromDegrees(m_gyro.getAngle() * (DriveConstants.kGyroReversed ? -1.0 : 1.0));
   }
 
+  /**
+   * @return the headingControllerOutput
+   */
+  public double getHeadingControllerOutput() {
+    return headingControllerOutput;
+  }
+
   @Override
   public void periodic() {
-    if(mCSVWriter.isSuspended()){
-      mCSVWriter.resume();
-    }
+    resumeCSVWriter();
+
+    headingController.setTolerance(DriveConstants.kTurnToleranceDeg, DriveConstants.kTurnRateToleranceDegPerS);
+    headingController.enableContinuousInput(-180, 180);
+    headingControllerOutput = headingController.calculate(getHeading());
 
     // Update the odometry in the periodic block
     double headingRadians = Math.toRadians(getHeading());
@@ -136,10 +158,26 @@ public class DriveSubsystem extends SubsystemBase {
    * @param fieldRelative Whether the provided x and y speeds are relative to the field.
    */
   @SuppressWarnings("ParameterName")
-  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative){
+    drive(xSpeed, ySpeed, 0, 0, fieldRelative);
+  }
+  
+  double maxRateOfTurn = 0;
+  /**
+   * Method to drive the robot using joystick info.
+   *
+   * @param xSpeed        Speed of the robot in the x direction (forward).
+   * @param ySpeed        Speed of the robot in the y direction (sideways).
+   * @param rot           Angular rate of the robot.
+   * @param fieldRelative Whether the provided x and y speeds are relative to the field.
+   */
+  @SuppressWarnings("ParameterName")
+  public void drive(double xSpeed, double ySpeed, double rightX, double rightY, boolean fieldRelative) {
     double xSpeedAdjusted = xSpeed;
     double ySpeedAdjusted = ySpeed;
-    double rotAdjusted = rot;
+    double rotAdjusted = rightX;
+    double rotationalOutput = headingControllerOutput;
+
     // DEADBAND
     if(Math.abs(xSpeedAdjusted) < 0.2){
       xSpeedAdjusted = 0;
@@ -150,10 +188,26 @@ public class DriveSubsystem extends SubsystemBase {
     if(Math.abs(rotAdjusted) < 0.2){
       rotAdjusted = 0;
     }
+
+    //If the stick is released, don't change the rotation
+    if(stickControlledHeading && (Math.abs(rightX) > DriveConstants.kMinRightStickThreshold || Math.abs(rightY) > DriveConstants.kMinRightStickThreshold)){
+      double rot = getStickAngle(rightX, rightY);
+      headingController.setGoal(rot);
+    } else if(Math.abs(rightX) <= DriveConstants.kMinRightStickThreshold && Math.abs(rightY) <= DriveConstants.kMinRightStickThreshold) {
+      rotationalOutput = 0;
+    }
+
+    if(maxRateOfTurn < Math.abs(getTurnRate())){
+      maxRateOfTurn = Math.abs(getTurnRate());
+    }
+
+    SmartDashboard.putNumber("Max Rate of Turn", maxRateOfTurn);
+
+    //Replaced rotAdjusted with headingControllerOutput
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
-          xSpeedAdjusted, ySpeedAdjusted, rotAdjusted, getAngle())
-            : new ChassisSpeeds(xSpeedAdjusted, ySpeedAdjusted, rotAdjusted)
+          xSpeedAdjusted, ySpeedAdjusted, rotationalOutput, getAngle())
+            : new ChassisSpeeds(xSpeedAdjusted, ySpeedAdjusted, rotationalOutput)
     );
     SwerveDriveKinematics.normalizeWheelSpeeds(swerveModuleStates,
                                                DriveConstants.kMaxSpeedMetersPerSecond);
@@ -161,6 +215,67 @@ public class DriveSubsystem extends SubsystemBase {
     m_frontRight.setDesiredState(swerveModuleStates[1]);
     m_rearLeft.setDesiredState(swerveModuleStates[2]);
     m_rearRight.setDesiredState(swerveModuleStates[3]);
+  }
+
+  /**
+   * Turns the robot to a heading read from the gyro
+   * @param heading The gyro angle from -180 to 180
+   */
+  public double getStickAngle(double stickX, double stickY){
+      double stickAngle = Math.toDegrees(Math.atan2(stickY, stickX));
+      stickAngle -= 90;
+      
+      SmartDashboard.putNumber("getStickAngle Raw", stickAngle);
+
+      //Don't know of Math.atan2 does this automatically. Check smartdashboard
+      /*
+      if((stickX < 0 && stickY >= 0) || (stickX < 0 && stickY < 0)){
+        stickAngle += 180;
+      } else if(stickX > 0 && stickY < 0){
+        stickAngle += 360;
+      }
+      */
+
+      //If the angle is greater than 180, mirror and invert it to keep the -180-180 heading angle (see getHeading())
+      if(stickAngle < -180){
+            stickAngle += 360;
+      }
+      
+      stickAngle *= -1;
+
+      SmartDashboard.putNumber("getStickAngle Clamped", stickAngle);
+
+      /*
+
+      Currently, we need to find the quickest turn from -179 to 179 in heading. So in reality, 
+      this is only a 2 degree difference
+      However, the robot is spinning all the way around...
+
+
+
+      */
+
+      return stickAngle;
+
+      //JavaScript from a cartesian to polar coordinate converter:
+      //Tbh drives me mad just a little with the lack of an OR and the fact that there's an if statement that just does nothing
+      /*
+      var x = $j('#x').val();
+ 	var y = $j('#y').val();
+ 	var r = Math.pow((Math.pow(x,2) + Math.pow(y,2)),0.5);
+ 	var theta = Math.atan(y/x)*360/2/Math.PI;
+ 	if (x >= 0 && y >= 0) {
+ 		theta = theta;
+ 	} else if (x < 0 && y >= 0) {
+ 		theta = 180 + theta;
+ 	} else if (x < 0 && y < 0) {
+ 		theta = 180 + theta;
+ 	} else if (x > 0 && y < 0) {
+ 		theta = 360 + theta;
+   } 
+   */
+      
+      
   }
 
   /**
@@ -230,5 +345,17 @@ public class DriveSubsystem extends SubsystemBase {
     if(mCSVWriter.isSuspended()){
       mCSVWriter.resume();
     }
+  }
+
+  /**
+   * Determines if the right thumbstick on the driver controller can control the robot's orientation.
+   * Set to false if you want another subsystem to control the orientation in teleop (e.x. vision)
+   */
+  public void setStickControlledHeading(boolean controlledHeading){
+    stickControlledHeading = controlledHeading;
+  }
+
+  public void setHeadingControllerGoal(double newGoal){
+    headingController.setGoal(newGoal);
   }
 }

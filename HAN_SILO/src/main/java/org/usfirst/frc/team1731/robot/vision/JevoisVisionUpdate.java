@@ -22,8 +22,6 @@ public class JevoisVisionUpdate {
         return mtargets;
     }
 
-
-
     public double getCapturedAtTimestamp() {
         return mCapturedAtTimestamp;
     }

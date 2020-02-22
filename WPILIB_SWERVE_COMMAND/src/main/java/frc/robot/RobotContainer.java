@@ -108,7 +108,11 @@ public class RobotContainer {
             // positive value when we pull to the left (remember, CCW is positive in
             // mathematics). Xbox controllers return positive values when you pull to
             // the right by default.
-            -m_driverController.getX(Hand.kRight), true),
+            -m_driverController.getX(Hand.kRight),
+
+            -m_driverController.getY(Hand.kRight), 
+            
+            true),
 
             m_robotDrive));
   }
@@ -135,6 +139,10 @@ public class RobotContainer {
     //new JoystickButton(m_operatorController, 3).whileActiveContinuous(new IntakeSeqCommand(m_intake, m_sequencer));
     new JoystickButton(m_driverController, 2)
     .whileActiveContinuous(new SeqResetCommand(m_sequencer), true);
+
+    //Map right bumper to rotation lock to power port
+    new JoystickButton(m_driverController, 6)
+      .whenActive(new RotToPowerPortCommand(m_vision, m_robotDrive, m_driverController));
 
     new JoystickButton(m_operatorController, 8)
       //.whenActive(new InstantCommand(m_shootclimb::enableShooting, m_shootclimb))

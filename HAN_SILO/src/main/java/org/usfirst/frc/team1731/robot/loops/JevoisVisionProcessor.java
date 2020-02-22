@@ -3,8 +3,6 @@ package org.usfirst.frc.team1731.robot.loops;
 import org.usfirst.frc.team1731.robot.GoalTracker;
 import org.usfirst.frc.team1731.robot.RobotState;
 import org.usfirst.frc.team1731.robot.vision.JevoisVisionUpdate;
-import org.usfirst.frc.team1731.robot.vision.VisionUpdate;
-import org.usfirst.frc.team1731.robot.vision.VisionUpdateReceiver;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 

@@ -4,10 +4,13 @@ import frc.robot.Constants.VisionConstants;
 import frc.robot.vision.GoalTracker;
 import frc.robot.vision.JevoisVisionServer;
 import frc.robot.vision.JevoisVisionUpdate;
+import frc.robot.vision.ShooterAimingParameters;
 import frc.robot.vision.TargetInfo;
+import frc.robot.vision.GoalTracker.TrackReport;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
@@ -25,18 +28,22 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  * @see GoalTracker.java
  */
 public class JevoisVisionSubsystem extends SubsystemBase {
+    private DriveSubsystem m_robotDrive;
     private static JevoisVisionSubsystem instance_ = new JevoisVisionSubsystem();
     private JevoisVisionUpdate update_ = null;
     private JevoisVisionServer m_VisionServer = JevoisVisionServer.getInstance();
+
+    private ShooterAimingParameters cachedAimingParameters = null;
 
     private GoalTracker goal_tracker_;
     //RobotState robot_state_ = RobotState.getInstance();
 
     public static JevoisVisionSubsystem getInstance() {
+        //JevoisVisionServer.getInstance();
         return instance_;
     }
 
-    public JevoisVisionSubsystem() {
+    private JevoisVisionSubsystem() {
         goal_tracker_ = new GoalTracker();
     }
 
@@ -54,6 +61,7 @@ public class JevoisVisionSubsystem extends SubsystemBase {
 
      //   SmartDashboard.putString("JevoisVisionProcessorUpdate", "update was captured at "+update.getCapturedAtTimestamp());
         //robot_state_.addVisionUpdate(update.getCapturedAtTimestamp(), update.getTargets());
+        addVisionUpdate(update.getCapturedAtTimestamp(), update.getTargets());
     }
     int updateCounter = 0;
    
@@ -87,8 +95,8 @@ public class JevoisVisionSubsystem extends SubsystemBase {
     public void addVisionUpdate(double timestamp, List<TargetInfo> vision_update) {
         List<Translation2d> field_to_goals = new ArrayList<>();
         Pose2d field_to_camera = null;
-        Rotation2d camera_pitch_correction_ = Rotation2d.fromDegrees(-VisionConstants.kCameraPitchAngleDegrees);;
-        Rotation2d camera_yaw_correction_ = Rotation2d.fromDegrees(-VisionConstants.kCameraYawAngleDegrees);;
+        Rotation2d camera_pitch_correction_ = Rotation2d.fromDegrees(-VisionConstants.kCameraPitchAngleDegrees);
+        Rotation2d camera_yaw_correction_ = Rotation2d.fromDegrees(-VisionConstants.kCameraYawAngleDegrees);
         double differential_height_ = VisionConstants.kBoilerTargetTopHeight - VisionConstants.kCameraZOffset;
 
         //RigidTransform2d field_to_camera = getFieldToCamera(timestamp);
@@ -131,6 +139,33 @@ public class JevoisVisionSubsystem extends SubsystemBase {
         }
     }
 
+    public synchronized Optional<ShooterAimingParameters> getAimingParameters() {
+        List<TrackReport> reports = goal_tracker_.getTracks();
+        if (!reports.isEmpty()) {
+            TrackReport report = reports.get(0);
+
+            Translation2d robot_to_goal = m_robotDrive.getPose().getTranslation().unaryMinus()
+            .plus(report.field_to_goal);
+            //Translation2d robot_to_goal = getLatestFieldToVehicle().getTranslation().inverse()
+            //        .translateBy(report.field_to_goal);
+
+            //Old code used fromRadians, but from the constructor it looks like it already does that.
+            //Also, the angle is calculated when you give it cartesian points. If you give it an angle, it converts it
+            //into cartesian points. Kinda useless to give it extra work
+            Rotation2d robot_to_goal_rotation = new Rotation2d(robot_to_goal.getX(), robot_to_goal.getY());
+            //Rotation2d robot_to_goal_rotation = Rotation2d
+            //        .fromRadians(Math.atan2(robot_to_goal.getY(), robot_to_goal.getX()));
+
+            ShooterAimingParameters params = new ShooterAimingParameters(robot_to_goal.getNorm(), robot_to_goal_rotation,
+                    report.latest_timestamp, report.stability);
+            cachedAimingParameters = params;
+
+            return Optional.of(params);
+        } else {
+            return Optional.empty();
+        }
+    }
+
     /**
      * Writes "SEND" to the vision camera. 
      * This should start the flood of JSON strings determining the center point of the target of interest
@@ -158,5 +193,9 @@ public class JevoisVisionSubsystem extends SubsystemBase {
 
         return false;
     }
+
+	public void setDriveSubsystem(DriveSubsystem m_robotDrive) {
+        this.m_robotDrive = m_robotDrive;
+	}
 
 }
