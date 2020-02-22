@@ -251,4 +251,15 @@ public final class Constants {
         public static final double kCameraFrameRate = 30.0;
         public static final int kCameraBaudRate = 230400;
     }
+
+    public static final class DriveConstantsOrig {
+      public static final double kTurnP = 0.5;
+      public static final double kTurnI = 0;
+      public static final double kTurnD = 0;
+      public static final double kTurnToleranceDeg = 5;
+      public static final double kTurnRateToleranceDegPerS = 10; // degrees per second
+      public static final double kMaxTurnRateDegPerS = 10;
+      public static final double kMaxTurnAccelerationDegPerSSquared = 30;
+    
+    }
 }
