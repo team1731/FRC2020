@@ -60,8 +60,8 @@ public class ShootClimbSubsystem extends SubsystemBase {
     /** Phase sensor accordingly. 
       * Positive Sensor Reading should match Green (blinking) Leds on Talon
     */
-		mTalonShoot1.setSensorPhase(true);
-		mTalonShoot2.setSensorPhase(false);
+		mTalonShoot1.setSensorPhase(false);
+		mTalonShoot2.setSensorPhase(true);
 
 		/* Config the peak and nominal outputs */
 		mTalonShoot1.configNominalOutputForward(0, OpConstants.kTimeoutMs);
@@ -118,12 +118,16 @@ public class ShootClimbSubsystem extends SubsystemBase {
        * ==> shootPercent is 0 to 1, so 100% == put in a value of 1.0
     */
     //double velocity = 0.1; // guessing between -1.0 to 1.0
-		//double targetVelocity_UnitsPer100ms = shootMotorPercent_0_to_1 * 11425.0 * 2048 / 600;
+		double targetVelocity_UnitsPer100ms = shootMotorPercent_0_to_1 * 3000.0 * 2048 / 600;
     /* 500 RPM in either direction */
-		//mTalonShoot1.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
-    //mTalonShoot2.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
-    mTalonShoot1.set(ControlMode.PercentOutput, shootMotorPercent_0_to_1);
-    mTalonShoot2.set(ControlMode.PercentOutput, shootMotorPercent_0_to_1);
+		mTalonShoot1.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
+    mTalonShoot2.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
+    SmartDashboard.putNumber("bdltargetvelocity", targetVelocity_UnitsPer100ms);
+    SmartDashboard.putNumber("talon1Velocity", mTalonShoot1.getSelectedSensorVelocity());
+    SmartDashboard.putNumber("talon1Velocity2", mTalonShoot2.getSelectedSensorVelocity());
+
+    //mTalonShoot1.set(ControlMode.PercentOutput, shootMotorPercent_0_to_1);
+    //mTalonShoot2.set(ControlMode.PercentOutput, shootMotorPercent_0_to_1);
     hoodExtend();
   }
 
