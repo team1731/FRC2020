@@ -7,8 +7,8 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.ShootClimbSubsystem;
 import frc.robot.Constants.OpConstants;
+import frc.robot.subsystems.ShootClimbSubsystem;
 import frc.robot.subsystems.SequencerSubsystem;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
  */
 public class ShootSeqCommand extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  //private final ShootClimbSubsystem shootSubsystem;
+  private final ShootClimbSubsystem shootSubsystem;
   private final SequencerSubsystem seqSubsystem;
   private double startTime;
 
@@ -28,9 +28,9 @@ public class ShootSeqCommand extends CommandBase {
    * @param intakeSubsystem The intake subsystem this command will run on
    * @param seqSubsystem The sequencer subsystem this command will run on
    */
-  public ShootSeqCommand(SequencerSubsystem sequenceSubsystem) {
-    //shootSubsystem = shootClimbSubsystem;
-    seqSubsystem = sequenceSubsystem;
+  public ShootSeqCommand(ShootClimbSubsystem shoot, SequencerSubsystem seq) {
+    shootSubsystem = shoot;
+    seqSubsystem = seq;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(seqSubsystem);
   }
@@ -48,15 +48,15 @@ public class ShootSeqCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //double shootMotorVelocity = shootSubsystem.getShootMotor1Velocity();
-    //System.out.println("shoot motor velocity = " + shootMotorVelocity);
-    //if(shootMotorVelocity > OpConstants.kShootMinVelocity){
+    double shootMotorVelocity = shootSubsystem.getShootMotor1Velocity();
+    System.out.println("shoot motor velocity = " + shootMotorVelocity);
+    if(shootMotorVelocity > OpConstants.kShootMinVelocity){
       System.out.println("calling seqSubSystem.forward(true);");
       seqSubsystem.forward(true);
-    //}
-    //else{
-    //  System.out.println("waiting for shoot motor to come up to speed");
-    //}
+    }
+    else{
+      System.out.println("waiting for shoot motor to come up to speed");
+    }
     // get necessary input
     //if (!m_SeqSubsystem.getMaxPowerCells()) {
     //}

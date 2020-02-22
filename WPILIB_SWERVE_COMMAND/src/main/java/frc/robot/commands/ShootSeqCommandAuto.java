@@ -1,17 +1,28 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.SequencerSubsystem;
+import frc.robot.subsystems.ShootClimbSubsystem;
 
 public class ShootSeqCommandAuto extends ShootSeqCommand {
-    private SequencerSubsystem sequenceSubsystem;
+    private ShootClimbSubsystem shootSubsystem;
+    private SequencerSubsystem seqSubsystem;
 
-    public ShootSeqCommandAuto(SequencerSubsystem sequenceSubsystem) {
-        super(sequenceSubsystem);
-        this.sequenceSubsystem = sequenceSubsystem;
+    public ShootSeqCommandAuto(ShootClimbSubsystem shoot, SequencerSubsystem sequence) {
+        super(shoot, sequence);
+        this.shootSubsystem = shoot;
+        this.seqSubsystem = sequence;
+    }
+
+    // Called once the command ends or is interrupted.
+    @Override
+    public void end(boolean interrupted) {
+        seqSubsystem.stop();
+        shootSubsystem.stopShooting();
+        //shootSubsystem.hoodRetract();
     }
 
     @Override
     public boolean isFinished(){
-        return sequenceSubsystem.getPowerCellCount() == 0;
+        return seqSubsystem.getPowerCellCount() == 0;
     }
 }
