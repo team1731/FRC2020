@@ -26,7 +26,7 @@ public class LedStringSubsystem extends SubsystemBase {
   private int m_rainbowFirstPixelHue;
   private int count;
   private double elapsed;
-  private OpConstants.LedOption mLedOption;
+  private OpConstants.LedOption mLedOption = OpConstants.LedOption.TEAM;
   private AddressableLED m_led;
   private AddressableLEDBuffer m_ledBuffer;
   private double delayNum;
@@ -67,7 +67,7 @@ public class LedStringSubsystem extends SubsystemBase {
 
   public void init() {
     // initialization stuff
-    mLedOption = OpConstants.LedOption.INTAKE;
+    option(OpConstants.LedOption.TEAM);
     mTimer.start();
     elapsed = mTimer.get();
   }
@@ -125,8 +125,8 @@ public class LedStringSubsystem extends SubsystemBase {
       m_ledBuffer.setRGB(((i*-1)+59), 255,125,0);
       m_led.setData(m_ledBuffer);
     }
-    
   }
+
   void intake(){
     delay = true;
     delayNum = 0.02;
@@ -417,8 +417,11 @@ public class LedStringSubsystem extends SubsystemBase {
   }
 
   public void option(OpConstants.LedOption select) {
+    synchronized(mLedOption){
+      mLedOption = select;
+    }
     // Fill the buffer with selection
-    switch (select) {
+    switch (mLedOption) {
       case TEAM:
         teamColors(16);
         break;
