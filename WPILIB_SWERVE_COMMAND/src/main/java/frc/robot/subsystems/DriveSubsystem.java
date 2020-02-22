@@ -38,7 +38,7 @@ public class DriveSubsystem extends SubsystemBase {
   private final ReflectingCSVWriter<DebugOutput> mCSVWriter;
   private final DebugOutput debugOutput = new DebugOutput();
   private final ProfiledPIDController headingController = new ProfiledPIDController(
-    DriveConstants.kTurnP, DriveConstants.kTurnI, DriveConstants.kTurnD, 
+    DriveConstants.kTurnP, DriveConstants.kTurnI, DriveConstants.kTurnD,
     new TrapezoidProfile.Constraints(DriveConstants.kMaxTurnVelocity, DriveConstants.kMaxTurnAcceleration));
   
   private double headingControllerOutput = 0;
@@ -153,7 +153,8 @@ public class DriveSubsystem extends SubsystemBase {
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative){
     drive(xSpeed, ySpeed, 0, 0, fieldRelative);
   }
-
+  
+  double maxRateOfTurn = 0;
   /**
    * Method to drive the robot using joystick info.
    *
@@ -166,7 +167,7 @@ public class DriveSubsystem extends SubsystemBase {
   public void drive(double xSpeed, double ySpeed, double rightX, double rightY, boolean fieldRelative) {
     double xSpeedAdjusted = xSpeed;
     double ySpeedAdjusted = ySpeed;
-    //double rotAdjusted = rot;
+    double rotAdjusted = rightX;
     // DEADBAND
     if(Math.abs(xSpeedAdjusted) < 0.2){
       xSpeedAdjusted = 0;
@@ -174,15 +175,21 @@ public class DriveSubsystem extends SubsystemBase {
     if(Math.abs(ySpeedAdjusted) < 0.2){
       ySpeedAdjusted = 0;
     }
-    //if(Math.abs(rotAdjusted) < 0.2){
-    //  rotAdjusted = 0;
-    //}
+    if(Math.abs(rotAdjusted) < 0.2){
+      rotAdjusted = 0;
+    }
 
     //If the stick is released, don't change the rotation
-    if(stickControlledHeading && rightX != 0 && rightY != 0){
+    if(stickControlledHeading && (Math.abs(rightX) > 0.7 || Math.abs(rightY) > 0.7)){
       double rot = getStickAngle(rightX, rightY);
       headingController.setGoal(rot);
     }
+
+    if(maxRateOfTurn < Math.abs(getTurnRate())){
+      maxRateOfTurn = Math.abs(getTurnRate());
+    }
+
+    SmartDashboard.putNumber("Max Rate of Turn", maxRateOfTurn);
 
     //Replaced rotAdjusted with headingControllerOutput
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
@@ -203,8 +210,9 @@ public class DriveSubsystem extends SubsystemBase {
    * @param heading The gyro angle from -180 to 180
    */
   public double getStickAngle(double stickX, double stickY){
-      double stickAngle = Math.atan2(stickY, stickX);
-
+      double stickAngle = Math.toDegrees(Math.atan2(stickY, stickX));
+      stickAngle -= 90;
+      
       SmartDashboard.putNumber("getStickAngle Raw", stickAngle);
 
       //Don't know of Math.atan2 does this automatically. Check smartdashboard
@@ -217,11 +225,23 @@ public class DriveSubsystem extends SubsystemBase {
       */
 
       //If the angle is greater than 180, mirror and invert it to keep the -180-180 heading angle (see getHeading())
-      if(stickAngle > 180){
-            stickAngle -= 360;
+      if(stickAngle < -180){
+            stickAngle += 360;
       }
+      
+      stickAngle *= -1;
 
       SmartDashboard.putNumber("getStickAngle Clamped", stickAngle);
+
+      /*
+
+      Currently, we need to find the quickest turn from -179 to 179 in heading. So in reality, 
+      this is only a 2 degree difference
+      However, the robot is spinning all the way around...
+
+
+
+      */
 
       return stickAngle;
 

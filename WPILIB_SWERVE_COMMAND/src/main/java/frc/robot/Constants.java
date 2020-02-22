@@ -60,12 +60,13 @@ public final class Constants {
 
     public static final boolean kGyroReversed = true; //09FEB false;
 
-    public static final double kMaxTurnVelocity = 10;
-    public static final double kMaxTurnAcceleration = 30;
+    public static final double kMaxTurnVelocity = 360;
+    public static final double kMaxTurnAcceleration = 360;
 
-    public static final double kTurnP = 0.5;
+    public static final double kTurnP = 0.05;
     public static final double kTurnI = 0;
     public static final double kTurnD = 0;
+    public static final double kTurnF = 0;
 
     public static final double kTurnToleranceDeg = 5;
     public static final double kTurnRateToleranceDegPerS = 10; // degrees per second

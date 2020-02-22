@@ -38,6 +38,7 @@ public class JevoisVisionServer {
     double lastMessageReceivedTime = 0;
     private boolean m_use_java_time = false;
     private SerialPort visionCam;
+    private boolean attemptingConnection = false;
     boolean visionCamAvailable;
     boolean visionCamHasTarget;
     double visionCamZPosition;
@@ -151,22 +152,33 @@ public class JevoisVisionServer {
         int connectionAttempt = 0; //Debug purposes
 
         private void AttemptJevoisConnection(){
-            try {
-                Thread.sleep(1000);
-                connectionAttempt++;
-                SmartDashboard.putString("JevoisVisionServerOutput", "Attempting Jevois connection... ("+connectionAttempt+")");
-                
-                visionCam = new SerialPort(VisionConstants.kCameraBaudRate, SerialPort.Port.kMXP);
-                visionCam.setTimeout(5);
+            AttemptJevoisConnection(3);
+        }
 
-                if(visionCam != null){
-                    SmartDashboard.putString("JevoisVisionServerOutput", "(NO RUN) Connected successfully on attempt "+connectionAttempt);
-                    visionCamAvailable = true;
+        private void AttemptJevoisConnection(int attemptsBeforeFail){
+            if(attemptingConnection){
+                return;
+            }
+            attemptingConnection = true;
+            try {
+                for(; attemptsBeforeFail > 0; attemptsBeforeFail--){
+                    Thread.sleep(1000);
+                    connectionAttempt++;
+                    SmartDashboard.putString("JevoisVisionServerOutput", "Attempting Jevois connection... ("+connectionAttempt+")");
                     
-                    //run();
-                } else {
-                    visionCamAvailable = false;
-                    AttemptJevoisConnection();
+                    visionCam = new SerialPort(VisionConstants.kCameraBaudRate, SerialPort.Port.kUSB1);
+                    visionCam.setTimeout(5);
+
+                    if(visionCam != null){
+                        SmartDashboard.putString("JevoisVisionServerOutput", "(NO RUN) Connected successfully on attempt "+connectionAttempt);
+                        visionCamAvailable = true;
+                        JevoisVisionSubsystem.getInstance().StartCameraDataStream();
+                        break;
+                        //run();
+                    } else {
+                        visionCamAvailable = false;
+                        AttemptJevoisConnection();
+                    }
                 }
                 
 
@@ -176,44 +188,47 @@ public class JevoisVisionServer {
                 e.printStackTrace();
                 AttemptJevoisConnection();
             }
+            attemptingConnection = false;
         }
 
 
         String lastDashboardMessage = "";
 
 
-
         @Override
         public void run() {
-            //There was a while true loop in here... maybe run this through a looper instead if this doesn't keep going?
-            String dashboardMessage = "";
-            visionCamAvailable = visionCam != null;
-            try {
-                if(visionCamAvailable){
-                    dashboardMessage = "visionCamAvailable == true. Handling message";
-                    String visionTargetPositions_Raw = visionCam.readString();
-                    handleMessage(visionTargetPositions_Raw, getTimestamp());
-                } else {
-                    dashboardMessage = "visionCamAvailable == false. Lost connection";
+            for(;;){
+                SmartDashboard.putString("JevoisServerThreadSTART", "ah yes");
+                //There was a while true loop in here... maybe run this through a looper instead if this doesn't keep going?
+                String dashboardMessage = "";
+                visionCamAvailable = visionCam != null;
+                try {
+                    if(visionCamAvailable){
+                        dashboardMessage = "visionCamAvailable == true. Handling message";
+                        String visionTargetPositions_Raw = visionCam.readString();
+                        int visionLength = visionTargetPositions_Raw.length();
+                        handleMessage(visionTargetPositions_Raw, getTimestamp());
+                    } else {
+                        dashboardMessage = "visionCamAvailable == false. Lost connection";
+                        AttemptJevoisConnection();
+                    }
+                    if(lastDashboardMessage != dashboardMessage){
+                        SmartDashboard.putString("JevoisVisionServerOutput", dashboardMessage);
+                    }
+                    lastDashboardMessage = dashboardMessage;
+                } catch (Exception e){
+                    try{
+                        Thread.sleep(50);
+                    } catch (InterruptedException ie){
+                        e.printStackTrace();
+                    }
                     AttemptJevoisConnection();
-                    return;
                 }
-                if(lastDashboardMessage != dashboardMessage){
-                    SmartDashboard.putString("JevoisVisionServerOutput", dashboardMessage);
-                }
-                lastDashboardMessage = dashboardMessage;
-            } catch (Exception e){
-                try{
-                    Thread.sleep(50);
-                } catch (InterruptedException ie){
+                try {
+                    Thread.sleep(5);
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                AttemptJevoisConnection();
-            }
-            try {
-                Thread.sleep(5);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
         }
 

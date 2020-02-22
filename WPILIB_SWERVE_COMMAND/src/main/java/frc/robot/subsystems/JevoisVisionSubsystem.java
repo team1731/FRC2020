@@ -39,6 +39,7 @@ public class JevoisVisionSubsystem extends SubsystemBase {
     //RobotState robot_state_ = RobotState.getInstance();
 
     public static JevoisVisionSubsystem getInstance() {
+        //JevoisVisionServer.getInstance();
         return instance_;
     }
 
