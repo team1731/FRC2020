@@ -60,12 +60,16 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    //JevoisVisionServer.getInstance();
-
+    
     CameraServer camServer = CameraServer.getInstance();
     camServer.startAutomaticCapture();
     
-    m_robotDrive = new DriveSubsystem();
+    leftFrontAbsEncoder = new AnalogInput(0);
+    rightFrontAbsEncoder = new AnalogInput(1);
+    leftRearAbsEncoder = new AnalogInput(2);
+    rightRearAbsEncoder = new AnalogInput(3);
+
+    m_robotDrive = new DriveSubsystem(leftFrontAbsEncoder, rightFrontAbsEncoder, leftRearAbsEncoder, rightRearAbsEncoder);
     m_targeting = new TargetingSubsystem();
     m_vision = JevoisVisionSubsystem.getInstance();
     m_intake = new IntakeSubsystem();
@@ -88,18 +92,12 @@ public class Robot extends TimedRobot {
       return;
     }
 
-    leftFrontAbsEncoder = new AnalogInput(0);
-    rightFrontAbsEncoder = new AnalogInput(1);
-    leftRearAbsEncoder = new AnalogInput(2);
-    rightRearAbsEncoder = new AnalogInput(3);
-
     if(RobotBase.isReal()){
       if(leftFrontAbsEncoder == null || rightFrontAbsEncoder == null || leftRearAbsEncoder == null || rightRearAbsEncoder == null){
         System.err.println("At least one absolute encoder (AnalogInput(0)--AnalogInput(3) is NULL!!! -- Aborting!!!");
         return;
       }
-      m_robotDrive.resetEncoders(leftFrontAbsEncoder.getVoltage(), rightFrontAbsEncoder.getVoltage(),
-      leftRearAbsEncoder.getVoltage(), rightRearAbsEncoder.getVoltage());
+      m_robotDrive.resetEncoders();
     }
 
     // initial SubSystems to at rest states

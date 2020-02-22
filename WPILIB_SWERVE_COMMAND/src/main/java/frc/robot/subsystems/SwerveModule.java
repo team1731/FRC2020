@@ -208,7 +208,6 @@ public double getDriveEncoderPosition(){
       m_driveEncoder.setPosition(0);
       m_turningEncoder.setPosition(absoluteEncoderVoltage * 16/3.26);
     }
-    //setAzimuthZero(absoluteEncoderVoltage); //remember our offset
   }
 
 }
