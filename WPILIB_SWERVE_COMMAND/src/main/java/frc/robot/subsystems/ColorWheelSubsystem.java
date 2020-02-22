@@ -94,6 +94,7 @@ public class ColorWheelSubsystem extends SubsystemBase {
 
   public void init() {
     // initialization stuff
+    mColorWheelSolenoid.set(DoubleSolenoid.Value.kReverse);
   }
 
   private void handleColorWheel(WheelMode mode) {

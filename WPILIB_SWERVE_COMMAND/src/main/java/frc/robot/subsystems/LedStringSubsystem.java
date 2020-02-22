@@ -7,7 +7,6 @@
 
 package frc.robot.subsystems;
 
-import java.lang.Thread;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;

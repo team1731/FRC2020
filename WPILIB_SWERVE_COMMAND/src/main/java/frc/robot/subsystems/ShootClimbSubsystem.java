@@ -9,7 +9,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
-import edu.wpi.first.wpilibj.PWMTalonFX;
+// import edu.wpi.first.wpilibj.PWMTalonFX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
@@ -29,10 +29,8 @@ public class ShootClimbSubsystem extends SubsystemBase {
   private final TalonFX mTalonShoot1;
   private final TalonFX mTalonShoot2;
 
-  private boolean modeClimbing;
-  private double extendRetract;
-  private double shootPercent;
-
+  //private boolean modeClimbing;
+  
   /**
    * Creates a new ExampleSubsystem.
    */
@@ -60,7 +58,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
     /** Phase sensor accordingly. 
       * Positive Sensor Reading should match Green (blinking) Leds on Talon
     */
-		mTalonShoot1.setSensorPhase(false);
+		mTalonShoot1.setSensorPhase(true);
 		mTalonShoot2.setSensorPhase(false);
 
 		/* Config the peak and nominal outputs */
@@ -83,7 +81,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
 		mTalonShoot2.config_kI(OpConstants.kPIDLoopIdx, OpConstants.kGains_Velocity.kI, OpConstants.kTimeoutMs);
 		mTalonShoot2.config_kD(OpConstants.kPIDLoopIdx, OpConstants.kGains_Velocity.kD, OpConstants.kTimeoutMs);
 
-    extendRetract = 0;
+    shootMode();    
 
     SmartDashboard.putNumber("ShootingPercent", 0.5);
   }
@@ -133,6 +131,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
     mTalonShoot1.set(ControlMode.PercentOutput, 0);
     mTalonShoot2.set(ControlMode.PercentOutput, 0);
     hoodRetract();
+    shootMode();
   }
 
   public void enableClimbing() {
@@ -140,34 +139,6 @@ public class ShootClimbSubsystem extends SubsystemBase {
     //mTalonShoot.setSpeed(0);
     mTalonShoot1.set(ControlMode.PercentOutput,OpConstants.kMotorShootPercent);
     //mTalonShoot2.set(ControlMode.PercentOutput,OpConstants.kMotorShootPercent);
-  }
-
-  public void climbExtend() {
-    if (modeClimbing) {
-      //mClimberSolenoid.set(DoubleSolenoid.Value.kForward);
-    }
-  }
-
-  public void climbRetract() {
-    if (modeClimbing) {
-     // mClimberSolenoid.set(DoubleSolenoid.Value.kReverse);
-    }
-  }
-
-  /**
-   * @deprecated Naming scheme is bad. Replaced with stopShooting()
-   * @see stopShooting()
-   */
-  @Deprecated
-  public void disable() {
-    //mShootClimbSolenoid.set(DoubleSolenoid.Value.kReverse);
-    //mClimberSolenoid.set(DoubleSolenoid.Value.kReverse);
-    //mShootHoodSolenoid.set(DoubleSolenoid.Value.kReverse);
-    //mTalonShoot.setSpeed(0);
-    //mTalonShoot1.set(ControlMode.Velocity, 0);
-    stopShooting();
-    //mTalonShoot2.set(ControlMode.PercentOutput, 0);
-    //hoodRetract();
   }
 
   public void hoodRetract() {
@@ -179,8 +150,38 @@ public class ShootClimbSubsystem extends SubsystemBase {
   }
 
   public void setClimber(double percentOut) {
-    mTalonShoot1.set(ControlMode.PercentOutput, percentOut);
-    mTalonShoot2.set(ControlMode.PercentOutput, percentOut);
+    double output = percentOut;
+    // if within deadband then set output to Zero
+    if (Math.abs(output) < OpConstants.kJoystickDeadband) {
+      shootMode();
+      output = 0;
+    } else {
+      climbMode();
+    }
+    //System.out.println("climb output = " + output);
+    mTalonShoot1.set(ControlMode.PercentOutput, output*OpConstants.kClimbMaxPercent);
+    mTalonShoot2.set(ControlMode.PercentOutput, output*OpConstants.kClimbMaxPercent);
+  }
+
+
+  public void shootMode() {
+    mShootClimbSolenoid.set(DoubleSolenoid.Value.kForward);
+  }
+
+  public void climbMode() {
+    mShootClimbSolenoid.set(DoubleSolenoid.Value.kReverse);
+  }
+
+  public void climbExtend() {
+    // if (modeClimbing) {
+    mClimberSolenoid.set(DoubleSolenoid.Value.kForward);
+    // }
+  }
+
+  public void climbRetract() {
+    // if (modeClimbing) {
+    mClimberSolenoid.set(DoubleSolenoid.Value.kReverse);
+    // }
   }
 
 }

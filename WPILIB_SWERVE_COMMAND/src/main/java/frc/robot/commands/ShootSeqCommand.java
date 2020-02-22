@@ -12,7 +12,6 @@ import frc.robot.Constants.OpConstants;
 import frc.robot.subsystems.SequencerSubsystem;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 /**
  * An example command that uses an example subsystem.
@@ -67,7 +66,7 @@ public class ShootSeqCommand extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     seqSubsystem.stop();
-    shootSubsystem.stopShooting();
+    //shootSubsystem.stopShooting();
     //shootSubsystem.hoodRetract();
   }
 
