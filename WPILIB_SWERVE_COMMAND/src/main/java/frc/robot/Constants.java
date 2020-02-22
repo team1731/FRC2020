@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.util.Color;
 import com.revrobotics.ColorMatch;
-import frc.robot.Gains;
+//import frc.robot.Gains;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -82,7 +82,9 @@ public final class Constants {
     public static final double kaVoltSecondsSquaredPerMeter = 0.15;
 
     public static final double kMaxSpeedMetersPerSecond = 3;
+
   }
+
 
   public static final class ModuleConstants {
     public static final double kMaxModuleAngularSpeedRadiansPerSecond = 2 * Math.PI;
@@ -146,7 +148,7 @@ public final class Constants {
         public static final double kMotorShootSpeed2 = 0.3;
         public static final double kMotorShootPercent = 0.50;   // check shooting motor percent
         public static final double kMotorClimbPercent = 0.3;
-        public static final int kMaxPowerCells = 3;
+        public static final int kMaxPowerCells = 5;
         public static final double kSeqResetDelay = 2.0;
 
         // ColorWheel
@@ -155,6 +157,10 @@ public final class Constants {
         // Shooter
         public static final int kShooterVictor = 3;
         public static final int kShootMinVelocity = 5000;
+
+        public static final double kClimbMaxPercent = 0.3;
+        public static final double kJoystickDeadband = 0.2;
+        public static final int kClimbJoystickInvert = -1;
 
         // Digital Input/Outputs
         public static int kLowSequencer = 0;
@@ -176,9 +182,9 @@ public final class Constants {
         public static int kArduino_YELLW = 7; // yellow wipe
 
         public enum LedOption {
-            TEAM, RED, BLUE, GREEN, YELLOW, ORANGE, PURPLE, RAINBOW
+          TEAM, RED, BLUE, GREEN, YELLOW, ORANGE, PURPLE, RAINBOW, FULL, CLIMB, SHOOT, INTAKE, INTAKEBALL, WHEEL, BALLONE, BALLTWO, BALLTHREE, BALLFOUR
         }
-
+    
         // in order of pneumatic actuators (top to bottom)
         // PCM  terminals     function
         //  0      6-7    ==   spare
@@ -240,8 +246,8 @@ public final class Constants {
          * PID Gains may have to be adjusted based on the responsiveness of control loop.
          * kF: 1023 represents output value to Talon at 100%, 7200 represents Velocity units at 100% output
          * 
-         * 	                                    		          	  kP   kI   kD   kF             Iz    PeakOut */
-        public final static Gains kGains_Velocity = new Gains( 0.25, 0.001, 20, 1023.0/7200.0,  300,  1.00);
+         * 	                                    		          	  kP   kI   kD   kF     Iz    PeakOut */
+        public final static Gains kGains_Velocity = new Gains( 0/*0.0682*/, 0.000, 0, 0.07,  300,  1.00); //0.07 = .2 * 1023 / 2830;
         ///// End TalonFX
     }
 
@@ -256,5 +262,16 @@ public final class Constants {
         public static final double kMaxGoalTrackAge = 1.0;  // cp had 1.0
         public static final double kCameraFrameRate = 30.0;
         public static final int kCameraBaudRate = 230400;
+    }
+
+    public static final class DriveConstantsOrig {
+      public static final double kTurnP = 0.5;
+      public static final double kTurnI = 0;
+      public static final double kTurnD = 0;
+      public static final double kTurnToleranceDeg = 5;
+      public static final double kTurnRateToleranceDegPerS = 10; // degrees per second
+      public static final double kMaxTurnRateDegPerS = 10;
+      public static final double kMaxTurnAccelerationDegPerSSquared = 30;
+    
     }
 }

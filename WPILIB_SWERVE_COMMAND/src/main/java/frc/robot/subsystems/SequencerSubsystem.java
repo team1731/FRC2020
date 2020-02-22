@@ -24,8 +24,9 @@ public class SequencerSubsystem extends SubsystemBase {
   //private double elapsed;
   //private boolean startDelay;
   //private boolean mLowSensorCur;
-  //private boolean mLowSensorLast; // does robot want to index balls - mode
-  //private int mPowerCellCount;
+  private boolean mLastLowHasBall; // does robot want to index balls - mode
+  private boolean mLastHighHasBall; // does robot want to index balls - mode
+  private int mPowerCellCount;
 
   /**
    * Creates a new SequencerSubsystem.
@@ -39,12 +40,36 @@ public class SequencerSubsystem extends SubsystemBase {
     //mTimer.start();
     //startDelay = false;
     //mLowSensorCur = mLowSensor.get();
-    //mLowSensorLast = mLowSensorCur;
-    //mPowerCellCount = 0;
+    mLastLowHasBall = lowSensorHasBall();
+    mLastHighHasBall = highSensorHasBall();
+    mPowerCellCount = 0;
+  }
+
+  public void setPowerCellCount(int numBalls){
+    mPowerCellCount = numBalls;
   }
 
   @Override
   public void periodic() {
+    // Decrementing ball count
+    if (lowSensorHasBall()) {
+      if (!mLastLowHasBall) {
+        if (mPowerCellCount <= OpConstants.kMaxPowerCells) {
+          mPowerCellCount++;
+        }
+      }
+    }
+    // Decrementing ball count
+    if (!highSensorHasBall()) {
+      if (mLastHighHasBall) {
+        if (mPowerCellCount > 0) {
+          mPowerCellCount--;
+        }
+      }
+    }
+
+    mLastLowHasBall = lowSensorHasBall();
+    mLastHighHasBall = highSensorHasBall();
   }
   
   /**
@@ -65,7 +90,7 @@ public class SequencerSubsystem extends SubsystemBase {
    */
   public void reverse() {
     mTalonSeq.setSpeed(OpConstants.kMotorSeqRevShootSpeed);
-    //mPowerCellCount = 0;
+    mPowerCellCount = 0;
   }
 
   /**
@@ -73,6 +98,7 @@ public class SequencerSubsystem extends SubsystemBase {
    */
   public void stop() {
     mTalonSeq.setSpeed(0);
+    mTalonSeq.stopMotor();
   }
 
   public boolean lowSensorHasBall() {
@@ -87,7 +113,6 @@ public class SequencerSubsystem extends SubsystemBase {
     return !mHighSensor.get();
   }
 
-  /*
   public boolean getMaxPowerCells() {
     return(mPowerCellCount >= OpConstants.kMaxPowerCells);
   }
@@ -96,6 +121,7 @@ public class SequencerSubsystem extends SubsystemBase {
     return(mPowerCellCount);
   }
 
+  /*
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

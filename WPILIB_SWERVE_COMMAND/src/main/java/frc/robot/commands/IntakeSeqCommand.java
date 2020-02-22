@@ -5,15 +5,15 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 /* Intake Motor (I), Sequence Motor (S)
-  Hi Mid Lo | iU/D iR Seq
-   0  0  0  |   D   R  Off
-   0  0  1  |   D   R  Off
-   0  1  0  |   D   -  On
-   0  1  1  |   D   R  Off
-   1  0  0  |   D   -  On
-   1  0  1  |   U   -  Off
-   1  1  0  |   D   -  On
-   1  1  1  |   U   -  Off
+  Lo Mid Hi | iU/D iR Seq
+   0  0  0  |   D   R  Off  ==> case A
+   0  0  1  |   D   R  Off  ==> case A
+   0  1  0  |   D   -  On   ==> case B
+   0  1  1  |   D   R  Off  ==> case A
+   1  0  0  |   D   -  On   ==> case B
+   1  0  1  |   U   -  Off  ==> case C
+   1  1  0  |   D   -  On   ==> case B
+   1  1  1  |   U   -  Off  ==> case C
 
    If you switch case 2 & 3, then spacing will be ball width, now it's sensor width
 */
@@ -61,19 +61,20 @@ public class IntakeSeqCommand extends CommandBase {
     low = m_SeqSubsystem.lowSensorHasBall();
     mid = m_SeqSubsystem.midSensorHasBall();
     high = m_SeqSubsystem.highSensorHasBall();
-    if (!low && ((!mid && !high) || (!mid && high) || (mid && high))) {
+    if (!low && ((!mid && !high) || (!mid && high) || (mid && high))) {  // case A
       m_IntakeSubsystem.extend();
       m_IntakeSubsystem.active();
       m_SeqSubsystem.stop();
-    } else if (!high && ((!low && mid) || (low && !mid) || (low && mid))) {
+    } else if (!high && ((!low && mid) || (low && !mid) || (low && mid))) { // case B
       m_IntakeSubsystem.extend();
       m_IntakeSubsystem.inactive();
       m_SeqSubsystem.forward(false);;
-    } else if (low && high) {
+    } else if (low && high) { // case C
       m_IntakeSubsystem.retract();
       m_IntakeSubsystem.inactive();
       m_SeqSubsystem.stop();
     }
+
     
     
     /* if low and high not tripped do something
@@ -112,6 +113,6 @@ public class IntakeSeqCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_SeqSubsystem.highSensorHasBall(); //m_SeqSubsystem.getMaxPowerCells();
+    return false; //m_SeqSubsystem.highSensorHasBall(); //m_SeqSubsystem.getMaxPowerCells();
   }
 }

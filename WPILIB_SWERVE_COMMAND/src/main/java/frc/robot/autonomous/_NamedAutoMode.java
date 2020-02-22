@@ -3,7 +3,7 @@ package frc.robot.autonomous;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class _NamedAutoMode {
-    public String code = "M1";
+    public String code = "L1";
     public String name = "UNKNOWN";
     public _DelayableStrafingAutoMode delayableStrafingAutoMode;
     

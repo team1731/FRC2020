@@ -45,6 +45,11 @@ public class DriveSubsystem extends SubsystemBase {
 
   private boolean stickControlledHeading = true;
   
+  private final AnalogInput leftFrontAbsEncoder;
+  private final AnalogInput rightFrontAbsEncoder;
+  private final AnalogInput leftRearAbsEncoder;
+  private final AnalogInput rightRearAbsEncoder;
+  
   //Robot swerve modules
   private final SwerveModule m_frontLeft = 
       new SwerveModule(DriveConstants.kFrontLeftDriveMotorPort,
@@ -74,12 +79,16 @@ public class DriveSubsystem extends SubsystemBase {
   /**
    * Creates a new DriveSubsystem.
    */
-  public DriveSubsystem() {
+  public DriveSubsystem(AnalogInput leftFrontAbsEncoder, AnalogInput rightFrontAbsEncoder, AnalogInput leftRearAbsEncoder, AnalogInput rightRearAbsEncoder) {
+    this.leftFrontAbsEncoder = leftFrontAbsEncoder;
+    this.rightFrontAbsEncoder = rightFrontAbsEncoder;
+    this.leftRearAbsEncoder = leftRearAbsEncoder;
+    this.rightRearAbsEncoder = rightRearAbsEncoder;
     mCSVWriter = new ReflectingCSVWriter<>(this.getName(), DebugOutput.class);
   }
 
-  
-  /**
+
+/**
    * Returns the angle of the robot as a Rotation2d.
    *
    * @return The angle of the robot.
@@ -286,14 +295,11 @@ public class DriveSubsystem extends SubsystemBase {
   /**
    * Resets the drive encoders to currently read a position of 0.
    */
-  public void resetEncoders(double leftFrontAbsEncoderReading, // frontLeft, frontRight, rearLeft, rearRight
-                            double rightFrontAbsEncoderReading, 
-                            double leftRearAbsEncoderReading, 
-                            double rightRearAbsEncoderReading) {
-    m_frontLeft.resetEncoders(leftFrontAbsEncoderReading);     // frontLeft, frontRight, rearLeft, rearRight
-    m_frontRight.resetEncoders(rightFrontAbsEncoderReading);
-    m_rearLeft.resetEncoders(leftRearAbsEncoderReading);
-    m_rearRight.resetEncoders(rightRearAbsEncoderReading);
+  public void resetEncoders() {
+    m_frontLeft.resetEncoders(leftFrontAbsEncoder.getVoltage());     // frontLeft, frontRight, rearLeft, rearRight
+    m_frontRight.resetEncoders(rightFrontAbsEncoder.getVoltage());
+    m_rearLeft.resetEncoders(leftRearAbsEncoder.getVoltage());
+    m_rearRight.resetEncoders(rightRearAbsEncoder.getVoltage());
   }
 
   /**
