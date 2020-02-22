@@ -76,9 +76,6 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public DriveSubsystem() {
     mCSVWriter = new ReflectingCSVWriter<>(this.getName(), DebugOutput.class);
-
-    headingController.setTolerance(DriveConstants.kTurnToleranceDeg, DriveConstants.kTurnRateToleranceDegPerS);
-    headingController.enableContinuousInput(-180, 180);
   }
 
   
@@ -103,6 +100,8 @@ public class DriveSubsystem extends SubsystemBase {
   public void periodic() {
     resumeCSVWriter();
 
+    headingController.setTolerance(DriveConstants.kTurnToleranceDeg, DriveConstants.kTurnRateToleranceDegPerS);
+    headingController.enableContinuousInput(-180, 180);
     headingControllerOutput = headingController.calculate(getHeading());
 
     // Update the odometry in the periodic block
@@ -168,6 +167,8 @@ public class DriveSubsystem extends SubsystemBase {
     double xSpeedAdjusted = xSpeed;
     double ySpeedAdjusted = ySpeed;
     double rotAdjusted = rightX;
+    double rotationalOutput = headingControllerOutput;
+
     // DEADBAND
     if(Math.abs(xSpeedAdjusted) < 0.2){
       xSpeedAdjusted = 0;
@@ -180,9 +181,11 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     //If the stick is released, don't change the rotation
-    if(stickControlledHeading && (Math.abs(rightX) > 0.7 || Math.abs(rightY) > 0.7)){
+    if(stickControlledHeading && (Math.abs(rightX) > DriveConstants.kMinRightStickThreshold || Math.abs(rightY) > DriveConstants.kMinRightStickThreshold)){
       double rot = getStickAngle(rightX, rightY);
       headingController.setGoal(rot);
+    } else if(Math.abs(rightX) <= DriveConstants.kMinRightStickThreshold && Math.abs(rightY) <= DriveConstants.kMinRightStickThreshold) {
+      rotationalOutput = 0;
     }
 
     if(maxRateOfTurn < Math.abs(getTurnRate())){
@@ -194,8 +197,8 @@ public class DriveSubsystem extends SubsystemBase {
     //Replaced rotAdjusted with headingControllerOutput
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
-          xSpeedAdjusted, ySpeedAdjusted, headingControllerOutput, getAngle())
-            : new ChassisSpeeds(xSpeedAdjusted, ySpeedAdjusted, headingControllerOutput)
+          xSpeedAdjusted, ySpeedAdjusted, rotationalOutput, getAngle())
+            : new ChassisSpeeds(xSpeedAdjusted, ySpeedAdjusted, rotationalOutput)
     );
     SwerveDriveKinematics.normalizeWheelSpeeds(swerveModuleStates,
                                                DriveConstants.kMaxSpeedMetersPerSecond);

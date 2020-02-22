@@ -66,7 +66,8 @@ public final class Constants {
     public static final double kTurnP = 0.05;
     public static final double kTurnI = 0;
     public static final double kTurnD = 0;
-    public static final double kTurnF = 0;
+
+    public static final double kMinRightStickThreshold = 0.7;
 
     public static final double kTurnToleranceDeg = 5;
     public static final double kTurnRateToleranceDegPerS = 10; // degrees per second
