@@ -156,20 +156,26 @@ public final class Constants {
 
         // Shooter
         public static final int kShooterVictor = 3;
-        public static final int kShootMinVelocity = 5000;
+        public static final int kShootMinVelocity = 1000;
 
-        public static final double kClimbMaxPercent = 0.3;
+        public static final double kClimbMaxPercent = 1; // 0.3;
         public static final double kJoystickDeadband = 0.2;
         public static final int kClimbJoystickInvert = -1;
 
+        public static final double kClimbExSafeEncValue = 10000;
         // Digital Input/Outputs
         public static int kLowSequencer = 0;
         public static int kMidSequencer = 1;
         public static int kHighSequencer = 2;
 
-        public static int kArduinoLed0 = 7;
-        public static int kArduinoLed1 = 8;
-        public static int kArduinoLed2 = 9;
+        public static int kHiCylinder = 3;
+        public static int kLoCylinder = 4;
+        public static int kClimbExtend = 5;
+        public static int kClimbRetract = 6;
+
+        //public static int kArduinoLed0 = 7;
+        //public static int kArduinoLed1 = 8;
+        //public static int kArduinoLed2 = 9;
 
         // Arduino Colors/Options
         public static int kArduino_TEAM  = 0;
@@ -246,8 +252,8 @@ public final class Constants {
          * PID Gains may have to be adjusted based on the responsiveness of control loop.
          * kF: 1023 represents output value to Talon at 100%, 7200 represents Velocity units at 100% output
          * 
-         * 	                                    		          	  kP   kI   kD   kF     Iz    PeakOut */
-        public final static Gains kGains_Velocity = new Gains( 0/*0.0682*/, 0.000, 0, 0.07,  300,  1.00); //0.07 = .2 * 1023 / 2830;
+         * 	                                    		          	  kP   kI   kD   kF             Iz    PeakOut */
+        public final static Gains kGains_Velocity = new Gains( 1.0, 0, 0, .07,  300,  1.00);
         ///// End TalonFX
     }
 

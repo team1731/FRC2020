@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 
 public class SequencerSubsystem extends SubsystemBase {
 
+  private final LedStringSubsystem m_ledstring;
   private final PWMTalonFX mTalonSeq;
   private DigitalInput mLowSensor;
   private DigitalInput mMidSensor;
@@ -30,8 +31,10 @@ public class SequencerSubsystem extends SubsystemBase {
 
   /**
    * Creates a new SequencerSubsystem.
+ * @param m_ledstring
    */
-  public SequencerSubsystem() {
+  public SequencerSubsystem(LedStringSubsystem m_ledstring) {
+    this.m_ledstring = m_ledstring;
     mTalonSeq = new PWMTalonFX(OpConstants.kMotorPWMSeq);
     mLowSensor = new DigitalInput(OpConstants.kLowSequencer);
     mMidSensor = new DigitalInput(OpConstants.kMidSequencer);
