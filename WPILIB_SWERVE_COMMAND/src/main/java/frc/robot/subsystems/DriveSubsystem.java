@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.TurnToAngleProfiled;
 import frc.robot.util.DebugOutput;
@@ -111,7 +111,9 @@ public class DriveSubsystem extends SubsystemBase {
 
     headingController.setTolerance(DriveConstants.kTurnToleranceDeg, DriveConstants.kTurnRateToleranceDegPerS);
     headingController.enableContinuousInput(-180, 180);
-    headingControllerOutput = headingController.calculate(getHeading());
+    SmartDashboard.putNumber("headingController In", getHeading());
+    headingControllerOutput = headingController.calculate(MathUtil.clamp(getHeading(), -180, 180));
+    SmartDashboard.putNumber("headingController Out", headingControllerOutput);
 
     // Update the odometry in the periodic block
     double headingRadians = Math.toRadians(getHeading());
@@ -162,7 +164,6 @@ public class DriveSubsystem extends SubsystemBase {
     drive(xSpeed, ySpeed, 0, 0, fieldRelative);
   }
   
-  double maxRateOfTurn = 0;
   /**
    * Method to drive the robot using joystick info.
    *
@@ -193,15 +194,9 @@ public class DriveSubsystem extends SubsystemBase {
     if(stickControlledHeading && (Math.abs(rightX) > DriveConstants.kMinRightStickThreshold || Math.abs(rightY) > DriveConstants.kMinRightStickThreshold)){
       double rot = getStickAngle(rightX, rightY);
       headingController.setGoal(rot);
-    } else if(Math.abs(rightX) <= DriveConstants.kMinRightStickThreshold && Math.abs(rightY) <= DriveConstants.kMinRightStickThreshold) {
+    } else if(stickControlledHeading && Math.abs(rightX) <= DriveConstants.kMinRightStickThreshold && Math.abs(rightY) <= DriveConstants.kMinRightStickThreshold) {
       rotationalOutput = 0;
     }
-
-    if(maxRateOfTurn < Math.abs(getTurnRate())){
-      maxRateOfTurn = Math.abs(getTurnRate());
-    }
-
-    SmartDashboard.putNumber("Max Rate of Turn", maxRateOfTurn);
 
     //Replaced rotAdjusted with headingControllerOutput
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(

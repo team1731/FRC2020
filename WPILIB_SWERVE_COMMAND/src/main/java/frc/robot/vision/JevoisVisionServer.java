@@ -94,11 +94,14 @@ public class JevoisVisionServer {
         public void handleMessage(String message, double timestamp) {
             dashboardCounter++;
             String visionTargetPositions_Raw = message; //message should be the raw visionCam.readString() called from runCrashTracked()
+            
             //System.out.println(visionTargetPositions_Raw);
+            /*
             if(!SafeToParse(visionTargetPositions_Raw)){
                 return;
             }
-            
+            */
+
             if(dashboardCounter >= 10){
                 SmartDashboard.putString("JevoisVisionServerTargets", visionTargetPositions_Raw);
             }
@@ -152,33 +155,27 @@ public class JevoisVisionServer {
         int connectionAttempt = 0; //Debug purposes
 
         private void AttemptJevoisConnection(){
-            AttemptJevoisConnection(3);
-        }
-
-        private void AttemptJevoisConnection(int attemptsBeforeFail){
             if(attemptingConnection){
                 return;
             }
             attemptingConnection = true;
             try {
-                for(; attemptsBeforeFail > 0; attemptsBeforeFail--){
-                    Thread.sleep(1000);
-                    connectionAttempt++;
-                    SmartDashboard.putString("JevoisVisionServerOutput", "Attempting Jevois connection... ("+connectionAttempt+")");
-                    
-                    visionCam = new SerialPort(VisionConstants.kCameraBaudRate, SerialPort.Port.kUSB1);
-                    visionCam.setTimeout(5);
+                Thread.sleep(1000);
+                connectionAttempt++;
+                SmartDashboard.putString("JevoisVisionServerOutput", "Attempting Jevois connection... ("+connectionAttempt+")");
+                
+                visionCam = new SerialPort(VisionConstants.kCameraBaudRate, SerialPort.Port.kUSB1);
+                visionCam.setTimeout(5);
 
-                    if(visionCam != null){
-                        SmartDashboard.putString("JevoisVisionServerOutput", "(NO RUN) Connected successfully on attempt "+connectionAttempt);
-                        visionCamAvailable = true;
-                        JevoisVisionSubsystem.getInstance().StartCameraDataStream();
-                        break;
-                        //run();
-                    } else {
-                        visionCamAvailable = false;
-                        AttemptJevoisConnection();
-                    }
+                if(visionCam != null){
+                    SmartDashboard.putString("JevoisVisionServerOutput", "(NO RUN) Connected successfully on attempt "+connectionAttempt);
+                    visionCamAvailable = true;
+                    JevoisVisionSubsystem.getInstance().StartCameraDataStream();
+                    //run();
+                } else {
+                    visionCamAvailable = false;
+                    attemptingConnection = false;
+                    AttemptJevoisConnection();
                 }
                 
 

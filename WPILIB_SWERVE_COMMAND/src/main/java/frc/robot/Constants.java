@@ -261,7 +261,7 @@ public final class Constants {
         public static final double kMaxTrackerDistance = 18.0;
         public static final double kMaxGoalTrackAge = 1.0;  // cp had 1.0
         public static final double kCameraFrameRate = 30.0;
-        public static final int kCameraBaudRate = 230400;
+        public static final int kCameraBaudRate = 115200;
     }
 
     public static final class DriveConstantsOrig {
