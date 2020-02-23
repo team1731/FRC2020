@@ -7,7 +7,6 @@
 
 package frc.robot.subsystems;
 
-import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 // import edu.wpi.first.wpilibj.PWMTalonFX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
