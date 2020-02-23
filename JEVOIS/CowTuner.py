@@ -12,12 +12,12 @@ import time
 
 
 # default values for Hue, Saturation, and Value ranges:
-lowerHue = 60
 upperHue = 95
-lowerSat = 85
+lowerHue = 60
 upperSat = 255
-lowerVal = 100
+lowerSat = 100
 upperVal = 255
+lowerVal = 100
 errode = 0
 dilate = 0
 approx = 9
@@ -110,7 +110,7 @@ send_command('ping')                   # should return ALIVE
 master = Tk()
 master.geometry('1220x500')
 master.config(bg="navy")
-master.title("Eagle Vision JeVois Tuner")
+master.title("Cow Vision JeVois Tuner")
 
 w1 = Label(master, text = "Hue min", fg="white", bg="red3")
 w2 = Scale(master, from_=0, to=180, tickinterval=30, length=600, width=16, orient=HORIZONTAL, command=update_lowerHue)

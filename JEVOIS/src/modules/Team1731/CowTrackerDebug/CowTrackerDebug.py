@@ -1,28 +1,35 @@
+# ###################################################################################################
+## FRC Team 1731 - Fresta Valley Robotics Club
+## Originally written by FRC Team 2073 - EagleForce
+## INFINITE RECHARGE - 2020
+
+## Summary:
+## CowTracker finds the half-hexagon target on the top power port and draws a bounding box around it.
+## It then gets the center point of the bounding box and normalizes such that 0 is the center of the
+## camera. These values are then sent over the serial port on the JeVois camera as a JSON string.
+
+## This is the STREAM version of CowTracker. It sends the JSON string of target coordinates along with a video output via USB
+# ###################################################################################################
+
+# These libraries are built-in to the JeVois camera, so the Python compiler will throw errors. Ignore these.
 import libjevois as jevois
 import cv2
 import numpy as np
+# The rest of the imports are Python libraries
+
 import json
 import math
 import time
 
-#Try termite instead of PuTTY
-#Holders for target data
-pixels = [(0,0), (0,0), (0,0), (0,0)]
-allTargets = {} #Dictionaries https://stackoverflow.com/questions/10487278/how-to-declare-and-add-items-to-an-array-in-python
-target = {}
+# Camera Field Of View in degrees. JeVois = 65.0, Lifecam HD-300 = 68.5, Cinema = 73.5
+FOV = 65.0
 
-imageWidth = 320
-imageHeight = 240
-
-
-# Values to use in target distance calculation
-Ta = 12 #Actual target width in inches. This variable is never used. Why is this here?
-FOV = 55.0	#Camera View in degrees. JeVois = 65.0, Lifecam HD-300 = 68.5, Cinema = 73.5
-# FOV was 55. Even though documentation shows 65.0 for a JeVois A33 (http://jevois.org/doc/Hardware.html)
-
+# Determines if target data is sent or not. Controlled by serial commands SEND and STOP (see parseSerial(cmd))
 sendTargetData = True
 
-##Threshold values for Trackbars, These are pulled from the CalFile
+# Threshold values for Trackbars. These were loaded from a calibration file, but our JeVois OS kept changing permissions.
+# CowTrackerCal will write a calibration file. These values should be stored as constants as we have done below.
+# CowTrackerCal also has changes in how it writes these values, so the below code will not work
 '''
 rawCalFile = open ('data/cowtracker/calibration.txt', 'r')
 readCalFile = rawCalFile.read()
@@ -42,10 +49,7 @@ sl = float(CalFile[10])
 rawCalFile.close() #Close calibration file
 '''
 
-# Use the above during testing. The Calibration file will spontaneously have bad permissions, so during competitions the
-# values from the CalFile should be put into the below variables and used instead
-
-#CalFile keeps getting reset... just set these
+# Constant calibration files that are manually copied from the calibration file
 uh = 95
 lh = 60
 us = 255
@@ -58,6 +62,8 @@ ap = 9
 ar = 100
 sl = 1.0
 
+# ###################################################################################################
+## Stores data from targets
 class TargetObject:
 	def __init__(self, _xPos, _yPos, _area):
 		self.xPos = _xPos
@@ -71,16 +77,14 @@ class CowTrackerDebug:
 		# Instantiate a JeVois Timer to measure our processing framerate:
 		self.timer = jevois.Timer("Catbox", 100, jevois.LOG_INFO)
 		
-	## Process function without USB output
+	# ###################################################################################################
+	## Process function without USB output. This the STREAM version, so this function will simply not run.
 	def processNoUSB(self, inframe):
 		jevois.LINFO("CowTrackerDebug should not be used without USB output!")
 
 	# ###################################################################################################
 	## Process function with USB output
 	def process(self, inframe, outframe):
-		# Initialize global variables
-		global imageHeight
-		global imageWidth
 
 		# Get the next camera image (may block until it is captured) and here convert it to OpenCV BGR by default. If
 		# you need a grayscale image instead, just use getCvGRAY() instead of getCvBGR(). Also supported are getCvRGB()
@@ -88,136 +92,116 @@ class CowTrackerDebug:
 		
 		inimg = inframe.getCvBGR()
 		
-		normalizedY = 0
-		normalizedZ = 0
-		
 		# Start measuring image processing time (NOTE: does not account for input conversion time):
 		self.timer.start()
 		myTimer = time.time()
-		#Convert the image from BGR(RGB) to HSV
+
+		# Convert the image from BGR(RGB) to HSV
 		hsvImage = cv2.cvtColor( inimg, cv2.COLOR_BGR2HSV)
 		
-		## Threshold HSV Image to find specific color
+		# Threshold HSV Image to find specific color
 		binImage = cv2.inRange(hsvImage, (lh, ls, lv), (uh, us, uv))
 		
 		# Erode image to remove noise if necessary.
 		binImage = cv2.erode(binImage, None, iterations = er)
-		#Dilate image to fill in gaps
+
+		# Dilate image to fill in gaps
 		binImage = cv2.dilate(binImage, None, iterations = dl)
 		
-		##Finds contours (like finding edges/sides), 'contours' is what we are after
-		#im2 is old, don't use
-		
+		# Finds contours (like finding edges/sides). findContours returns hierarchy as well, but that won't be used.
 		contours, hierarchy = cv2.findContours(binImage, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_TC89_KCOS)
 		
-		##arrays to will hold the good/bad polygons
-		
+		# TargetObjects holds an array of TargetObjects.
 		targetObjects = []
-		squares = []
-		badPolys = []
 
-		## Parse through contours to find allTargets
+		# Parse through contours to find valid targets
 		for index in range(len(contours)):
 			c = contours[index]
 			if (contours != None) and (len(contours) > 0):
+				# Solidity calculation
 				cnt_area = cv2.contourArea(c)
 				hull = cv2.convexHull(c , 1)
-				hull_area = cv2.contourArea(hull)  #Used in Solidity calculation
+				hull_area = cv2.contourArea(hull)
 				p = cv2.approxPolyDP(hull, ap, 1)
 				
 				if (cv2.isContourConvex(p) != False) and (len(p) == 4) and (cv2.contourArea(p) >= ar):
 					filled = cnt_area/hull_area
 					if filled <= sl:
 						
+						# Find center point of the bounding box
 						br = cv2.boundingRect(p)
 						x = br[0] + (br[2]/2)
 						y = br[1] + (br[3]/2)
 						
+						# Add the target to the array
+						targetObjects.append(TargetObject(x, y, cv2.contourArea(c)))
+
+						# Calculate points for drawing contours. 
+						# Used only in the CowTrackerDebug.
 						rect = cv2.minAreaRect(p)
 						box = cv2.boxPoints(rect)
 						box = np.int0(box)
-						
 						cv2.drawContours(inimg,[box],0,(255,0,0),1)
-						cv2.putText(inimg, str(index), (int(x), int(y)), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,0,255),1, cv2.LINE_AA)								
-						targetObjects.append(TargetObject(x, y, cv2.contourArea(c)))
-						squares.append(p)
-						
-				else:
-					badPolys.append(p)
-		
-		##BoundingRectangles are just CvRectangles, so they store data as (x, y, width, height)
-		##Calculate and draw the center of the target based on the BoundingRect
+						cv2.putText(inimg, str(index), (int(x), int(y)), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,0,255),1, cv2.LINE_AA)
 
-		#If the width is bigger (minAreaRect[1][0]), then it's a left
-		#If the height is bigger (minAreaRect[1][1]), then it's a right
+		outimg = inimg
+		imgHeight, imgWidth, imgChannels = outimg.shape
 
-		#processedSquares = []
-		#squares2 = squares
-		#middleMostPair = None
-		#middleMostCentroid = (0, 0)
-
-		tallestTarget = TargetObject(imageWidth, imageHeight, 0)
+		# Set a tallest target so that it is impossible for another target to be shorter
+		shortestTarget = TargetObject(imgWidth, imgHeight, 0)
 
 		# Only perform work if there are any targets visible
-
-		if len(squares) > 0:
+		if len(targetObjects) > 0:
 
 			# Find the tallest target as we are not going to aim for the low power port
 			for targetObject in targetObjects:
+
 				# y = 0 is at the top of the camera. So the higher the y position, the lower the object is
-				if targetObject.yPos < tallestTarget.yPos:
-					tallestTarget = targetObject
+				if targetObject.yPos < shortestTarget.yPos:
+					shortestTarget = targetObject
 			
-			# Draw debug the highest target
-			if tallestTarget.area != 0:
-				cv2.circle(inimg, (int(tallestTarget.xPos), int(tallestTarget.yPos)), 10, (0,255,255), 1)
+			# Draw debug the highest target.
+			# Used only in CowTrackerDebug
+			if shortestTarget.area != 0:
+				cv2.circle(inimg, (int(shortestTarget.xPos), int(shortestTarget.yPos)), 10, (0,255,255), 1)
 
+		
+		
+		
 		# Normalize coordinates such that 0.5 is center, and 0 & 1 are edges
-
 		normalizedY = 0
 		normalizedZ = 0
-		
-		if tallestTarget.area != 0:
-			focalLength = imageWidth/(2 * math.tan(math.radians(FOV)/2))
-			normalizedY = -(tallestTarget.xPos - (imageWidth/2 - 0.5)) / focalLength
-			normalizedZ = (tallestTarget.yPos - (imageHeight/2 - 0.5)) / focalLength
 
-		'''
-		if not middleMostCentroid == (0, 0):
-			focalLength = imageWidth/(2 * math.tan(math.radians(FOV)/2))
-			normalizedY = -(middleMostCentroid[0] - (imageWidth/2 - 0.5)) / focalLength
-			normalizedZ = (middleMostCentroid[1] - (imageHeight/2 - 0.5)) / focalLength
-		'''
-		
-		outimg = inimg
-		
-		# Write frames/s info from our timer into the edge map (NOTE: does not account for output conversion time):
+		# Make sure that somehow, the highest target wasn't at the bottom
+		if shortestTarget.area != 0:
+			focalLength = imgWidth/(2 * math.tan(math.radians(FOV)/2))
+			normalizedY = -(shortestTarget.xPos - (imgWidth/2 - 0.5)) / focalLength
+			normalizedZ = (shortestTarget.yPos - (imgHeight/2 - 0.5)) / focalLength
+
+		# Calculate time spent calculating cause that's funny (NOTE: does not account for output conversion time)
+		# Used only in CowTrackerDebug
 		fps = self.timer.stop()
-		height, width, channels = outimg.shape # if outimg is grayscale, change to: height, width = outimg.shape
-		pixels = {"DeltaTime" : str((time.time()-myTimer)), "Y" : str(normalizedY), "Z" : str(normalizedZ)}
-		#jevois.sendSerial(json.dumps(pixels))
 		cv2.putText(outimg, fps, (3, height - 6), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 1, cv2.LINE_AA)
 
+		# Build JSON string and send it out the serial port if we are sending data
 		global sendTargetData
 		if sendTargetData:
+			pixels = {"DeltaTime" : str((time.time()-myTimer)), "Y" : str(normalizedY), "Z" : str(normalizedZ)}
 			jevois.sendSerial(json.dumps(pixels))
-		
 		
 		# Convert our BGR output image to video output format and send to host over USB. If your output image is not
 		# BGR, you can use sendCvGRAY(), sendCvRGB(), or sendCvRGBA() as appropriate:
-		# json_output = json.dumps(allTargets)
-		
-		#jevois.sendSerial(json_output)
+		# Used only in CowTrackerDebug
 		outframe.sendCvBGR(outimg,50)
 
 	# ###################################################################################################
-	## Parse a serial command forwarded to us by the JeVois Engine, return a string
+	## Parse a serial command forwarded to us by the JeVois Engine, return a string response
 	def parseSerial(self, cmd):
 		# cmd is the raw string that was sent over the serial
 		cmd = cmd.upper()
 
+		# Change the sendTargetData depending on the serial command received
 		global sendTargetData
-
 		if cmd == "SEND":
 			sendTargetData = True
 			return "SENDING DATA STREAM TO ROBORIO"
@@ -225,5 +209,6 @@ class CowTrackerDebug:
 			sendTargetData = False
 			return "STOPPING DATA STREAM"
 
+		# If the serial command is not handled by this module, let the JeVois handle the command
 		return "NOT A MODULE COMMAND"
 
