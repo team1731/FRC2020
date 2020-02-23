@@ -162,14 +162,20 @@ public final class Constants {
         public static final double kJoystickDeadband = 0.2;
         public static final int kClimbJoystickInvert = -1;
 
+        public static final double kClimbExSafeEncValue = 1000;
         // Digital Input/Outputs
         public static int kLowSequencer = 0;
         public static int kMidSequencer = 1;
         public static int kHighSequencer = 2;
 
-        public static int kArduinoLed0 = 7;
-        public static int kArduinoLed1 = 8;
-        public static int kArduinoLed2 = 9;
+        public static int kHiCylinder = 3;
+        public static int kLoCylinder = 4;
+        public static int kClimbExtend = 5;
+        public static int kClimbRetract = 6;
+
+        //public static int kArduinoLed0 = 7;
+        //public static int kArduinoLed1 = 8;
+        //public static int kArduinoLed2 = 9;
 
         // Arduino Colors/Options
         public static int kArduino_TEAM  = 0;

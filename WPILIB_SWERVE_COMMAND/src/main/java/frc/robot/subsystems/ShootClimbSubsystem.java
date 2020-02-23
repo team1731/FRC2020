@@ -15,7 +15,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 import frc.robot.Constants;
 import frc.robot.Constants.OpConstants;
@@ -30,6 +32,11 @@ public class ShootClimbSubsystem extends SubsystemBase {
   //private final PWMTalonFX mTalonShoot;
   private final TalonFX mTalonShoot1;
   private final TalonFX mTalonShoot2;
+  private final DigitalInput sHiCylinder;
+  private final DigitalInput sLoCylinder;
+  private final DigitalInput sClimbExtend;
+  private final DigitalInput sClimbRetract;
+
   
   /**
    * Creates a new ExampleSubsystem.
@@ -43,6 +50,11 @@ public class ShootClimbSubsystem extends SubsystemBase {
     //mTalonShoot = new PWMTalonFX(OpConstants.kMotorPWMShoot1);
     mTalonShoot1 = new TalonFX(OpConstants.kMotorCANShoot1);
     mTalonShoot2 = new TalonFX(OpConstants.kMotorCANShoot2);
+
+    sHiCylinder = new DigitalInput(OpConstants.kHiCylinder);
+    sLoCylinder = new DigitalInput(OpConstants.kLoCylinder);
+    sClimbExtend = new DigitalInput(OpConstants.kClimbExtend);
+    sClimbRetract = new DigitalInput(OpConstants.kClimbRetract);
 
     mTalonShoot1.configFactoryDefault();
     mTalonShoot2.configFactoryDefault();
@@ -157,9 +169,8 @@ public class ShootClimbSubsystem extends SubsystemBase {
   public void setClimber(double percentOut) {
     double output = percentOut;
     // if within deadband then set output to Zero
-    if (Math.abs(output) < OpConstants.kJoystickDeadband) {
+    if (output == 0) {
       shootMode();
-      output = 0;
     } else {
       climbMode();
     }
@@ -170,25 +181,49 @@ public class ShootClimbSubsystem extends SubsystemBase {
 
 
   public void shootMode() {
-    mShootClimbSolenoid.set(DoubleSolenoid.Value.kForward);
+    mShootClimbSolenoid.set(DoubleSolenoid.Value.kForward);//"clutch"
+    mTalonShoot1.setNeutralMode(NeutralMode.Coast);
+    mTalonShoot2.setNeutralMode(NeutralMode.Coast);
   }
 
   public void climbMode() {
-    mShootClimbSolenoid.set(DoubleSolenoid.Value.kReverse);
+    mShootClimbSolenoid.set(DoubleSolenoid.Value.kReverse); //"clutch"
+    mTalonShoot1.setNeutralMode(NeutralMode.Brake);
+    mTalonShoot2.setNeutralMode(NeutralMode.Brake);
   }
 
   public void climbExtend() {
     // if (modeClimbing) {
-    mClimberSolenoid.set(DoubleSolenoid.Value.kForward);
+    mClimberSolenoid.set(DoubleSolenoid.Value.kForward); // "raise climber arm"
     // }
   }
 
   public void climbRetract() {
     // if (modeClimbing) {
-    mClimberSolenoid.set(DoubleSolenoid.Value.kReverse);
+    mClimberSolenoid.set(DoubleSolenoid.Value.kReverse); // "lower climber arm"
     // }
   }
 
+  public boolean isHiCylinderSensor() {
+    return sHiCylinder.get();
+  }
+  public boolean isLoCylinderSensor() {
+    return sLoCylinder.get();
+  }
+  public boolean isClimbExtendSensor() {
+    return sClimbExtend.get();
+  }
+  public boolean isClimbRetractSensor() {
+    return sClimbRetract.get();
+  }
+
+  public void resetClimbEncoder() {
+    mTalonShoot1.setSelectedSensorPosition(0);
+  }
+
+  public double getClimbEncoderValue() {
+    return mTalonShoot1.getSelectedSensorPosition();
+  }
 }
 
 /*

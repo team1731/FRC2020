@@ -245,6 +245,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("HighSensor",  m_sequencer.highSensorHasBall());
     SmartDashboard.putNumber("PowerCellCount",  (int)m_sequencer.getPowerCellCount());
     SmartDashboard.putString("Intake State",  m_intake.getIntakeState());
+    SmartDashboard.putNumber("Climb Encoder", m_shootclimb.getClimbEncoderValue());
 
     switch((int)m_sequencer.getPowerCellCount()){
       case 1: m_ledstring.option(LedOption.BALLONE); break;

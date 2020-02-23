@@ -22,6 +22,14 @@ public class ClimbingCommand extends CommandBase {
   
   private final DoubleSupplier climb;
 
+  boolean isHiCy;
+  boolean isLoCy;
+  boolean isClimbEx;
+  boolean isClimbRt;
+
+  boolean isCyExtending;
+  boolean isCyRetracting;
+
   /**
    * Creates a new ExampleCommand.
    *
@@ -40,12 +48,46 @@ public class ClimbingCommand extends CommandBase {
   @Override
   public void initialize() {
     //m_ShootClimbSubsystem.disable(); Can't call this all the time it will make it ineffective
+    isCyExtending = false;
+    isCyRetracting = true;
+    m_ShootClimbSubsystem.resetClimbEncoder();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_ShootClimbSubsystem.setClimber(climb.getAsDouble() * OpConstants.kClimbJoystickInvert);
+
+    isHiCy =  m_ShootClimbSubsystem.isHiCylinderSensor();
+    isLoCy =  m_ShootClimbSubsystem.isLoCylinderSensor();
+    isClimbEx = m_ShootClimbSubsystem.isClimbExtendSensor();
+    isClimbRt = m_ShootClimbSubsystem.isClimbRetractSensor();
+
+    double climbPercent = climb.getAsDouble();
+    // Joystick deadband limits
+    if (Math.abs(climbPercent) < OpConstants.kJoystickDeadband) {
+      climbPercent = 0;
+    }
+    if (climbPercent > 0 && !isCyExtending) {
+      m_ShootClimbSubsystem.climbExtend();
+      isCyExtending = true;
+      isCyRetracting = false;
+    } else if (climbPercent < 0 && !isCyRetracting) {
+      m_ShootClimbSubsystem.climbRetract();
+      isCyRetracting = true;
+      isCyExtending = false;
+    }
+        //EXTENDING    NOT REACHED LIMIT    RETRACTING     NOT REACHED LIMIT
+    if ((isCyExtending && !isClimbEx && (
+             (m_ShootClimbSubsystem.getClimbEncoderValue() < OpConstants.kClimbExSafeEncValue) 
+               || isHiCy) ) 
+         ||
+        (isCyRetracting && !isClimbRt)) { //TODO: how to use isLoCy ????
+      m_ShootClimbSubsystem.setClimber(climbPercent * OpConstants.kClimbJoystickInvert);
+    } else {
+      m_ShootClimbSubsystem.setClimber(0);
+    }
+
+  
   }
 
   // Called once the command ends or is interrupted.
