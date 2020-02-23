@@ -111,7 +111,7 @@ public class Robot extends TimedRobot {
     m_colorwheel.init();
     m_ledstring.init();
 
-    SmartDashboard.putString("BALL COUNT", "3"); // How much ammo we start with
+    SmartDashboard.putString("INIT CELL COUNT", "3"); // How much ammo we start with
 
     SmartDashboard.putString("AUTO CODE", "M1"); // XNDD (X=L,M,R,F) (N=1,2,3,4) (DD=0-99 [optional])
                                                  // XN = one of Mark and Chuck's 10 auto modes plus new "forward" mode F
@@ -178,7 +178,7 @@ public class Robot extends TimedRobot {
     m_ledstring.option(LedOption.RAINBOW);
 
     m_robotDrive.resumeCSVWriter();
-    m_sequencer.setPowerCellCount((int) SmartDashboard.getNumber("BALL COUNT", 3));
+    m_sequencer.setPowerCellCount((int) SmartDashboard.getNumber("INIT CELL COUNT", 3));
 
     if(m_vision != null){
       //m_vision.StartCameraDataStream();

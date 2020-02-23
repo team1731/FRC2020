@@ -54,7 +54,7 @@ public class SequencerSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // Decrementing ball count
+    // Incrementing ball count
     if (lowSensorHasBall()) {
       if (!mLastLowHasBall) {
         if (mPowerCellCount <= OpConstants.kMaxPowerCells) {
