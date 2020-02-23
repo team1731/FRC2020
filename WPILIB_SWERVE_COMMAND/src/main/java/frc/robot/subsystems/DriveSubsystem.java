@@ -195,6 +195,7 @@ public class DriveSubsystem extends SubsystemBase {
       rotationalOutput = headingController.calculate(getHeading(), getStickAngle(rightX, rightY));
     } else if(stickControlledHeading && Math.abs(rightX) <= DriveConstants.kMinRightStickThreshold && Math.abs(rightY) <= DriveConstants.kMinRightStickThreshold) {
       rotationalOutput = 0;
+      headingController.reset(rotationalOutput);
     }
 
     //Replaced rotAdjusted with headingControllerOutput
@@ -203,8 +204,7 @@ public class DriveSubsystem extends SubsystemBase {
           xSpeedAdjusted, ySpeedAdjusted, rotationalOutput, getAngle())
             : new ChassisSpeeds(xSpeedAdjusted, ySpeedAdjusted, rotationalOutput)
     );
-    SwerveDriveKinematics.normalizeWheelSpeeds(swerveModuleStates,
-                                               DriveConstants.kMaxSpeedMetersPerSecond);
+    SwerveDriveKinematics.normalizeWheelSpeeds(swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
     m_frontLeft.setDesiredState(swerveModuleStates[0]);    // frontLeft, frontRight, rearLeft, rearRight
     m_frontRight.setDesiredState(swerveModuleStates[1]);
     m_rearLeft.setDesiredState(swerveModuleStates[2]);
