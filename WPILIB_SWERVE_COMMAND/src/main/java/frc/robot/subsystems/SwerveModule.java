@@ -197,6 +197,9 @@ public double getDriveEncoderPosition(){
       m_turningPIDController.setReference((azimuthPosition + azimuthError), ControlType.kSmartMotion);
       m_drivePIDController.setReference(drive, ControlType.kVelocity);
     }
+
+    SmartDashboard.putNumber("RelativeEncoder"+id, m_turningEncoder.getPosition());
+    SmartDashboard.putNumber("absOffset"+id, offsetFromAbsoluteEncoder);
   }
 
   /**

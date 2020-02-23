@@ -117,7 +117,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
   
   public void enableShooting() {
     // this is for Autonomous
-    this.spinShooter(SmartDashboard.getNumber("ShootingPercent", 0.5));
+    this.spinShooter(0.75);
     hoodExtend();
   }
   

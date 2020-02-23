@@ -113,7 +113,7 @@ public class Robot extends TimedRobot {
 
     SmartDashboard.putString("INIT CELL COUNT", "3"); // How much ammo we start with
 
-    SmartDashboard.putString("AUTO CODE", "M1"); // XNDD (X=L,M,R,F) (N=1,2,3,4) (DD=0-99 [optional])
+    SmartDashboard.putString("AUTO CODE", "L1"); // XNDD (X=L,M,R,F) (N=1,2,3,4) (DD=0-99 [optional])
                                                  // XN = one of Mark and Chuck's 10 auto modes plus new "forward" mode F
                                                  //      (and if it turns out we need a backward mode, B, we will add it)
                                                  // DD = up to 2 digits (0-9) signifying 2 possible delays (in seconds)
@@ -151,7 +151,7 @@ public class Robot extends TimedRobot {
       SmartDashboard.putNumber("leftRearAbsEncoder", leftRearAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
     if(rightRearAbsEncoder != null)
       SmartDashboard.putNumber("rightRearAbsEncoder", rightRearAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
-  }
+    }
 
   /**
    * This function is called once each time the robot enters Disabled mode.
@@ -167,6 +167,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
     m_ledstring.option(LedOption.TEAM);
+    m_robotDrive.resetEncoders();
    }
 
   /**
