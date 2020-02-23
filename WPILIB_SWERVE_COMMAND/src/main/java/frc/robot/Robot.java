@@ -19,6 +19,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.JevoisVisionSubsystem;
 import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.OpConstants.LedOption;
 import frc.robot.autonomous._NamedAutoMode;
 import frc.robot.autonomous._NotImplementedProperlyException;
 import frc.robot.subsystems.ColorWheelSubsystem;
@@ -71,15 +72,15 @@ public class Robot extends TimedRobot {
     leftRearAbsEncoder = new AnalogInput(2);
     rightRearAbsEncoder = new AnalogInput(3);
 
+    m_ledstring = new LedStringSubsystem();
     m_robotDrive = new DriveSubsystem(leftFrontAbsEncoder, rightFrontAbsEncoder, leftRearAbsEncoder, rightRearAbsEncoder);
     m_targeting = new TargetingSubsystem();
     m_vision = JevoisVisionSubsystem.getInstance(); //new JevoisVisionSubsystem();
     m_vision.setDriveSubsystem(m_robotDrive);
-    m_intake = new IntakeSubsystem();
-    m_sequencer = new SequencerSubsystem();
-    m_shootclimb = new ShootClimbSubsystem();
+    m_intake = new IntakeSubsystem(m_ledstring);
+    m_sequencer = new SequencerSubsystem(m_ledstring);
+    m_shootclimb = new ShootClimbSubsystem(m_ledstring);
     m_colorwheel = new ColorWheelSubsystem();
-    m_ledstring = new LedStringSubsystem();
 
     m_robotDrive.zeroHeading();
 
@@ -87,7 +88,7 @@ public class Robot extends TimedRobot {
     // and put our
     // autonomous chooser on the dashboard.
     try{
-      m_robotContainer = new RobotContainer(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_targeting, m_vision);
+      m_robotContainer = new RobotContainer(m_ledstring, m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_targeting, m_vision);
     }
     catch(_NotImplementedProperlyException e){
       System.err.println("UNABLE TO INITIALILZE AUTONOMOUS -- ABORTING -- FIX YOUR SOFTWARE!!! ==> " + e.getMessage());
@@ -158,12 +159,14 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     m_robotDrive.suspendCSVWriter();
-    m_vision.StopCameraDataStream();
+    if(m_vision != null){
+      m_vision.StopCameraDataStream();
+    }
   }
 
   @Override
   public void disabledPeriodic() {
-
+    m_ledstring.option(LedOption.TEAM);
    }
 
   /**
@@ -172,10 +175,14 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    m_ledstring.option(LedOption.RAINBOW);
+
     m_robotDrive.resumeCSVWriter();
     m_sequencer.setPowerCellCount((int) SmartDashboard.getNumber("BALL COUNT", 3));
 
-    m_vision.StartCameraDataStream();
+    if(m_vision != null){
+      m_vision.StartCameraDataStream();
+    }
 
     String DEFAULT_AUTO_CODE = "T4"; // DEFAULT AUTO MODE if Drive Team is unable to set the mode via Dashboard
                                      // NOTE: also useful if trying to run in the simulator!
@@ -241,6 +248,15 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("HighSensor",  m_sequencer.highSensorHasBall());
     SmartDashboard.putNumber("PowerCellCount",  (int)m_sequencer.getPowerCellCount());
     SmartDashboard.putString("Intake State",  m_intake.getIntakeState());
+    SmartDashboard.putNumber("Climb Encoder", m_shootclimb.getClimbEncoderValue());
+
+    switch((int)m_sequencer.getPowerCellCount()){
+      case 1: m_ledstring.option(LedOption.BALLONE); break;
+      case 2: m_ledstring.option(LedOption.BALLTWO); break;
+      case 3: m_ledstring.option(LedOption.BALLTHREE); break;
+      case 4: m_ledstring.option(LedOption.BALLFOUR); break;
+      case 5: m_ledstring.option(LedOption.GREEN); break;
+    }
   }
 
   @Override
@@ -256,7 +272,8 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
     double shootMotorPercent_0_to_1 = SmartDashboard.getNumber("Shoot Motor % (0-1)", 0.5);
-    m_shootclimb.enableShooting(shootMotorPercent_0_to_1);
+    m_shootclimb.hoodExtend();
+    m_shootclimb.spinShooter(shootMotorPercent_0_to_1);
     SmartDashboard.putNumber("Shoot Motor 1 Vel", m_shootclimb.getShootMotor1Velocity());
   }
 }
