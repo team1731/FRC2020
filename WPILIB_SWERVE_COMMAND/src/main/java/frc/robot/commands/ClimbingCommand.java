@@ -49,18 +49,19 @@ public class ClimbingCommand extends CommandBase {
   public void initialize() {
     //m_ShootClimbSubsystem.disable(); Can't call this all the time it will make it ineffective
     isCyExtending = false;
-    isCyRetracting = true;
+    isCyRetracting = false;
     m_ShootClimbSubsystem.resetClimbEncoder();
+    m_ShootClimbSubsystem.climbRetract();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
 
-    isHiCy =  m_ShootClimbSubsystem.isHiCylinderSensor();
-    isLoCy =  m_ShootClimbSubsystem.isLoCylinderSensor();
-    isClimbEx = m_ShootClimbSubsystem.isClimbExtendSensor();
-    isClimbRt = m_ShootClimbSubsystem.isClimbRetractSensor();
+    isHiCy = false; //m_ShootClimbSubsystem.isHiCylinderSensor();
+    isLoCy =  true; //m_ShootClimbSubsystem.isLoCylinderSensor();
+    isClimbEx = false; //m_ShootClimbSubsystem.isClimbExtendSensor();
+    isClimbRt = false; //m_ShootClimbSubsystem.isClimbRetractSensor();
 
     double climbPercent = climb.getAsDouble();
     // Joystick deadband limits

@@ -147,13 +147,13 @@ public class RobotContainer {
       .whenActive(new RotToPowerPortCommand(m_vision, m_robotDrive, m_driverController));
 
     new JoystickButton(m_operatorController, 8) // convert -1 to +1 TO 0 to 1
-      .whenActive(() -> m_shootclimb.spinShooter((m_operatorController.getRawAxis(7)+1)/2))
+      .whileActiveContinuous(() -> m_shootclimb.spinShooter((m_operatorController.getRawAxis(4)+1)/2))
       .whenInactive(() -> m_shootclimb.stopShooting());
       //.whenActive(new InstantCommand(m_shootclimb::enableShooting, m_shootclimb))
       //.whileActiveContinuous(new JoystickShooter(m_shootclimb, () -> m_operatorController.getRawAxis(4)), false
       //.whileActiveContinuous(new ShootSeqCommand(m_shootclimb, m_sequencer, () -> m_operatorController.getRawAxis(4)), false
     //);
-    new JoystickButton(m_operatorController, 12).whileActiveContinuous(
+    new JoystickButton(m_operatorController, 10).whileActiveContinuous(
       new ShootSeqCommand(m_ledstring, m_shootclimb ,m_sequencer), true
     );
 

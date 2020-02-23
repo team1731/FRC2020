@@ -158,11 +158,11 @@ public final class Constants {
         public static final int kShooterVictor = 3;
         public static final int kShootMinVelocity = 1000;
 
-        public static final double kClimbMaxPercent = 0.3;
+        public static final double kClimbMaxPercent = 1; // 0.3;
         public static final double kJoystickDeadband = 0.2;
         public static final int kClimbJoystickInvert = -1;
 
-        public static final double kClimbExSafeEncValue = 1000;
+        public static final double kClimbExSafeEncValue = 10000;
         // Digital Input/Outputs
         public static int kLowSequencer = 0;
         public static int kMidSequencer = 1;
@@ -253,7 +253,7 @@ public final class Constants {
          * kF: 1023 represents output value to Talon at 100%, 7200 represents Velocity units at 100% output
          * 
          * 	                                    		          	  kP   kI   kD   kF             Iz    PeakOut */
-        public final static Gains kGains_Velocity = new Gains( 8.0, 0, 0, .07,  300,  1.00);
+        public final static Gains kGains_Velocity = new Gains( 1.0, 0, 0, .07,  300,  1.00);
         ///// End TalonFX
     }
 

@@ -136,6 +136,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("bdltargetvelocity", targetVelocity_UnitsPer100ms);
     SmartDashboard.putNumber("talon1Velocity", mTalonShoot1.getSelectedSensorVelocity());
     SmartDashboard.putNumber("talon1Velocity2", mTalonShoot2.getSelectedSensorVelocity());
+    hoodExtend();
   }
 
   //public void enableShooting(double shootMotorPercent_0_to_1) {
@@ -182,25 +183,25 @@ public class ShootClimbSubsystem extends SubsystemBase {
 
   public void shootMode() {
     mShootClimbSolenoid.set(DoubleSolenoid.Value.kForward);//"clutch"
-    mTalonShoot1.setNeutralMode(NeutralMode.Coast);
-    mTalonShoot2.setNeutralMode(NeutralMode.Coast);
+    //mTalonShoot1.setNeutralMode(NeutralMode.Coast);
+    //mTalonShoot2.setNeutralMode(NeutralMode.Coast);
   }
 
   public void climbMode() {
     mShootClimbSolenoid.set(DoubleSolenoid.Value.kReverse); //"clutch"
-    mTalonShoot1.setNeutralMode(NeutralMode.Brake);
-    mTalonShoot2.setNeutralMode(NeutralMode.Brake);
+    //mTalonShoot1.setNeutralMode(NeutralMode.Brake);
+    //mTalonShoot2.setNeutralMode(NeutralMode.Brake);
   }
 
   public void climbExtend() {
     // if (modeClimbing) {
-    mClimberSolenoid.set(DoubleSolenoid.Value.kForward); // "raise climber arm"
+    mClimberSolenoid.set(DoubleSolenoid.Value.kReverse); // "raise climber arm"
     // }
   }
 
   public void climbRetract() {
     // if (modeClimbing) {
-    mClimberSolenoid.set(DoubleSolenoid.Value.kReverse); // "lower climber arm"
+    mClimberSolenoid.set(DoubleSolenoid.Value.kForward); // "lower climber arm"
     // }
   }
 

@@ -453,7 +453,7 @@ public class LedStringSubsystem extends SubsystemBase {
         climb();
         break;
       case SHOOT:
-        shoot();
+        //shoot();
         break;
       case INTAKE:
         intake();

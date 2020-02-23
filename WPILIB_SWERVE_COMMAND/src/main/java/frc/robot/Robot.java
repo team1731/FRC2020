@@ -75,8 +75,8 @@ public class Robot extends TimedRobot {
     m_ledstring = new LedStringSubsystem();
     m_robotDrive = new DriveSubsystem(leftFrontAbsEncoder, rightFrontAbsEncoder, leftRearAbsEncoder, rightRearAbsEncoder);
     m_targeting = new TargetingSubsystem();
-    m_vision = JevoisVisionSubsystem.getInstance(); //new JevoisVisionSubsystem();
-    m_vision.setDriveSubsystem(m_robotDrive);
+    //m_vision = JevoisVisionSubsystem.getInstance(); //new JevoisVisionSubsystem();
+    //m_vision.setDriveSubsystem(m_robotDrive);
     m_intake = new IntakeSubsystem(m_ledstring);
     m_sequencer = new SequencerSubsystem(m_ledstring);
     m_shootclimb = new ShootClimbSubsystem(m_ledstring);
@@ -160,7 +160,7 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
     m_robotDrive.suspendCSVWriter();
     if(m_vision != null){
-      m_vision.StopCameraDataStream();
+      //m_vision.StopCameraDataStream();
     }
   }
 
@@ -181,7 +181,7 @@ public class Robot extends TimedRobot {
     m_sequencer.setPowerCellCount((int) SmartDashboard.getNumber("BALL COUNT", 3));
 
     if(m_vision != null){
-      m_vision.StartCameraDataStream();
+      //m_vision.StartCameraDataStream();
     }
 
     String DEFAULT_AUTO_CODE = "T4"; // DEFAULT AUTO MODE if Drive Team is unable to set the mode via Dashboard
@@ -225,7 +225,7 @@ public class Robot extends TimedRobot {
     m_sequencer.setPowerCellCount((int) SmartDashboard.getNumber("CELL COUNT", 3));
     m_robotDrive.resumeCSVWriter();
 
-    m_vision.StartCameraDataStream();
+    //m_vision.StartCameraDataStream();
 
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
