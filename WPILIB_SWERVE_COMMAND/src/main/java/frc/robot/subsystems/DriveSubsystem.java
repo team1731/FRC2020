@@ -84,6 +84,8 @@ public class DriveSubsystem extends SubsystemBase {
     this.rightFrontAbsEncoder = rightFrontAbsEncoder;
     this.leftRearAbsEncoder = leftRearAbsEncoder;
     this.rightRearAbsEncoder = rightRearAbsEncoder;
+    headingController.setTolerance(DriveConstants.kTurnToleranceDeg, DriveConstants.kTurnRateToleranceDegPerS);
+    headingController.enableContinuousInput(-180, 180);
     mCSVWriter = new ReflectingCSVWriter<>(this.getName(), DebugOutput.class);
   }
 
@@ -109,10 +111,8 @@ public class DriveSubsystem extends SubsystemBase {
   public void periodic() {
     resumeCSVWriter();
 
-    headingController.setTolerance(DriveConstants.kTurnToleranceDeg, DriveConstants.kTurnRateToleranceDegPerS);
-    headingController.enableContinuousInput(-180, 180);
     SmartDashboard.putNumber("headingController In", getHeading());
-    headingControllerOutput = headingController.calculate(MathUtil.clamp(getHeading(), -180, 180));
+    //headingControllerOutput = headingController.calculate(MathUtil.clamp(getHeading(), -180, 180));
     SmartDashboard.putNumber("headingController Out", headingControllerOutput);
 
     // Update the odometry in the periodic block
@@ -192,10 +192,10 @@ public class DriveSubsystem extends SubsystemBase {
 
     //If the stick is released, don't change the rotation
     if(stickControlledHeading && (Math.abs(rightX) > DriveConstants.kMinRightStickThreshold || Math.abs(rightY) > DriveConstants.kMinRightStickThreshold)){
-      double rot = getStickAngle(rightX, rightY);
-      headingController.setGoal(rot);
+      rotationalOutput = headingController.calculate(getHeading(), getStickAngle(rightX, rightY));
     } else if(stickControlledHeading && Math.abs(rightX) <= DriveConstants.kMinRightStickThreshold && Math.abs(rightY) <= DriveConstants.kMinRightStickThreshold) {
       rotationalOutput = 0;
+      headingController.reset(rotationalOutput);
     }
 
     //Replaced rotAdjusted with headingControllerOutput
@@ -204,8 +204,7 @@ public class DriveSubsystem extends SubsystemBase {
           xSpeedAdjusted, ySpeedAdjusted, rotationalOutput, getAngle())
             : new ChassisSpeeds(xSpeedAdjusted, ySpeedAdjusted, rotationalOutput)
     );
-    SwerveDriveKinematics.normalizeWheelSpeeds(swerveModuleStates,
-                                               DriveConstants.kMaxSpeedMetersPerSecond);
+    SwerveDriveKinematics.normalizeWheelSpeeds(swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
     m_frontLeft.setDesiredState(swerveModuleStates[0]);    // frontLeft, frontRight, rearLeft, rearRight
     m_frontRight.setDesiredState(swerveModuleStates[1]);
     m_rearLeft.setDesiredState(swerveModuleStates[2]);
