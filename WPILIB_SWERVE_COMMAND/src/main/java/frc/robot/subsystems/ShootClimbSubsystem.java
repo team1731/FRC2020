@@ -36,6 +36,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
   private final DigitalInput sLoCylinder;
   private final DigitalInput sClimbExtend;
   private final DigitalInput sClimbRetract;
+  private boolean isHoodExtended;
 
   
   /**
@@ -95,6 +96,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
 		mTalonShoot2.config_kD(OpConstants.kPIDLoopIdx, OpConstants.kGains_Velocity.kD, OpConstants.kTimeoutMs);
 
     shootMode();    
+    hoodRetract();
 
     SmartDashboard.putNumber("ShootingPercent", 0.5);
   }
@@ -136,7 +138,9 @@ public class ShootClimbSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("bdltargetvelocity", targetVelocity_UnitsPer100ms);
     SmartDashboard.putNumber("talon1Velocity", mTalonShoot1.getSelectedSensorVelocity());
     SmartDashboard.putNumber("talon1Velocity2", mTalonShoot2.getSelectedSensorVelocity());
-    hoodExtend();
+    if (!isHoodExtended) {
+      hoodExtend();
+    }
   }
 
   //public void enableShooting(double shootMotorPercent_0_to_1) {
@@ -161,10 +165,12 @@ public class ShootClimbSubsystem extends SubsystemBase {
 
   public void hoodRetract() {
     mShootHoodSolenoid.set(DoubleSolenoid.Value.kReverse);
+    isHoodExtended = false;
   }
 
   public void hoodExtend() {
     mShootHoodSolenoid.set(DoubleSolenoid.Value.kForward);
+    isHoodExtended = true;
   }
 
   public void setClimber(double percentOut) {
@@ -194,15 +200,11 @@ public class ShootClimbSubsystem extends SubsystemBase {
   }
 
   public void climbExtend() {
-    // if (modeClimbing) {
     mClimberSolenoid.set(DoubleSolenoid.Value.kReverse); // "raise climber arm"
-    // }
   }
 
   public void climbRetract() {
-    // if (modeClimbing) {
     mClimberSolenoid.set(DoubleSolenoid.Value.kForward); // "lower climber arm"
-    // }
   }
 
   public boolean isHiCylinderSensor() {
