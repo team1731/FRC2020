@@ -1,5 +1,5 @@
 {
     "deploy_folder": "src",
     
-    "jevois_baud_rate": "230400"
+    "jevois_baud_rate": "115200"
 }

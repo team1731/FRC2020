@@ -423,31 +423,31 @@ public class LedStringSubsystem extends SubsystemBase {
     // Fill the buffer with selection
     switch (mLedOption) {
       case TEAM:
-        teamColors(16);
+        //teamColors(16);
         break;
       case RED:
-        fixedColor(255, 0, 0);
+        //fixedColor(255, 0, 0);
         break;
       case BLUE:
-        fixedColor(0, 0, 255);
+        //fixedColor(0, 0, 255);
         break;
       case GREEN:
-        fixedColor(0, 200, 0);
+        //fixedColor(0, 200, 0);
         break;
       case YELLOW:
-        fixedColor(255, 255, 0);
+        //fixedColor(255, 255, 0);
         break;
       case ORANGE:
-        fixedColor(255, 30, 0);
+        //fixedColor(255, 30, 0);
         break;
       case PURPLE:
-        fixedColor(150, 0, 150);
+        //fixedColor(150, 0, 150);
         break;
       case RAINBOW:
-        rainbow(); // Fill the buffer with a rainbow
+        //rainbow(); // Fill the buffer with a rainbow
         break;
       case FULL:
-        full();
+        //full();
         break;
       case CLIMB:
         climb();
@@ -456,22 +456,22 @@ public class LedStringSubsystem extends SubsystemBase {
         //shoot();
         break;
       case INTAKE:
-        intake();
+        //intake();
         break;
       case INTAKEBALL:
-        intakeBall();
+        //intakeBall();
         break;
       case BALLONE:
-        ballCount(1);
+        //ballCount(1);
         break;
       case BALLTWO:
-        ballCount(2);
+        //ballCount(2);
         break;
       case BALLTHREE:
-        ballCount(3);
+        //ballCount(3);
         break;
       case BALLFOUR:
-        ballCount(4);
+        //ballCount(4);
         break;
     }
     // Set the LEDs

@@ -192,10 +192,15 @@ public class DriveSubsystem extends SubsystemBase {
 
     //If the stick is released, don't change the rotation
     if(stickControlledHeading && (Math.abs(rightX) > DriveConstants.kMinRightStickThreshold || Math.abs(rightY) > DriveConstants.kMinRightStickThreshold)){
-      rotationalOutput = headingController.calculate(getHeading(), getStickAngle(rightX, rightY));
+      double stickAngle = getStickAngle(rightX, rightY);
+      if(Math.abs(stickAngle) < 165){
+        rotationalOutput = headingController.calculate(getHeading(), stickAngle);
+      } else {
+        rotationalOutput = 0;
+      }
     } else if(stickControlledHeading && Math.abs(rightX) <= DriveConstants.kMinRightStickThreshold && Math.abs(rightY) <= DriveConstants.kMinRightStickThreshold) {
       rotationalOutput = 0;
-      headingController.reset(rotationalOutput);
+      headingController.reset(getHeading());
     }
 
     //Replaced rotAdjusted with headingControllerOutput

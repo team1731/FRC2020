@@ -1,35 +1,33 @@
+# ###################################################################################################
+## FRC Team 1731 - Fresta Valley Robotics Club
+## Originally written by FRC Team 2073 - EagleForce
+## INFINITE RECHARGE - 2020
+
+## Summary:
+## Camera-side code that calibrates the CowTracker so that the binary image, which determines where 
+## targets are drawn, only shows actual targets you want.
+## These values are written to a calibration.txt file in data/cowtracker/
+
+## ENSURE YOU CHANGE THE serdev PARAMETER IN COWTUNER TO CALIBRATE!!!
+# ###################################################################################################
+
+# These libraries are built-in to the JeVois camera, so the Python compiler will throw errors. Ignore these.
 import libjevois as jevois
 import cv2
 import numpy as np
 
+# The starting values to write to the calibration file
 upperHue = 95
 lowerHue = 60
 upperSat = 255
 lowerSat = 100
 upperVal = 255
-lowerVal = 180
+lowerVal = 100
 errode = 0
 dilate = 0
 approx = 9
 area = 100
 solidity = 100
-
-valuesInitialized = False
-'''
-lowerHue = 65
-upperHue = 85
-lowerSat = 200
-upperSat = 255
-lowerVal = 200
-upperVal = 255
-errode = 0
-dilate = 3
-approx = 5
-area = 100
-solidity = 100
-'''
-
-
 
 class CowTrackerCal:
 	# ###################################################################################################
@@ -41,6 +39,7 @@ class CowTrackerCal:
 	# ###################################################################################################
 	## Process function with USB output
 	def process(self, inframe, outframe):
+		# Global variables
 		global upperHue
 		global lowerHue
 		global upperSat
@@ -52,7 +51,6 @@ class CowTrackerCal:
 		global approx
 		global area
 		global solidity
-		global valuesInitialized
 
 		# Get the next camera image (may block until it is captured) and here convert it to OpenCV BGR by default. If
 		# you need a grayscale image instead, just use getCvGRAY() instead of getCvBGR(). Also supported are getCvRGB()
@@ -107,16 +105,6 @@ class CowTrackerCal:
 			x = br[0] + (br[2]/2)
 			y = br[1] + (br[3]/2)
 			cv2.rectangle(binOut, (br[0],br[1]),((br[0]+br[2]),(br[1]+br[3])),(0,0,255), 2,cv2.LINE_AA)
-		
-		'''
-		for s in squares:
-			if len(squares) > 0:
-				#Build "pixels" array to contain info desired to be sent to RoboRio
-
-		'''
-
-
-
 
 		# Convert our BGR output image to video output format and send to host over USB. If your output image is not
 		# BGR, you can use sendCvGRAY(), sendCvRGB(), or sendCvRGBA() as appropriate:
@@ -126,33 +114,34 @@ class CowTrackerCal:
 		# Hopefully storing it in share will stop the access permissions errors
 		CalFile = open('data/cowtracker/calibration.txt', 'w')
 		CalFile.truncate()#Clear out old calibraton values
-		CalFile.write(str(upperHue))
-		CalFile.write(",")
-		CalFile.write(str(lowerHue))
-		CalFile.write(",")
-		CalFile.write(str(upperSat))
-		CalFile.write(",")
-		CalFile.write(str(lowerSat))
-		CalFile.write(",")
-		CalFile.write(str(upperVal))
-		CalFile.write(",")
-		CalFile.write(str(lowerVal))
-		CalFile.write(",")
-		CalFile.write(str(errode))
-		CalFile.write(",")
-		CalFile.write(str(dilate))
-		CalFile.write(",")
-		CalFile.write(str(approx))
-		CalFile.write(",")
-		CalFile.write(str(area))
-		CalFile.write(",")
-		CalFile.write(str(solidity))
+		CalFile.write("MaxHue: "+str(upperHue))
+		CalFile.write(" ,")
+		CalFile.write("MinHue: "+str(lowerHue))
+		CalFile.write(" ,")
+		CalFile.write("MaxSaturation: "+str(upperSat))
+		CalFile.write(" ,")
+		CalFile.write("MinSaturation: "+str(lowerSat))
+		CalFile.write(" ,")
+		CalFile.write("MaxValue: "+str(upperVal))
+		CalFile.write(" ,")
+		CalFile.write("MinValue: "+str(lowerVal))
+		CalFile.write(" ,")
+		CalFile.write("Errode: "+str(errode))
+		CalFile.write(" ,")
+		CalFile.write("Dilate: "+str(dilate))
+		CalFile.write(" ,")
+		CalFile.write("Approximate: "+str(approx))
+		CalFile.write(" ,")
+		CalFile.write("Area: "+str(area))
+		CalFile.write(" ,")
+		CalFile.write("Solidity (percent): "+str(solidity))
 		
 		CalFile.close()#Close calibration file
 		
 	# ###################################################################################################
 	## Parse a serial command forwarded to us by the JeVois Engine, return a string
 	def parseSerial(self, cmd):
+		# Global variables
 		global upperHue
 		global lowerHue
 		global upperSat
@@ -221,7 +210,7 @@ class CowTrackerCal:
 	## Return a string that describes the custom commands we support, for the JeVois help message
 	def supportedCommands(self):
 		# use \n seperator if your module supports several commands
-		return "Use the EagleTuner.py script on a RPi, PC, etc. to send Serial commands to tune the vision tracking."
+		return "Use the CowTuner.py script on a RPi, PC, etc. to send Serial commands to tune the vision tracking."
 		
 
 

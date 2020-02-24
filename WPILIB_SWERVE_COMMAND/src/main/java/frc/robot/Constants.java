@@ -111,8 +111,8 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 2;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 2;
+    public static final double kMaxSpeedMetersPerSecond = 1.5; //2
+    public static final double kMaxAccelerationMetersPerSecondSquared = 2; //2
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
@@ -156,7 +156,7 @@ public final class Constants {
 
         // Shooter
         public static final int kShooterVictor = 3;
-        public static final int kShootMinVelocity = 1000;
+        public static final int kShootMinVelocity = 500;
 
         public static final double kClimbMaxPercent = 1; // 0.3;
         public static final double kJoystickDeadband = 0.2;
