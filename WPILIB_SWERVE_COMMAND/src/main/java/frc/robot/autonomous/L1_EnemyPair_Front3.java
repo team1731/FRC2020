@@ -69,7 +69,7 @@ public class L1_EnemyPair_Front3 extends _DelayableStrafingAutoMode {
             configBackward
         );
 
-        backwardToEnemyPair = new Trajectory(unrotateTrajectory(backwardToEnemyPair.getStates(), 0)); // make it pure strafe
+        backwardToEnemyPair = new Trajectory(unrotateTrajectory(backwardToEnemyPair.getStates(), 15)); // make it pure strafe
         Utils.printTrajectory(this.getClass().getSimpleName() + ": backwardToEnemyPair", backwardToEnemyPair);
     
         SwerveControllerCommand backwardToEnemyPairCommand = new SwerveControllerCommand(
@@ -100,7 +100,7 @@ public class L1_EnemyPair_Front3 extends _DelayableStrafingAutoMode {
             configForward
         );
     
-        strafeToShootLocation1_1 = new Trajectory(unrotateTrajectory(strafeToShootLocation1_1.getStates(), -12)); // make it pure strafe
+        strafeToShootLocation1_1 = new Trajectory(unrotateTrajectory(strafeToShootLocation1_1.getStates(), -20)); // make it pure strafe
         Utils.printTrajectory(this.getClass().getSimpleName() + ": strafeToShootLocation", strafeToShootLocation1_1);
 
         SwerveControllerCommand strafeToShootLocation1_1Command = new SwerveControllerCommand(
@@ -129,7 +129,7 @@ public class L1_EnemyPair_Front3 extends _DelayableStrafingAutoMode {
             configBackward
         );
     
-        strafeToShootLocation1_1 = new Trajectory(unrotateTrajectory(strafeToShootLocation1_2.getStates(), -12)); // make it pure strafe
+        strafeToShootLocation1_1 = new Trajectory(unrotateTrajectory(strafeToShootLocation1_2.getStates(), -10)); // make it pure strafe
         Utils.printTrajectory(this.getClass().getSimpleName() + ": strafeToShootLocation", strafeToShootLocation1_2);
 
         SwerveControllerCommand strafeToShootLocation1_2Command = new SwerveControllerCommand(
@@ -248,12 +248,12 @@ public class L1_EnemyPair_Front3 extends _DelayableStrafingAutoMode {
 
             // ENEMY PAIR
             new ParallelCommandGroup(
-                backwardToEnemyPairCommand
-                //new IntakeSeqCommand(m_intake, m_sequence).withTimeout(4)
+                backwardToEnemyPairCommand,
+                new IntakeSeqCommand(m_intake, m_sequence).withTimeout(4)
             ),
 
             new ParallelCommandGroup(
-                new InstantCommand(m_shootclimb::enableShooting, m_shootclimb).withTimeout(3),
+                new InstantCommand(m_shootclimb::enableShooting, m_shootclimb).withTimeout(4),
                 strafeToShootLocation1_1Command
             ),
 
@@ -263,7 +263,8 @@ public class L1_EnemyPair_Front3 extends _DelayableStrafingAutoMode {
                 strafeToShootLocation1_2Command
             ),
             */
-
+            //new InstantCommand(() -> m_robotDrive.drive(0, 0, 0, false)),
+            new WaitCommand(1),
             //new Aim(m_robotDrive, m_vision, m_targeting)),
             new ShootSeqCommandAuto(m_ledstring, m_shootclimb, m_sequence).withTimeout(1),
 
