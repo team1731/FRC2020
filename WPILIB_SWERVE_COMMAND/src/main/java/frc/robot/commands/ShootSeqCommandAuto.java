@@ -18,7 +18,7 @@ public class ShootSeqCommandAuto extends ShootSeqCommand {
     @Override
     public void end(boolean interrupted) {
         seqSubsystem.stop();
-        shootSubsystem.stopShooting();
+        //shootSubsystem.stopShooting();
         //shootSubsystem.hoodRetract();
     }
 

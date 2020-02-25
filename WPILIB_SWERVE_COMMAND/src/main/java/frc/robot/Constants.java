@@ -140,7 +140,7 @@ public final class Constants {
         public static final int kMotorCANShoot2 = 8;
         public static final double kMotorSeqFwdIntakeSpeed = -0.3; //-0.3   // forward or backward
         public static final double kMotorSeqRevIntakeSpeed = 0.4;   // forward or backward
-        public static final double kMotorSeqFwdShootSpeed = -0.5;   // forward or backward
+        public static final double kMotorSeqFwdShootSpeed = -0.4; //-0.5   // forward or backward
         public static final double kMotorSeqRevShootSpeed = 0.4;   // forward or backward
         public static final double kMotorIntakeFwdSpeed = 0.3;   // forward or backward
         public static final double kMotorIntakeRevSpeed = -1.0;   // forward or backward
@@ -253,7 +253,7 @@ public final class Constants {
          * kF: 1023 represents output value to Talon at 100%, 7200 represents Velocity units at 100% output
          * 
          * 	                                    		          	  kP   kI   kD   kF             Iz    PeakOut */
-        public final static Gains kGains_Velocity = new Gains( 1.0, 0, 0, .07,  300,  1.00);
+        public final static Gains kGains_Velocity = new Gains( 4.0, 0, 0, .07,  300,  1.00);
         ///// End TalonFX
     }
 

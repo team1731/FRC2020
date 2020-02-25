@@ -36,6 +36,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
   private final DigitalInput sClimbExtend;
   private final DigitalInput sClimbRetract;
   private boolean isHoodExtended;
+  private double targetVelocity_UnitsPer100ms;
 
   
   /**
@@ -114,6 +115,10 @@ public class ShootClimbSubsystem extends SubsystemBase {
   public double getShootMotor1Velocity() {
     return mTalonShoot1.getSelectedSensorVelocity();
   }
+
+  public boolean atTargetVelocity(){
+    return mTalonShoot1.getSelectedSensorVelocity() >= targetVelocity_UnitsPer100ms*0.99 && mTalonShoot1.getSelectedSensorVelocity() < targetVelocity_UnitsPer100ms*1.01;
+  }
   
   public void enableShooting() {
     // this is for Autonomous
@@ -122,7 +127,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
   }
   
   public void spinShooter(double shootMotorPercent_0_to_1) {
-		double targetVelocity_UnitsPer100ms = shootMotorPercent_0_to_1 * 3000.0 * 2048 / 600;
+		targetVelocity_UnitsPer100ms = shootMotorPercent_0_to_1 * 3000.0 * 2048 / 600;
     /**
 			 * Convert 500 RPM to units / 100ms.
 			 * 2048(FX) 4096(SRX) Units/Rev * 500 RPM / 600 100ms/min in either direction:

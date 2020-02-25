@@ -168,6 +168,9 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {
     m_ledstring.option(LedOption.TEAM);
     m_robotDrive.resetEncoders();
+    SmartDashboard.putBoolean("LowSensor",  m_sequencer.lowSensorHasBall());
+    SmartDashboard.putBoolean("MidSensor",  m_sequencer.midSensorHasBall());
+    SmartDashboard.putBoolean("HighSensor",  m_sequencer.highSensorHasBall());
    }
 
   /**

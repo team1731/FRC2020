@@ -54,12 +54,13 @@ public class ShootSeqCommand extends CommandBase {
   public void execute() {
     double shootMotorVelocity = shootSubsystem.getShootMotor1Velocity();
     System.out.println("shoot motor velocity = " + shootMotorVelocity);
-    if(shootMotorVelocity > OpConstants.kShootMinVelocity){
+    if(shootSubsystem.atTargetVelocity()){
       System.out.println("calling seqSubSystem.forward(true);");
       seqSubsystem.forward(true);
       m_ledstring.option(LedOption.SHOOT);
     }
     else{
+      
       System.out.println("waiting for shoot motor to come up to speed");
     }
     // get necessary input

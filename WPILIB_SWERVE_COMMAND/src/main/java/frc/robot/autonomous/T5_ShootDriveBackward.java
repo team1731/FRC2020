@@ -78,6 +78,8 @@ public class T5_ShootDriveBackward extends _DelayableStrafingAutoMode {
 
         new InstantCommand(m_shootclimb::enableShooting, m_shootclimb).withTimeout(4),
 
+        new WaitCommand(3),
+
         //new Aim(m_robotDrive, m_vision, m_targeting)),
         new ShootSeqCommandAuto(m_ledstring, m_shootclimb, m_sequence).withTimeout(2),
 
