@@ -60,7 +60,7 @@ public class R2_Shoot3_FriendlyTriple extends _DelayableStrafingAutoMode {
           //new Translation2d(, 0)
         ),
         
-      new Pose2d(-1.56, -0.37, new Rotation2d(Math.toRadians(1))),
+      new Pose2d(-1.56, -0.2, new Rotation2d(Math.toRadians(1))),
       configBackward
     );
 
@@ -85,13 +85,13 @@ public class R2_Shoot3_FriendlyTriple extends _DelayableStrafingAutoMode {
     // An example trajectory to follow.  All units in meters.
     Trajectory pickupTriple = TrajectoryGenerator.generateTrajectory(
         // Start at the origin facing the +X direction
-        new Pose2d(-1.56, -0.37, new Rotation2d(Math.toRadians(1))),
+        new Pose2d(-1.56, -0.2, new Rotation2d(Math.toRadians(1))),
         
         List.of(
           //new Translation2d(, 0)
         ),
         
-      new Pose2d(-4.59, -0.24, new Rotation2d(Math.toRadians(1))),
+      new Pose2d(-4.59, -0.2, new Rotation2d(Math.toRadians(1))),
       configBackward
     );
 
@@ -116,14 +116,14 @@ public class R2_Shoot3_FriendlyTriple extends _DelayableStrafingAutoMode {
     // An example trajectory to follow.  All units in meters.
     Trajectory goHome = TrajectoryGenerator.generateTrajectory(
         // Start at the origin facing the +X direction
-        new Pose2d(-4.59, -0.24, new Rotation2d(Math.toRadians(1))),
+        new Pose2d(-4.59, -0.2, new Rotation2d(Math.toRadians(1))),
         
         List.of(
           //new Translation2d(, 0)
         ),
         
       new Pose2d(0, 0, new Rotation2d(0)),
-      configBackward
+      configForward
     );
 
     goHome = new Trajectory(unrotateTrajectory(goHome.getStates(), 0)); // make it pure strafe

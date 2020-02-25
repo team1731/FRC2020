@@ -102,7 +102,7 @@ public class Robot extends TimedRobot {
     m_sequencer.stop();
     m_shootclimb.stopShooting();
     m_colorwheel.init();
-    m_ledstring.init();
+    //m_ledstring.init();
 
     SmartDashboard.putString("INIT CELL COUNT", "3"); // How much ammo we start with
 
@@ -233,9 +233,15 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     CommandScheduler.getInstance().cancelAll();
-
     m_sequencer.setPowerCellCount((int) SmartDashboard.getNumber("CELL COUNT", 3));
     m_robotDrive.resumeCSVWriter();
+
+    // initial SubSystems to at rest states
+    m_intake.retract();
+    m_sequencer.stop();
+    m_shootclimb.stopShooting();
+    m_colorwheel.init();
+    //m_ledstring.init();
 
     //m_vision.StartCameraDataStream();
 

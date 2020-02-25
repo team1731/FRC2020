@@ -111,8 +111,8 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 1.5; //2
-    public static final double kMaxAccelerationMetersPerSecondSquared = 2; //2
+    public static final double kMaxSpeedMetersPerSecond = 1; //2
+    public static final double kMaxAccelerationMetersPerSecondSquared = 1; //2
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
@@ -138,11 +138,11 @@ public final class Constants {
         public static final int kMotorPWMShoot2 = 3;       // Shooter Motor Two
         public static final int kMotorCANShoot1 = 7;
         public static final int kMotorCANShoot2 = 8;
-        public static final double kMotorSeqFwdIntakeSpeed = -0.3; //-0.3   // forward or backward
+        public static final double kMotorSeqFwdIntakeSpeed = -0.7; //-0.3   // forward or backward
         public static final double kMotorSeqRevIntakeSpeed = 0.4;   // forward or backward
         public static final double kMotorSeqFwdShootSpeed = -0.4; //-0.5   // forward or backward
         public static final double kMotorSeqRevShootSpeed = 0.4;   // forward or backward
-        public static final double kMotorIntakeFwdSpeed = 0.7;   // forward or backward
+        public static final double kMotorIntakeFwdSpeed = 1.0;   // forward or backward
         public static final double kMotorIntakeRevSpeed = -1.0;   // forward or backward
         public static final double kMotorShootSpeed1 = -0.3;   // forward or backward
         public static final double kMotorShootSpeed2 = 0.3;

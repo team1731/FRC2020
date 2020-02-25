@@ -80,7 +80,8 @@ public class RobotContainer {
    */
   public RobotContainer(LedStringSubsystem m_ledstring, DriveSubsystem m_robotDrive, IntakeSubsystem m_intake, SequencerSubsystem m_sequencer,
       ShootClimbSubsystem m_shootclimb, TargetingSubsystem m_targeting, JevoisVisionSubsystem m_vision) {
-    this.m_ledstring = m_ledstring;
+    //this.m_ledstring = m_ledstring;
+    this.m_ledstring = null;
     this.m_robotDrive = m_robotDrive;
     this.m_intake = m_intake;
     this.m_sequencer = m_sequencer;
@@ -152,9 +153,11 @@ public class RobotContainer {
       //.whileActiveContinuous(new JoystickShooter(m_shootclimb, () -> m_operatorController.getRawAxis(4)), false
       //.whileActiveContinuous(new ShootSeqCommand(m_shootclimb, m_sequencer, () -> m_operatorController.getRawAxis(4)), false
     //);
+    /*
     new JoystickButton(m_operatorController, 10).whileActiveContinuous(
       new ShootSeqCommand(m_ledstring, m_shootclimb ,m_sequencer), true
     );
+    */
 
     // Climbing Command - CURRENT
     new JoystickButton(m_operatorController, 9).whileActiveContinuous(

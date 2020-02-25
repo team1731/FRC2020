@@ -57,10 +57,10 @@ public class ShootSeqCommand extends CommandBase {
     if(shootSubsystem.atTargetVelocity()){
       System.out.println("calling seqSubSystem.forward(true);");
       seqSubsystem.forward(true);
-      m_ledstring.option(LedOption.SHOOT);
+      //m_ledstring.option(LedOption.SHOOT);
     }
     else{
-      
+
       System.out.println("waiting for shoot motor to come up to speed");
     }
     // get necessary input
