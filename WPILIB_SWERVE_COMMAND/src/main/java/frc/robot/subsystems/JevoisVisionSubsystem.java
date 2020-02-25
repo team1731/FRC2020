@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
@@ -32,7 +33,7 @@ public class JevoisVisionSubsystem extends SubsystemBase {
     private static JevoisVisionSubsystem instance_ = new JevoisVisionSubsystem();
     private JevoisVisionUpdate update_ = null;
     private JevoisVisionServer m_VisionServer = JevoisVisionServer.getInstance();
-
+    private Solenoid ringLight;
     private ShooterAimingParameters cachedAimingParameters = null;
 
     private GoalTracker goal_tracker_;
@@ -44,7 +45,16 @@ public class JevoisVisionSubsystem extends SubsystemBase {
     }
 
     private JevoisVisionSubsystem() {
+        ringLight = new Solenoid(0, 0);
         goal_tracker_ = new GoalTracker();
+    }
+
+    public void ringLightOn(){
+        ringLight.set(true);
+    }
+
+    public void ringLightOff(){
+        ringLight.set(false);
     }
 
     @Override

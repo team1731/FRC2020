@@ -10,6 +10,7 @@ package frc.robot.subsystems;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 //import edu.wpi.first.wpilibj.ADXRS450_Gyro;
@@ -79,11 +80,18 @@ public class DriveSubsystem extends SubsystemBase {
   /**
    * Creates a new DriveSubsystem.
    */
-  public DriveSubsystem(AnalogInput leftFrontAbsEncoder, AnalogInput rightFrontAbsEncoder, AnalogInput leftRearAbsEncoder, AnalogInput rightRearAbsEncoder) {
-    this.leftFrontAbsEncoder = leftFrontAbsEncoder;
-    this.rightFrontAbsEncoder = rightFrontAbsEncoder;
-    this.leftRearAbsEncoder = leftRearAbsEncoder;
-    this.rightRearAbsEncoder = rightRearAbsEncoder;
+  public DriveSubsystem() {
+
+    leftFrontAbsEncoder = new AnalogInput(0);
+    rightFrontAbsEncoder = new AnalogInput(1);
+    leftRearAbsEncoder = new AnalogInput(2);
+    rightRearAbsEncoder = new AnalogInput(3);
+
+    if(RobotBase.isReal()){
+      if(leftFrontAbsEncoder == null || rightFrontAbsEncoder == null || leftRearAbsEncoder == null || rightRearAbsEncoder == null){
+        System.err.println("\n\nAt least one absolute encoder (AnalogInput(0)--AnalogInput(3) is NULL!!!\n\n");
+      }
+    }
     headingController.setTolerance(DriveConstants.kTurnToleranceDeg, DriveConstants.kTurnRateToleranceDegPerS);
     headingController.enableContinuousInput(-180, 180);
     //mCSVWriter = new ReflectingCSVWriter<>(this.getName(), DebugOutput.class);
@@ -356,5 +364,13 @@ public class DriveSubsystem extends SubsystemBase {
 
   public void setHeadingControllerGoal(double newGoal){
     headingController.setGoal(newGoal);
+  }
+
+
+  public void displayEncoders() {
+    SmartDashboard.putNumber("leftFrontAbsEncoder", leftFrontAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
+    SmartDashboard.putNumber("rightFrontAbsEncoder", rightFrontAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
+    SmartDashboard.putNumber("leftRearAbsEncoder", leftRearAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
+    SmartDashboard.putNumber("rightRearAbsEncoder", rightRearAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
   }
 }

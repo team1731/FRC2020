@@ -36,10 +36,6 @@ public class Robot extends TimedRobot {
 
   private Command m_autonomousCommand;
   private RobotContainer m_robotContainer;
-  private AnalogInput leftFrontAbsEncoder;
-  private AnalogInput rightFrontAbsEncoder;
-  private AnalogInput leftRearAbsEncoder;
-  private AnalogInput rightRearAbsEncoder;
 
   // The robot's subsystems
   public DriveSubsystem m_robotDrive;
@@ -60,13 +56,8 @@ public class Robot extends TimedRobot {
     CameraServer camServer = CameraServer.getInstance();
     camServer.startAutomaticCapture();
     
-    leftFrontAbsEncoder = new AnalogInput(0);
-    rightFrontAbsEncoder = new AnalogInput(1);
-    leftRearAbsEncoder = new AnalogInput(2);
-    rightRearAbsEncoder = new AnalogInput(3);
-
     m_ledstring = null; //new LedStringSubsystem();
-    m_robotDrive = new DriveSubsystem(leftFrontAbsEncoder, rightFrontAbsEncoder, leftRearAbsEncoder, rightRearAbsEncoder);
+    m_robotDrive = new DriveSubsystem();
     //m_vision = JevoisVisionSubsystem.getInstance(); //new JevoisVisionSubsystem();
     //m_vision.setDriveSubsystem(m_robotDrive);
     m_intake = new IntakeSubsystem(m_ledstring);
@@ -81,15 +72,9 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer(m_ledstring, m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision);
 
-    if(RobotBase.isReal()){
-      if(leftFrontAbsEncoder == null || rightFrontAbsEncoder == null || leftRearAbsEncoder == null || rightRearAbsEncoder == null){
-        System.err.println("At least one absolute encoder (AnalogInput(0)--AnalogInput(3) is NULL!!! -- Aborting!!!");
-        return;
-      }
-      m_robotDrive.resetEncoders();
-    }
 
     // initial SubSystems to at rest states
+    m_robotDrive.resetEncoders();
     m_intake.retract();
     m_sequencer.stop();
     m_shootclimb.stopShooting();
@@ -128,15 +113,8 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
-    if(leftFrontAbsEncoder != null)
-      SmartDashboard.putNumber("leftFrontAbsEncoder", leftFrontAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
-    if(rightFrontAbsEncoder != null)
-      SmartDashboard.putNumber("rightFrontAbsEncoder", rightFrontAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
-    if(leftRearAbsEncoder != null)
-      SmartDashboard.putNumber("leftRearAbsEncoder", leftRearAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
-    if(rightRearAbsEncoder != null)
-      SmartDashboard.putNumber("rightRearAbsEncoder", rightRearAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
-    }
+    m_robotDrive.displayEncoders();
+  }
 
   /**
    * This function is called once each time the robot enters Disabled mode.
