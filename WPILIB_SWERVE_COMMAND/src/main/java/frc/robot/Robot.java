@@ -151,7 +151,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    m_ledstring.option(LedOption.TEAM);
+    //m_ledstring.option(LedOption.TEAM);
     m_robotDrive.resetEncoders();
     SmartDashboard.putBoolean("LowSensor",  m_sequencer.lowSensorHasBall());
     SmartDashboard.putBoolean("MidSensor",  m_sequencer.midSensorHasBall());
@@ -166,7 +166,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     CommandScheduler.getInstance().cancelAll(); ///????????????????????????????????????????? SHOULD WE DO THIS????? ******************
     
-    m_ledstring.option(LedOption.RAINBOW);
+    //m_ledstring.option(LedOption.RAINBOW);
 
     //m_robotDrive.resumeCSVWriter();
     m_sequencer.setPowerCellCount((int) SmartDashboard.getNumber("INIT CELL COUNT", 3));
