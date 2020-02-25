@@ -8,7 +8,7 @@ public class Aim extends CommandBase {
     public int count;
 
     public Aim(DriveSubsystem m_robotDrive, JevoisVisionSubsystem m_vision){
-		    count = (int)((Math.random() + 1) * 100);  
+		count = (int)((Math.random() + 1) * 100);  
         System.out.println("Aim : " + count);     
     }
 
