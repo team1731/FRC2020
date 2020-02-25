@@ -21,6 +21,7 @@ import frc.robot.autonomous.L1_EnemyPair_Front3;
 import frc.robot.autonomous.M1_Shoot3_Front3_Shoot3;
 import frc.robot.autonomous.M3_Shoot3_Buddy5;
 import frc.robot.autonomous.R1_WholeSide10;
+import frc.robot.autonomous.R2_Shoot3_FriendlyTriple;
 import frc.robot.autonomous.T1_Move_Forward;
 import frc.robot.autonomous.T2_BwdPickup2Balls;
 import frc.robot.autonomous.T3_BwdPickup2BallsAndShoot;
@@ -273,6 +274,9 @@ public class RobotContainer {
       // FOR HAYMARKET: R1, L1, M1, M3
       //
       mode = new _NamedAutoMode(new R1_WholeSide10(m_ledstring, m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
+      myMap.put(mode.code, mode);
+
+      mode = new _NamedAutoMode(new R2_Shoot3_FriendlyTriple(m_ledstring, m_robotDrive, m_sequencer, m_shootclimb, m_vision, m_targeting));
       myMap.put(mode.code, mode);
 
       mode = new _NamedAutoMode(new L1_EnemyPair_Front3(m_ledstring, m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));

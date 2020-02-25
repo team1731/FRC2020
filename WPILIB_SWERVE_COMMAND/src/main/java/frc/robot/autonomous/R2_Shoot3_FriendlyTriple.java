@@ -29,8 +29,8 @@ import frc.robot.subsystems.ShootClimbSubsystem;
 import frc.robot.subsystems.TargetingSubsystem;
 import frc.robot.util.Utils;
 
-public class T5_ShootDriveBackward extends _DelayableStrafingAutoMode {
-    public T5_ShootDriveBackward(LedStringSubsystem m_ledstring, DriveSubsystem m_robotDrive,
+public class R2_Shoot3_FriendlyTriple extends _DelayableStrafingAutoMode {
+    public R2_Shoot3_FriendlyTriple(LedStringSubsystem m_ledstring, DriveSubsystem m_robotDrive,
             SequencerSubsystem m_sequence, ShootClimbSubsystem m_shootclimb, JevoisVisionSubsystem m_vision,
             TargetingSubsystem m_targeting) {
 
