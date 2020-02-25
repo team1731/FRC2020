@@ -25,16 +25,13 @@ import frc.robot.commands.IntakeSeqCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.JevoisVisionSubsystem;
-import frc.robot.subsystems.LedStringSubsystem;
 import frc.robot.subsystems.SequencerSubsystem;
 import frc.robot.subsystems.ShootClimbSubsystem;
-import frc.robot.subsystems.TargetingSubsystem;
 import frc.robot.util.Utils;
 
 public class R2_Shoot3_FriendlyTriple extends _DelayableStrafingAutoMode {
-    public R2_Shoot3_FriendlyTriple(LedStringSubsystem m_ledstring, DriveSubsystem m_robotDrive, IntakeSubsystem m_intake, 
-            SequencerSubsystem m_sequence, ShootClimbSubsystem m_shootclimb, JevoisVisionSubsystem m_vision,
-            TargetingSubsystem m_targeting) {
+    public R2_Shoot3_FriendlyTriple(DriveSubsystem m_robotDrive, IntakeSubsystem m_intake, 
+            SequencerSubsystem m_sequence, ShootClimbSubsystem m_shootclimb, JevoisVisionSubsystem m_vision) {
 
     // Create config for trajectory
     TrajectoryConfig configBackward =
@@ -153,8 +150,8 @@ public class R2_Shoot3_FriendlyTriple extends _DelayableStrafingAutoMode {
 
         new WaitCommand(3),
 
-        //new Aim(m_robotDrive, m_vision, m_targeting)),
-        new ShootSeqCommandAuto(m_ledstring, m_shootclimb, m_sequence).withTimeout(2),
+        //new Aim(m_robotDrive, m_vision)),
+        new ShootSeqCommandAuto(m_shootclimb, m_sequence).withTimeout(2),
 
         new WaitCommand(getSecondaryDelaySeconds()),
 
@@ -170,8 +167,8 @@ public class R2_Shoot3_FriendlyTriple extends _DelayableStrafingAutoMode {
             goHomeCommand
         ),
 
-        //new Aim(m_robotDrive, m_vision, m_targeting)),
-        new ShootSeqCommandAuto(m_ledstring, m_shootclimb, m_sequence).withTimeout(2)
+        //new Aim(m_robotDrive, m_vision)),
+        new ShootSeqCommandAuto(m_shootclimb, m_sequence).withTimeout(2)
         
         
         );

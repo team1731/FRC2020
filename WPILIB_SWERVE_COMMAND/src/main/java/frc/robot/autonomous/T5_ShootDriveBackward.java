@@ -23,16 +23,13 @@ import frc.robot.commands.Aim;
 import frc.robot.commands.ShootSeqCommandAuto;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.JevoisVisionSubsystem;
-import frc.robot.subsystems.LedStringSubsystem;
 import frc.robot.subsystems.SequencerSubsystem;
 import frc.robot.subsystems.ShootClimbSubsystem;
-import frc.robot.subsystems.TargetingSubsystem;
 import frc.robot.util.Utils;
 
 public class T5_ShootDriveBackward extends _DelayableStrafingAutoMode {
-    public T5_ShootDriveBackward(LedStringSubsystem m_ledstring, DriveSubsystem m_robotDrive,
-            SequencerSubsystem m_sequence, ShootClimbSubsystem m_shootclimb, JevoisVisionSubsystem m_vision,
-            TargetingSubsystem m_targeting) {
+    public T5_ShootDriveBackward(DriveSubsystem m_robotDrive,
+            SequencerSubsystem m_sequence, ShootClimbSubsystem m_shootclimb, JevoisVisionSubsystem m_vision) {
 
     // Create config for trajectory
     TrajectoryConfig config =
@@ -80,8 +77,8 @@ public class T5_ShootDriveBackward extends _DelayableStrafingAutoMode {
 
         new WaitCommand(3),
 
-        //new Aim(m_robotDrive, m_vision, m_targeting)),
-        new ShootSeqCommandAuto(m_ledstring, m_shootclimb, m_sequence).withTimeout(2),
+        //new Aim(m_robotDrive, m_vision)),
+        new ShootSeqCommandAuto(m_shootclimb, m_sequence).withTimeout(2),
 
         new WaitCommand(getSecondaryDelaySeconds()),
 

@@ -41,7 +41,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public void active() {
     mTalonIntake.setSpeed(OpConstants.kMotorIntakeFwdSpeed);
     mTalonState = "Intake Fwd";
-    m_ledstring.option(LedOption.INTAKE);
+    //m_ledstring.option(LedOption.INTAKE);
   }
 
   public void inactive() {

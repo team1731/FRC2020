@@ -35,8 +35,8 @@ import frc.robot.util.ReflectingCSVWriter;
 @SuppressWarnings("PMD.ExcessiveImports")
 public class DriveSubsystem extends SubsystemBase {
 
-  private final ReflectingCSVWriter<DebugOutput> mCSVWriter;
-  private final DebugOutput debugOutput = new DebugOutput();
+  //private final ReflectingCSVWriter<DebugOutput> mCSVWriter;
+  //private final DebugOutput debugOutput = new DebugOutput();
   private final ProfiledPIDController headingController = new ProfiledPIDController(
     DriveConstants.kTurnP, DriveConstants.kTurnI, DriveConstants.kTurnD,
     new TrapezoidProfile.Constraints(DriveConstants.kMaxTurnVelocity, DriveConstants.kMaxTurnAcceleration));
@@ -86,7 +86,7 @@ public class DriveSubsystem extends SubsystemBase {
     this.rightRearAbsEncoder = rightRearAbsEncoder;
     headingController.setTolerance(DriveConstants.kTurnToleranceDeg, DriveConstants.kTurnRateToleranceDegPerS);
     headingController.enableContinuousInput(-180, 180);
-    mCSVWriter = new ReflectingCSVWriter<>(this.getName(), DebugOutput.class);
+    //mCSVWriter = new ReflectingCSVWriter<>(this.getName(), DebugOutput.class);
   }
 
 
@@ -129,8 +129,8 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("heading radians", headingRadians);    
     SmartDashboard.putNumber("raw gyro", m_gyro.getAngle());
     SmartDashboard.putBoolean("gyro is calibrating", m_gyro.isCalibrating());
-    debugOutput.update(Timer.getFPGATimestamp(), m_odometry, headingRadians, m_gyro.getAngle());
-    mCSVWriter.add(debugOutput);
+    //debugOutput.update(Timer.getFPGATimestamp(), m_odometry, headingRadians, m_gyro.getAngle());
+    //mCSVWriter.add(debugOutput);
   }
 
   /**
@@ -335,15 +335,15 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void suspendCSVWriter() {
-    if(!mCSVWriter.isSuspended()){
-      mCSVWriter.suspend();
-    }
+    //if(!mCSVWriter.isSuspended()){
+    //  mCSVWriter.suspend();
+    //}
   }
 
   public void resumeCSVWriter() {
-    if(mCSVWriter.isSuspended()){
-      mCSVWriter.resume();
-    }
+    //if(mCSVWriter.isSuspended()){
+    //  mCSVWriter.resume();
+    //}
   }
 
   /**

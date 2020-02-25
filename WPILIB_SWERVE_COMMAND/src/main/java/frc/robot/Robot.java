@@ -9,7 +9,6 @@ package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -18,17 +17,12 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.JevoisVisionSubsystem;
-import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.OpConstants.LedOption;
 import frc.robot.autonomous._NamedAutoMode;
-import frc.robot.autonomous._NotImplementedProperlyException;
 import frc.robot.subsystems.ColorWheelSubsystem;
 import frc.robot.subsystems.LedStringSubsystem;
 import frc.robot.subsystems.SequencerSubsystem;
 import frc.robot.subsystems.ShootClimbSubsystem;
-import frc.robot.subsystems.TargetingSubsystem;
-import frc.robot.util.DebugOutput;
-import frc.robot.util.ReflectingCSVWriter;
 import frc.robot.vision.JevoisVisionServer;
 
 /**
@@ -49,7 +43,6 @@ public class Robot extends TimedRobot {
 
   // The robot's subsystems
   public DriveSubsystem m_robotDrive;
-  public TargetingSubsystem m_targeting;
   public JevoisVisionSubsystem m_vision;
   public IntakeSubsystem m_intake;
   public SequencerSubsystem m_sequencer;
@@ -72,22 +65,21 @@ public class Robot extends TimedRobot {
     leftRearAbsEncoder = new AnalogInput(2);
     rightRearAbsEncoder = new AnalogInput(3);
 
-    m_ledstring = new LedStringSubsystem();
+    m_ledstring = null; //new LedStringSubsystem();
     m_robotDrive = new DriveSubsystem(leftFrontAbsEncoder, rightFrontAbsEncoder, leftRearAbsEncoder, rightRearAbsEncoder);
-    m_targeting = new TargetingSubsystem();
     //m_vision = JevoisVisionSubsystem.getInstance(); //new JevoisVisionSubsystem();
     //m_vision.setDriveSubsystem(m_robotDrive);
     m_intake = new IntakeSubsystem(m_ledstring);
     m_sequencer = new SequencerSubsystem(m_ledstring);
     m_shootclimb = new ShootClimbSubsystem(m_ledstring);
-    m_colorwheel = new ColorWheelSubsystem();
+    m_colorwheel = null; //new ColorWheelSubsystem();
 
     m_robotDrive.zeroHeading();
 
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our
     // autonomous chooser on the dashboard.
-    m_robotContainer = new RobotContainer(m_ledstring, m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_targeting, m_vision);
+    m_robotContainer = new RobotContainer(m_ledstring, m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision);
 
     if(RobotBase.isReal()){
       if(leftFrontAbsEncoder == null || rightFrontAbsEncoder == null || leftRearAbsEncoder == null || rightRearAbsEncoder == null){
@@ -151,7 +143,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
-    m_robotDrive.suspendCSVWriter();
+    //m_robotDrive.suspendCSVWriter();
     if(m_vision != null){
       //m_vision.StopCameraDataStream();
     }
@@ -174,18 +166,9 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     CommandScheduler.getInstance().cancelAll(); ///????????????????????????????????????????? SHOULD WE DO THIS????? ******************
     
-    // try{
-    //   m_robotContainer.createAutonomousModes();
-    // }
-    //  catch(_NotImplementedProperlyException e){
-    //   System.err.println("UNABLE TO INITIALILZE AUTONOMOUS -- ABORTING -- FIX YOUR SOFTWARE!!! ==> " + e.getMessage());
-    //   e.printStackTrace();
-    //   return;
-    // }
-
     m_ledstring.option(LedOption.RAINBOW);
 
-    m_robotDrive.resumeCSVWriter();
+    //m_robotDrive.resumeCSVWriter();
     m_sequencer.setPowerCellCount((int) SmartDashboard.getNumber("INIT CELL COUNT", 3));
 
     if(m_vision != null){
@@ -234,7 +217,7 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     CommandScheduler.getInstance().cancelAll();
     m_sequencer.setPowerCellCount((int) SmartDashboard.getNumber("CELL COUNT", 3));
-    m_robotDrive.resumeCSVWriter();
+    //m_robotDrive.resumeCSVWriter();
 
     // initial SubSystems to at rest states
     m_intake.retract();

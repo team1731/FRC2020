@@ -21,15 +21,13 @@ import frc.robot.commands.ShootSeqCommandAuto;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.JevoisVisionSubsystem;
-import frc.robot.subsystems.LedStringSubsystem;
 import frc.robot.subsystems.SequencerSubsystem;
 import frc.robot.subsystems.ShootClimbSubsystem;
-import frc.robot.subsystems.TargetingSubsystem;
 import frc.robot.util.Utils;
 
 public class R1_WholeSide10 extends _DelayableStrafingAutoMode {
-    public R1_WholeSide10(LedStringSubsystem m_ledstring, DriveSubsystem m_robotDrive, IntakeSubsystem m_intake, SequencerSubsystem m_sequence,
-            ShootClimbSubsystem m_shootclimb, JevoisVisionSubsystem m_vision, TargetingSubsystem m_targeting) {
+    public R1_WholeSide10(DriveSubsystem m_robotDrive, IntakeSubsystem m_intake, SequencerSubsystem m_sequence,
+            ShootClimbSubsystem m_shootclimb, JevoisVisionSubsystem m_vision) {
 
         TrajectoryConfig config =
             new TrajectoryConfig(AutoConstants.kMaxSpeedMetersPerSecond,
@@ -163,8 +161,8 @@ public class R1_WholeSide10 extends _DelayableStrafingAutoMode {
 
             // SHOOT 5
             new InstantCommand(m_shootclimb::enableShooting, m_shootclimb).withTimeout(3),
-            //new Aim(m_robotDrive, m_vision, m_targeting)),
-            new ShootSeqCommandAuto(m_ledstring, m_shootclimb, m_sequence).withTimeout(3),
+            //new Aim(m_robotDrive, m_vision)),
+            new ShootSeqCommandAuto(m_shootclimb, m_sequence).withTimeout(3),
 
             new WaitCommand(getSecondaryDelaySeconds()),
 
@@ -176,8 +174,8 @@ public class R1_WholeSide10 extends _DelayableStrafingAutoMode {
 
             // SHOOT 5
             new InstantCommand(m_shootclimb::enableShooting, m_shootclimb).withTimeout(3),
-            //new Aim(m_robotDrive, m_vision, m_targeting)),
-            new ShootSeqCommandAuto(m_ledstring, m_shootclimb, m_sequence).withTimeout(3)
+            //new Aim(m_robotDrive, m_vision)),
+            new ShootSeqCommandAuto(m_shootclimb, m_sequence).withTimeout(3)
 
         );
 

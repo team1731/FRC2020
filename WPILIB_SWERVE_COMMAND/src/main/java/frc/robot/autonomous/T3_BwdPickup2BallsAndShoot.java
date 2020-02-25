@@ -11,16 +11,15 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.JevoisVisionSubsystem;
 import frc.robot.subsystems.SequencerSubsystem;
 import frc.robot.subsystems.ShootClimbSubsystem;
-import frc.robot.subsystems.TargetingSubsystem;
 
 public class T3_BwdPickup2BallsAndShoot extends _DelayableStrafingAutoMode {
-    public T3_BwdPickup2BallsAndShoot(DriveSubsystem m_robotDrive, IntakeSubsystem m_intake, SequencerSubsystem m_sequence, ShootClimbSubsystem m_shootclimb, JevoisVisionSubsystem m_vision, TargetingSubsystem m_targeting) {
+    public T3_BwdPickup2BallsAndShoot(DriveSubsystem m_robotDrive, IntakeSubsystem m_intake, SequencerSubsystem m_sequence, ShootClimbSubsystem m_shootclimb, JevoisVisionSubsystem m_vision) {
         SequentialCommandGroup commandGroup = new SequentialCommandGroup(
             new T2_BwdPickup2Balls(m_robotDrive).getCommand(),
             new ParallelCommandGroup(
                 new StartIntake(m_intake, m_sequence),
                 new SpinUpShooter(m_shootclimb),
-                new Aim(m_robotDrive, m_vision, m_targeting)),
+                new Aim(m_robotDrive, m_vision)),
             new ShootAllBalls(m_shootclimb, m_sequence));
         command = commandGroup.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
     }
