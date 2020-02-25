@@ -262,8 +262,10 @@ public class RobotContainer {
         return null;
       }
     }
-    selectedAutoMode.delayableStrafingAutoMode.setInitialDelaySeconds(initialDelaySeconds);
-    selectedAutoMode.delayableStrafingAutoMode.setSecondaryDelaySeconds(secondaryDelaySeconds);
+    if(selectedAutoMode != null){
+      selectedAutoMode.delayableStrafingAutoMode.setInitialDelaySeconds(initialDelaySeconds);
+      selectedAutoMode.delayableStrafingAutoMode.setSecondaryDelaySeconds(secondaryDelaySeconds);
+    }
 
     return selectedAutoMode;
   }
@@ -285,8 +287,9 @@ public class RobotContainer {
       case "T2": return new _NamedAutoMode(new T2_BwdPickup2Balls(m_robotDrive));
       case "T3": return new _NamedAutoMode(new T3_BwdPickup2BallsAndShoot(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
       case "T4": return new _NamedAutoMode(new T4_ShootDriveForward(m_ledstring, m_robotDrive, m_sequencer, m_shootclimb, m_vision, m_targeting));
-      case "R2": return new _NamedAutoMode(new R2_Shoot3_FriendlyTriple(m_ledstring, m_robotDrive, m_sequencer, m_shootclimb, m_vision, m_targeting));
-
+      case "T5": return new _NamedAutoMode(new T5_ShootDriveBackward(m_ledstring, m_robotDrive, m_sequencer, m_shootclimb, m_vision, m_targeting));
+      case "R2": return new _NamedAutoMode(new R2_Shoot3_FriendlyTriple(m_ledstring, m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
+      
       default: return null;
     }
   }
