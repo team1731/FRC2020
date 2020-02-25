@@ -113,7 +113,7 @@ public class Robot extends TimedRobot {
 
     SmartDashboard.putString("INIT CELL COUNT", "3"); // How much ammo we start with
 
-    SmartDashboard.putString("AUTO CODE", "L1"); // XNDD (X=L,M,R,F) (N=1,2,3,4) (DD=0-99 [optional])
+    SmartDashboard.putString("AUTO CODE", "T5"); // XNDD (X=L,M,R,F) (N=1,2,3,4) (DD=0-99 [optional])
                                                  // XN = one of Mark and Chuck's 10 auto modes plus new "forward" mode F
                                                  //      (and if it turns out we need a backward mode, B, we will add it)
                                                  // DD = up to 2 digits (0-9) signifying 2 possible delays (in seconds)
@@ -185,7 +185,7 @@ public class Robot extends TimedRobot {
       //m_vision.StartCameraDataStream();
     }
 
-    String DEFAULT_AUTO_CODE = "T4"; // DEFAULT AUTO MODE if Drive Team is unable to set the mode via Dashboard
+    String DEFAULT_AUTO_CODE = "T5"; // DEFAULT AUTO MODE if Drive Team is unable to set the mode via Dashboard
                                      // NOTE: also useful if trying to run in the simulator!
     String autoCode = DEFAULT_AUTO_CODE;
     if (RobotBase.isReal()) {

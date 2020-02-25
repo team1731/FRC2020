@@ -25,6 +25,7 @@ import frc.robot.autonomous.T1_Move_Forward;
 import frc.robot.autonomous.T2_BwdPickup2Balls;
 import frc.robot.autonomous.T3_BwdPickup2BallsAndShoot;
 import frc.robot.autonomous.T4_ShootDriveForward;
+import frc.robot.autonomous.T5_ShootDriveBackward;
 import frc.robot.autonomous._NamedAutoMode;
 import frc.robot.autonomous._NotImplementedProperlyException;
 import frc.robot.commands.*;
@@ -296,6 +297,9 @@ public class RobotContainer {
       myMap.put(mode.code, mode);
                     
       mode = new _NamedAutoMode(new T4_ShootDriveForward(m_ledstring, m_robotDrive, m_sequencer, m_shootclimb, m_vision, m_targeting));
+      myMap.put(mode.code, mode);
+
+      mode = new _NamedAutoMode(new T5_ShootDriveBackward(m_ledstring, m_robotDrive, m_sequencer, m_shootclimb, m_vision, m_targeting));
       myMap.put(mode.code, mode);
 
       return myMap;
