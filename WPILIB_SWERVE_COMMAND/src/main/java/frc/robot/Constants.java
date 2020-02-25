@@ -138,11 +138,11 @@ public final class Constants {
         public static final int kMotorPWMShoot2 = 3;       // Shooter Motor Two
         public static final int kMotorCANShoot1 = 7;
         public static final int kMotorCANShoot2 = 8;
-        public static final double kMotorSeqFwdIntakeSpeed = -0.5; //-0.3   // forward or backward
+        public static final double kMotorSeqFwdIntakeSpeed = -0.3; //-0.3   // forward or backward
         public static final double kMotorSeqRevIntakeSpeed = 0.4;   // forward or backward
-        public static final double kMotorSeqFwdShootSpeed = -1.0;   // forward or backward
+        public static final double kMotorSeqFwdShootSpeed = -0.5;   // forward or backward
         public static final double kMotorSeqRevShootSpeed = 0.4;   // forward or backward
-        public static final double kMotorIntakeFwdSpeed = 0.7;   // forward or backward
+        public static final double kMotorIntakeFwdSpeed = 0.3;   // forward or backward
         public static final double kMotorIntakeRevSpeed = -1.0;   // forward or backward
         public static final double kMotorShootSpeed1 = -0.3;   // forward or backward
         public static final double kMotorShootSpeed2 = 0.3;

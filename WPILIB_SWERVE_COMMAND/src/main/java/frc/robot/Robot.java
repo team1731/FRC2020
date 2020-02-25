@@ -223,6 +223,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    CommandScheduler.getInstance().cancelAll();
+
     m_sequencer.setPowerCellCount((int) SmartDashboard.getNumber("CELL COUNT", 3));
     m_robotDrive.resumeCSVWriter();
 

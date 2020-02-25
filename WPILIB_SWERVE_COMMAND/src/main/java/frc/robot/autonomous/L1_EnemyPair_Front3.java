@@ -88,7 +88,7 @@ public class L1_EnemyPair_Front3 extends _DelayableStrafingAutoMode {
         // STRAFE TO SHOOT LOCATION
         Trajectory strafeToShootLocation1_1 = TrajectoryGenerator.generateTrajectory(
             // Start at the origin facing the +X direction
-            new Pose2d(-2.2, -0.2, new Rotation2d(-50)),
+            new Pose2d(-2.2, -0.2, new Rotation2d(50)),
 
             //  STRAFE TO SHOOT LOCATION
             List.of(
@@ -96,11 +96,11 @@ public class L1_EnemyPair_Front3 extends _DelayableStrafingAutoMode {
                 //new Translation2d(-2, -2.43)
             ),
 
-            new Pose2d(-0.54, -4.74, new Rotation2d(Math.toRadians(-50))),
+            new Pose2d(-0.54, -4.74, new Rotation2d(Math.toRadians(50))),
             configForward
         );
     
-        strafeToShootLocation1_1 = new Trajectory(unrotateTrajectory(strafeToShootLocation1_1.getStates(), -20)); // make it pure strafe
+        strafeToShootLocation1_1 = new Trajectory(unrotateTrajectory(strafeToShootLocation1_1.getStates(), 0)); // make it pure strafe
         Utils.printTrajectory(this.getClass().getSimpleName() + ": strafeToShootLocation", strafeToShootLocation1_1);
 
         SwerveControllerCommand strafeToShootLocation1_1Command = new SwerveControllerCommand(
