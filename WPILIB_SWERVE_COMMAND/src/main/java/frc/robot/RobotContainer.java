@@ -79,8 +79,7 @@ public class RobotContainer {
    * @throws _NotImplementedProperlyException
    */
   public RobotContainer(LedStringSubsystem m_ledstring, DriveSubsystem m_robotDrive, IntakeSubsystem m_intake, SequencerSubsystem m_sequencer,
-      ShootClimbSubsystem m_shootclimb, TargetingSubsystem m_targeting, JevoisVisionSubsystem m_vision)
-      throws _NotImplementedProperlyException {
+      ShootClimbSubsystem m_shootclimb, TargetingSubsystem m_targeting, JevoisVisionSubsystem m_vision) {
     this.m_ledstring = m_ledstring;
     this.m_robotDrive = m_robotDrive;
     this.m_intake = m_intake;
@@ -88,8 +87,6 @@ public class RobotContainer {
     this.m_targeting = m_targeting;
     this.m_vision = m_vision;
     this.m_shootclimb = m_shootclimb;
-
-    nameAutoModeMap = createNamedAutoModeMap();
 
     // Configure the button bindings
     configureButtonBindings();
@@ -226,7 +223,7 @@ public class RobotContainer {
     */
   }
 
-  public _NamedAutoMode getNamedAutonomousCommand(String autoSelected) throws _NotImplementedProperlyException {
+  public _NamedAutoMode getNamedAutonomousCommand(String autoSelected) {
     String autoMode = "";
     int initialDelaySeconds = 0;
     int secondaryDelaySeconds = 0;
@@ -250,10 +247,20 @@ public class RobotContainer {
       }
     }
 
-    _NamedAutoMode selectedAutoMode = nameAutoModeMap.get(autoMode);
-    if(selectedAutoMode == null){
+    //_NamedAutoMode selectedAutoMode = nameAutoModeMap.get(autoMode);
+    _NamedAutoMode selectedAutoMode = null;
+    try{
+      selectedAutoMode = createNamedAutoMode(autoMode);
+    }
+    catch(_NotImplementedProperlyException e){
       System.err.println("SELECTED MODE NOT IMPLEMENTED -- DEFAULT TO F1_MOVE_FORWARD!!!");
-      selectedAutoMode = new _NamedAutoMode(new F1_Move_Forward(m_robotDrive));
+      try{
+        selectedAutoMode = new _NamedAutoMode(new F1_Move_Forward(m_robotDrive));
+      }
+      catch(_NotImplementedProperlyException e2){
+        System.err.println("F1_Move_Forward could NOT be created -- Aborting!!!");
+        return null;
+      }
     }
     selectedAutoMode.delayableStrafingAutoMode.setInitialDelaySeconds(initialDelaySeconds);
     selectedAutoMode.delayableStrafingAutoMode.setSecondaryDelaySeconds(secondaryDelaySeconds);
@@ -261,53 +268,70 @@ public class RobotContainer {
     return selectedAutoMode;
   }
 
-  private Map<String, _NamedAutoMode> createNamedAutoModeMap() throws _NotImplementedProperlyException {
-    _NamedAutoMode mode;
-    Map<String, _NamedAutoMode> myMap = new HashMap<String, _NamedAutoMode>();
-      //
-      // DEFAULT AUTO -- MOVE FORWARD
-      //
-      mode = new _NamedAutoMode(new F1_Move_Forward(m_robotDrive));
-      myMap.put(mode.code, mode);
-
+  private _NamedAutoMode createNamedAutoMode(String autoModeName) throws _NotImplementedProperlyException {
+    switch(autoModeName){
       //
       // FOR HAYMARKET: R1, L1, M1, M3
       //
-      mode = new _NamedAutoMode(new R1_WholeSide10(m_ledstring, m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
-      myMap.put(mode.code, mode);
-
-      mode = new _NamedAutoMode(new R2_Shoot3_FriendlyTriple(m_ledstring, m_robotDrive, m_sequencer, m_shootclimb, m_vision, m_targeting));
-      myMap.put(mode.code, mode);
-
-      mode = new _NamedAutoMode(new L1_EnemyPair_Front3(m_ledstring, m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
-      myMap.put(mode.code, mode);
-
-      mode = new _NamedAutoMode(new M1_Shoot3_Front3_Shoot3(m_ledstring, m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
-      myMap.put(mode.code, mode);
-                    
-      mode = new _NamedAutoMode(new M3_Shoot3_Buddy5(m_ledstring, m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
-      myMap.put(mode.code, mode);
+      case "R1": return new _NamedAutoMode(new R1_WholeSide10(m_ledstring, m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
+      case "L1": return new _NamedAutoMode(new L1_EnemyPair_Front3(m_ledstring, m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
+      case "M1": return new _NamedAutoMode(new M1_Shoot3_Front3_Shoot3(m_ledstring, m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
+      case "M3": return new _NamedAutoMode(new M3_Shoot3_Buddy5(m_ledstring, m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
 
       //
       // TEST AUTO ROUTINES
       //
-      mode = new _NamedAutoMode(new T1_Move_Forward(m_robotDrive));
-      myMap.put(mode.code, mode);
+      case "T1": return new _NamedAutoMode(new T1_Move_Forward(m_robotDrive));
+      case "T2": return new _NamedAutoMode(new T2_BwdPickup2Balls(m_robotDrive));
+      case "T3": return new _NamedAutoMode(new T3_BwdPickup2BallsAndShoot(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
+      case "T4": return new _NamedAutoMode(new T4_ShootDriveForward(m_ledstring, m_robotDrive, m_sequencer, m_shootclimb, m_vision, m_targeting));
+      case "R2": return new _NamedAutoMode(new R2_Shoot3_FriendlyTriple(m_ledstring, m_robotDrive, m_sequencer, m_shootclimb, m_vision, m_targeting));
 
-      mode = new _NamedAutoMode(new T2_BwdPickup2Balls(m_robotDrive));
-      myMap.put(mode.code, mode);
-
-      mode = new _NamedAutoMode(new T3_BwdPickup2BallsAndShoot(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
-      myMap.put(mode.code, mode);
-                    
-      mode = new _NamedAutoMode(new T4_ShootDriveForward(m_ledstring, m_robotDrive, m_sequencer, m_shootclimb, m_vision, m_targeting));
-      myMap.put(mode.code, mode);
-
-      mode = new _NamedAutoMode(new T5_ShootDriveBackward(m_ledstring, m_robotDrive, m_sequencer, m_shootclimb, m_vision, m_targeting));
-      myMap.put(mode.code, mode);
-
-      return myMap;
+      default: return null;
+    }
   }
+
+  // private Map<String, _NamedAutoMode> createNamedAutoModeMap() throws _NotImplementedProperlyException {
+  //   _NamedAutoMode mode;
+  //   Map<String, _NamedAutoMode> myMap = new HashMap<String, _NamedAutoMode>();
+  //     //
+  //     // DEFAULT AUTO -- MOVE FORWARD
+  //     //
+  //     mode = new _NamedAutoMode(new F1_Move_Forward(m_robotDrive));
+  //     myMap.put(mode.code, mode);
+
+  //     //
+  //     // FOR HAYMARKET: R1, L1, M1, M3
+  //     //
+  //     mode = new _NamedAutoMode(new R1_WholeSide10(m_ledstring, m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
+  //     myMap.put(mode.code, mode);
+
+  //     mode = new _NamedAutoMode(new L1_EnemyPair_Front3(m_ledstring, m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
+  //     myMap.put(mode.code, mode);
+
+  //     mode = new _NamedAutoMode(new M1_Shoot3_Front3_Shoot3(m_ledstring, m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
+  //     myMap.put(mode.code, mode);
+                    
+  //     mode = new _NamedAutoMode(new M3_Shoot3_Buddy5(m_ledstring, m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
+  //     myMap.put(mode.code, mode);
+
+  //     //
+  //     // TEST AUTO ROUTINES
+  //     //
+  //     mode = new _NamedAutoMode(new T1_Move_Forward(m_robotDrive));
+  //     myMap.put(mode.code, mode);
+
+  //     mode = new _NamedAutoMode(new T2_BwdPickup2Balls(m_robotDrive));
+  //     myMap.put(mode.code, mode);
+
+  //     mode = new _NamedAutoMode(new T3_BwdPickup2BallsAndShoot(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision, m_targeting));
+  //     myMap.put(mode.code, mode);
+                    
+  //     mode = new _NamedAutoMode(new T4_ShootDriveForward(m_ledstring, m_robotDrive, m_sequencer, m_shootclimb, m_vision, m_targeting));
+  //     myMap.put(mode.code, mode);
+
+  //     return myMap;
+  // }
     
   public class StickTrigger extends Trigger {
     public boolean get() {

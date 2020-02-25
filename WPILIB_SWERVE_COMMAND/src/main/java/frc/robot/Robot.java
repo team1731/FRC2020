@@ -87,14 +87,7 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our
     // autonomous chooser on the dashboard.
-    try{
-      m_robotContainer = new RobotContainer(m_ledstring, m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_targeting, m_vision);
-    }
-    catch(_NotImplementedProperlyException e){
-      System.err.println("UNABLE TO INITIALILZE AUTONOMOUS -- ABORTING -- FIX YOUR SOFTWARE!!! ==> " + e.getMessage());
-      e.printStackTrace();
-      return;
-    }
+    m_robotContainer = new RobotContainer(m_ledstring, m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_targeting, m_vision);
 
     if(RobotBase.isReal()){
       if(leftFrontAbsEncoder == null || rightFrontAbsEncoder == null || leftRearAbsEncoder == null || rightRearAbsEncoder == null){
@@ -179,6 +172,17 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    CommandScheduler.getInstance().cancelAll(); ///????????????????????????????????????????? SHOULD WE DO THIS????? ******************
+    
+    // try{
+    //   m_robotContainer.createAutonomousModes();
+    // }
+    //  catch(_NotImplementedProperlyException e){
+    //   System.err.println("UNABLE TO INITIALILZE AUTONOMOUS -- ABORTING -- FIX YOUR SOFTWARE!!! ==> " + e.getMessage());
+    //   e.printStackTrace();
+    //   return;
+    // }
+
     m_ledstring.option(LedOption.RAINBOW);
 
     m_robotDrive.resumeCSVWriter();
@@ -201,19 +205,21 @@ public class Robot extends TimedRobot {
     autoCode = autoCode.toUpperCase();
     System.out.println("AUTO CODE being used by the software --> " + autoCode);
 
-    try {
-      _NamedAutoMode namedAutoCommand = m_robotContainer.getNamedAutonomousCommand(autoCode);
-      m_autonomousCommand = namedAutoCommand.getCommand();
+    m_autonomousCommand = null;
+    _NamedAutoMode namedAutoMode = m_robotContainer.getNamedAutonomousCommand(autoCode);
+    if(namedAutoMode != null){
+      m_autonomousCommand = namedAutoMode.getCommand();
 
       // schedule the autonomous command (example)
       if (m_autonomousCommand == null) {
         System.out.println("SOMETHING WENT WRONG - UNABLE TO RUN AUTONOMOUS! CHECK SOFTWARE!");
       } else {
-        System.out.println("Running actual autonomous mode --> " + namedAutoCommand.name);
+        System.out.println("Running actual autonomous mode --> " + namedAutoMode.name);
         m_autonomousCommand.schedule();
       }
-    } catch (_NotImplementedProperlyException e) {
-      System.err.println("CANNOT RUN AUTONOMOUS COMMAND! ==> " + e.getMessage());
+    }
+    else{
+      System.err.println("UNABLE TO EXECUTE SELECTED AUTONOMOUS MODE!!");
     }
   }
 
@@ -256,13 +262,13 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("Intake State",  m_intake.getIntakeState());
     SmartDashboard.putNumber("Climb Encoder", m_shootclimb.getClimbEncoderValue());
 
-    switch((int)m_sequencer.getPowerCellCount()){
-      case 1: m_ledstring.option(LedOption.BALLONE); break;
-      case 2: m_ledstring.option(LedOption.BALLTWO); break;
-      case 3: m_ledstring.option(LedOption.BALLTHREE); break;
-      case 4: m_ledstring.option(LedOption.BALLFOUR); break;
-      case 5: m_ledstring.option(LedOption.GREEN); break;
-    }
+    // switch((int)m_sequencer.getPowerCellCount()){
+    //   case 1: m_ledstring.option(LedOption.BALLONE); break;
+    //   case 2: m_ledstring.option(LedOption.BALLTWO); break;
+    //   case 3: m_ledstring.option(LedOption.BALLTHREE); break;
+    //   case 4: m_ledstring.option(LedOption.BALLFOUR); break;
+    //   case 5: m_ledstring.option(LedOption.GREEN); break;
+    // }
   }
 
   @Override
