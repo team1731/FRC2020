@@ -177,7 +177,7 @@ public class Robot extends TimedRobot {
 
       // schedule the autonomous command (example)
       if (m_autonomousCommand == null) {
-        System.out.println("SOMETHING WENT WRONG - UNABLE TO RUN AUTONOMOUS! CHECK SOFTWARE!");
+        System.err.println("SOMETHING WENT WRONG - UNABLE TO RUN AUTONOMOUS! CHECK SOFTWARE!");
       } else {
         System.out.println("Running actual autonomous mode --> " + namedAutoMode.name);
         m_autonomousCommand.schedule();

@@ -104,7 +104,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
   }
 
   public void testSpeed(){
-    System.out.println("testSpeed");
+    //System.out.println("testSpeed");
   }
   
   @Override
