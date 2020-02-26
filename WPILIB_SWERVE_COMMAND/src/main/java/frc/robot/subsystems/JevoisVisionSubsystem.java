@@ -50,7 +50,7 @@ public class JevoisVisionSubsystem extends SubsystemBase {
     private JevoisVisionSubsystem() {
         ringLight = new Solenoid(0, 0);
         goal_tracker_ = new GoalTracker();
-        m_VisionServer = JevoisVisionServer.getInstance();
+        m_VisionServer = JevoisVisionServer.getInstance(this);
     }
 
     public void ringLightOn(){
@@ -136,7 +136,7 @@ public class JevoisVisionSubsystem extends SubsystemBase {
                  //   System.out.println("zr: "+zr);
                     double distance = Math.hypot(xr, yr) * scaling;
                     Rotation2d angle = normalize(new Rotation2d(xr, yr));
-                    SmartDashboard.putString("RobotState_distance/angle", "Distance: "+distance+" angle: "+angle);
+                    //SmartDashboard.putString("RobotState_distance/angle", "Distance: "+distance+" angle: "+angle);
     //                System.out.println("RobotState_distance/angle Distance: "+distance+" angle: "+angle);
                     angle = angle.rotateBy(Rotation2d.fromDegrees(-1.5));
                    

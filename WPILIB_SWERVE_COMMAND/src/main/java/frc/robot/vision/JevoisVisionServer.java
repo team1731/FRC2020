@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class JevoisVisionServer {
 
     private static JevoisVisionServer s_instance = null;
+    private static JevoisVisionSubsystem visionSubsystem;
     private boolean m_running = true;
     double lastMessageReceivedTime = 0;
     private boolean m_use_java_time = false;
@@ -48,11 +49,11 @@ public class JevoisVisionServer {
  //   private ArrayList<ServerThread> serverThreads = new ArrayList<>();
  //   private volatile boolean mWantsAppRestart = false;
 
-    public static JevoisVisionServer getInstance() {
+    public static JevoisVisionServer getInstance(JevoisVisionSubsystem visionSys) {
         if (s_instance == null) {
             s_instance = new JevoisVisionServer();
-
         }
+        visionSubsystem = visionSys;
         return s_instance;
     }
     
@@ -68,7 +69,8 @@ public class JevoisVisionServer {
 
         private JevoisVisionSubsystem mJevoisVisionProcessor;
 
-        private VisionServerThread(){
+        private VisionServerThread(JevoisVisionSubsystem visionSys){
+            mJevoisVisionProcessor = visionSys;
             try {
                 AttemptJevoisConnection();
             } catch (Exception e){
@@ -107,7 +109,7 @@ public class JevoisVisionServer {
             */
 
             if(dashboardCounter >= 10){
-                SmartDashboard.putString("JevoisVisionServerTargets", visionTargetPositions_Raw);
+                //SmartDashboard.putString("JevoisVisionServerTargets", visionTargetPositions_Raw);
             }
 
             String[] visionTargetLines = visionTargetPositions_Raw.split("\n");
@@ -143,9 +145,9 @@ public class JevoisVisionServer {
             if(targetInfoArray.size() > 0){ 
                 sentTimes++;
                 if(dashboardCounter >= 10){
-                    SmartDashboard.putString("JevoisVisionServerUpdate", "Sent: "+sentTimes);
+                    //SmartDashboard.putString("JevoisVisionServerUpdate", "Sent: "+sentTimes);
                 }
-                //mJevoisVisionProcessor.gotUpdate(new JevoisVisionUpdate(Timer.getFPGATimestamp()-visionCamDeltaTime, targetInfoArray));
+                mJevoisVisionProcessor.gotUpdate(new JevoisVisionUpdate(Timer.getFPGATimestamp()-visionCamDeltaTime, targetInfoArray));
 
              //   mRobotState.addVisionUpdate(Timer.getFPGATimestamp()-visionCamDeltaTime, targetInfoArray);
             }
@@ -166,13 +168,13 @@ public class JevoisVisionServer {
             try {
                 Thread.sleep(1000);
                 connectionAttempt++;
-                SmartDashboard.putString("JevoisVisionServerOutput", "Attempting Jevois connection... ("+connectionAttempt+")");
+                //SmartDashboard.putString("JevoisVisionServerOutput", "Attempting Jevois connection... ("+connectionAttempt+")");
                 
                 visionCam = new SerialPort(VisionConstants.kCameraBaudRate, SerialPort.Port.kUSB1);
                 visionCam.setTimeout(5);
 
                 if(visionCam != null){
-                    SmartDashboard.putString("JevoisVisionServerOutput", "(NO RUN) Connected successfully on attempt "+connectionAttempt);
+                    //SmartDashboard.putString("JevoisVisionServerOutput", "(NO RUN) Connected successfully on attempt "+connectionAttempt);
                     visionCamAvailable = true;
                     //JevoisVisionSubsystem.getInstance().StartCameraDataStream();
                     //run();
@@ -199,7 +201,7 @@ public class JevoisVisionServer {
         @Override
         public void run() {
             for(;;){
-                SmartDashboard.putString("JevoisServerThreadSTART", "ah yes");
+                //SmartDashboard.putString("JevoisServerThreadSTART", "ah yes");
                 //There was a while true loop in here... maybe run this through a looper instead if this doesn't keep going?
                 String dashboardMessage = "";
                 visionCamAvailable = visionCam != null;
@@ -214,7 +216,7 @@ public class JevoisVisionServer {
                         AttemptJevoisConnection();
                     }
                     if(lastDashboardMessage != dashboardMessage){
-                        SmartDashboard.putString("JevoisVisionServerOutput", dashboardMessage);
+                        //SmartDashboard.putString("JevoisVisionServerOutput", dashboardMessage);
                     }
                     lastDashboardMessage = dashboardMessage;
                 } catch (Exception e){
@@ -278,7 +280,7 @@ public class JevoisVisionServer {
      * 
      */
     private JevoisVisionServer() {
-        new Thread(new VisionServerThread()).start();
+        new Thread(new VisionServerThread(visionSubsystem)).start();
     }
 
 

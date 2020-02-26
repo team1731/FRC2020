@@ -119,9 +119,9 @@ public class DriveSubsystem extends SubsystemBase {
   public void periodic() {
     resumeCSVWriter();
 
-    SmartDashboard.putNumber("headingController In", getHeading());
+    //SmartDashboard.putNumber("headingController In", getHeading());
     //headingControllerOutput = headingController.calculate(MathUtil.clamp(getHeading(), -180, 180));
-    SmartDashboard.putNumber("headingController Out", headingControllerOutput);
+    //SmartDashboard.putNumber("headingController Out", headingControllerOutput);
 
     // Update the odometry in the periodic block
     double headingRadians = Math.toRadians(getHeading());
@@ -232,7 +232,7 @@ public class DriveSubsystem extends SubsystemBase {
       double stickAngle = Math.toDegrees(Math.atan2(stickY, stickX));
       stickAngle -= 90;
       
-      SmartDashboard.putNumber("getStickAngle Raw", stickAngle);
+      //SmartDashboard.putNumber("getStickAngle Raw", stickAngle);
 
       //Don't know of Math.atan2 does this automatically. Check smartdashboard
       /*
@@ -250,7 +250,7 @@ public class DriveSubsystem extends SubsystemBase {
       
       stickAngle *= -1;
 
-      SmartDashboard.putNumber("getStickAngle Clamped", stickAngle);
+      //SmartDashboard.putNumber("getStickAngle Clamped", stickAngle);
 
       /*
 
@@ -329,7 +329,7 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public double getHeading() {
     double heading = Math.IEEEremainder(m_gyro.getAngle(), 360) * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
-    SmartDashboard.putNumber("Heading", heading);
+    //SmartDashboard.putNumber("Heading", heading);
     return heading;
   }
 
@@ -368,9 +368,9 @@ public class DriveSubsystem extends SubsystemBase {
 
 
   public void displayEncoders() {
-    SmartDashboard.putNumber("leftFrontAbsEncoder", leftFrontAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
-    SmartDashboard.putNumber("rightFrontAbsEncoder", rightFrontAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
-    SmartDashboard.putNumber("leftRearAbsEncoder", leftRearAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
-    SmartDashboard.putNumber("rightRearAbsEncoder", rightRearAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
+    //SmartDashboard.putNumber("leftFrontAbsEncoder", leftFrontAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
+    //SmartDashboard.putNumber("rightFrontAbsEncoder", rightFrontAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
+    //SmartDashboard.putNumber("leftRearAbsEncoder", leftRearAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
+    //SmartDashboard.putNumber("rightRearAbsEncoder", rightRearAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
   }
 }
