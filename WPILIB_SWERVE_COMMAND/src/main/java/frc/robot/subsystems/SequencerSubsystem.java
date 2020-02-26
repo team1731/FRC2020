@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.OpConstants;
 import edu.wpi.first.wpilibj.PWMTalonFX;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.InterruptHandlerFunction;
+
 //import edu.wpi.first.wpilibj.Timer;
 
 public class SequencerSubsystem extends SubsystemBase {
@@ -39,6 +41,13 @@ public class SequencerSubsystem extends SubsystemBase {
     mLowSensor = new DigitalInput(OpConstants.kLowSequencer);
     mMidSensor = new DigitalInput(OpConstants.kMidSequencer);
     mHighSensor = new DigitalInput(OpConstants.kHighSequencer);
+
+    mMidSensor.requestInterrupts(new InterruptHandlerFunction<Object>() {
+		@Override
+		public void interruptFired(int interruptAssertedMask, Object param) {
+      mTalonSeq.set(0);
+    }});
+    mMidSensor.setUpSourceEdge(false, true);
     //mTimer = new Timer();
     //mTimer.start();
     //startDelay = false;
@@ -46,6 +55,14 @@ public class SequencerSubsystem extends SubsystemBase {
     mLastLowHasBall = lowSensorHasBall();
     mLastHighHasBall = highSensorHasBall();
     mPowerCellCount = 0;
+  }
+
+  public void enableInterrupts(){
+    mMidSensor.enableInterrupts();
+  }
+
+  public void disableInterrupts(){
+    mMidSensor.disableInterrupts();
   }
 
   public void setPowerCellCount(int numBalls){

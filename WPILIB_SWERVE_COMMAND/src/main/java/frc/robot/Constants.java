@@ -160,6 +160,7 @@ public final class Constants {
 
         public static final double kClimbMaxPercent = 1; // 0.3;
         public static final double kJoystickDeadband = 0.2;
+        public static final double kClutchDeadband = 0.3;
         public static final int kClimbJoystickInvert = -1;
 
         public static final double kClimbExSafeEncValue = 10000;

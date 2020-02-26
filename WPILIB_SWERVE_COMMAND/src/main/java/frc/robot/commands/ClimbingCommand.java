@@ -65,9 +65,7 @@ public class ClimbingCommand extends CommandBase {
 
     double climbPercent = climb.getAsDouble();
     // Joystick deadband limits
-    if (Math.abs(climbPercent) < OpConstants.kJoystickDeadband) {
-      climbPercent = 0;
-    }
+    
     if (climbPercent > 0 && !isCyExtending) {
       m_ShootClimbSubsystem.climbExtend();
       isCyExtending = true;
