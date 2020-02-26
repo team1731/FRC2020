@@ -34,7 +34,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class JevoisVisionServer {
 
     private static JevoisVisionServer s_instance = null;
-    private JevoisVisionSubsystem m_VisionSubsystem;
     private boolean m_running = true;
     double lastMessageReceivedTime = 0;
     private boolean m_use_java_time = false;
@@ -57,10 +56,6 @@ public class JevoisVisionServer {
         return s_instance;
     }
 
-    public void setVisionSubsystem(JevoisVisionSubsystem visSys){
-        m_VisionSubsystem = visSys;
-    }
-
     public SerialPort getVisionCam(){
         if(visionCamAvailable){
             return visionCam;
@@ -71,7 +66,7 @@ public class JevoisVisionServer {
 
     private class VisionServerThread implements Runnable {
 
-        //private JevoisVisionSubsystem mJevoisVisionProcessor = JevoisVisionSubsystem.getInstance();
+        private JevoisVisionSubsystem mJevoisVisionProcessor = JevoisVisionSubsystem.getInstance();
 
         private VisionServerThread(){
             try {
@@ -97,7 +92,6 @@ public class JevoisVisionServer {
         int dashboardCounter = 0;
         int sentTimes = 0;
         public void handleMessage(String message, double timestamp) {
-            //m_VisionSubsystem.ringLightOn();
             dashboardCounter++;
             String visionTargetPositions_Raw = message; //message should be the raw visionCam.readString() called from runCrashTracked()
             
@@ -134,7 +128,7 @@ public class JevoisVisionServer {
                     }
                     //}
                 } catch(Exception e) {
-                    //System.err.println("Parse error: "+e.toString());
+                    System.err.println("Parse error: "+e.toString());
                 }
 
                 if(isValid){
@@ -150,7 +144,7 @@ public class JevoisVisionServer {
                 if(dashboardCounter >= 10){
                     SmartDashboard.putString("JevoisVisionServerUpdate", "Sent: "+sentTimes);
                 }
-                JevoisVisionSubsystem.getInstance().gotUpdate(new JevoisVisionUpdate(Timer.getFPGATimestamp()-visionCamDeltaTime, targetInfoArray));
+                mJevoisVisionProcessor.gotUpdate(new JevoisVisionUpdate(Timer.getFPGATimestamp()-visionCamDeltaTime, targetInfoArray));
 
              //   mRobotState.addVisionUpdate(Timer.getFPGATimestamp()-visionCamDeltaTime, targetInfoArray);
             }

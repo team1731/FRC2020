@@ -46,6 +46,16 @@ public class Robot extends TimedRobot {
   public ColorWheelSubsystem m_colorwheel;
   public LedStringSubsystem m_ledstring;
 
+  private void initSubsystems(){
+    // initial SubSystems to at rest states
+    m_robotDrive.resetEncoders();
+    m_intake.retract();
+    m_sequencer.stop();
+    m_shootclimb.stopShooting();
+    //m_colorwheel.init();
+    //m_ledstring.init();
+  }
+
   /**
    * This function is run when the robot is first started up and should be used
    * for any initialization code.
@@ -58,8 +68,8 @@ public class Robot extends TimedRobot {
     
     m_ledstring = null; //new LedStringSubsystem();
     m_robotDrive = new DriveSubsystem();
-    //m_vision = JevoisVisionSubsystem.getInstance(); //new JevoisVisionSubsystem();
-    //m_vision.setDriveSubsystem(m_robotDrive);
+    m_vision = JevoisVisionSubsystem.getInstance();
+    m_vision.setDriveSubsystem(m_robotDrive);
     m_intake = new IntakeSubsystem(m_ledstring);
     m_sequencer = new SequencerSubsystem(m_ledstring);
     m_shootclimb = new ShootClimbSubsystem(m_ledstring);
@@ -73,13 +83,7 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer(m_ledstring, m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision);
 
 
-    // initial SubSystems to at rest states
-    m_robotDrive.resetEncoders();
-    m_intake.retract();
-    m_sequencer.stop();
-    m_shootclimb.stopShooting();
-    m_colorwheel.init();
-    //m_ledstring.init();
+    initSubsystems();
 
     SmartDashboard.putString("INIT CELL COUNT", "3"); // How much ammo we start with
 
@@ -197,12 +201,7 @@ public class Robot extends TimedRobot {
     m_sequencer.setPowerCellCount((int) SmartDashboard.getNumber("CELL COUNT", 3));
     //m_robotDrive.resumeCSVWriter();
 
-    // initial SubSystems to at rest states
-    m_intake.retract();
-    m_sequencer.stop();
-    m_shootclimb.stopShooting();
-    m_colorwheel.init();
-    //m_ledstring.init();
+    initSubsystems();
 
     //m_vision.StartCameraDataStream();
 

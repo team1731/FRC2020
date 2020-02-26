@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.util.Color;
-import com.revrobotics.ColorMatch;
+//import com.revrobotics.ColorMatch;
 //import frc.robot.Gains;
 
 /**
@@ -217,12 +217,13 @@ public final class Constants {
         public static final int k1IntakeRetract = 7; //ok
 
         // ColorWheel
+        /*
         // Note: Any example colors should be calibrated as the user needs, these are here as a basic example.
         public static Color kBlueTarget = ColorMatch.makeColor(0.143, 0.427, 0.429);
         public static Color kGreenTarget = ColorMatch.makeColor(0.197, 0.561, 0.240);
         public static Color kRedTarget = ColorMatch.makeColor(0.561, 0.232, 0.114);
         public static Color kYellowTarget = ColorMatch.makeColor(0.361, 0.524, 0.113);
-
+*/
         public static final int kWheelUnknown = 0;
         public static final int kWheelGreen = 1;
         public static final int kWheelBlue = 2;
@@ -253,7 +254,7 @@ public final class Constants {
          * kF: 1023 represents output value to Talon at 100%, 7200 represents Velocity units at 100% output
          * 
          * 	                                    		          	  kP   kI   kD   kF             Iz    PeakOut */
-        public final static Gains kGains_Velocity = new Gains( 4.0, 0, 0, .07,  300,  1.00);
+        //public final static Gains kGains_Velocity = new Gains( 4.0, 0, 0, .07,  300,  1.00);
         ///// End TalonFX
     }
 

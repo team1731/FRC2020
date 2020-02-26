@@ -29,7 +29,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  * @see GoalTracker.java
  */
 public class JevoisVisionSubsystem extends SubsystemBase {
-    private DriveSubsystem m_robotDrive;
+    //private DriveSubsystem m_robotDrive;
     private static JevoisVisionSubsystem instance_ = new JevoisVisionSubsystem();
     private JevoisVisionUpdate update_ = null;
     private JevoisVisionServer m_VisionServer = JevoisVisionServer.getInstance();
@@ -47,7 +47,6 @@ public class JevoisVisionSubsystem extends SubsystemBase {
     private JevoisVisionSubsystem() {
         ringLight = new Solenoid(0, 0);
         goal_tracker_ = new GoalTracker();
-        m_VisionServer.setVisionSubsystem(this);
     }
 
     public void ringLightOn(){
@@ -149,6 +148,7 @@ public class JevoisVisionSubsystem extends SubsystemBase {
             goal_tracker_.update(timestamp, field_to_goals);
         }
     }
+    /*
 
     public synchronized Optional<ShooterAimingParameters> getAimingParameters() {
         List<TrackReport> reports = goal_tracker_.getTracks();
@@ -176,6 +176,7 @@ public class JevoisVisionSubsystem extends SubsystemBase {
             return Optional.empty();
         }
     }
+    */
 
     /**
      * Writes "SEND" to the vision camera. 
@@ -207,7 +208,9 @@ public class JevoisVisionSubsystem extends SubsystemBase {
         return false;
     }
 
+    /*
 	public void setDriveSubsystem(DriveSubsystem m_robotDrive) {
         this.m_robotDrive = m_robotDrive;
 	}
+*/
 }

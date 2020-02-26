@@ -1,7 +1,10 @@
 package frc.robot.commands;
 
+import java.util.Optional;
+
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.XboxConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.JevoisVisionSubsystem;
 import frc.robot.vision.ShooterAimingParameters;
@@ -20,32 +23,30 @@ public class RotToPowerPortCommand extends CommandBase {
 
     @Override
     public void initialize(){
-        //Doing this from teleopInit and autonomousInit. May want to do this here instead...
-        //m_vision.StartCameraDataStream();
         m_drive.setStickControlledHeading(false);
+        m_vision.StartCameraDataStream();
     }
 
     @Override
     public void execute(){
         
-        ShooterAimingParameters aimParams = m_vision.getAimingParameters().get();
+        Optional<ShooterAimingParameters> aimParams = m_vision.getAimingParameters();
 
-        if(aimParams != null){
-            m_drive.setHeadingControllerGoal(m_drive.getHeading()+aimParams.getRobotToGoal().getDegrees());
+        if(!aimParams.isEmpty() && aimParams != null){
+            m_drive.setHeadingControllerGoal(m_drive.getHeading()+aimParams.get().getRobotToGoal().getDegrees());
         }
     }
 
     @Override
     public void end(boolean interrupted){
-        //Doing this from disabledInit. May want to do this here instead...
-        //m_vision.StopCameraDataStream();
         m_drive.setStickControlledHeading(true);
+        m_vision.StopCameraDataStream();
     }
 
     @Override
     public boolean isFinished(){
         //When the right bumper is released, stop the command
-        return !m_driverController.getRawButton(6);
+        return !m_driverController.getRawButton(XboxConstants.kRBumper);
     } 
 
 }
