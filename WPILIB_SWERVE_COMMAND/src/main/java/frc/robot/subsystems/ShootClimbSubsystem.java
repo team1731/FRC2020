@@ -218,16 +218,16 @@ public class ShootClimbSubsystem extends SubsystemBase {
   }
 
   public boolean isHiCylinderSensor() {
-    return sHiCylinder.get();
+    return !sHiCylinder.get();
   }
   public boolean isLoCylinderSensor() {
-    return sLoCylinder.get();
+    return !sLoCylinder.get();
   }
   public boolean isClimbExtendSensor() {
-    return sClimbExtend.get();
+    return !sClimbExtend.get();
   }
   public boolean isClimbRetractSensor() {
-    return sClimbRetract.get();
+    return !sClimbRetract.get();
   }
 
   public void resetClimbEncoder() {

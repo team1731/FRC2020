@@ -59,7 +59,7 @@ public class ClimbingCommand extends CommandBase {
   public void execute() {
 
     isHiCy = false; //m_ShootClimbSubsystem.isHiCylinderSensor();
-    isLoCy =  true; //m_ShootClimbSubsystem.isLoCylinderSensor();
+    isLoCy =  false; //m_ShootClimbSubsystem.isLoCylinderSensor();
     isClimbEx = false; //m_ShootClimbSubsystem.isClimbExtendSensor();
     isClimbRt = false; //m_ShootClimbSubsystem.isClimbRetractSensor();
 
@@ -70,10 +70,14 @@ public class ClimbingCommand extends CommandBase {
       m_ShootClimbSubsystem.climbExtend();
       isCyExtending = true;
       isCyRetracting = false;
-    } else if (climbPercent < 0 && !isCyRetracting) {
-      m_ShootClimbSubsystem.climbRetract();
-      isCyRetracting = true;
-      isCyExtending = false;
+    } else if (climbPercent < 0) {
+      if (isLoCy) {
+        m_ShootClimbSubsystem.climbRetract();
+      }
+      if (!isCyRetracting) {
+        isCyRetracting = true;
+        isCyExtending = false;
+      }
     }
         //EXTENDING    NOT REACHED LIMIT    RETRACTING     NOT REACHED LIMIT
     if ((isCyExtending && !isClimbEx && (
