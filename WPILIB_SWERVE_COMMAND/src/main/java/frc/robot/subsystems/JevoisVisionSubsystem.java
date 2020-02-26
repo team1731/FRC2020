@@ -30,9 +30,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  */
 public class JevoisVisionSubsystem extends SubsystemBase {
     private DriveSubsystem m_robotDrive;
-    private static JevoisVisionSubsystem instance_ = new JevoisVisionSubsystem();
+    private static JevoisVisionSubsystem instance_;
     private JevoisVisionUpdate update_ = null;
-    private JevoisVisionServer m_VisionServer = JevoisVisionServer.getInstance();
+    private JevoisVisionServer m_VisionServer;
     private Solenoid ringLight;
     private ShooterAimingParameters cachedAimingParameters = null;
 
@@ -41,13 +41,16 @@ public class JevoisVisionSubsystem extends SubsystemBase {
 
     public static JevoisVisionSubsystem getInstance() {
         //JevoisVisionServer.getInstance();
+        if(instance_ == null){
+            instance_ = new JevoisVisionSubsystem();
+        }
         return instance_;
     }
 
     private JevoisVisionSubsystem() {
         ringLight = new Solenoid(0, 0);
         goal_tracker_ = new GoalTracker();
-        m_VisionServer.setVisionSubsystem(this);
+        m_VisionServer = JevoisVisionServer.getInstance();
     }
 
     public void ringLightOn(){

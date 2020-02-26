@@ -158,12 +158,12 @@ public final class Constants {
         public static final int kShooterVictor = 3;
         public static final int kShootMinVelocity = 500;
 
-        public static final double kClimbMaxPercent = 1; // 0.3;
-        public static final double kJoystickDeadband = 0.2;
-        public static final double kClutchDeadband = 0.3;
+        public static final double kClimbMaxPercent = 0.6; // 0.3;
+        public static final double kJoystickDeadband = 0.1;
+        public static final double kClutchDeadband = 0.11;
         public static final int kClimbJoystickInvert = -1;
 
-        public static final double kClimbExSafeEncValue = 10000;
+        public static final double kClimbExSafeEncValue = 100000;
         // Digital Input/Outputs
         public static int kLowSequencer = 0;
         public static int kMidSequencer = 1;

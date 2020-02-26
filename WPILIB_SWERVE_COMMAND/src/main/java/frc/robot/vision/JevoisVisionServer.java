@@ -34,7 +34,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class JevoisVisionServer {
 
     private static JevoisVisionServer s_instance = null;
-    private JevoisVisionSubsystem m_VisionSubsystem;
     private boolean m_running = true;
     double lastMessageReceivedTime = 0;
     private boolean m_use_java_time = false;
@@ -56,11 +55,7 @@ public class JevoisVisionServer {
         }
         return s_instance;
     }
-
-    public void setVisionSubsystem(JevoisVisionSubsystem visSys){
-        m_VisionSubsystem = visSys;
-    }
-
+    
     public SerialPort getVisionCam(){
         if(visionCamAvailable){
             return visionCam;
@@ -71,7 +66,7 @@ public class JevoisVisionServer {
 
     private class VisionServerThread implements Runnable {
 
-        //private JevoisVisionSubsystem mJevoisVisionProcessor = JevoisVisionSubsystem.getInstance();
+        private JevoisVisionSubsystem mJevoisVisionProcessor;
 
         private VisionServerThread(){
             try {
@@ -150,7 +145,7 @@ public class JevoisVisionServer {
                 if(dashboardCounter >= 10){
                     SmartDashboard.putString("JevoisVisionServerUpdate", "Sent: "+sentTimes);
                 }
-                JevoisVisionSubsystem.getInstance().gotUpdate(new JevoisVisionUpdate(Timer.getFPGATimestamp()-visionCamDeltaTime, targetInfoArray));
+                //mJevoisVisionProcessor.gotUpdate(new JevoisVisionUpdate(Timer.getFPGATimestamp()-visionCamDeltaTime, targetInfoArray));
 
              //   mRobotState.addVisionUpdate(Timer.getFPGATimestamp()-visionCamDeltaTime, targetInfoArray);
             }
