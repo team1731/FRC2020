@@ -179,12 +179,18 @@ public class ShootClimbSubsystem extends SubsystemBase {
 
   public void setClimber(double percentOut) {
     double output = percentOut;
+    double test = Math.abs(percentOut);
     // if within deadband then set output to Zero
-    if (output == 0) {
+    if (test < OpConstants.kJoystickDeadband) {
+      percentOut = 0;
+    }
+
+    if (test < OpConstants.kClutchDeadband) {
       shootMode();
     } else {
       climbMode();
     }
+
     //System.out.println("climb output = " + output);
     mTalonShoot1.set(ControlMode.PercentOutput, output*OpConstants.kClimbMaxPercent);
     mTalonShoot2.set(ControlMode.PercentOutput, output*OpConstants.kClimbMaxPercent);

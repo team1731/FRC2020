@@ -53,6 +53,7 @@ public class IntakeSeqCommand extends CommandBase {
   public void initialize() {
     m_IntakeSubsystem.extend();
     //m_SeqSubsystem.stop();
+    m_SeqSubsystem.enableInterrupts();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -108,6 +109,7 @@ public class IntakeSeqCommand extends CommandBase {
     m_SeqSubsystem.stop();
     m_IntakeSubsystem.inactive();
     m_IntakeSubsystem.retract();
+    m_SeqSubsystem.disableInterrupts();
   }
 
   // Returns true when the command should end.
