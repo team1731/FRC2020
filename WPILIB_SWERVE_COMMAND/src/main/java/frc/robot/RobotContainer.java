@@ -150,7 +150,7 @@ public class RobotContainer {
       //.whileActiveContinuous(new ShootSeqCommand(m_shootclimb, m_sequencer, () -> m_operatorController.getRawAxis(4)), false
     //);
     
-    new JoystickButton(m_operatorController, 10).whileActiveContinuous(
+    new JoystickButton(m_operatorController, 16).whileActiveContinuous(
       new ShootSeqCommand(m_shootclimb ,m_sequencer), true
     );
     
@@ -176,7 +176,7 @@ public class RobotContainer {
     //);
 
     // Sequencer ejects works when button is held
-    new JoystickButton(m_driverController, XboxConstants.kAppMenu)
+    new JoystickButton(m_operatorController, 14)
     .whenHeld(new InstantCommand(m_sequencer::reverse, m_sequencer))
     .whenReleased(new InstantCommand(m_sequencer::stop, m_sequencer));
 

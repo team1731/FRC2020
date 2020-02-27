@@ -329,7 +329,7 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public double getHeading() {
     double heading = Math.IEEEremainder(m_gyro.getAngle(), 360) * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
-    //SmartDashboard.putNumber("Heading", heading);
+    SmartDashboard.putNumber("Heading", heading);
     return heading;
   }
 
@@ -363,7 +363,7 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void setHeadingControllerGoal(double newGoal){
-    headingController.setGoal(newGoal);
+    //headingController.setGoal(newGoal);
   }
 
 
