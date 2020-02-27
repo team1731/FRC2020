@@ -68,6 +68,7 @@ public class ClimbingCommand extends CommandBase {
     // if within Joystick deadband then set output to Zero
     if (Math.abs(climbPercent) < OpConstants.kJoystickDeadband) {
       climbPercent = 0;
+      m_ShootClimbSubsystem.brakeOn();
     }
     
     if (climbPercent > 0 && !isCyExtending) {
@@ -89,6 +90,7 @@ public class ClimbingCommand extends CommandBase {
                || isHiCy) ) 
          ||
         (isCyRetracting && !isClimbRt)) { //TODO: how to use isLoCy ????
+          m_ShootClimbSubsystem.brakeOff();
       m_ShootClimbSubsystem.setClimber(climbPercent * OpConstants.kClimbJoystickInvert);
     } else {
       m_ShootClimbSubsystem.setClimber(0);
@@ -101,6 +103,7 @@ public class ClimbingCommand extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     m_ShootClimbSubsystem.stopShooting();
+    m_ShootClimbSubsystem.brakeOff();
   }
 
   // Returns true when the command should end.

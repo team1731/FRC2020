@@ -216,6 +216,8 @@ public final class Constants {
         public static final int k1HoodRetract = 5; 
         public static final int k1IntakeExtend = 6; //ok
         public static final int k1IntakeRetract = 7; //ok
+        public static final int k0BrakeOn = 1;
+        public static final int k0BrakeOff = 2;
 
         // ColorWheel
         // Note: Any example colors should be calibrated as the user needs, these are here as a basic example.

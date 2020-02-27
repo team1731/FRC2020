@@ -41,8 +41,12 @@ public class DriveSubsystem extends SubsystemBase {
   private final ProfiledPIDController headingController = new ProfiledPIDController(
     DriveConstants.kTurnP, DriveConstants.kTurnI, DriveConstants.kTurnD,
     new TrapezoidProfile.Constraints(DriveConstants.kMaxTurnVelocity, DriveConstants.kMaxTurnAcceleration));
+
+  //After looking inside the ProfiledPIDController class, I suspect that a standard PIDController will work better as ProfiledPID seems to primarily use the
+  //trapezoid profiler to calculate the next output rather than the PID. Since trapezoid profiler doesn't have continuous input it just ignores it.
+  //private final PIDController headingControllerPID = new PIDController(DriveConstants.kTurnP, DriveConstants.kTurnI, DriveConstants.kTurnD);
   
-  private double headingControllerOutput = 0;
+  //private double headingControllerOutput = 0;
 
   private boolean stickControlledHeading = true;
   
@@ -93,7 +97,7 @@ public class DriveSubsystem extends SubsystemBase {
       }
     }
     headingController.setTolerance(DriveConstants.kTurnToleranceDeg, DriveConstants.kTurnRateToleranceDegPerS);
-    headingController.enableContinuousInput(-180, 180);
+    //headingController.enableContinuousInput(-180, 180);
     //mCSVWriter = new ReflectingCSVWriter<>(this.getName(), DebugOutput.class);
   }
 
@@ -108,12 +112,13 @@ public class DriveSubsystem extends SubsystemBase {
     return Rotation2d.fromDegrees(m_gyro.getAngle() * (DriveConstants.kGyroReversed ? -1.0 : 1.0));
   }
 
+  /*
   /**
    * @return the headingControllerOutput
-   */
   public double getHeadingControllerOutput() {
     return headingControllerOutput;
   }
+  */
 
   @Override
   public void periodic() {
@@ -185,7 +190,7 @@ public class DriveSubsystem extends SubsystemBase {
     double xSpeedAdjusted = xSpeed;
     double ySpeedAdjusted = ySpeed;
     double rotAdjusted = rightX;
-    double rotationalOutput = headingControllerOutput;
+    double rotationalOutput = 0;
 
     // DEADBAND
     if(Math.abs(xSpeedAdjusted) < 0.2){
@@ -198,20 +203,19 @@ public class DriveSubsystem extends SubsystemBase {
       rotAdjusted = 0;
     }
 
-    //If the stick is released, don't change the rotation
-    if(stickControlledHeading && (Math.abs(rightX) > DriveConstants.kMinRightStickThreshold || Math.abs(rightY) > DriveConstants.kMinRightStickThreshold)){
-      double stickAngle = getStickAngle(rightX, rightY);
-      if(Math.abs(stickAngle) < 165){
+    if(stickControlledHeading){
+      //If the stick is released, don't change the rotation
+      if((Math.abs(rightX) > DriveConstants.kMinRightStickThreshold || Math.abs(rightY) > DriveConstants.kMinRightStickThreshold)){
+        double stickAngle = getStickAngle(rightX, rightY);
         rotationalOutput = headingController.calculate(getHeading(), stickAngle);
       } else {
-        rotationalOutput = 0;
+        headingController.reset(getHeading());
       }
-    } else if(stickControlledHeading && Math.abs(rightX) <= DriveConstants.kMinRightStickThreshold && Math.abs(rightY) <= DriveConstants.kMinRightStickThreshold) {
-      rotationalOutput = 0;
-      headingController.reset(getHeading());
+    } else {
+      rotationalOutput = headingController.calculate(getHeading());
     }
 
-    //Replaced rotAdjusted with headingControllerOutput
+    //Replaced rotAdjusted with rotationalOutput
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
           xSpeedAdjusted, ySpeedAdjusted, rotationalOutput, getAngle())
@@ -363,7 +367,7 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void setHeadingControllerGoal(double newGoal){
-    //headingController.setGoal(newGoal);
+    headingController.setGoal(newGoal);
   }
 
 

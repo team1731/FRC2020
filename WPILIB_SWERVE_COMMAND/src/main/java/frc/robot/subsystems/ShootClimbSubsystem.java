@@ -28,6 +28,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
   private DoubleSolenoid mShootClimbSolenoid;
   private DoubleSolenoid mClimberSolenoid;
   private DoubleSolenoid mShootHoodSolenoid;
+  private DoubleSolenoid mBrakeSolenoid;
   //private final PWMTalonFX mTalonShoot;
   private final TalonFX mTalonShoot1;
   private final TalonFX mTalonShoot2;
@@ -48,6 +49,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
     mShootClimbSolenoid = Constants.makeDoubleSolenoidForIds(0, OpConstants.k0Shooting, OpConstants.k0Climbing);
     mClimberSolenoid = Constants.makeDoubleSolenoidForIds(1, OpConstants.k1ClimbRetract, OpConstants.k1ClimbExtend);
     mShootHoodSolenoid = Constants.makeDoubleSolenoidForIds(1, OpConstants.k1HoodRetract, OpConstants.k1HoodExtend);
+    mBrakeSolenoid = Constants.makeDoubleSolenoidForIds(1, OpConstants.k0BrakeOn, OpConstants.k0BrakeOff);
     //mTalonShoot = new PWMTalonFX(OpConstants.kMotorPWMShoot1);
     mTalonShoot1 = new TalonFX(OpConstants.kMotorCANShoot1);
     mTalonShoot2 = new TalonFX(OpConstants.kMotorCANShoot2);
@@ -219,6 +221,14 @@ public class ShootClimbSubsystem extends SubsystemBase {
 
   public void climbRetract() {
     mClimberSolenoid.set(DoubleSolenoid.Value.kForward); // "lower climber arm"
+  }
+
+  public void brakeOn() {
+    mBrakeSolenoid.set(DoubleSolenoid.Value.kForward); // brake
+  }
+
+  public void brakeOff() {
+    mBrakeSolenoid.set(DoubleSolenoid.Value.kReverse); // brake
   }
 
   public boolean isHiCylinderSensor() {
