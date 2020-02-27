@@ -60,7 +60,7 @@ public class IntakeSeqCommand extends CommandBase {
   @Override
   public void execute() {
     low = m_SeqSubsystem.lowSensorHasBall();
-    mid = low;
+    mid = low;  //use low for both mid and low
     //mid = m_SeqSubsystem.midSensorHasBall();
     high = m_SeqSubsystem.highSensorHasBall();
     if (!low && ((!mid && !high) || (!mid && high) || (mid && high))) {  // case A
