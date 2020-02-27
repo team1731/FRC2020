@@ -8,7 +8,6 @@
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -23,7 +22,6 @@ import frc.robot.subsystems.ColorWheelSubsystem;
 import frc.robot.subsystems.LedStringSubsystem;
 import frc.robot.subsystems.SequencerSubsystem;
 import frc.robot.subsystems.ShootClimbSubsystem;
-import frc.robot.vision.JevoisVisionServer;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -46,6 +44,16 @@ public class Robot extends TimedRobot {
   public ColorWheelSubsystem m_colorwheel;
   public LedStringSubsystem m_ledstring;
 
+  private void initSubsystems(){
+    // initial SubSystems to at rest states
+    m_robotDrive.resetEncoders();
+    m_intake.retract();
+    m_sequencer.stop();
+    m_shootclimb.stopShooting();
+    //m_colorwheel.init();
+    //m_ledstring.init();
+  }
+
   /**
    * This function is run when the robot is first started up and should be used
    * for any initialization code.
@@ -58,8 +66,7 @@ public class Robot extends TimedRobot {
     
     m_ledstring = null; //new LedStringSubsystem();
     m_robotDrive = new DriveSubsystem();
-    //m_vision = JevoisVisionSubsystem.getInstance(); //new JevoisVisionSubsystem();
-    //m_vision.setDriveSubsystem(m_robotDrive);
+    m_vision = new JevoisVisionSubsystem(m_robotDrive);
     m_intake = new IntakeSubsystem(m_ledstring);
     m_sequencer = new SequencerSubsystem(m_ledstring);
     m_shootclimb = new ShootClimbSubsystem(m_ledstring);
@@ -73,13 +80,7 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer(m_ledstring, m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision);
 
 
-    // initial SubSystems to at rest states
-    m_robotDrive.resetEncoders();
-    m_intake.retract();
-    m_sequencer.stop();
-    m_shootclimb.stopShooting();
-    m_colorwheel.init();
-    //m_ledstring.init();
+    initSubsystems();
 
     SmartDashboard.putString("INIT CELL COUNT", "3"); // How much ammo we start with
 
@@ -173,7 +174,7 @@ public class Robot extends TimedRobot {
 
       // schedule the autonomous command (example)
       if (m_autonomousCommand == null) {
-        System.out.println("SOMETHING WENT WRONG - UNABLE TO RUN AUTONOMOUS! CHECK SOFTWARE!");
+        System.err.println("SOMETHING WENT WRONG - UNABLE TO RUN AUTONOMOUS! CHECK SOFTWARE!");
       } else {
         System.out.println("Running actual autonomous mode --> " + namedAutoMode.name);
         m_autonomousCommand.schedule();
@@ -197,12 +198,7 @@ public class Robot extends TimedRobot {
     m_sequencer.setPowerCellCount((int) SmartDashboard.getNumber("CELL COUNT", 3));
     //m_robotDrive.resumeCSVWriter();
 
-    // initial SubSystems to at rest states
-    m_intake.retract();
-    m_sequencer.stop();
-    m_shootclimb.stopShooting();
-    m_colorwheel.init();
-    //m_ledstring.init();
+    initSubsystems();
 
     //m_vision.StartCameraDataStream();
 
@@ -227,7 +223,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("HighSensor",  m_sequencer.highSensorHasBall());
     SmartDashboard.putNumber("PowerCellCount",  (int)m_sequencer.getPowerCellCount());
     SmartDashboard.putString("Intake State",  m_intake.getIntakeState());
-    SmartDashboard.putNumber("Climb Encoder", m_shootclimb.getClimbEncoderValue());
+    //SmartDashboard.putNumber("Climb Encoder", m_shootclimb.getClimbEncoderValue());
 
     // switch((int)m_sequencer.getPowerCellCount()){
     //   case 1: m_ledstring.option(LedOption.BALLONE); break;
@@ -253,6 +249,6 @@ public class Robot extends TimedRobot {
     double shootMotorPercent_0_to_1 = SmartDashboard.getNumber("Shoot Motor % (0-1)", 0.5);
     m_shootclimb.hoodExtend();
     m_shootclimb.spinShooter(shootMotorPercent_0_to_1);
-    SmartDashboard.putNumber("Shoot Motor 1 Vel", m_shootclimb.getShootMotor1Velocity());
+    //SmartDashboard.putNumber("Shoot Motor 1 Vel", m_shootclimb.getShootMotor1Velocity());
   }
 }

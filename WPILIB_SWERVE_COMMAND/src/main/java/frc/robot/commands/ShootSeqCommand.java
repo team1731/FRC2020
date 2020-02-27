@@ -50,14 +50,14 @@ public class ShootSeqCommand extends CommandBase {
   @Override
   public void execute() {
     double shootMotorVelocity = shootSubsystem.getShootMotor1Velocity();
-    System.out.println("shoot motor velocity = " + shootMotorVelocity);
+    //System.out.println("shoot motor velocity = " + shootMotorVelocity);
     if(shootSubsystem.atTargetVelocity()){
       System.out.println("calling seqSubSystem.forward(true);");
       seqSubsystem.forward(true);
     }
     else{
 
-      System.out.println("waiting for shoot motor to come up to speed");
+      //System.out.println("waiting for shoot motor to come up to speed");
     }
     // get necessary input
     //if (!m_SeqSubsystem.getMaxPowerCells()) {

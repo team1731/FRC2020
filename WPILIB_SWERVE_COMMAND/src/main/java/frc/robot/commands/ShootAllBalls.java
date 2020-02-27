@@ -52,7 +52,7 @@ public class ShootAllBalls extends WaitCommand {
     if(shootMotorVelocity > Constants.OpConstants.kShootMinVelocity){
       seqSubsystem.forward(true);
     }
-    System.out.println("ShootMotorVelocity=" + shootMotorVelocity);
+    //System.out.println("ShootMotorVelocity=" + shootMotorVelocity);
   }
   
   // Called once the command ends or is interrupted.

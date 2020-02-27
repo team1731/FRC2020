@@ -11,6 +11,7 @@ import java.util.function.DoubleSupplier;
 
 import frc.robot.Constants.OpConstants;
 import frc.robot.subsystems.ShootClimbSubsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /**
@@ -59,22 +60,25 @@ public class ClimbingCommand extends CommandBase {
   public void execute() {
 
     isHiCy = false; //m_ShootClimbSubsystem.isHiCylinderSensor();
-    isLoCy =  false; //m_ShootClimbSubsystem.isLoCylinderSensor();
+    isLoCy = false; //m_ShootClimbSubsystem.isLoCylinderSensor();
     isClimbEx = false; //m_ShootClimbSubsystem.isClimbExtendSensor();
     isClimbRt = false; //m_ShootClimbSubsystem.isClimbRetractSensor();
-
+    
     double climbPercent = climb.getAsDouble();
-    // Joystick deadband limits
+    // if within Joystick deadband then set output to Zero
+    if (Math.abs(climbPercent) < OpConstants.kJoystickDeadband) {
+      climbPercent = 0;
+    }
     
     if (climbPercent > 0 && !isCyExtending) {
       m_ShootClimbSubsystem.climbExtend();
       isCyExtending = true;
       isCyRetracting = false;
     } else if (climbPercent < 0) {
-      if (isLoCy) {
+      if(isLoCy){
         m_ShootClimbSubsystem.climbRetract();
       }
-      if (!isCyRetracting) {
+      if(!isCyRetracting){
         isCyRetracting = true;
         isCyExtending = false;
       }

@@ -95,6 +95,8 @@ public class ShootClimbSubsystem extends SubsystemBase {
 		mTalonShoot2.config_kI(OpConstants.kPIDLoopIdx, OpConstants.kGains_Velocity.kI, OpConstants.kTimeoutMs);
 		mTalonShoot2.config_kD(OpConstants.kPIDLoopIdx, OpConstants.kGains_Velocity.kD, OpConstants.kTimeoutMs);
 
+    mTalonShoot1.setNeutralMode(NeutralMode.Brake);
+    mTalonShoot2.setNeutralMode(NeutralMode.Brake);
     shootMode();    
     hoodRetract();
 
@@ -102,7 +104,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
   }
 
   public void testSpeed(){
-    System.out.println("testSpeed");
+    //System.out.println("testSpeed");
   }
   
   @Override
@@ -110,6 +112,10 @@ public class ShootClimbSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     //shootPercent = SmartDashboard.getNumber("ShootingPercent", 0.5);
     //enableShooting(shootPercent);
+    SmartDashboard.putBoolean("isHiCy", isHiCylinderSensor());
+    SmartDashboard.putBoolean("isLoCy", isLoCylinderSensor());
+    SmartDashboard.putBoolean("isClimbEx", isClimbExtendSensor());
+    SmartDashboard.putBoolean("isClimbRt", isClimbRetractSensor());
   }
 
   public double getShootMotor1Velocity() {
@@ -179,13 +185,13 @@ public class ShootClimbSubsystem extends SubsystemBase {
 
   public void setClimber(double percentOut) {
     double output = percentOut;
-    double test = Math.abs(percentOut);
+    //double test = Math.abs(percentOut);
     // if within deadband then set output to Zero
-    if (test < OpConstants.kJoystickDeadband) {
-      percentOut = 0;
-    }
+    //if (test < OpConstants.kJoystickDeadband) {
+    //  percentOut = 0;
+    //}
 
-    if (test < OpConstants.kClutchDeadband) {
+    if (Math.abs(output) < OpConstants.kClutchDeadband) {
       shootMode();
     } else {
       climbMode();
@@ -199,14 +205,12 @@ public class ShootClimbSubsystem extends SubsystemBase {
 
   public void shootMode() {
     mShootClimbSolenoid.set(DoubleSolenoid.Value.kForward);//"clutch"
-    //mTalonShoot1.setNeutralMode(NeutralMode.Coast);
-    //mTalonShoot2.setNeutralMode(NeutralMode.Coast);
   }
 
   public void climbMode() {
     mShootClimbSolenoid.set(DoubleSolenoid.Value.kReverse); //"clutch"
-    //mTalonShoot1.setNeutralMode(NeutralMode.Brake);
-    //mTalonShoot2.setNeutralMode(NeutralMode.Brake);
+    //mTalonShoot1.setNeutralMode(NeutralMode.Coast);
+    //mTalonShoot2.setNeutralMode(NeutralMode.Coast);
   }
 
   public void climbExtend() {

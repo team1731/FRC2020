@@ -41,13 +41,25 @@ public class SequencerSubsystem extends SubsystemBase {
     mLowSensor = new DigitalInput(OpConstants.kLowSequencer);
     mMidSensor = new DigitalInput(OpConstants.kMidSequencer);
     mHighSensor = new DigitalInput(OpConstants.kHighSequencer);
-
+/*
     mMidSensor.requestInterrupts(new InterruptHandlerFunction<Object>() {
 		@Override
 		public void interruptFired(int interruptAssertedMask, Object param) {
-      mTalonSeq.set(0);
+      //mTalonSeq.set(0);
+      stop();
+      System.out.println("Mid Interrupt Received: stopping sequencer");
     }});
     mMidSensor.setUpSourceEdge(false, true);
+
+    mHighSensor.requestInterrupts(new InterruptHandlerFunction<Object>() {
+      @Override
+      public void interruptFired(int interruptAssertedMask, Object param) {
+        //mTalonSeq.set(0);
+        stop();
+        System.out.println("High Interrupt Received: stopping sequencer");
+      }});
+    mHighSensor.setUpSourceEdge(true, true);
+    */
     //mTimer = new Timer();
     //mTimer.start();
     //startDelay = false;
@@ -58,11 +70,13 @@ public class SequencerSubsystem extends SubsystemBase {
   }
 
   public void enableInterrupts(){
-    mMidSensor.enableInterrupts();
+    //mMidSensor.enableInterrupts();
+    //mHighSensor.enableInterrupts();
   }
 
   public void disableInterrupts(){
-    mMidSensor.disableInterrupts();
+    //mMidSensor.disableInterrupts();
+    //mHighSensor.disableInterrupts();
   }
 
   public void setPowerCellCount(int numBalls){

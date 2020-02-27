@@ -29,18 +29,24 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  * @see GoalTracker.java
  */
 public class JevoisVisionSubsystem extends SubsystemBase {
-    private DriveSubsystem m_robotDrive;
+    //private DriveSubsystem m_robotDrive;
+    private static JevoisVisionSubsystem instance_ = new JevoisVisionSubsystem();
     private JevoisVisionUpdate update_ = null;
-    private JevoisVisionServer m_VisionServer;
+    private JevoisVisionServer m_VisionServer = JevoisVisionServer.getInstance();
     private Solenoid ringLight;
     private ShooterAimingParameters cachedAimingParameters = null;
-    private GoalTracker goal_tracker_;
 
-    public JevoisVisionSubsystem(DriveSubsystem m_robotDrive) {
+    private GoalTracker goal_tracker_;
+    //RobotState robot_state_ = RobotState.getInstance();
+
+    public static JevoisVisionSubsystem getInstance() {
+        //JevoisVisionServer.getInstance();
+        return instance_;
+    }
+
+    private JevoisVisionSubsystem() {
         ringLight = new Solenoid(0, 0);
         goal_tracker_ = new GoalTracker();
-        this.m_robotDrive = m_robotDrive;
-        m_VisionServer = new JevoisVisionServer(this);
     }
 
     public void ringLightOn(){
@@ -126,7 +132,7 @@ public class JevoisVisionSubsystem extends SubsystemBase {
                  //   System.out.println("zr: "+zr);
                     double distance = Math.hypot(xr, yr) * scaling;
                     Rotation2d angle = normalize(new Rotation2d(xr, yr));
-                    //SmartDashboard.putString("RobotState_distance/angle", "Distance: "+distance+" angle: "+angle);
+                    SmartDashboard.putString("RobotState_distance/angle", "Distance: "+distance+" angle: "+angle);
     //                System.out.println("RobotState_distance/angle Distance: "+distance+" angle: "+angle);
                     angle = angle.rotateBy(Rotation2d.fromDegrees(-1.5));
                    
@@ -142,6 +148,7 @@ public class JevoisVisionSubsystem extends SubsystemBase {
             goal_tracker_.update(timestamp, field_to_goals);
         }
     }
+    /*
 
     public synchronized Optional<ShooterAimingParameters> getAimingParameters() {
         List<TrackReport> reports = goal_tracker_.getTracks();
@@ -169,6 +176,7 @@ public class JevoisVisionSubsystem extends SubsystemBase {
             return Optional.empty();
         }
     }
+    */
 
     /**
      * Writes "SEND" to the vision camera. 
@@ -199,4 +207,10 @@ public class JevoisVisionSubsystem extends SubsystemBase {
         
         return false;
     }
+
+    /*
+	public void setDriveSubsystem(DriveSubsystem m_robotDrive) {
+        this.m_robotDrive = m_robotDrive;
+	}
+*/
 }

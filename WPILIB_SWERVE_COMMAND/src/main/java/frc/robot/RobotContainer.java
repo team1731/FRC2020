@@ -44,6 +44,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.XboxConstants;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -135,10 +136,10 @@ public class RobotContainer {
     new HanTrigger(HanTriggers.DR_TRIG_LEFT).whileActiveContinuous(new IntakeSeqCommand(m_intake, m_sequencer));
     // Activate Intake via Operator Left Front Top - Up is Intaking, Down is Reset 
     //new JoystickButton(m_operatorController, 3).whileActiveContinuous(new IntakeSeqCommand(m_intake, m_sequencer));
-    new JoystickButton(m_driverController, 2).whileActiveContinuous(new SeqResetCommand(m_sequencer), true);
+    new JoystickButton(m_driverController, XboxConstants.kB).whileActiveContinuous(new SeqResetCommand(m_sequencer), true);
 
     //Map right bumper to rotation lock to power port
-    new JoystickButton(m_driverController, 6)
+    new JoystickButton(m_driverController, XboxConstants.kRBumper)
       .whenActive(new RotToPowerPortCommand(m_vision, m_robotDrive, m_driverController));
 
     new JoystickButton(m_operatorController, 8) // convert -1 to +1 TO 0 to 1
@@ -148,11 +149,11 @@ public class RobotContainer {
       //.whileActiveContinuous(new JoystickShooter(m_shootclimb, () -> m_operatorController.getRawAxis(4)), false
       //.whileActiveContinuous(new ShootSeqCommand(m_shootclimb, m_sequencer, () -> m_operatorController.getRawAxis(4)), false
     //);
-    /*
-    new JoystickButton(m_operatorController, 10).whileActiveContinuous(
+    
+    new JoystickButton(m_operatorController, 16).whileActiveContinuous(
       new ShootSeqCommand(m_shootclimb ,m_sequencer), true
     );
-    */
+    
 
     // Climbing Command - CURRENT
     new JoystickButton(m_operatorController, 9).whileActiveContinuous(
@@ -175,11 +176,11 @@ public class RobotContainer {
     //);
 
     // Sequencer ejects works when button is held
-    new JoystickButton(m_driverController, 7)
+    new JoystickButton(m_operatorController, 14)
     .whenHeld(new InstantCommand(m_sequencer::reverse, m_sequencer))
     .whenReleased(new InstantCommand(m_sequencer::stop, m_sequencer));
 
-    new JoystickButton(m_driverController, 8).whenPressed(new InstantCommand(() -> { m_robotDrive.resetEncoders(); System.out.println("Reset encoders"); }, m_robotDrive));
+    new JoystickButton(m_driverController, XboxConstants.kMenu).whenPressed(new InstantCommand(() -> { m_robotDrive.resetEncoders(); System.out.println("Reset encoders"); }, m_robotDrive));
 
     // Climbing Command
     //new ModeTrigger(HanMode.MODE_CLIMB).whileActiveContinuous(
