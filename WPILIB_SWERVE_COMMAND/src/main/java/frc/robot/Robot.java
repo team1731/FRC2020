@@ -8,7 +8,6 @@
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -23,7 +22,6 @@ import frc.robot.subsystems.ColorWheelSubsystem;
 import frc.robot.subsystems.LedStringSubsystem;
 import frc.robot.subsystems.SequencerSubsystem;
 import frc.robot.subsystems.ShootClimbSubsystem;
-import frc.robot.vision.JevoisVisionServer;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -68,8 +66,7 @@ public class Robot extends TimedRobot {
     
     m_ledstring = null; //new LedStringSubsystem();
     m_robotDrive = new DriveSubsystem();
-    m_vision = JevoisVisionSubsystem.getInstance();
-    m_vision.setDriveSubsystem(m_robotDrive);
+    m_vision = new JevoisVisionSubsystem(m_robotDrive);
     m_intake = new IntakeSubsystem(m_ledstring);
     m_sequencer = new SequencerSubsystem(m_ledstring);
     m_shootclimb = new ShootClimbSubsystem(m_ledstring);
