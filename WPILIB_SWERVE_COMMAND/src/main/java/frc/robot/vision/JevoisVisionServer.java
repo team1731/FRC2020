@@ -53,10 +53,15 @@ public class JevoisVisionServer {
             for(;;){
                 String dashboardMessage = "";
                 if(isConnected){
-                    dashboardMessage = "visionCamAvailable == true. Handling message";
-                    String visionTargetPositions_Raw = visionCam.readString();
-                    int visionLength = visionTargetPositions_Raw.length();
-                    handleMessage(visionTargetPositions_Raw, getTimestamp());
+                    try{
+                        dashboardMessage = "visionCamAvailable == true. Handling message";
+                        String visionTargetPositions_Raw = visionCam.readString();
+                        //int visionLength = visionTargetPositions_Raw.length();
+                        handleMessage(visionTargetPositions_Raw, getTimestamp());
+                    } catch(Exception e){
+                        //Camera may not have sent anything or become disconnected
+                        dashboardMessage = "isConnected, but error thrown on handle";
+                    }
                 } else {
                     dashboardMessage = "visionCamAvailable == false. Lost connection?";
                     isConnected = attemptJevoisConnection();
