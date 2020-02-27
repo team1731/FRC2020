@@ -184,7 +184,7 @@ class CowTracker:
 		# Calculate time spent calculating cause that's funny (NOTE: does not account for output conversion time)
 		# Used only in CowTrackerDebug
 		#fps = self.timer.stop()
-		#cv2.putText(outimg, fps, (3, height - 6), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 1, cv2.LINE_AA)
+		#cv2.putText(outimg, fps, (3, imgHeight - 6), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 1, cv2.LINE_AA)
 
 		# Build JSON string and send it out the serial port if we are sending data
 		global sendTargetData
