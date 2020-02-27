@@ -30,27 +30,17 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  */
 public class JevoisVisionSubsystem extends SubsystemBase {
     private DriveSubsystem m_robotDrive;
-    private static JevoisVisionSubsystem instance_;
     private JevoisVisionUpdate update_ = null;
     private JevoisVisionServer m_VisionServer;
     private Solenoid ringLight;
     private ShooterAimingParameters cachedAimingParameters = null;
-
     private GoalTracker goal_tracker_;
-    //RobotState robot_state_ = RobotState.getInstance();
 
-    public static JevoisVisionSubsystem getInstance() {
-        //JevoisVisionServer.getInstance();
-        if(instance_ == null){
-            instance_ = new JevoisVisionSubsystem();
-        }
-        return instance_;
-    }
-
-    private JevoisVisionSubsystem() {
+    public JevoisVisionSubsystem(DriveSubsystem m_robotDrive) {
         ringLight = new Solenoid(0, 0);
         goal_tracker_ = new GoalTracker();
-        m_VisionServer = JevoisVisionServer.getInstance();
+        this.m_robotDrive = m_robotDrive;
+        m_VisionServer = new JevoisVisionServer(this);
     }
 
     public void ringLightOn(){
@@ -136,7 +126,7 @@ public class JevoisVisionSubsystem extends SubsystemBase {
                  //   System.out.println("zr: "+zr);
                     double distance = Math.hypot(xr, yr) * scaling;
                     Rotation2d angle = normalize(new Rotation2d(xr, yr));
-                    SmartDashboard.putString("RobotState_distance/angle", "Distance: "+distance+" angle: "+angle);
+                    //SmartDashboard.putString("RobotState_distance/angle", "Distance: "+distance+" angle: "+angle);
     //                System.out.println("RobotState_distance/angle Distance: "+distance+" angle: "+angle);
                     angle = angle.rotateBy(Rotation2d.fromDegrees(-1.5));
                    
@@ -209,8 +199,4 @@ public class JevoisVisionSubsystem extends SubsystemBase {
         
         return false;
     }
-
-	public void setDriveSubsystem(DriveSubsystem m_robotDrive) {
-        this.m_robotDrive = m_robotDrive;
-	}
 }

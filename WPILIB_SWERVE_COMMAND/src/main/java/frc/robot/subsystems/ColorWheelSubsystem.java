@@ -254,14 +254,14 @@ public class ColorWheelSubsystem extends SubsystemBase {
       * mTalon.getSensorCollection().isRevLimitSwitchClosed());
       */
      Color detectedColor = getColor();
-     SmartDashboard.putNumber("Red", detectedColor.red);
-     SmartDashboard.putNumber("Green", detectedColor.green);
-     SmartDashboard.putNumber("Blue", detectedColor.blue);
+     //SmartDashboard.putNumber("Red", detectedColor.red);
+     //SmartDashboard.putNumber("Green", detectedColor.green);
+     //SmartDashboard.putNumber("Blue", detectedColor.blue);
      // The sensor returns a raw IR value of the infrared light detected.
-     SmartDashboard.putNumber("IR", mColorSensor.getIR());
+     //SmartDashboard.putNumber("IR", mColorSensor.getIR());
    
-     SmartDashboard.putNumber("Confidence", matchConfidence);
-     SmartDashboard.putNumber("Detected Color", getMatch());
+     //SmartDashboard.putNumber("Confidence", matchConfidence);
+     //SmartDashboard.putNumber("Detected Color", getMatch());
  }
 
 }

@@ -107,7 +107,7 @@ public double getDriveEncoderPosition(){
    */
   private void setAzimuthZero(double zeroSetpointAbsoluteEncoderVoltage) { // 0.0 to 3.26, 180=1.63V
     offsetFromAbsoluteEncoder = zeroSetpointAbsoluteEncoderVoltage * 16/3.26;
-    SmartDashboard.putNumber("offsetFromAbsoluteEncoder"+id, offsetFromAbsoluteEncoder);
+    //SmartDashboard.putNumber("offsetFromAbsoluteEncoder"+id, offsetFromAbsoluteEncoder);
     //logger.info("<b>Wheel</b>: setAzimuthZero starting");
     //double azimuthSetpoint = getAzimuthAbsolutePosition() - zero;
     //ErrorCode err = azimuthTalon.setSelectedSensorPosition(azimuthSetpoint, 0, 10);
@@ -149,7 +149,7 @@ public double getDriveEncoderPosition(){
     double azimuthPercent = Math.IEEEremainder(azimuth, kTICKS)/16.0;
 
     if(RobotBase.isReal()){
-      SmartDashboard.putNumber("Module"+id+" Drive Encoder Tick", m_driveEncoder.getPosition());
+      //SmartDashboard.putNumber("Module"+id+" Drive Encoder Tick", m_driveEncoder.getPosition());
     }
 
     return new SwerveModuleState(velocity, new Rotation2d(azimuthPercent * 2.0 * Math.PI));
@@ -177,7 +177,7 @@ public double getDriveEncoderPosition(){
     
     double azimuth = -state.angle.getDegrees() * kTICKS/360.0;
     double speedMetersPerSecond = state.speedMetersPerSecond;
-    SmartDashboard.putNumber("SpeedMPS-"+id, speedMetersPerSecond);
+    //SmartDashboard.putNumber("SpeedMPS-"+id, speedMetersPerSecond);
     // meters per sec * 39.37 is inches/s * 60 is inches per min / PI*D is RPM * 5.5 is ticks
     double drive = (speedMetersPerSecond * 5.5 * 39.37  * 60.0) / (3.0 * Math.PI);
     //wheel.set(-angleDegrees/360, speedMetersPerSecond * 16.0 * 39.37  * 60.0 / 3.0 / Math.PI);
@@ -198,8 +198,8 @@ public double getDriveEncoderPosition(){
       m_drivePIDController.setReference(drive, ControlType.kVelocity);
     }
 
-    SmartDashboard.putNumber("RelativeEncoder"+id, m_turningEncoder.getPosition());
-    SmartDashboard.putNumber("absOffset"+id, offsetFromAbsoluteEncoder);
+    //SmartDashboard.putNumber("RelativeEncoder"+id, m_turningEncoder.getPosition());
+    //SmartDashboard.putNumber("absOffset"+id, offsetFromAbsoluteEncoder);
   }
 
   /**

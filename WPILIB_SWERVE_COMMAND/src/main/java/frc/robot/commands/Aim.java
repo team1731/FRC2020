@@ -9,13 +9,13 @@ public class Aim extends CommandBase {
 
     public Aim(DriveSubsystem m_robotDrive, JevoisVisionSubsystem m_vision){
 		count = (int)((Math.random() + 1) * 100);  
-        System.out.println("Aim : " + count);     
+        //System.out.println("Aim : " + count);     
     }
 
     @Override
     public boolean isFinished() {
 		  if(--count > 0) return false;
-		  System.out.println("Aim : DONE!");
+		  //System.out.println("Aim : DONE!");
 		  return true;
    }
   

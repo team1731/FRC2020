@@ -8,7 +8,6 @@
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -23,7 +22,6 @@ import frc.robot.subsystems.ColorWheelSubsystem;
 import frc.robot.subsystems.LedStringSubsystem;
 import frc.robot.subsystems.SequencerSubsystem;
 import frc.robot.subsystems.ShootClimbSubsystem;
-import frc.robot.vision.JevoisVisionServer;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -68,8 +66,7 @@ public class Robot extends TimedRobot {
     
     m_ledstring = null; //new LedStringSubsystem();
     m_robotDrive = new DriveSubsystem();
-    m_vision = JevoisVisionSubsystem.getInstance();
-    m_vision.setDriveSubsystem(m_robotDrive);
+    m_vision = new JevoisVisionSubsystem(m_robotDrive);
     m_intake = new IntakeSubsystem(m_ledstring);
     m_sequencer = new SequencerSubsystem(m_ledstring);
     m_shootclimb = new ShootClimbSubsystem(m_ledstring);
@@ -177,7 +174,7 @@ public class Robot extends TimedRobot {
 
       // schedule the autonomous command (example)
       if (m_autonomousCommand == null) {
-        System.out.println("SOMETHING WENT WRONG - UNABLE TO RUN AUTONOMOUS! CHECK SOFTWARE!");
+        System.err.println("SOMETHING WENT WRONG - UNABLE TO RUN AUTONOMOUS! CHECK SOFTWARE!");
       } else {
         System.out.println("Running actual autonomous mode --> " + namedAutoMode.name);
         m_autonomousCommand.schedule();
@@ -226,7 +223,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("HighSensor",  m_sequencer.highSensorHasBall());
     SmartDashboard.putNumber("PowerCellCount",  (int)m_sequencer.getPowerCellCount());
     SmartDashboard.putString("Intake State",  m_intake.getIntakeState());
-    SmartDashboard.putNumber("Climb Encoder", m_shootclimb.getClimbEncoderValue());
+    //SmartDashboard.putNumber("Climb Encoder", m_shootclimb.getClimbEncoderValue());
 
     // switch((int)m_sequencer.getPowerCellCount()){
     //   case 1: m_ledstring.option(LedOption.BALLONE); break;
@@ -252,6 +249,6 @@ public class Robot extends TimedRobot {
     double shootMotorPercent_0_to_1 = SmartDashboard.getNumber("Shoot Motor % (0-1)", 0.5);
     m_shootclimb.hoodExtend();
     m_shootclimb.spinShooter(shootMotorPercent_0_to_1);
-    SmartDashboard.putNumber("Shoot Motor 1 Vel", m_shootclimb.getShootMotor1Velocity());
+    //SmartDashboard.putNumber("Shoot Motor 1 Vel", m_shootclimb.getShootMotor1Velocity());
   }
 }

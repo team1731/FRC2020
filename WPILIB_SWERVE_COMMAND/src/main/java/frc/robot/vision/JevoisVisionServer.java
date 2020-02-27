@@ -1,118 +1,106 @@
 package frc.robot.vision;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Collections;
-
 import edu.wpi.first.wpilibj.SerialPort;
 import org.json.simple.parser.JSONParser;
-
 import frc.robot.Constants.VisionConstants;
-//import org.usfirst.frc.team1731.lib.util.CrashTrackingRunnable;
-//import org.usfirst.frc.team1731.robot.Constants;
-//import frc.robot.Constants;
-//import org.usfirst.frc.team1731.robot.loops.JevoisVisionProcessor;
 import frc.robot.subsystems.JevoisVisionSubsystem;
 import org.json.simple.JSONObject;
-
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
- * This controls all vision actions, including vision updates, capture, and interfacing with the Android phone with
- * Android Debug Bridge. It also stores all VisionUpdates (from the Android phone) and contains methods to add to/prune
- * the VisionUpdate list. Much like the subsystems, outside methods get the VisionServer instance (there is only one
- * VisionServer) instead of creating new VisionServer instances.
+ * This controls all vision actions, including vision updates, capture, and
+ * interfacing with the Android phone with Android Debug Bridge. It also stores
+ * all VisionUpdates (from the Android phone) and contains methods to add
+ * to/prune the VisionUpdate list. Much like the subsystems, outside methods get
+ * the VisionServer instance (there is only one VisionServer) instead of
+ * creating new VisionServer instances.
  * 
  * @see VisionUpdate.java
  */
 
 public class JevoisVisionServer {
-
-    private static JevoisVisionServer s_instance = null;
-    private boolean m_running = true;
     double lastMessageReceivedTime = 0;
     private boolean m_use_java_time = false;
     private SerialPort visionCam;
-    private boolean attemptingConnection = false;
-    boolean visionCamAvailable;
     boolean visionCamHasTarget;
     double visionCamZPosition;
     double visionCamYPosition;
     double visionCamDeltaTime;
+    private boolean isConnected;
+    private JevoisVisionSubsystem visionSubsystem;
 
- //   private ArrayList<ServerThread> serverThreads = new ArrayList<>();
- //   private volatile boolean mWantsAppRestart = false;
-
-    public static JevoisVisionServer getInstance() {
-        if (s_instance == null) {
-            s_instance = new JevoisVisionServer();
-
-        }
-        return s_instance;
+    public JevoisVisionServer(JevoisVisionSubsystem visionSubsystem) {
+        this.visionSubsystem = visionSubsystem;
+        new Thread(new VisionServerThread()).start();
     }
-    
-    public SerialPort getVisionCam(){
-        if(visionCamAvailable){
-            return visionCam;
-        }
 
-        return null;
+    public SerialPort getVisionCam() {
+        return visionCam;
     }
 
     private class VisionServerThread implements Runnable {
+        int dashboardCounter = 0;
+        String lastDashboardMessage = "";
 
-        private JevoisVisionSubsystem mJevoisVisionProcessor;
-
-        private VisionServerThread(){
-            try {
-                AttemptJevoisConnection();
-            } catch (Exception e){
-                try {
-                    Thread.sleep(1000);
-                } catch(InterruptedException re){
-                    re.printStackTrace();
-                }
-                AttemptJevoisConnection();
-            }
+        private VisionServerThread() {
+            isConnected = attemptJevoisConnection();
         }
 
-        private boolean SafeToParse(String message){
-            if(message.length() > 1){
-                return message.charAt(0) == '{' && message.charAt(message.length()-3) == '}' && message.contains("{\"DeltaTime\"") && message.contains("\"Y\"") && message.contains("\"Z\"");
+        @Override
+        public void run() {
+            for(;;){
+                String dashboardMessage = "";
+                if(isConnected){
+                    try{
+                        dashboardMessage = "visionCamAvailable == true. Handling message";
+                        String visionTargetPositions_Raw = visionCam.readString();
+                        //int visionLength = visionTargetPositions_Raw.length();
+                        handleMessage(visionTargetPositions_Raw, getTimestamp());
+                    } catch(Exception e){
+                        //Camera may not have sent anything or become disconnected
+                        dashboardMessage = "isConnected, but error thrown on handle";
+                    }
+                } else {
+                    dashboardMessage = "visionCamAvailable == false. Lost connection?";
+                    isConnected = attemptJevoisConnection();
+                }
+                if(lastDashboardMessage != dashboardMessage){
+                    SmartDashboard.putString("JevoisVisionServerOutput", dashboardMessage);
+                }
+                lastDashboardMessage = dashboardMessage;
+           }
+        }
+
+        private boolean SafeToParse(String message) {
+            if (message.length() > 1) {
+                return message.charAt(0) == '{' && message.charAt(message.length() - 3) == '}'
+                        && message.contains("{\"DeltaTime\"") && message.contains("\"Y\"") && message.contains("\"Z\"");
             } else {
                 return false;
             }
         }
 
-        int dashboardCounter = 0;
-        int sentTimes = 0;
         public void handleMessage(String message, double timestamp) {
-            //m_VisionSubsystem.ringLightOn();
+            // m_VisionSubsystem.ringLightOn();
             dashboardCounter++;
-            String visionTargetPositions_Raw = message; //message should be the raw visionCam.readString() called from runCrashTracked()
-            
-            if(message == null || message.length() <= 0){
+            String visionTargetPositions_Raw = message; // message should be the raw visionCam.readString()
+            if (message == null || message.length() <= 0) {
                 return;
             }
-            //System.out.println(visionTargetPositions_Raw);
+            // System.out.println(visionTargetPositions_Raw);
             /*
-            if(!SafeToParse(visionTargetPositions_Raw)){
-                return;
-            }
-            */
-
-            if(dashboardCounter >= 10){
-                SmartDashboard.putString("JevoisVisionServerTargets", visionTargetPositions_Raw);
+             * if(!SafeToParse(visionTargetPositions_Raw)){ return; }
+             */
+            if (dashboardCounter >= 10) {
+                // SmartDashboard.putString("JevoisVisionServerTargets",
+                // visionTargetPositions_Raw);
             }
 
             String[] visionTargetLines = visionTargetPositions_Raw.split("\n");
             ArrayList<TargetInfo> targetInfoArray = new ArrayList<>();
-            for(int i = visionTargetLines.length-1; i >= 0; i--){
+            for (int i = visionTargetLines.length - 1; i >= 0; i--) {
                 boolean isValid = false;
                 try {
                     String thisTargetLine = visionTargetLines[i];
@@ -127,163 +115,51 @@ public class JevoisVisionServer {
                     } else {
                         isValid = true;
                     }
-                    //}
-                } catch(Exception e) {
-                    //System.err.println("Parse error: "+e.toString());
+                    // }
+                } catch (Exception e) {
+                    // System.err.println("Parse error: "+e.toString());
                 }
-
-                if(isValid){
+                if (isValid) {
                     TargetInfo targetInfo = new TargetInfo(visionCamYPosition, visionCamZPosition);
                     targetInfoArray.add(targetInfo);
                 }
             }
-
-            //System.out.println("TargetInfoArray.size(): "+targetInfoArray.size());
-
-            if(targetInfoArray.size() > 0){ 
-                sentTimes++;
-                if(dashboardCounter >= 10){
-                    SmartDashboard.putString("JevoisVisionServerUpdate", "Sent: "+sentTimes);
+            // System.out.println("TargetInfoArray.size(): "+targetInfoArray.size());
+            if (targetInfoArray.size() > 0) {
+                if (dashboardCounter >= 10) {
+                    // SmartDashboard.putString("JevoisVisionServerUpdate", "Sent: "+sentTimes);
                 }
-                //mJevoisVisionProcessor.gotUpdate(new JevoisVisionUpdate(Timer.getFPGATimestamp()-visionCamDeltaTime, targetInfoArray));
+                visionSubsystem.gotUpdate(
+                        new JevoisVisionUpdate(Timer.getFPGATimestamp() - visionCamDeltaTime, targetInfoArray));
 
-             //   mRobotState.addVisionUpdate(Timer.getFPGATimestamp()-visionCamDeltaTime, targetInfoArray);
+                // mRobotState.addVisionUpdate(Timer.getFPGATimestamp()-visionCamDeltaTime, targetInfoArray);
             }
-
-            if(dashboardCounter >= 10){
+            if (dashboardCounter >= 10) {
                 dashboardCounter = 0;
             }
-
         }
 
-        int connectionAttempt = 0; //Debug purposes
-
-        private void AttemptJevoisConnection(){
-            if(attemptingConnection || connectionAttempt > 10){
-                return;
-            }
-            attemptingConnection = true;
-            try {
-                Thread.sleep(1000);
-                connectionAttempt++;
-                SmartDashboard.putString("JevoisVisionServerOutput", "Attempting Jevois connection... ("+connectionAttempt+")");
-                
+        private boolean attemptJevoisConnection() {
+            int connectionAttempts = 0;
+            int MAX_ATTEMPTS = 3;
+            boolean connected = false;
+            while (!connected && ++connectionAttempts <= MAX_ATTEMPTS) {
                 visionCam = new SerialPort(VisionConstants.kCameraBaudRate, SerialPort.Port.kUSB1);
-                visionCam.setTimeout(5);
-
                 if(visionCam != null){
-                    SmartDashboard.putString("JevoisVisionServerOutput", "(NO RUN) Connected successfully on attempt "+connectionAttempt);
-                    visionCamAvailable = true;
-                    //JevoisVisionSubsystem.getInstance().StartCameraDataStream();
-                    //run();
-                } else {
-                    visionCamAvailable = false;
-                    attemptingConnection = false;
-                    AttemptJevoisConnection();
+                    visionCam.setTimeout(5);
+                    connected = true;
                 }
-                
-
-            } catch(Exception e){
-                visionCamAvailable = false;
-                System.err.println("is this it? "+e.toString());
-                e.printStackTrace();
-                AttemptJevoisConnection();
-            }
-            attemptingConnection = false;
-        }
-
-
-        String lastDashboardMessage = "";
-
-
-        @Override
-        public void run() {
-            for(;;){
-                SmartDashboard.putString("JevoisServerThreadSTART", "ah yes");
-                //There was a while true loop in here... maybe run this through a looper instead if this doesn't keep going?
-                String dashboardMessage = "";
-                visionCamAvailable = visionCam != null;
-                try {
-                    if(visionCamAvailable){
-                        dashboardMessage = "visionCamAvailable == true. Handling message";
-                        String visionTargetPositions_Raw = visionCam.readString();
-                        int visionLength = visionTargetPositions_Raw.length();
-                        handleMessage(visionTargetPositions_Raw, getTimestamp());
-                    } else {
-                        dashboardMessage = "visionCamAvailable == false. Lost connection";
-                        AttemptJevoisConnection();
+                else{
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        // don't care if our sleep gets interrupted
                     }
-                    if(lastDashboardMessage != dashboardMessage){
-                        SmartDashboard.putString("JevoisVisionServerOutput", dashboardMessage);
-                    }
-                    lastDashboardMessage = dashboardMessage;
-                } catch (Exception e){
-                    try{
-                        Thread.sleep(50);
-                    } catch (InterruptedException ie){
-                        e.printStackTrace();
-                    }
-                    AttemptJevoisConnection();
-                }
-                try {
-                    Thread.sleep(5);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
             }
+            return connected;
         }
-
-        /*
-        @Override
-        public void runCrashTracked() {
-            while (true) {
-                String dashboardMessage = "";
-                visionCamAvailable = visionCam != null;
-                try {
-                    if(visionCamAvailable){
-                        dashboardMessage = "visionCamAvailable == true. Handling message";
-                        String visionTargetPositions_Raw = visionCam.readString();
-                        handleMessage(visionTargetPositions_Raw, getTimestamp());
-                    } else {
-                        dashboardMessage = "visionCamAvailable == false. Lost connection";
-                        AttemptJevoisConnection();
-                        //return;
-                        break;
-                    }
-                    if(lastDashboardMessage != dashboardMessage){
-                      //  SmartDashboard.putString("JevoisVisionServerOutput", dashboardMessage);
-                    }
-                    lastDashboardMessage = dashboardMessage;
-                } catch (Exception e){
-                    try{
-                        Thread.sleep(50);
-                    } catch (InterruptedException ie){}
-                    AttemptJevoisConnection();
-                }
-                try {
-                    Thread.sleep(5);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        */
     }
-
-        
-
-
-    /**
-     * Instantializes the VisionServer and connects to ADB via the specified port.
-     * 
-     */
-    private JevoisVisionServer() {
-        new Thread(new VisionServerThread()).start();
-    }
-
-
-
-
 
     private double getTimestamp() {
         if (m_use_java_time) {
