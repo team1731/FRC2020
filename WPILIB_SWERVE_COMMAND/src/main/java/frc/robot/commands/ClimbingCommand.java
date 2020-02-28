@@ -69,6 +69,8 @@ public class ClimbingCommand extends CommandBase {
     if (Math.abs(climbPercent) < OpConstants.kJoystickDeadband) {
       climbPercent = 0;
       m_ShootClimbSubsystem.brakeOn();
+    } else {
+      m_ShootClimbSubsystem.brakeOff();
     }
     
     if (climbPercent > 0 && !isCyExtending) {
@@ -90,8 +92,7 @@ public class ClimbingCommand extends CommandBase {
                || isHiCy) ) 
          ||
         (isCyRetracting && !isClimbRt)) { //TODO: how to use isLoCy ????
-          m_ShootClimbSubsystem.brakeOff();
-      m_ShootClimbSubsystem.setClimber(climbPercent * OpConstants.kClimbJoystickInvert);
+          m_ShootClimbSubsystem.setClimber(climbPercent * OpConstants.kClimbJoystickInvert);
     } else {
       m_ShootClimbSubsystem.setClimber(0);
     }
