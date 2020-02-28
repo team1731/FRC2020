@@ -202,10 +202,12 @@ public final class Constants {
         //  1      6-7    ==   intake
 
         // PCM 0 SOLENOIDS
-        public static final int k0SpareLeft = 6;
-        public static final int k0SpareRight = 7;
+        //public static final int k0SpareLeft = 6;
+        //public static final int k0SpareRight = 7;
         public static final int k0Shooting = 4; //ok
         public static final int k0Climbing = 5; //ok 
+        public static final int k0BrakeOn = 6;
+        public static final int k0BrakeOff = 7;
 
         // PCM 1 SOLENOIDS
         public static final int k1ColorWheelExtend = 0; 
@@ -216,8 +218,7 @@ public final class Constants {
         public static final int k1HoodRetract = 5; 
         public static final int k1IntakeExtend = 6; //ok
         public static final int k1IntakeRetract = 7; //ok
-        public static final int k0BrakeOn = 1;
-        public static final int k0BrakeOff = 2;
+        
 
         // ColorWheel
         // Note: Any example colors should be calibrated as the user needs, these are here as a basic example.

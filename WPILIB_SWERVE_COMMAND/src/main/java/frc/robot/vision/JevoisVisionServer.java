@@ -144,17 +144,21 @@ public class JevoisVisionServer {
             int MAX_ATTEMPTS = 3;
             boolean connected = false;
             while (!connected && ++connectionAttempts <= MAX_ATTEMPTS) {
-                visionCam = new SerialPort(VisionConstants.kCameraBaudRate, SerialPort.Port.kUSB1);
-                if(visionCam != null){
-                    visionCam.setTimeout(5);
-                    connected = true;
-                }
-                else{
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        // don't care if our sleep gets interrupted
+                try{
+                    visionCam = new SerialPort(VisionConstants.kCameraBaudRate, SerialPort.Port.kUSB1);
+                    if(visionCam != null){
+                        visionCam.setTimeout(5);
+                        connected = true;
                     }
+                    else{
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            // don't care if our sleep gets interrupted
+                        }
+                    }
+                } catch(Exception e){
+                    
                 }
             }
             return connected;
