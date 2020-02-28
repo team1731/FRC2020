@@ -49,7 +49,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
     mShootClimbSolenoid = Constants.makeDoubleSolenoidForIds(0, OpConstants.k0Shooting, OpConstants.k0Climbing);
     mClimberSolenoid = Constants.makeDoubleSolenoidForIds(1, OpConstants.k1ClimbRetract, OpConstants.k1ClimbExtend);
     mShootHoodSolenoid = Constants.makeDoubleSolenoidForIds(1, OpConstants.k1HoodRetract, OpConstants.k1HoodExtend);
-    mBrakeSolenoid = Constants.makeDoubleSolenoidForIds(1, OpConstants.k0BrakeOn, OpConstants.k0BrakeOff);
+    mBrakeSolenoid = Constants.makeDoubleSolenoidForIds(0, OpConstants.k0BrakeOn, OpConstants.k0BrakeOff);
     //mTalonShoot = new PWMTalonFX(OpConstants.kMotorPWMShoot1);
     mTalonShoot1 = new TalonFX(OpConstants.kMotorCANShoot1);
     mTalonShoot2 = new TalonFX(OpConstants.kMotorCANShoot2);
@@ -193,7 +193,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
     //  percentOut = 0;
     //}
 
-    if (Math.abs(output) < OpConstants.kClutchDeadband) {
+    if (percentOut == 0) { //(Math.abs(output) < OpConstants.kClutchDeadband) {
       shootMode();
     } else {
       climbMode();
