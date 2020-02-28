@@ -159,9 +159,9 @@ public final class Constants {
         public static final int kShootMinVelocity = 500;
 
         public static final double kClimbMaxPercent = 0.6; // 0.3;
-        public static final double kJoystickDeadband = 0.1;
-        public static final double kClutchDeadband = 0.11;
-        public static final int kClimbJoystickInvert = -1;
+        public static final double kJoystickDeadband = 0.3;
+        public static final double kClutchDeadband = 0.3;
+        public static final int kClimbJoystickInvert = 1;
 
         public static final double kClimbExSafeEncValue = 100000;
         // Digital Input/Outputs
@@ -202,10 +202,12 @@ public final class Constants {
         //  1      6-7    ==   intake
 
         // PCM 0 SOLENOIDS
-        public static final int k0SpareLeft = 6;
-        public static final int k0SpareRight = 7;
+        //public static final int k0SpareLeft = 6;
+        //public static final int k0SpareRight = 7;
         public static final int k0Shooting = 4; //ok
         public static final int k0Climbing = 5; //ok 
+        public static final int k0BrakeOn = 6;
+        public static final int k0BrakeOff = 7;
 
         // PCM 1 SOLENOIDS
         public static final int k1ColorWheelExtend = 0; 
@@ -216,9 +218,7 @@ public final class Constants {
         public static final int k1HoodRetract = 5; 
         public static final int k1IntakeExtend = 6; //ok
         public static final int k1IntakeRetract = 7; //ok
-        public static final int k0BrakeOn = 1;
-        public static final int k0BrakeOff = 2;
-
+        
         // ColorWheel
         // Note: Any example colors should be calibrated as the user needs, these are here as a basic example.
         public static Color kBlueTarget = ColorMatch.makeColor(0.143, 0.427, 0.429);
