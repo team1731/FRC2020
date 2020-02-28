@@ -101,6 +101,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
     mTalonShoot2.setNeutralMode(NeutralMode.Brake);
     shootMode();    
     hoodRetract();
+    brakeOff();
 
     SmartDashboard.putNumber("ShootingPercent", 0.5);
   }

@@ -158,7 +158,7 @@ public final class Constants {
         public static final int kShooterVictor = 3;
         public static final int kShootMinVelocity = 500;
 
-        public static final double kClimbMaxPercent = 0.6; // 0.3;
+        public static final double kClimbMaxPercent = 0.5;
         public static final double kJoystickDeadband = 0.3;
         public static final double kClutchDeadband = 0.3;
         public static final int kClimbJoystickInvert = 1;
@@ -206,8 +206,8 @@ public final class Constants {
         //public static final int k0SpareRight = 7;
         public static final int k0Shooting = 4; //ok
         public static final int k0Climbing = 5; //ok 
-        public static final int k0BrakeOn = 6;
-        public static final int k0BrakeOff = 7;
+        public static final int k0BrakeOn = 2;
+        public static final int k0BrakeOff = 1;
 
         // PCM 1 SOLENOIDS
         public static final int k1ColorWheelExtend = 0; 
