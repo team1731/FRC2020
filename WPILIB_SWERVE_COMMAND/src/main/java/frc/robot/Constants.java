@@ -159,9 +159,9 @@ public final class Constants {
         public static final int kShootMinVelocity = 500;
 
         public static final double kClimbMaxPercent = 0.6; // 0.3;
-        public static final double kJoystickDeadband = 0.1;
-        public static final double kClutchDeadband = 0.11;
-        public static final int kClimbJoystickInvert = -1;
+        public static final double kJoystickDeadband = 0.3;
+        public static final double kClutchDeadband = 0.3;
+        public static final int kClimbJoystickInvert = 1;
 
         public static final double kClimbExSafeEncValue = 100000;
         // Digital Input/Outputs
@@ -219,7 +219,6 @@ public final class Constants {
         public static final int k1IntakeExtend = 6; //ok
         public static final int k1IntakeRetract = 7; //ok
         
-
         // ColorWheel
         // Note: Any example colors should be calibrated as the user needs, these are here as a basic example.
         public static Color kBlueTarget = ColorMatch.makeColor(0.143, 0.427, 0.429);

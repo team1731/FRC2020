@@ -59,10 +59,10 @@ public class ClimbingCommand extends CommandBase {
   @Override
   public void execute() {
 
-    isHiCy = false; //m_ShootClimbSubsystem.isHiCylinderSensor();
-    isLoCy = false; //m_ShootClimbSubsystem.isLoCylinderSensor();
-    isClimbEx = false; //m_ShootClimbSubsystem.isClimbExtendSensor();
-    isClimbRt = false; //m_ShootClimbSubsystem.isClimbRetractSensor();
+    isHiCy = m_ShootClimbSubsystem.isHiCylinderSensor();
+    isLoCy = m_ShootClimbSubsystem.isLoCylinderSensor();
+    isClimbEx = m_ShootClimbSubsystem.isClimbExtendSensor();
+    isClimbRt = m_ShootClimbSubsystem.isClimbRetractSensor();
     
     double climbPercent = climb.getAsDouble();
     // if within Joystick deadband then set output to Zero

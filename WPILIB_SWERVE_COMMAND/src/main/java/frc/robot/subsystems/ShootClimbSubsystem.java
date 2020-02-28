@@ -193,7 +193,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
     //  percentOut = 0;
     //}
 
-    if (Math.abs(output) < OpConstants.kClutchDeadband) {
+    if (percentOut == 0) { //(Math.abs(output) < OpConstants.kClutchDeadband) {
       shootMode();
     } else {
       climbMode();
