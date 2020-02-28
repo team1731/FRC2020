@@ -31,7 +31,7 @@ public class LedStringSubsystem extends SubsystemBase {
   private AddressableLEDBuffer m_ledBuffer;
   private double delayNum;
   private boolean delay;
-
+  private int length;
   /**
    * Creates a new ExampleSubsystem.
    */
@@ -44,7 +44,8 @@ public class LedStringSubsystem extends SubsystemBase {
     // Default to a length of 60, start empty output
     // Length is expensive to set, so only set it once, then just update data
     m_ledBuffer = new AddressableLEDBuffer(60);
-    m_led.setLength(m_ledBuffer.getLength());
+    length  = m_ledBuffer.getLength();
+    m_led.setLength(length);
 
     // Set the data
     m_led.setData(m_ledBuffer);
@@ -417,61 +418,64 @@ public class LedStringSubsystem extends SubsystemBase {
   }
 
   public void option(OpConstants.LedOption select) {
+    if (length < 60){
+      return;
+    }
     synchronized(mLedOption){
       mLedOption = select;
     }
     // Fill the buffer with selection
     switch (mLedOption) {
       case TEAM:
-        //teamColors(16);
+        teamColors(16);
         break;
       case RED:
-        //fixedColor(255, 0, 0);
+        fixedColor(255, 0, 0);
         break;
       case BLUE:
-        //fixedColor(0, 0, 255);
+        fixedColor(0, 0, 255);
         break;
       case GREEN:
-        //fixedColor(0, 200, 0);
+        fixedColor(0, 200, 0);
         break;
       case YELLOW:
-        //fixedColor(255, 255, 0);
+        fixedColor(255, 255, 0);
         break;
       case ORANGE:
-        //fixedColor(255, 30, 0);
+        fixedColor(255, 30, 0);
         break;
       case PURPLE:
-        //fixedColor(150, 0, 150);
+        fixedColor(150, 0, 150);
         break;
       case RAINBOW:
-        //rainbow(); // Fill the buffer with a rainbow
+        rainbow(); // Fill the buffer with a rainbow
         break;
       case FULL:
-        //full();
+        full();
         break;
       case CLIMB:
         climb();
         break;
       case SHOOT:
-        //shoot();
+        shoot();
         break;
       case INTAKE:
-        //intake();
+        intake();
         break;
       case INTAKEBALL:
-        //intakeBall();
+        intakeBall();
         break;
       case BALLONE:
-        //ballCount(1);
+        ballCount(1);
         break;
       case BALLTWO:
-        //ballCount(2);
+        ballCount(2);
         break;
       case BALLTHREE:
-        //ballCount(3);
+        ballCount(3);
         break;
       case BALLFOUR:
-        //ballCount(4);
+        ballCount(4);
         break;
     }
     // Set the LEDs
