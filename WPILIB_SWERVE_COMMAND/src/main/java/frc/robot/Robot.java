@@ -44,6 +44,10 @@ public class Robot extends TimedRobot {
   public ColorWheelSubsystem m_colorwheel;
   public LedStringSubsystem m_ledstring;
 
+  String DEFAULT_AUTO_CODE = "T5"; // DEFAULT AUTO MODE if Drive Team is unable to set the mode via Dashboard
+                                   // NOTE: also useful if trying to run in the simulator!
+  String autoCode = DEFAULT_AUTO_CODE;
+
   private void initSubsystems(){
     // initial SubSystems to at rest states
     m_robotDrive.resetEncoders();
@@ -95,6 +99,10 @@ public class Robot extends TimedRobot {
                                                  // M25 --> wait 5 seconds, then run M2 auto
                                                  // M203 --> wait 0 seconds, run M2 with 3-sec delay after 1st shooting
                                                  // F12 --> wait 2 seconds, run "forward" auto mode (robot will drive forward a pre-programmed distance)
+    if (RobotBase.isReal()) {
+      autoCode = SmartDashboard.getString("AUTO CODE", autoCode);
+    }
+                                            
   }
 
   /**
@@ -154,9 +162,6 @@ public class Robot extends TimedRobot {
       //m_vision.StartCameraDataStream();
     }
 
-    String DEFAULT_AUTO_CODE = "T5"; // DEFAULT AUTO MODE if Drive Team is unable to set the mode via Dashboard
-                                     // NOTE: also useful if trying to run in the simulator!
-    String autoCode = DEFAULT_AUTO_CODE;
     if (RobotBase.isReal()) {
       autoCode = SmartDashboard.getString("AUTO CODE", autoCode);
     }
