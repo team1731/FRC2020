@@ -15,6 +15,8 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import edu.wpi.first.wpilibj.DigitalInput;
 
@@ -99,6 +101,20 @@ public class ShootClimbSubsystem extends SubsystemBase {
 
     mTalonShoot1.setNeutralMode(NeutralMode.Brake);
     mTalonShoot2.setNeutralMode(NeutralMode.Brake);
+
+    
+    StatorCurrentLimitConfiguration statorConfig = 
+//                                    ENABLED   LIMIT(AMP)   TRIGGER THRESHOLD(AMP)   TRIGGER THRESHOLD
+    new StatorCurrentLimitConfiguration(true,      20,                25,                   1.0);
+    mTalonShoot1.configStatorCurrentLimit(statorConfig);
+    mTalonShoot2.configStatorCurrentLimit(statorConfig);
+
+    SupplyCurrentLimitConfiguration supplyConfig = 
+    //                                ENABLED   LIMIT(AMP)   TRIGGER THRESHOLD(AMP)   TRIGGER THRESHOLD
+    new SupplyCurrentLimitConfiguration(true,      20,                25,                   1.0);
+    mTalonShoot1.configSupplyCurrentLimit(supplyConfig);
+    mTalonShoot2.configSupplyCurrentLimit(supplyConfig);
+    
     shootMode();    
     hoodRetract();
     brakeOff();
@@ -154,6 +170,21 @@ public class ShootClimbSubsystem extends SubsystemBase {
     if (!isHoodExtended) {
       hoodExtend();
     }
+  }
+
+  private void spinUpShooter(double desiredVelocity){
+    for(int i = 0; i < 100; i += 10){
+      mTalonShoot1.set(ControlMode.Velocity, desiredVelocity*i/100);
+      mTalonShoot2.set(ControlMode.Velocity, desiredVelocity*i/100);
+      try{
+        Thread.sleep(500);
+      } catch (InterruptedException e){
+        System.err.println("Interrupted while sleeping. Don't wake me up pls");
+        e.printStackTrace();
+      }
+    }
+    mTalonShoot1.set(ControlMode.Velocity, desiredVelocity);
+    mTalonShoot2.set(ControlMode.Velocity, desiredVelocity);
   }
 
   //public void enableShooting(double shootMotorPercent_0_to_1) {

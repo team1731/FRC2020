@@ -203,6 +203,7 @@ public class DriveSubsystem extends SubsystemBase {
       rotAdjusted = 0;
     }
 
+    /*
     if(stickControlledHeading){
       //If the stick is released, don't change the rotation
       if((Math.abs(rightX) > DriveConstants.kMinRightStickThreshold || Math.abs(rightY) > DriveConstants.kMinRightStickThreshold)){
@@ -214,6 +215,7 @@ public class DriveSubsystem extends SubsystemBase {
     } else {
     //  rotationalOutput = headingController.calculate(getHeading());
     }
+    */
 
     //Replaced rotAdjusted with rotationalOutput
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
