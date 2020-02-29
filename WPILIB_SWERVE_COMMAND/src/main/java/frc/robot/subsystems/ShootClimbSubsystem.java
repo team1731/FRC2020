@@ -243,6 +243,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
 
   public void climbMode() {
     mShootClimbSolenoid.set(DoubleSolenoid.Value.kReverse); //"clutch"
+    hoodExtend();
     //mTalonShoot1.setNeutralMode(NeutralMode.Coast);
     //mTalonShoot2.setNeutralMode(NeutralMode.Coast);
   }
