@@ -102,19 +102,19 @@ public class ShootClimbSubsystem extends SubsystemBase {
     mTalonShoot1.setNeutralMode(NeutralMode.Brake);
     mTalonShoot2.setNeutralMode(NeutralMode.Brake);
 
-    
+    /*
     StatorCurrentLimitConfiguration statorConfig = 
-//                                    ENABLED   LIMIT(AMP)   TRIGGER THRESHOLD(AMP)   TRIGGER THRESHOLD
-    new StatorCurrentLimitConfiguration(true,      20,                25,                   1.0);
+//                                    ENABLED   LIMIT(AMP)   TRIGGER THRESHOLD(AMP)   TRIGGER THRESHOLD TIME(s)
+    new StatorCurrentLimitConfiguration(true,      40,                45,                   1.0);
     mTalonShoot1.configStatorCurrentLimit(statorConfig);
     mTalonShoot2.configStatorCurrentLimit(statorConfig);
-
+    */
     SupplyCurrentLimitConfiguration supplyConfig = 
-    //                                ENABLED   LIMIT(AMP)   TRIGGER THRESHOLD(AMP)   TRIGGER THRESHOLD
-    new SupplyCurrentLimitConfiguration(true,      20,                25,                   1.0);
+    //                                ENABLED   LIMIT(AMP)   TRIGGER THRESHOLD(AMP)   TRIGGER THRESHOLD TIME(s)
+    new SupplyCurrentLimitConfiguration(true,      40,                45,                   0.5);
     mTalonShoot1.configSupplyCurrentLimit(supplyConfig);
     mTalonShoot2.configSupplyCurrentLimit(supplyConfig);
-    
+
     shootMode();    
     hoodRetract();
     brakeOff();
