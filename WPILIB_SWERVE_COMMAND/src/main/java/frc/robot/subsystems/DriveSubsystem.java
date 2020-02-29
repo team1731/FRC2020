@@ -207,19 +207,19 @@ public class DriveSubsystem extends SubsystemBase {
       //If the stick is released, don't change the rotation
       if((Math.abs(rightX) > DriveConstants.kMinRightStickThreshold || Math.abs(rightY) > DriveConstants.kMinRightStickThreshold)){
         double stickAngle = getStickAngle(rightX, rightY);
-        rotationalOutput = headingController.calculate(getHeading(), stickAngle);
+     //   rotationalOutput = headingController.calculate(getHeading(), stickAngle);
       } else {
         headingController.reset(getHeading());
       }
     } else {
-      rotationalOutput = headingController.calculate(getHeading());
+    //  rotationalOutput = headingController.calculate(getHeading());
     }
 
     //Replaced rotAdjusted with rotationalOutput
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
-          xSpeedAdjusted, ySpeedAdjusted, rotationalOutput, getAngle())
-            : new ChassisSpeeds(xSpeedAdjusted, ySpeedAdjusted, rotationalOutput)
+          xSpeedAdjusted, ySpeedAdjusted, rotAdjusted, getAngle())
+            : new ChassisSpeeds(xSpeedAdjusted, ySpeedAdjusted, rotAdjusted)
     );
     SwerveDriveKinematics.normalizeWheelSpeeds(swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
     m_frontLeft.setDesiredState(swerveModuleStates[0]);    // frontLeft, frontRight, rearLeft, rearRight
