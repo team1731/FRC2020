@@ -379,4 +379,11 @@ public class DriveSubsystem extends SubsystemBase {
     //SmartDashboard.putNumber("leftRearAbsEncoder", leftRearAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
     //SmartDashboard.putNumber("rightRearAbsEncoder", rightRearAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
   }
+
+
+  public void resetGyro() {
+    if(m_gyro != null){
+      m_gyro.reset();
+    }
+  }
 }
