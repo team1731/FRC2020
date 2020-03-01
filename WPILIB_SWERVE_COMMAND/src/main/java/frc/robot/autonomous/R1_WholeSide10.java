@@ -50,7 +50,7 @@ public class R1_WholeSide10 extends _DelayableStrafingAutoMode {
         );
 
         backwardToRail2 = new Trajectory(unrotateTrajectory(backwardToRail2.getStates(), 90)); // make it pure strafe
-        Utils.printTrajectory(this.getClass().getSimpleName() + ": backwardToRail2", backwardToRail2);
+        //Utils.printTrajectory(this.getClass().getSimpleName() + ": backwardToRail2", backwardToRail2);
 
         SwerveControllerCommand backwardToRail2Command = new SwerveControllerCommand(
             backwardToRail2,
@@ -79,7 +79,7 @@ public class R1_WholeSide10 extends _DelayableStrafingAutoMode {
         );
 
         strafeToShootLocation1 = new Trajectory(unrotateTrajectory(strafeToShootLocation1.getStates(), 90)); // make it pure strafe
-        Utils.printTrajectory(this.getClass().getSimpleName() + ": strafeToShootLocation1", strafeToShootLocation1);
+        //Utils.printTrajectory(this.getClass().getSimpleName() + ": strafeToShootLocation1", strafeToShootLocation1);
 
         SwerveControllerCommand strafeToShootLocation1Command = new SwerveControllerCommand(
             strafeToShootLocation1,
@@ -107,7 +107,7 @@ public class R1_WholeSide10 extends _DelayableStrafingAutoMode {
         );
 
         backwardToPickupTrench5 = new Trajectory(unrotateTrajectory(backwardToPickupTrench5.getStates(), 90)); // make it pure strafe
-        Utils.printTrajectory(this.getClass().getSimpleName() + ": backwardToPickupTrench5", backwardToPickupTrench5);
+        //Utils.printTrajectory(this.getClass().getSimpleName() + ": backwardToPickupTrench5", backwardToPickupTrench5);
 
         SwerveControllerCommand backwardToPickupTrench5Command = new SwerveControllerCommand(
             backwardToPickupTrench5,
@@ -135,7 +135,7 @@ public class R1_WholeSide10 extends _DelayableStrafingAutoMode {
         );
 
         strafeToShootLocation2 = new Trajectory(unrotateTrajectory(strafeToShootLocation2.getStates(), 90)); // make it pure strafe
-        Utils.printTrajectory(this.getClass().getSimpleName() + ": strafeToShootLocation2", strafeToShootLocation2);
+        //Utils.printTrajectory(this.getClass().getSimpleName() + ": strafeToShootLocation2", strafeToShootLocation2);
 
         SwerveControllerCommand strafeToShootLocation2Command = new SwerveControllerCommand(
             strafeToShootLocation2,

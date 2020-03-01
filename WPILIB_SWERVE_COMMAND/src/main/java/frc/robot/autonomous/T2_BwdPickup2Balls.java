@@ -53,7 +53,7 @@ public class T2_BwdPickup2Balls extends _DelayableStrafingAutoMode {
     //TODO: Change the zero to the actual last rotation (SCH2020)
     backwardPickup2Balls = new Trajectory(unrotateTrajectory(backwardPickup2Balls.getStates(), 90)); // make it pure strafe
 
-    Utils.printTrajectory(this.getClass().getSimpleName() + ": backwardPickup2Balls", backwardPickup2Balls);
+    //Utils.printTrajectory(this.getClass().getSimpleName() + ": backwardPickup2Balls", backwardPickup2Balls);
     
     SwerveControllerCommand backwardPickup2BallsCommand = new SwerveControllerCommand(
         backwardPickup2Balls,

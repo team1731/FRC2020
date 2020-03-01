@@ -50,7 +50,7 @@ public class M3_Shoot3_Buddy5 extends _DelayableStrafingAutoMode {
         );
 
         backwardToBuddy5 = new Trajectory(unrotateTrajectory(backwardToBuddy5.getStates(), 90)); // make it pure strafe
-        Utils.printTrajectory(this.getClass().getSimpleName() + ": backwardToBuddy5", backwardToBuddy5);
+        //Utils.printTrajectory(this.getClass().getSimpleName() + ": backwardToBuddy5", backwardToBuddy5);
     
         SwerveControllerCommand backwardToBuddy5Command = new SwerveControllerCommand(
             backwardToBuddy5,
@@ -79,7 +79,7 @@ public class M3_Shoot3_Buddy5 extends _DelayableStrafingAutoMode {
         );
     
         strafeToShootLocation = new Trajectory(unrotateTrajectory(strafeToShootLocation.getStates(), 90)); // make it pure strafe
-        Utils.printTrajectory(this.getClass().getSimpleName() + ": strafeToShootLocation", strafeToShootLocation);
+        //Utils.printTrajectory(this.getClass().getSimpleName() + ": strafeToShootLocation", strafeToShootLocation);
 
         SwerveControllerCommand strafeToShootLocationCommand = new SwerveControllerCommand(
             strafeToShootLocation,

@@ -51,7 +51,7 @@ public class T5_ShootDriveBackward extends _DelayableStrafingAutoMode {
       config
     );
 
-    Utils.printTrajectory(this.getClass().getSimpleName() + ": moveForward", moveForward);
+    //Utils.printTrajectory(this.getClass().getSimpleName() + ": moveForward", moveForward);
     
     SwerveControllerCommand moveForwardCommand = new SwerveControllerCommand(
         moveForward,

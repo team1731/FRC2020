@@ -68,7 +68,7 @@ public class L1_EnemyPair_Front3 extends _DelayableStrafingAutoMode {
         );
 
         backwardToEnemyPair = new Trajectory(unrotateTrajectory(backwardToEnemyPair.getStates(), 15)); // make it pure strafe
-        Utils.printTrajectory(this.getClass().getSimpleName() + ": backwardToEnemyPair", backwardToEnemyPair);
+        //Utils.printTrajectory(this.getClass().getSimpleName() + ": backwardToEnemyPair", backwardToEnemyPair);
     
         SwerveControllerCommand backwardToEnemyPairCommand = new SwerveControllerCommand(
             backwardToEnemyPair,
@@ -99,7 +99,7 @@ public class L1_EnemyPair_Front3 extends _DelayableStrafingAutoMode {
         );
     
         strafeToShootLocation1_1 = new Trajectory(unrotateTrajectory(strafeToShootLocation1_1.getStates(), 0)); // make it pure strafe
-        Utils.printTrajectory(this.getClass().getSimpleName() + ": strafeToShootLocation", strafeToShootLocation1_1);
+        //Utils.printTrajectory(this.getClass().getSimpleName() + ": strafeToShootLocation", strafeToShootLocation1_1);
 
         SwerveControllerCommand strafeToShootLocation1_1Command = new SwerveControllerCommand(
             strafeToShootLocation1_1,
@@ -128,7 +128,7 @@ public class L1_EnemyPair_Front3 extends _DelayableStrafingAutoMode {
         );
     
         strafeToShootLocation1_1 = new Trajectory(unrotateTrajectory(strafeToShootLocation1_2.getStates(), -10)); // make it pure strafe
-        Utils.printTrajectory(this.getClass().getSimpleName() + ": strafeToShootLocation", strafeToShootLocation1_2);
+        //Utils.printTrajectory(this.getClass().getSimpleName() + ": strafeToShootLocation", strafeToShootLocation1_2);
 
         SwerveControllerCommand strafeToShootLocation1_2Command = new SwerveControllerCommand(
             strafeToShootLocation1_2,
@@ -158,7 +158,7 @@ public class L1_EnemyPair_Front3 extends _DelayableStrafingAutoMode {
         );
     
         backwardToPickupFront3_1 = new Trajectory(unrotateTrajectory(backwardToPickupFront3_1.getStates(), 65)); // make it pure strafe
-        Utils.printTrajectory(this.getClass().getSimpleName() + ": backwardToPickupFront3", backwardToPickupFront3_1);
+        //Utils.printTrajectory(this.getClass().getSimpleName() + ": backwardToPickupFront3", backwardToPickupFront3_1);
 
         SwerveControllerCommand backwardToPickupFront3_1Command = new SwerveControllerCommand(
             backwardToPickupFront3_1,
@@ -187,7 +187,7 @@ public class L1_EnemyPair_Front3 extends _DelayableStrafingAutoMode {
         );
     
         backwardToPickupFront3_2 = new Trajectory(maintainTrajectory(backwardToPickupFront3_2.getStates(), 65)); // make it pure strafe
-        Utils.printTrajectory(this.getClass().getSimpleName() + ": backwardToPickupFront3", backwardToPickupFront3_2);
+        //Utils.printTrajectory(this.getClass().getSimpleName() + ": backwardToPickupFront3", backwardToPickupFront3_2);
 
         SwerveControllerCommand backwardToPickupFront3_2Command = new SwerveControllerCommand(
             backwardToPickupFront3_2,
@@ -224,7 +224,7 @@ public class L1_EnemyPair_Front3 extends _DelayableStrafingAutoMode {
         //#endregion
 
         strafeToShootLocation2 = new Trajectory(unrotateTrajectory(strafeToShootLocation2.getStates(), 70)); // make it pure strafe
-        Utils.printTrajectory(this.getClass().getSimpleName() + ": strafeToShootLocation", strafeToShootLocation2);
+        //Utils.printTrajectory(this.getClass().getSimpleName() + ": strafeToShootLocation", strafeToShootLocation2);
 
         SwerveControllerCommand strafeToShootLocation2Command = new SwerveControllerCommand(
             strafeToShootLocation2,

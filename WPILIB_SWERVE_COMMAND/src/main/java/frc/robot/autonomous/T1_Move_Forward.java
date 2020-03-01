@@ -38,7 +38,7 @@ public class T1_Move_Forward extends _DelayableStrafingAutoMode {
         config
     );
 
-    Utils.printTrajectory(this.getClass().getSimpleName() + ": moveForward", moveForward);
+    //Utils.printTrajectory(this.getClass().getSimpleName() + ": moveForward", moveForward);
     
     SwerveControllerCommand moveForwardCommand = new SwerveControllerCommand(
       moveForward,

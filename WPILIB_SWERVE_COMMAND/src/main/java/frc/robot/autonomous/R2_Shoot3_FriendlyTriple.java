@@ -62,7 +62,7 @@ public class R2_Shoot3_FriendlyTriple extends _DelayableStrafingAutoMode {
     );
 
     moveToTrench = new Trajectory(unrotateTrajectory(moveToTrench.getStates(), 1)); // make it pure strafe
-    Utils.printTrajectory(this.getClass().getSimpleName() + ": moveToTrench", moveToTrench);
+    //Utils.printTrajectory(this.getClass().getSimpleName() + ": moveToTrench", moveToTrench);
     
     SwerveControllerCommand moveToTrenchCommand = new SwerveControllerCommand(
         moveToTrench,
@@ -93,7 +93,7 @@ public class R2_Shoot3_FriendlyTriple extends _DelayableStrafingAutoMode {
     );
 
     pickupTriple = new Trajectory(unrotateTrajectory(pickupTriple.getStates(), 1)); // make it pure strafe
-    Utils.printTrajectory(this.getClass().getSimpleName() + ": pickupTriple", pickupTriple);
+    //Utils.printTrajectory(this.getClass().getSimpleName() + ": pickupTriple", pickupTriple);
     
     SwerveControllerCommand pickupTripleCommand = new SwerveControllerCommand(
         pickupTriple,
@@ -124,7 +124,7 @@ public class R2_Shoot3_FriendlyTriple extends _DelayableStrafingAutoMode {
     );
 
     goHome = new Trajectory(unrotateTrajectory(goHome.getStates(), 0)); // make it pure strafe
-    Utils.printTrajectory(this.getClass().getSimpleName() + ": goHome", goHome);
+    //Utils.printTrajectory(this.getClass().getSimpleName() + ": goHome", goHome);
     
     SwerveControllerCommand goHomeCommand = new SwerveControllerCommand(
         pickupTriple,
