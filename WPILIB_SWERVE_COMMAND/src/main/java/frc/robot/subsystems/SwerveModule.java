@@ -47,6 +47,8 @@ public class SwerveModule {
       int smartMotionSlot = 0;
       m_driveMotor = new CANSparkMax(driveMotorChannel, MotorType.kBrushless);
       m_driveMotor.restoreFactoryDefaults();
+      m_driveMotor.setSmartCurrentLimit(40, 40);
+      //m_driveMotor.setSmartCurrentLimit(stallLimit, freeLimit, limitRPM);
       m_drivePIDController = m_driveMotor.getPIDController();
       m_driveEncoder = m_driveMotor.getEncoder();
       m_drivePIDController.setP(5e-5);
