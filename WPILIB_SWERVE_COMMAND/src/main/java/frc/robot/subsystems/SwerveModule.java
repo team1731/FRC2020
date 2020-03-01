@@ -65,12 +65,12 @@ public class SwerveModule {
           limitRPM      RPM less than this value will be set to the stallLimit,
                         RPM values greater than limitRPM will scale linearly to freeLimit
       */
-      m_driveMotor.setSmartCurrentLimit(10, 10);
+      m_driveMotor.setSmartCurrentLimit(40, 40);
       //m_driveMotor.setSmartCurrentLimit(stallLimit, freeLimit, limitRPM);
       m_drivePIDController = m_driveMotor.getPIDController();
       m_driveEncoder = m_driveMotor.getEncoder();
       m_drivePIDController.setP(5e-5);
-      m_drivePIDController.setI(1e-6);
+      m_drivePIDController.setI(0);
       m_drivePIDController.setD(0);
       m_drivePIDController.setFF(0.000156);
       m_drivePIDController.setOutputRange(-1, 1);
@@ -85,7 +85,7 @@ public class SwerveModule {
       m_turningEncoder = m_turningMotor.getEncoder();
       m_turningMotor.setInverted(true);
       m_turningPIDController.setP(5e-5);
-      m_turningPIDController.setI(1e-6);
+      m_turningPIDController.setI(0);
       m_turningPIDController.setD(0);
       m_turningPIDController.setIZone(0);
       m_turningPIDController.setFF(0.000156);
@@ -220,8 +220,13 @@ public double getDriveEncoderPosition(){
 
 
     if(RobotBase.isReal()){
-      m_turningPIDController.setReference((azimuthPosition + azimuthError), ControlType.kSmartMotion);
+      double turningMotorOutput = azimuthPosition + azimuthError;
+      m_turningPIDController.setReference(turningMotorOutput, ControlType.kSmartMotion);
       m_drivePIDController.setReference(drive, ControlType.kVelocity);
+      if(System.currentTimeMillis() % 100 == 0){
+        SmartDashboard.putNumber("turningMotorOutput-" + id,  turningMotorOutput);
+        SmartDashboard.putNumber("driveVelocityOutput-" + id,  drive);
+      }  
     }
 
     //SmartDashboard.putNumber("RelativeEncoder"+id, m_turningEncoder.getPosition());
