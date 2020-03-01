@@ -33,7 +33,8 @@ public class SwerveModule {
   private double offsetFromAbsoluteEncoder;
 
   private int id;
-    
+  private Boolean isInverted = Boolean.FALSE;
+
   /**
    * Constructs a SwerveModule.
    *
@@ -64,7 +65,7 @@ public class SwerveModule {
           limitRPM      RPM less than this value will be set to the stallLimit,
                         RPM values greater than limitRPM will scale linearly to freeLimit
       */
-      m_driveMotor.setSmartCurrentLimit(40, 40);
+      m_driveMotor.setSmartCurrentLimit(10, 10);
       //m_driveMotor.setSmartCurrentLimit(stallLimit, freeLimit, limitRPM);
       m_drivePIDController = m_driveMotor.getPIDController();
       m_driveEncoder = m_driveMotor.getEncoder();
@@ -206,12 +207,18 @@ public double getDriveEncoderPosition(){
     }
     double azimuthError = Math.IEEEremainder(azimuth - azimuthPosition, kTICKS);
 
+    // ********************************************************
     // minimize azimuth rotation, reversing drive if necessary
-    boolean isInverted = Math.abs(azimuthError) > 0.25 * kTICKS;
-    if (isInverted) {
-      azimuthError -= Math.copySign(0.5 * kTICKS, azimuthError);
-      drive = -drive;
-    }
+    // ********************************************************
+    // synchronized(isInverted){
+    //   isInverted = Math.abs(azimuthError) > 0.25 * kTICKS;
+    //   if (isInverted) {
+    //     azimuthError -= Math.copySign(0.5 * kTICKS, azimuthError);
+    //     drive = -drive;
+    //   }
+    // }
+
+
     if(RobotBase.isReal()){
       m_turningPIDController.setReference((azimuthPosition + azimuthError), ControlType.kSmartMotion);
       m_drivePIDController.setReference(drive, ControlType.kVelocity);
@@ -224,11 +231,12 @@ public double getDriveEncoderPosition(){
   /**
    * Zeros all the SwerveModule encoders.
    */
-
   public void resetEncoders(double absoluteEncoderVoltage) {
-    if(RobotBase.isReal()){
-      m_driveEncoder.setPosition(0);
-      m_turningEncoder.setPosition(absoluteEncoderVoltage * 16/3.26);
+    synchronized(isInverted){
+      if(RobotBase.isReal() && !isInverted){
+        m_driveEncoder.setPosition(0);
+        m_turningEncoder.setPosition(absoluteEncoderVoltage * 16/3.26);
+      }
     }
   }
 

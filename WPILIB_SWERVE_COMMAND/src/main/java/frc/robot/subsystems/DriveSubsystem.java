@@ -196,13 +196,13 @@ public class DriveSubsystem extends SubsystemBase {
     double rotationalOutput = 0;
 
     // DEADBAND
-    if(Math.abs(xSpeedAdjusted) < 0.2){
+    if(Math.abs(xSpeedAdjusted) < 0.3){
       xSpeedAdjusted = 0;
     }
-    if(Math.abs(ySpeedAdjusted) < 0.2){
+    if(Math.abs(ySpeedAdjusted) < 0.3){
       ySpeedAdjusted = 0;
     }
-    if(Math.abs(rotAdjusted) < 0.2){
+    if(Math.abs(rotAdjusted) < 0.3){
       rotAdjusted = 0;
     }
 
@@ -313,7 +313,7 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public void resetEncoders() {
     m_frontLeft.resetEncoders(leftFrontAbsEncoder.getVoltage());     // frontLeft, frontRight, rearLeft, rearRight
-    m_frontRight.resetEncoders(rightFrontAbsEncoder.getVoltage());
+    //m_frontRight.resetEncoders(rightFrontAbsEncoder.getVoltage()); took this one out -- bad hardware encoder!!!
     m_rearLeft.resetEncoders(leftRearAbsEncoder.getVoltage());
     m_rearRight.resetEncoders(rightRearAbsEncoder.getVoltage());
   }
