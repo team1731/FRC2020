@@ -140,9 +140,11 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {
     //m_ledstring.option(LedOption.TEAM);
     m_robotDrive.resetEncoders();
-    SmartDashboard.putBoolean("LowSensor",  m_sequencer.lowSensorHasBall());
-    SmartDashboard.putBoolean("MidSensor",  m_sequencer.midSensorHasBall());
-    SmartDashboard.putBoolean("HighSensor",  m_sequencer.highSensorHasBall());
+    if(System.currentTimeMillis() % 100 == 0){
+      SmartDashboard.putBoolean("LowSensor",  m_sequencer.lowSensorHasBall());
+      SmartDashboard.putBoolean("MidSensor",  m_sequencer.midSensorHasBall());
+      SmartDashboard.putBoolean("HighSensor",  m_sequencer.highSensorHasBall());
+    }
    }
 
   /**
@@ -223,12 +225,14 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    SmartDashboard.putBoolean("LowSensor",  m_sequencer.lowSensorHasBall());
-    SmartDashboard.putBoolean("MidSensor",  m_sequencer.midSensorHasBall());
-    SmartDashboard.putBoolean("HighSensor",  m_sequencer.highSensorHasBall());
-    SmartDashboard.putNumber("PowerCellCount",  (int)m_sequencer.getPowerCellCount());
-    SmartDashboard.putString("Intake State",  m_intake.getIntakeState());
-    //SmartDashboard.putNumber("Climb Encoder", m_shootclimb.getClimbEncoderValue());
+    if(System.currentTimeMillis() % 100 == 0){
+      SmartDashboard.putBoolean("LowSensor",  m_sequencer.lowSensorHasBall());
+      SmartDashboard.putBoolean("MidSensor",  m_sequencer.midSensorHasBall());
+      SmartDashboard.putBoolean("HighSensor",  m_sequencer.highSensorHasBall());
+      SmartDashboard.putNumber("PowerCellCount",  (int)m_sequencer.getPowerCellCount());
+      SmartDashboard.putString("Intake State",  m_intake.getIntakeState());
+      //SmartDashboard.putNumber("Climb Encoder", m_shootclimb.getClimbEncoderValue());
+    }
 
     // switch((int)m_sequencer.getPowerCellCount()){
     //   case 1: m_ledstring.option(LedOption.BALLONE); break;

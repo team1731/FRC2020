@@ -136,12 +136,15 @@ public class DriveSubsystem extends SubsystemBase {
         m_frontRight.getState(),
         m_rearLeft.getState(),
         m_rearRight.getState());
-    SmartDashboard.putNumber("pose x", m_odometry.getPoseMeters().getTranslation().getX());
-    SmartDashboard.putNumber("pose y", m_odometry.getPoseMeters().getTranslation().getY());
-    SmartDashboard.putNumber("rot deg", m_odometry.getPoseMeters().getRotation().getDegrees());
-    SmartDashboard.putNumber("heading radians", headingRadians);    
-    SmartDashboard.putNumber("raw gyro", m_gyro.getAngle());
-    SmartDashboard.putBoolean("gyro is calibrating", m_gyro.isCalibrating());
+        
+    if(System.currentTimeMillis() % 100 == 0){
+      SmartDashboard.putNumber("pose x", m_odometry.getPoseMeters().getTranslation().getX());
+      SmartDashboard.putNumber("pose y", m_odometry.getPoseMeters().getTranslation().getY());
+      SmartDashboard.putNumber("rot deg", m_odometry.getPoseMeters().getRotation().getDegrees());
+      SmartDashboard.putNumber("heading radians", headingRadians);    
+      SmartDashboard.putNumber("raw gyro", m_gyro.getAngle());
+      SmartDashboard.putBoolean("gyro is calibrating", m_gyro.isCalibrating());
+    }
     //debugOutput.update(Timer.getFPGATimestamp(), m_odometry, headingRadians, m_gyro.getAngle());
     //mCSVWriter.add(debugOutput);
   }
@@ -335,7 +338,9 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public double getHeading() {
     double heading = Math.IEEEremainder(m_gyro.getAngle(), 360) * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
-    SmartDashboard.putNumber("Heading", heading);
+    if(System.currentTimeMillis() % 100 == 0){  
+      SmartDashboard.putNumber("Heading", heading);
+    }
     return heading;
   }
 

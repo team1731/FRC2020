@@ -119,7 +119,9 @@ public class ShootClimbSubsystem extends SubsystemBase {
     hoodRetract();
     brakeOff();
 
-    SmartDashboard.putNumber("ShootingPercent", 0.5);
+    if(System.currentTimeMillis() % 100 == 0){
+      SmartDashboard.putNumber("ShootingPercent", 0.5);
+    }
   }
 
   public void testSpeed(){
@@ -131,10 +133,13 @@ public class ShootClimbSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     //shootPercent = SmartDashboard.getNumber("ShootingPercent", 0.5);
     //enableShooting(shootPercent);
-    SmartDashboard.putBoolean("isHiCy", isHiCylinderSensor());
-    SmartDashboard.putBoolean("isLoCy", isLoCylinderSensor());
-    SmartDashboard.putBoolean("isClimbEx", isClimbExtendSensor());
-    SmartDashboard.putBoolean("isClimbRt", isClimbRetractSensor());
+    
+    if(System.currentTimeMillis() % 100 == 0){
+      SmartDashboard.putBoolean("isHiCy", isHiCylinderSensor());
+      SmartDashboard.putBoolean("isLoCy", isLoCylinderSensor());
+      SmartDashboard.putBoolean("isClimbEx", isClimbExtendSensor());
+      SmartDashboard.putBoolean("isClimbRt", isClimbRetractSensor());
+    }
   }
 
   public double getShootMotor1Velocity() {
@@ -164,9 +169,12 @@ public class ShootClimbSubsystem extends SubsystemBase {
     /* 500 RPM in either direction */
 		mTalonShoot1.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
     mTalonShoot2.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
-    SmartDashboard.putNumber("bdltargetvelocity", targetVelocity_UnitsPer100ms);
-    SmartDashboard.putNumber("talon1Velocity", mTalonShoot1.getSelectedSensorVelocity());
-    SmartDashboard.putNumber("talon1Velocity2", mTalonShoot2.getSelectedSensorVelocity());
+
+    if(System.currentTimeMillis() % 100 == 0){
+      SmartDashboard.putNumber("bdltargetvelocity", targetVelocity_UnitsPer100ms);
+      SmartDashboard.putNumber("talon1Velocity", mTalonShoot1.getSelectedSensorVelocity());
+      SmartDashboard.putNumber("talon1Velocity2", mTalonShoot2.getSelectedSensorVelocity());
+    }
     if (!isHoodExtended) {
       hoodExtend();
     }

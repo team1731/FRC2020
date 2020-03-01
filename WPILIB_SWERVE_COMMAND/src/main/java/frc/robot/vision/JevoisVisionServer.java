@@ -67,7 +67,9 @@ public class JevoisVisionServer {
                     isConnected = attemptJevoisConnection();
                 }
                 if(lastDashboardMessage != dashboardMessage){
-                    SmartDashboard.putString("JevoisVisionServerOutput", dashboardMessage);
+                    if(System.currentTimeMillis() % 100 == 0){
+                        SmartDashboard.putString("JevoisVisionServerOutput", dashboardMessage);
+                    }
                 }
                 lastDashboardMessage = dashboardMessage;
            }
