@@ -147,7 +147,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
   
   public void enableShooting() {
     // this is for Autonomous
-    this.spinShooter(0.75);
+    this.spinShooter(0.8);
     hoodExtend();
   }
   
