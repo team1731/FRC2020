@@ -41,7 +41,7 @@ public class ShootSeqCommand extends CommandBase {
   @Override
   public void initialize() {
     startTime = Timer.getFPGATimestamp();
-    System.out.println("starttime = " + startTime);
+    //System.out.println("starttime = " + startTime);
     //shootSubsystem.hoodExtend();
     //seqSubsystem.stop();
   }
@@ -52,7 +52,7 @@ public class ShootSeqCommand extends CommandBase {
     double shootMotorVelocity = shootSubsystem.getShootMotor1Velocity();
     //System.out.println("shoot motor velocity = " + shootMotorVelocity);
     if(shootSubsystem.atTargetVelocity()){
-      System.out.println("calling seqSubSystem.forward(true);");
+      //System.out.println("calling seqSubSystem.forward(true);");
       seqSubsystem.forward(true);
     }
     else{

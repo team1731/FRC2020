@@ -58,7 +58,7 @@ public class ShootAllBalls extends WaitCommand {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    System.out.println("ShootAllBalls - end. interrupted=" + interrupted);
+    //System.out.println("ShootAllBalls - end. interrupted=" + interrupted);
     seqSubsystem.stop();
     shootSubsystem.hoodRetract();
   }

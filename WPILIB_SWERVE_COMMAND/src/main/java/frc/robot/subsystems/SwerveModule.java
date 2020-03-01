@@ -47,6 +47,23 @@ public class SwerveModule {
       int smartMotionSlot = 0;
       m_driveMotor = new CANSparkMax(driveMotorChannel, MotorType.kBrushless);
       m_driveMotor.restoreFactoryDefaults();
+
+      /*
+        Sets the current limit in Amps. The motor controller will reduce the controller voltage output
+        to avoid surpassing this limit. This limit is enabled by default and used for brushless only.
+        This limit is highly recommended when using the NEO brushless motor. The NEO Brushless Motor has
+        a low internal resistance, which can mean large current spikes that could be enough to cause damage
+        to the motor and controller. This current limit provides a smarter strategy to deal with high current
+        draws and keep the motor and controller operating in a safe region. The controller can also limit the
+        current based on the RPM of the motor in a linear fashion to help with controllability in closed loop
+        control. For a response that is linear the entire RPM range leave limit RPM at 0.
+
+        Parameters:
+          stallLimit    The current limit in Amps at 0 RPM.
+          freeLimit     The current limit at free speed (5700RPM for NEO).
+          limitRPM      RPM less than this value will be set to the stallLimit,
+                        RPM values greater than limitRPM will scale linearly to freeLimit
+      */
       m_driveMotor.setSmartCurrentLimit(40, 40);
       //m_driveMotor.setSmartCurrentLimit(stallLimit, freeLimit, limitRPM);
       m_drivePIDController = m_driveMotor.getPIDController();

@@ -106,7 +106,7 @@ public class IntakeSeqCommand extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    System.out.println("IntakeSequenceCommand end interrupted=" + (interrupted?"true":"false"));
+    //System.out.println("IntakeSequenceCommand end interrupted=" + (interrupted?"true":"false"));
     m_SeqSubsystem.stop();
     m_IntakeSubsystem.inactive();
     m_IntakeSubsystem.retract();

@@ -122,7 +122,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    resumeCSVWriter();
+    //resumeCSVWriter();
 
     //SmartDashboard.putNumber("headingController In", getHeading());
     //headingControllerOutput = headingController.calculate(MathUtil.clamp(getHeading(), -180, 180));

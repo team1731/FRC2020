@@ -59,7 +59,7 @@ public class SeqResetCommand extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    System.out.println("SeqResetCommand end interrupted=" + (interrupted?"true":"false"));
+    //System.out.println("SeqResetCommand end interrupted=" + (interrupted?"true":"false"));
     m_SeqSubsystem.stop();
     mTimer.stop();
   }
