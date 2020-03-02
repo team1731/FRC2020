@@ -1,26 +1,29 @@
 package frc.robot.autonomous;
 
-import java.util.List;
-
-import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
-import edu.wpi.first.wpilibj.geometry.Pose2d;
-import edu.wpi.first.wpilibj.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.geometry.Translation2d;
-import edu.wpi.first.wpilibj.trajectory.Trajectory;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Constants.AutoConstants;
-import frc.robot.Constants.DriveConstants;
+
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.util.Utils;
+
 
 public class F1_Move_Forward extends _DelayableStrafingAutoMode {
   public F1_Move_Forward(DriveSubsystem m_robotDrive) {
 
+    SequentialCommandGroup commandGroup = new SequentialCommandGroup(
+      new WaitCommand(getInitialDelaySeconds()),
+
+      createSwerveCommand(m_robotDrive, "MOVE FORWARD", TrajectoryDirection.FWD, 
+                          TrajectoryHeading.DO_NOTHING, 0, new double[][]
+        {{0.0, 0.0, 0.0},  //initial pose
+          {0.5, 0.0},      // waypoint(s)
+          {1.0, 0.0, 0.0}} // final pose
+        )
+    );
+
+    command = commandGroup.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
+	}
+
+  /* FOR REFERENCE ONLY
     // Create config for trajectory
     TrajectoryConfig config =
         new TrajectoryConfig(AutoConstants.kMaxSpeedMetersPerSecond,
@@ -63,8 +66,5 @@ public class F1_Move_Forward extends _DelayableStrafingAutoMode {
 
       moveForwardCommand
     );
-
-    command = commandGroup.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
-	}
-
+  */
 }

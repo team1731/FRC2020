@@ -271,6 +271,8 @@ public class RobotContainer {
 
   private _NamedAutoMode createNamedAutoMode(String autoModeName) throws _NotImplementedProperlyException {
     switch(autoModeName){
+      case "F1": return new _NamedAutoMode(new F1_Move_Forward(m_robotDrive));
+
       //
       // FOR HAYMARKET: R1, L1, M1, M3
       //
@@ -289,7 +291,9 @@ public class RobotContainer {
       case "T5": return new _NamedAutoMode(new T5_ShootDriveBackward(m_robotDrive, m_sequencer, m_shootclimb, m_vision));
       case "R2": return new _NamedAutoMode(new R2_Shoot3_FriendlyTriple(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision));
       
-      default: return null;
+      default: 
+        System.err.println("FATAL: SELECTED AUTO MODE " + autoModeName + " DOES NOT MAP TO A JAVA CLASS!!!!");
+        return null;
     }
   }
     
