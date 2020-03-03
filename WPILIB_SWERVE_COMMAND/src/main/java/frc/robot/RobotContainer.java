@@ -22,9 +22,6 @@ import frc.robot.autonomous.M1_Shoot3_Front3_Shoot3;
 import frc.robot.autonomous.M3_Shoot3_Buddy5;
 import frc.robot.autonomous.R1_WholeSide10;
 import frc.robot.autonomous.R2_Shoot3_FriendlyTriple;
-import frc.robot.autonomous.T1_Move_Forward;
-import frc.robot.autonomous.T2_BwdPickup2Balls;
-import frc.robot.autonomous.T3_BwdPickup2BallsAndShoot;
 import frc.robot.autonomous.T4_ShootDriveForward;
 import frc.robot.autonomous.T5_ShootDriveBackward;
 import frc.robot.autonomous._NamedAutoMode;
@@ -273,23 +270,14 @@ public class RobotContainer {
     switch(autoModeName){
       case "F1": return new _NamedAutoMode(new F1_Move_Forward(m_robotDrive));
 
-      //
-      // FOR HAYMARKET: R1, L1, M1, M3
-      //
-      case "R1": return new _NamedAutoMode(new R1_WholeSide10(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision));
       case "L1": return new _NamedAutoMode(new L1_EnemyPair_Front3(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision));
       case "M1": return new _NamedAutoMode(new M1_Shoot3_Front3_Shoot3(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision));
       case "M3": return new _NamedAutoMode(new M3_Shoot3_Buddy5(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision));
+      case "R1": return new _NamedAutoMode(new R1_WholeSide10(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision));
+      case "R2": return new _NamedAutoMode(new R2_Shoot3_FriendlyTriple(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision));
 
-      //
-      // TEST AUTO ROUTINES
-      //
-      case "T1": return new _NamedAutoMode(new T1_Move_Forward(m_robotDrive));
-      case "T2": return new _NamedAutoMode(new T2_BwdPickup2Balls(m_robotDrive));
-      case "T3": return new _NamedAutoMode(new T3_BwdPickup2BallsAndShoot(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision));
       case "T4": return new _NamedAutoMode(new T4_ShootDriveForward(m_robotDrive, m_sequencer, m_shootclimb, m_vision));
       case "T5": return new _NamedAutoMode(new T5_ShootDriveBackward(m_robotDrive, m_sequencer, m_shootclimb, m_vision));
-      case "R2": return new _NamedAutoMode(new R2_Shoot3_FriendlyTriple(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision));
       
       default: 
         System.err.println("FATAL: SELECTED AUTO MODE " + autoModeName + " DOES NOT MAP TO A JAVA CLASS!!!!");

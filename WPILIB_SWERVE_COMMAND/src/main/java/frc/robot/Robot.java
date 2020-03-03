@@ -44,7 +44,7 @@ public class Robot extends TimedRobot {
   public ColorWheelSubsystem m_colorwheel;
   public LedStringSubsystem m_ledstring;
 
-  String DEFAULT_AUTO_CODE = "F1";// DEFAULT AUTO MODE if Drive Team is unable to set the mode via Dashboard
+  String DEFAULT_AUTO_CODE = "L1";// DEFAULT AUTO MODE if Drive Team is unable to set the mode via Dashboard
                                   // NOTE: also useful if trying to run in the simulator!
                                   // XNDD (X=L,M,R,F) (N=1,2,3,4) (DD=0-99 [optional])
                                   // XN = one of Mark and Chuck's 10 auto modes plus new "forward" mode F
