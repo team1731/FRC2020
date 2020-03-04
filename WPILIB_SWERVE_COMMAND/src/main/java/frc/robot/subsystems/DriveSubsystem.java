@@ -211,12 +211,23 @@ public class DriveSubsystem extends SubsystemBase {
       //If the stick is released, don't change the rotation
       if((Math.abs(rightX) > DriveConstants.kMinRightStickThreshold || Math.abs(rightY) > DriveConstants.kMinRightStickThreshold)){
         double stickAngle = getStickAngle(rightX, rightY);
-     //   rotationalOutput = headingController.calculate(getHeading(), stickAngle);
+        double heading = getHeading();
+
+        //Continuous correction
+        //This assumes that positive is COUNTERclockwise, which may be wrong... the fix should be simply reversing the signs
+        if((stickAngle - heading) > 180){
+          stickAngle += 360;
+        } else if((stickAngle - heading) < -180){
+          stickAngle -= 360;
+        }
+
+        rotationalOutput = headingController.calculate(heading, stickAngle);
       } else {
         headingController.reset(getHeading());
       }
     } else {
-    //  rotationalOutput = headingController.calculate(getHeading());
+      //Perhaps do the same continuous correction here as above? Test first.
+      rotationalOutput = headingController.calculate(getHeading());
     }
     */
 
