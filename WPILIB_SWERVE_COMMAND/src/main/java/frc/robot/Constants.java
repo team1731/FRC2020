@@ -81,26 +81,26 @@ public final class Constants {
     public static final double kvVoltSecondsPerMeter = 0.8;
     public static final double kaVoltSecondsSquaredPerMeter = 0.15;
 
-    public static final double kMaxSpeedMetersPerSecond = 3;
+    public static final double kMaxSpeedMetersPerSecond = 3;   //tune
 
   }
 
 
   public static final class ModuleConstants {
-    public static final double kMaxModuleAngularSpeedRadiansPerSecond = 2 * Math.PI;
-    public static final double kMaxModuleAngularAccelerationRadiansPerSecondSquared = 2 * Math.PI;
+  //  public static final double kMaxModuleAngularSpeedRadiansPerSecond = 2 * Math.PI;
+  //  public static final double kMaxModuleAngularAccelerationRadiansPerSecondSquared = 2 * Math.PI;
 
-    public static final double kDriveEncoderCPR = 5.5;
-    public static final double kTurningEncoderCPR = 16;
-    public static final double kWheelDiameterMeters = 0.0762;
-    public static final double kDriveEncoderDistancePerPulse =
+   // public static final double kDriveEncoderCPR = 5.5;
+  //  public static final double kTurningEncoderCPR = 16;
+  //  public static final double kWheelDiameterMeters = 0.0762;
+   // public static final double kDriveEncoderDistancePerPulse =               // not used
         // Assumes the encoders are directly mounted on the wheel shafts
-        (kWheelDiameterMeters * Math.PI) / kDriveEncoderCPR;
+  //      (kWheelDiameterMeters * Math.PI) / kDriveEncoderCPR;
 
         
-    public static final double kTurningEncoderDistancePerPulse =
+   // public static final double kTurningEncoderDistancePerPulse =              //not used
         // Assumes the encoders are on a 1:1 reduction with the module shaft.
-        (2 * Math.PI) / kTurningEncoderCPR;
+   //     (2 * Math.PI) / kTurningEncoderCPR;
 
   }
 

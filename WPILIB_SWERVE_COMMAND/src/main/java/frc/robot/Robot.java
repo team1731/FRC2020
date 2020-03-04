@@ -130,7 +130,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
-    //m_robotDrive.suspendCSVWriter();
+    m_robotDrive.suspendCSVWriter();
     if(m_vision != null){
       //m_vision.StopCameraDataStream();
     }
@@ -157,7 +157,7 @@ public class Robot extends TimedRobot {
     
     //m_ledstring.option(LedOption.RAINBOW);
 
-    //m_robotDrive.resumeCSVWriter();
+    m_robotDrive.resumeCSVWriter();
     m_sequencer.setPowerCellCount((int) SmartDashboard.getNumber("INIT CELL COUNT", 3));
 
     if(m_vision != null){
@@ -203,7 +203,7 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     CommandScheduler.getInstance().cancelAll();
     m_sequencer.setPowerCellCount((int) SmartDashboard.getNumber("INIT CELL COUNT", 3));
-    //m_robotDrive.resumeCSVWriter();
+    m_robotDrive.resumeCSVWriter();
 
     initSubsystems();
 

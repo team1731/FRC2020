@@ -34,6 +34,7 @@ public class SwerveModule {
 
   private int id;
   private Boolean isInverted = Boolean.FALSE;
+  private DebugValues debugValues;
 
   /**
    * Constructs a SwerveModule.
@@ -43,6 +44,7 @@ public class SwerveModule {
    */
   public SwerveModule(int driveMotorChannel, int turningMotorChannel) {
     id = driveMotorChannel;
+    debugValues = new DebugValues(id);
 
     if(RobotBase.isReal()){
       int smartMotionSlot = 0;
@@ -194,7 +196,7 @@ public double getDriveEncoderPosition(){
     // Calculate the turning motor output from the turning PID controller.
     //m_driveMotor.set(driveOutput);
     //m_turningMotor.set(turnOutput);
-    
+
     double azimuth = -state.angle.getDegrees() * kTICKS/360.0;
     double speedMetersPerSecond = state.speedMetersPerSecond;
     //SmartDashboard.putNumber("SpeedMPS-"+id, speedMetersPerSecond);
@@ -226,7 +228,10 @@ public double getDriveEncoderPosition(){
       if(System.currentTimeMillis() % 100 == 0){
         SmartDashboard.putNumber("turningMotorOutput-" + id,  turningMotorOutput);
         SmartDashboard.putNumber("driveVelocityOutput-" + id,  drive);
-      }  
+      }
+
+      debugValues.update(m_turningMotor.getAppliedOutput(), m_turningEncoder.getVelocity(), 
+      m_driveMotor.getAppliedOutput(), m_driveEncoder.getVelocity());
     }
 
     //SmartDashboard.putNumber("RelativeEncoder"+id, m_turningEncoder.getPosition());
@@ -242,6 +247,30 @@ public double getDriveEncoderPosition(){
         m_driveEncoder.setPosition(0);
         m_turningEncoder.setPosition(absoluteEncoderVoltage * 16/3.26);
       }
+    }
+  }
+
+  public DebugValues getDebugValues(){
+    return debugValues;
+  }
+
+  public class DebugValues {
+    public int id;
+    
+    public double turnAppliedOutput;
+    public double turnVelocity;
+    public double driveAppliedOutput;
+    public double driveVelocity;
+
+    public DebugValues(int id){
+      this.id = id;
+    }
+
+    public void update(double turnAppliedOutput, double turnVelocity, double driveAppliedOutput, double driveVelocity){
+      this.turnAppliedOutput = turnAppliedOutput;
+      this.turnVelocity = turnVelocity;
+      this.driveAppliedOutput = driveAppliedOutput;
+      this.driveVelocity = driveVelocity;
     }
   }
 
