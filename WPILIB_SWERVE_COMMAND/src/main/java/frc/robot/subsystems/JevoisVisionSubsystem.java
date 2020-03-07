@@ -29,6 +29,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  * @see GoalTracker.java
  */
 public class JevoisVisionSubsystem extends SubsystemBase {
+    private static final Transform2d kVehicleToCamera = new Transform2d(new Translation2d(VisionConstants.kCameraXOffset, VisionConstants.kCameraYOffset), new Rotation2d());
+
     private DriveSubsystem m_robotDrive;
     private JevoisVisionUpdate update_ = null;
     private JevoisVisionServer m_VisionServer;
@@ -43,8 +45,18 @@ public class JevoisVisionSubsystem extends SubsystemBase {
         m_VisionServer = new JevoisVisionServer(this);
     }
 
+    public boolean isJeVoisConnected(){
+        return m_VisionServer.getisConnected();
+    }
+    
+    public void AttemptConnections(boolean attempt){
+        m_VisionServer.attemptConnections = attempt;
+    }
+
     public void ringLightOn(){
-        ringLight.set(true);
+        if(isJeVoisConnected()){
+            ringLight.set(true);
+        }
     }
 
     public void ringLightOff(){
@@ -97,14 +109,21 @@ public class JevoisVisionSubsystem extends SubsystemBase {
     }
 
     public void addVisionUpdate(double timestamp, List<TargetInfo> vision_update) {
-        List<Translation2d> field_to_goals = new ArrayList<>();
-        Pose2d field_to_camera = null;
-        Rotation2d camera_pitch_correction_ = Rotation2d.fromDegrees(-VisionConstants.kCameraPitchAngleDegrees);
-        Rotation2d camera_yaw_correction_ = Rotation2d.fromDegrees(-VisionConstants.kCameraYawAngleDegrees);
-        double differential_height_ = VisionConstants.kBoilerTargetTopHeight - VisionConstants.kCameraZOffset;
+        
+        //RigidTransform2d kVehicleToCamera = new RigidTransform2d(
+        //    new Translation2d(Constants.kCameraXOffset, Constants.kCameraYOffset), new Rotation2d());
+
+        
 
         //RigidTransform2d field_to_camera = getFieldToCamera(timestamp);
         if (!(vision_update == null || vision_update.isEmpty())) {
+            List<Translation2d> field_to_goals = new ArrayList<>();
+
+            Pose2d field_to_camera = m_robotDrive.getPose().transformBy(kVehicleToCamera);
+            Rotation2d camera_pitch_correction_ = Rotation2d.fromDegrees(-VisionConstants.kCameraPitchAngleDegrees);
+            Rotation2d camera_yaw_correction_ = Rotation2d.fromDegrees(-VisionConstants.kCameraYawAngleDegrees);
+            double differential_height_ = VisionConstants.kBoilerTargetTopHeight - VisionConstants.kCameraZOffset;
+
             for (TargetInfo target : vision_update) {
                 
                 double ydeadband = (target.getY() > -VisionConstants.kCameraDeadband
@@ -137,9 +156,10 @@ public class JevoisVisionSubsystem extends SubsystemBase {
                    field_to_goals.add(field_to_camera.getTranslation());
                 }
             }
-        }
-        synchronized (this) {
-            goal_tracker_.update(timestamp, field_to_goals);
+            
+            synchronized (this) {
+                goal_tracker_.update(timestamp, field_to_goals);
+            }
         }
     }
 
@@ -148,8 +168,7 @@ public class JevoisVisionSubsystem extends SubsystemBase {
         if (!reports.isEmpty()) {
             TrackReport report = reports.get(0);
 
-            Translation2d robot_to_goal = m_robotDrive.getPose().getTranslation().unaryMinus()
-            .plus(report.field_to_goal);
+            Translation2d robot_to_goal = m_robotDrive.getPose().getTranslation().unaryMinus().plus(report.field_to_goal);
             //Translation2d robot_to_goal = getLatestFieldToVehicle().getTranslation().inverse()
             //        .translateBy(report.field_to_goal);
 

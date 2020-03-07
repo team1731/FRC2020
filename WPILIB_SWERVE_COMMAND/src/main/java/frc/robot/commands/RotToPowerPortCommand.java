@@ -3,6 +3,7 @@ package frc.robot.commands;
 import java.util.Optional;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.XboxConstants;
 import frc.robot.subsystems.DriveSubsystem;
@@ -33,7 +34,11 @@ public class RotToPowerPortCommand extends CommandBase {
         Optional<ShooterAimingParameters> aimParams = m_vision.getAimingParameters();
 
         if(!aimParams.isEmpty() && aimParams != null){
+            SmartDashboard.putBoolean("Vis_HasTarget", true);
+            SmartDashboard.putNumber("Vis_TargetAngle", m_drive.getHeading()+aimParams.get().getRobotToGoal().getDegrees());
             m_drive.setHeadingControllerGoal(m_drive.getHeading()+aimParams.get().getRobotToGoal().getDegrees());
+        } else {
+            SmartDashboard.putBoolean("Vis_HasTarget", false);
         }
     }
 
@@ -41,6 +46,7 @@ public class RotToPowerPortCommand extends CommandBase {
     public void end(boolean interrupted){
         m_drive.setStickControlledHeading(true);
         m_vision.StopCameraDataStream();
+        SmartDashboard.putBoolean("Vis_HasTarget", false);
     }
 
     @Override

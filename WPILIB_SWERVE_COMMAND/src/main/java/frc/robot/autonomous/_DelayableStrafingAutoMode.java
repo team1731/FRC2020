@@ -161,7 +161,14 @@ public class _DelayableStrafingAutoMode {
 
             m_robotDrive::setModuleStates,
             m_robotDrive
-        );
+        )
+        {
+            @Override
+            public void end(boolean interrupted) {
+              super.end(interrupted);
+              System.out.println("at end of swerve command, interrupted=" + interrupted);
+            }
+        };
     }
 
 }

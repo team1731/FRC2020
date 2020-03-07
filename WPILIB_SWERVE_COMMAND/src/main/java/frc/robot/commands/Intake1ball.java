@@ -21,77 +21,41 @@ package frc.robot.commands;
 
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SequencerSubsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /**
  * An example command that uses an example subsystem.
  */
-public class IntakeSeqCommand extends CommandBase {
+public class Intake1ball extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final IntakeSubsystem m_IntakeSubsystem;
   private final SequencerSubsystem m_SeqSubsystem;
   private boolean low;
   private boolean mid;
   private boolean high;
-  private Intake1ball sequenceBallCommand;
-  private boolean interruptible;
 
   /**
-   * use this constructor for autonomous and set autonomous=true!
+   * Creates a new Intake Sequence Command.
+   *
+   * @param seqSubsystem The sequencer subsystem this command will run on
    */
-  public IntakeSeqCommand(IntakeSubsystem intakeSubsystem, SequencerSubsystem seqSubsystem, boolean autonomous) {
-    m_IntakeSubsystem = intakeSubsystem;
+  public Intake1ball(SequencerSubsystem seqSubsystem) {
     m_SeqSubsystem = seqSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(intakeSubsystem);
-    this.interruptible = autonomous;
-  }
-
-  /**
-   * use this constructor for teleop
-   */
-  public IntakeSeqCommand(IntakeSubsystem intakeSubsystem, SequencerSubsystem seqSubsystem) {
-    this(intakeSubsystem, seqSubsystem, false);
+    addRequirements(seqSubsystem);
   }
 
   // Called when the command is initially scheduled.
   // If it is used as Default command then it gets call all the time
   @Override
   public void initialize() {
-    m_IntakeSubsystem.extend();
-    //m_SeqSubsystem.stop();
-    m_SeqSubsystem.enableInterrupts();
-    sequenceBallCommand = new Intake1ball(m_SeqSubsystem);
+    m_SeqSubsystem.resetEncoder();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    low = m_SeqSubsystem.lowSensorHasBall();
-    mid = low;  //use low for both mid and low
-    //mid = m_SeqSubsystem.midSensorHasBall();
-    high = m_SeqSubsystem.highSensorHasBall();
-    if (!low && ((!mid && !high) || (!mid && high) || (mid && high))) {  // case A
-      m_IntakeSubsystem.extend();
-      m_IntakeSubsystem.active();
-    //  m_SeqSubsystem.stop();
-    } else if (!high && ((!low && mid) || (low && !mid) || (low && mid))) { // case B
-      m_IntakeSubsystem.extend();
-      m_IntakeSubsystem.inactive();
-   //   m_SeqSubsystem.forward(false);;
-    } else if (low && high) { // case C
-      m_IntakeSubsystem.retract();
-      m_IntakeSubsystem.inactive();
-   //   m_SeqSubsystem.stop();
-    }
-
-    if (low && !sequenceBallCommand.isScheduled()) {
-    //  sequenceBallCommand.withTimeout(2);
-      sequenceBallCommand.schedule(interruptible); // interruptible must be true for autonomous
-    }
-
-
-    
+    m_SeqSubsystem.intakeBall();
     
     /* if low and high not tripped do something
     // if they are both tripped we do NOTHING
@@ -120,18 +84,19 @@ public class IntakeSeqCommand extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    System.out.println("in end of intake1ball. interrupted="+interrupted);
+
     //System.out.println("IntakeSequenceCommand end interrupted=" + (interrupted?"true":"false"));
     m_SeqSubsystem.stop();
-    m_IntakeSubsystem.inactive();
-    m_IntakeSubsystem.retract();
     m_SeqSubsystem.disableInterrupts();
-    sequenceBallCommand = null;
-    System.out.println("in end of intake sequence, interrupted=" + interrupted);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false; //m_SeqSubsystem.highSensorHasBall(); //m_SeqSubsystem.getMaxPowerCells();
+    SmartDashboard.putBoolean("atsetpoint", m_SeqSubsystem.atSetpoint());
+    SmartDashboard.putNumber("encoder",m_SeqSubsystem.getencoder());
+    return (m_SeqSubsystem.atSetpoint() || m_SeqSubsystem.highSensorHasBall());
+    
   }
 }

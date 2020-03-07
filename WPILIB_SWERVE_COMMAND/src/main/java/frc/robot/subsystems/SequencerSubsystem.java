@@ -7,10 +7,14 @@
 
 package frc.robot.subsystems;
 
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.OpConstants;
 import edu.wpi.first.wpilibj.PWMTalonFX;
+
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
+
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.InterruptHandlerFunction;
 
@@ -19,7 +23,7 @@ import edu.wpi.first.wpilibj.InterruptHandlerFunction;
 public class SequencerSubsystem extends SubsystemBase {
 
   private final LedStringSubsystem m_ledstring;
-  private final PWMTalonFX mTalonSeq;
+  private final TalonFX mTalonSeq;
   private DigitalInput mLowSensor;
   private DigitalInput mMidSensor;
   private DigitalInput mHighSensor;
@@ -30,6 +34,7 @@ public class SequencerSubsystem extends SubsystemBase {
   private boolean mLastLowHasBall; // does robot want to index balls - mode
   private boolean mLastHighHasBall; // does robot want to index balls - mode
   private int mPowerCellCount;
+  private int targetTicks = 18500;
 
   /**
    * Creates a new SequencerSubsystem.
@@ -37,7 +42,19 @@ public class SequencerSubsystem extends SubsystemBase {
    */
   public SequencerSubsystem(LedStringSubsystem m_ledstring) {
     this.m_ledstring = m_ledstring;
-    mTalonSeq = new PWMTalonFX(OpConstants.kMotorPWMSeq);
+    mTalonSeq = new TalonFX(OpConstants.kMotorSeq);
+    mTalonSeq.configFactoryDefault();
+    mTalonSeq.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, OpConstants.kPIDLoopIdx, OpConstants.kTimeoutMs);
+		mTalonSeq.configNominalOutputForward(0, OpConstants.kTimeoutMs);
+		mTalonSeq.configNominalOutputReverse(0, OpConstants.kTimeoutMs);
+		mTalonSeq.configPeakOutputForward(1, OpConstants.kTimeoutMs);
+    mTalonSeq.configPeakOutputReverse(-1, OpConstants.kTimeoutMs);
+    mTalonSeq.config_kF(OpConstants.kPIDLoopIdx, 0.07, OpConstants.kTimeoutMs);
+		mTalonSeq.config_kP(OpConstants.kPIDLoopIdx, 2.0, OpConstants.kTimeoutMs);
+		mTalonSeq.config_kI(OpConstants.kPIDLoopIdx, 0, OpConstants.kTimeoutMs);
+		mTalonSeq.config_kD(OpConstants.kPIDLoopIdx, 0, OpConstants.kTimeoutMs);
+    mTalonSeq.setInverted(true);
+    
     mLowSensor = new DigitalInput(OpConstants.kLowSequencer);
     mMidSensor = new DigitalInput(OpConstants.kMidSequencer);
     mHighSensor = new DigitalInput(OpConstants.kHighSequencer);
@@ -109,6 +126,7 @@ public class SequencerSubsystem extends SubsystemBase {
   /**
    * For Shooting: Enables the Sequencer by turning on motor.
    */
+  /*
   public void forward(boolean shooting) {
     if(shooting){
       mTalonSeq.setSpeed(OpConstants.kMotorSeqFwdShootSpeed);
@@ -118,12 +136,18 @@ public class SequencerSubsystem extends SubsystemBase {
     }
     //mPowerCellCount = 0;
   }
+*/
+  public void shoot() {
 
+     // mTalonSeq.set(ControlMode.Velocity,1000.0 * 2048 / 600);
+     mTalonSeq.set(ControlMode.PercentOutput, 0.4);
+    //mPowerCellCount = 0;
+  }
   /**
    * For Ejecting balls: Reverses the motor.
    */
   public void reverse() {
-    mTalonSeq.setSpeed(OpConstants.kMotorSeqRevShootSpeed);
+    mTalonSeq.set(ControlMode.PercentOutput,OpConstants.kMotorSeqRevShootSpeed);
     mPowerCellCount = 0;
   }
 
@@ -131,8 +155,8 @@ public class SequencerSubsystem extends SubsystemBase {
    * Enables the intake by retracting solenoid & turning off motor.
    */
   public void stop() {
-    mTalonSeq.setSpeed(0);
-    mTalonSeq.stopMotor();
+    mTalonSeq.set(ControlMode.PercentOutput, 0);
+ 
   }
 
   public boolean lowSensorHasBall() {
@@ -154,6 +178,22 @@ public class SequencerSubsystem extends SubsystemBase {
   public int getPowerCellCount() {
     return(mPowerCellCount);
   }
+
+public void resetEncoder() {
+  mTalonSeq.setSelectedSensorPosition(0);
+}
+
+public void intakeBall() {
+  mTalonSeq.set(ControlMode.Position, targetTicks);
+}
+
+public boolean atSetpoint() {
+	return Math.abs(mTalonSeq.getSelectedSensorPosition() - targetTicks) < 1000;
+}
+
+public double getencoder() {
+	return mTalonSeq.getSelectedSensorPosition();
+}
 
   /*
   @Override

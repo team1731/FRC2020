@@ -50,7 +50,7 @@ public class ShootAllBalls extends WaitCommand {
   public void execute() {
     double shootMotorVelocity = shootSubsystem.getShootMotor1Velocity();
     if(shootMotorVelocity > Constants.OpConstants.kShootMinVelocity){
-      seqSubsystem.forward(true);
+      seqSubsystem.shoot();
     }
     //System.out.println("ShootMotorVelocity=" + shootMotorVelocity);
   }

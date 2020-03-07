@@ -92,10 +92,10 @@ public class SwerveModule {
       m_turningPIDController.setIZone(0);
       m_turningPIDController.setFF(0.000156);
       m_turningPIDController.setOutputRange(-1, 1);
-      m_turningPIDController.setSmartMotionMaxVelocity(2000, smartMotionSlot);
+      m_turningPIDController.setSmartMotionMaxVelocity(5000, smartMotionSlot);
       m_turningPIDController.setSmartMotionMinOutputVelocity(0, smartMotionSlot);
-      m_turningPIDController.setSmartMotionMaxAccel(1500, smartMotionSlot);
-      m_turningPIDController.setSmartMotionAllowedClosedLoopError(0, smartMotionSlot);  
+      m_turningPIDController.setSmartMotionMaxAccel(5000, smartMotionSlot);
+      m_turningPIDController.setSmartMotionAllowedClosedLoopError(0, smartMotionSlot); 
     }
     else{
       m_driveMotor = null;
@@ -142,7 +142,7 @@ public double getDriveEncoderPosition(){
     //logger.info("<b>Wheel</b>: setAzimuthZero finished");
   }
 
-  public double getAzimuthAbsolutePosition() {
+  /*public double getAzimuthAbsolutePosition() {
     //return azimuthTalon.getSensorCollection().getPulseWidthPosition() & 0xFFF;
     //return (int)azimuthSpark.get() & 0xFFF;
     //TODO - need to return azimuth from the 221 encoder
@@ -153,6 +153,7 @@ public double getDriveEncoderPosition(){
     double correctedEncoder = rawEncoder - offsetFromAbsoluteEncoder;
     return correctedEncoder;
   }
+  &/
 
   /**
    * Returns the current state of the module.
@@ -213,11 +214,11 @@ public double getDriveEncoderPosition(){
     // minimize azimuth rotation, reversing drive if necessary
     // ********************************************************
     // synchronized(isInverted){
-    //   isInverted = Math.abs(azimuthError) > 0.25 * kTICKS;
-    //   if (isInverted) {
-    //     azimuthError -= Math.copySign(0.5 * kTICKS, azimuthError);
-    //     drive = -drive;
-    //   }
+       isInverted = Math.abs(azimuthError) > 0.25 * kTICKS;
+       if (isInverted) {
+         azimuthError -= Math.copySign(0.5 * kTICKS, azimuthError);
+         drive = -drive;
+       }
     // }
 
 
@@ -242,13 +243,13 @@ public double getDriveEncoderPosition(){
    * Zeros all the SwerveModule encoders.
    */
   public void resetEncoders(double absoluteEncoderVoltage) {
-    synchronized(isInverted){
-      if(RobotBase.isReal() && !isInverted){
+ //   synchronized(isInverted){
+      if(RobotBase.isReal() ){
         m_driveEncoder.setPosition(0);
         m_turningEncoder.setPosition(absoluteEncoderVoltage * 16/3.26);
       }
     }
-  }
+ // }
 
   public DebugValues getDebugValues(){
     return debugValues;

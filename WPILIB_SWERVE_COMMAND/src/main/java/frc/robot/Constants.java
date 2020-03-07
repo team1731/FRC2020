@@ -116,8 +116,8 @@ public final class Constants {
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
-    public static final double kPXController = 1;
-    public static final double kPYController = 1;
+    public static final double kPXController = 3;
+    public static final double kPYController = 3;
     public static final double kPThetaController = 1;
 
     //Constraint for the motion profilied robot angle controller
@@ -133,7 +133,7 @@ public final class Constants {
 
         // Intake
         public static final int kMotorPWMIntake = 0;      // Intake
-        public static final int kMotorPWMSeq = 1;         // Sequencer
+        public static final int kMotorSeq = 9;         // Sequencer
         public static final int kMotorPWMShoot1 = 2;       // Shooter Motor One
         public static final int kMotorPWMShoot2 = 3;       // Shooter Motor Two
         public static final int kMotorCANShoot1 = 7;
@@ -239,6 +239,7 @@ public final class Constants {
         public static double kWheelMatchFwdSpeed = 0.2;
         public static double kWheelMatchRevSpeed = -0.2;
 
+
         /////// TalonFX parameters
         public static final int kSlotIdx = 0;
         /**
@@ -261,16 +262,22 @@ public final class Constants {
     }
 
     public static final class VisionConstants {
-        public static final double kBoilerTargetTopHeight = 27.5; //was 19.5
-        public static final double kCameraZOffset = 4.0;  // they had 20.9
+        //Ensure measurements are in METERS
+        public static final double kBoilerTargetTopHeight = 0;
         public static final double kCameraDeadband = 0.0;
-        public static final double kCameraPitchAngleDegrees = 18.135; // Measured on 3/30
-        public static final double kCameraYawAngleDegrees = 0.0;
         public static final double kEpsilon = 1E-9;
         public static final double kMaxTrackerDistance = 18.0;
         public static final double kMaxGoalTrackAge = 1.0;  // cp had 1.0
         public static final double kCameraFrameRate = 30.0;
         public static final int kCameraBaudRate = 115200;
+
+        //Ensure measurements are in METERS
+        public static final double kCameraXOffset = 0;
+        public static final double kCameraYOffset = 0;
+        public static final double kCameraZOffset = 0;
+        public static final double kCameraPitchAngleDegrees = 0;
+        public static final double kCameraYawAngleDegrees = 0;
+
     }
 
     public static final class DriveConstantsOrig {

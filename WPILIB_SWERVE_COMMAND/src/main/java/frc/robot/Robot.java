@@ -81,7 +81,7 @@ public class Robot extends TimedRobot {
     
     m_ledstring = null; //new LedStringSubsystem();
     m_robotDrive = new DriveSubsystem();
-    m_vision = new JevoisVisionSubsystem(m_robotDrive);
+    m_vision = null; //new JevoisVisionSubsystem(m_robotDrive);
     m_intake = new IntakeSubsystem(m_ledstring);
     m_sequencer = new SequencerSubsystem(m_ledstring);
     m_shootclimb = new ShootClimbSubsystem(m_ledstring);
@@ -102,7 +102,12 @@ public class Robot extends TimedRobot {
     if (RobotBase.isReal()) {
       autoCode = SmartDashboard.getString("AUTO CODE", autoCode);
     }
-                                            
+        
+    
+    SmartDashboard.putBoolean("Vis_HasTarget", false);
+    SmartDashboard.putNumber("Vis_TargetAngle", 0);
+    SmartDashboard.putString("Vis_TargetString", "Empty");
+    SmartDashboard.putString("Vis_TargetProcessed", "Empty");
   }
 
   /**
@@ -132,7 +137,8 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
     m_robotDrive.suspendCSVWriter();
     if(m_vision != null){
-      //m_vision.StopCameraDataStream();
+      m_vision.AttemptConnections(true);
+      m_vision.StopCameraDataStream();
     }
   }
 
@@ -161,7 +167,8 @@ public class Robot extends TimedRobot {
     m_sequencer.setPowerCellCount((int) SmartDashboard.getNumber("INIT CELL COUNT", 3));
 
     if(m_vision != null){
-      //m_vision.StartCameraDataStream();
+      m_vision.AttemptConnections(false);
+      m_vision.StartCameraDataStream();
     }
 
     if (RobotBase.isReal()) {
@@ -207,8 +214,10 @@ public class Robot extends TimedRobot {
 
     initSubsystems();
 
-    //m_vision.StartCameraDataStream();
-
+    if(m_vision != null){
+      m_vision.AttemptConnections(false);
+      m_vision.StartCameraDataStream();
+    }
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove

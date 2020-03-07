@@ -29,7 +29,12 @@ public class JevoisVisionServer {
     double visionCamYPosition;
     double visionCamDeltaTime;
     private boolean isConnected;
+    public boolean attemptConnections = false;
     private JevoisVisionSubsystem visionSubsystem;
+
+    public boolean getisConnected(){
+        return isConnected;
+    }
 
     public JevoisVisionServer(JevoisVisionSubsystem visionSubsystem) {
         this.visionSubsystem = visionSubsystem;
@@ -43,6 +48,7 @@ public class JevoisVisionServer {
     private class VisionServerThread implements Runnable {
         int dashboardCounter = 0;
         String lastDashboardMessage = "";
+        boolean attemptingConnection = false;
 
         private VisionServerThread() {
             isConnected = attemptJevoisConnection();
@@ -64,7 +70,10 @@ public class JevoisVisionServer {
                     }
                 } else {
                     dashboardMessage = "visionCamAvailable == false. Lost connection?";
-                    isConnected = attemptJevoisConnection();
+                    //isConnected = attemptJevoisConnection();
+                    if(attemptConnections && !attemptingConnection){
+                        attemptJevoisConnection();
+                    }
                 }
                 if(lastDashboardMessage != dashboardMessage){
                     if(System.currentTimeMillis() % 100 == 0){
@@ -72,6 +81,12 @@ public class JevoisVisionServer {
                     }
                 }
                 lastDashboardMessage = dashboardMessage;
+                try{
+                    SmartDashboard.putBoolean("isJevoisConnected", isConnected);
+                    Thread.sleep(20);
+                }
+                catch(Exception e){
+                }
            }
         }
 
@@ -96,16 +111,16 @@ public class JevoisVisionServer {
              * if(!SafeToParse(visionTargetPositions_Raw)){ return; }
              */
             if (dashboardCounter >= 10) {
-                // SmartDashboard.putString("JevoisVisionServerTargets",
-                // visionTargetPositions_Raw);
+                SmartDashboard.putString("Vis_TargetString",
+                visionTargetPositions_Raw);
             }
 
             String[] visionTargetLines = visionTargetPositions_Raw.split("\n");
             ArrayList<TargetInfo> targetInfoArray = new ArrayList<>();
             for (int i = visionTargetLines.length - 1; i >= 0; i--) {
                 boolean isValid = false;
+                String thisTargetLine = visionTargetLines[i];
                 try {
-                    String thisTargetLine = visionTargetLines[i];
                     // if(SafeToParse(thisTargetLine, true)){
                     JSONParser parser = new JSONParser();
                     JSONObject j = (JSONObject) parser.parse(thisTargetLine);
@@ -124,12 +139,13 @@ public class JevoisVisionServer {
                 if (isValid) {
                     TargetInfo targetInfo = new TargetInfo(visionCamYPosition, visionCamZPosition);
                     targetInfoArray.add(targetInfo);
+                    SmartDashboard.putString("Vis_TargetProcessed", thisTargetLine);
                 }
             }
             // System.out.println("TargetInfoArray.size(): "+targetInfoArray.size());
             if (targetInfoArray.size() > 0) {
                 if (dashboardCounter >= 10) {
-                    // SmartDashboard.putString("JevoisVisionServerUpdate", "Sent: "+sentTimes);
+                    //SmartDashboard.putString("JevoisVisionServerUpdate", "Sent: "+sentTimes);
                 }
                 visionSubsystem.gotUpdate(
                         new JevoisVisionUpdate(Timer.getFPGATimestamp() - visionCamDeltaTime, targetInfoArray));
@@ -141,28 +157,33 @@ public class JevoisVisionServer {
             }
         }
 
-        private boolean attemptJevoisConnection() {
+        public boolean attemptJevoisConnection() {
             int connectionAttempts = 0;
             int MAX_ATTEMPTS = 3;
             boolean connected = false;
-            while (!connected && ++connectionAttempts <= MAX_ATTEMPTS) {
+            attemptingConnection = true;
+            while (!connected && (++connectionAttempts <= MAX_ATTEMPTS || attemptConnections)) {
                 try{
+                    System.out.println("Connecting to JeVois...");
                     visionCam = new SerialPort(VisionConstants.kCameraBaudRate, SerialPort.Port.kUSB1);
                     if(visionCam != null){
                         visionCam.setTimeout(5);
                         connected = true;
+                        System.out.println(">>>CONNECTED TO JEVOIS<<<");
                     }
                     else{
                         try {
-                            Thread.sleep(1000);
+                            Thread.sleep(10000);
                         } catch (InterruptedException e) {
                             // don't care if our sleep gets interrupted
+                            System.err.println("Don't bother me, I'm sleeping");
                         }
                     }
                 } catch(Exception e){
-                    
+                    System.err.println("*Failed to connect to JeVois*" + (connectionAttempts <= MAX_ATTEMPTS ? " \nTrying "+(MAX_ATTEMPTS-connectionAttempts)+" more times" : ""));
                 }
             }
+            attemptingConnection = false;
             return connected;
         }
     }

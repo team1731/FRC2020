@@ -53,7 +53,7 @@ public class ShootSeqCommand extends CommandBase {
     //System.out.println("shoot motor velocity = " + shootMotorVelocity);
     if(shootSubsystem.atTargetVelocity()){
       //System.out.println("calling seqSubSystem.forward(true);");
-      seqSubsystem.forward(true);
+      seqSubsystem.shoot();
     }
     else{
 

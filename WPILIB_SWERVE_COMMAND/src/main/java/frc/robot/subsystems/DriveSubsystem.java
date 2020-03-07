@@ -143,14 +143,14 @@ public class DriveSubsystem extends SubsystemBase {
         m_rearLeft.getState(),
         m_rearRight.getState());
         
-    if(System.currentTimeMillis() % 100 == 0){
+    //.if(System.currentTimeMillis() % 100 == 0){
       SmartDashboard.putNumber("pose x", m_odometry.getPoseMeters().getTranslation().getX());
       SmartDashboard.putNumber("pose y", m_odometry.getPoseMeters().getTranslation().getY());
       SmartDashboard.putNumber("rot deg", m_odometry.getPoseMeters().getRotation().getDegrees());
       SmartDashboard.putNumber("heading radians", headingRadians);    
       SmartDashboard.putNumber("raw gyro", m_gyro.getAngle());
       SmartDashboard.putBoolean("gyro is calibrating", m_gyro.isCalibrating());
-    }
+    //}
     debugOutput.update(Timer.getFPGATimestamp(), m_odometry, headingRadians, m_gyro.getAngle());
     swerveDebugOutput.update(m_frontLeft.getDebugValues(), m_frontRight.getDebugValues(), m_rearLeft.getDebugValues(), m_rearRight.getDebugValues());
     mCSVWriter.add(debugOutput);
@@ -215,7 +215,7 @@ public class DriveSubsystem extends SubsystemBase {
       rotAdjusted = 0;
     }
 
-    /*
+    
     if(stickControlledHeading){
       //If the stick is released, don't change the rotation
       if((Math.abs(rightX) > DriveConstants.kMinRightStickThreshold || Math.abs(rightY) > DriveConstants.kMinRightStickThreshold)){
@@ -225,11 +225,12 @@ public class DriveSubsystem extends SubsystemBase {
         //Continuous correction
         //This assumes that positive is COUNTERclockwise, which may be wrong... the fix should be simply reversing the signs
         if((stickAngle - heading) > 180){
-          stickAngle += 360;
-        } else if((stickAngle - heading) < -180){
           stickAngle -= 360;
+        } else if((stickAngle - heading) < -180){
+          stickAngle += 360;
         }
-
+        SmartDashboard.putNumber("bdlheading", heading); 
+        SmartDashboard.putNumber("bdlstick", stickAngle); 
         rotationalOutput = headingController.calculate(heading, stickAngle);
       } else {
         headingController.reset(getHeading());
@@ -238,13 +239,13 @@ public class DriveSubsystem extends SubsystemBase {
       //Perhaps do the same continuous correction here as above? Test first.
       rotationalOutput = headingController.calculate(getHeading());
     }
-    */
+    
 
     //Replaced rotAdjusted with rotationalOutput
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
-          xSpeedAdjusted, ySpeedAdjusted, rotAdjusted, getAngle())
-            : new ChassisSpeeds(xSpeedAdjusted, ySpeedAdjusted, rotAdjusted)
+          xSpeedAdjusted, ySpeedAdjusted, rotationalOutput, getAngle())
+            : new ChassisSpeeds(xSpeedAdjusted, ySpeedAdjusted, rotationalOutput)
     );
     SwerveDriveKinematics.normalizeWheelSpeeds(swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
     m_frontLeft.setDesiredState(swerveModuleStates[0]);    // frontLeft, frontRight, rearLeft, rearRight
@@ -333,7 +334,7 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public void resetEncoders() {
     m_frontLeft.resetEncoders(leftFrontAbsEncoder.getVoltage());     // frontLeft, frontRight, rearLeft, rearRight
-    //m_frontRight.resetEncoders(rightFrontAbsEncoder.getVoltage()); took this one out -- bad hardware encoder!!!
+    //m_frontRight.resetEncoders(rightFrontAbsEncoder.getVoltage());nope! took it back out!// had taken out but it started working again 7mar2020. // took this one out -- bad hardware encoder!!!
     m_rearLeft.resetEncoders(leftRearAbsEncoder.getVoltage());
     m_rearRight.resetEncoders(rightRearAbsEncoder.getVoltage());
   }
@@ -407,10 +408,14 @@ public class DriveSubsystem extends SubsystemBase {
 
 
   public void displayEncoders() {
-    //SmartDashboard.putNumber("leftFrontAbsEncoder", leftFrontAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
-    //SmartDashboard.putNumber("rightFrontAbsEncoder", rightFrontAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
-    //SmartDashboard.putNumber("leftRearAbsEncoder", leftRearAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
-    //SmartDashboard.putNumber("rightRearAbsEncoder", rightRearAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
+    SmartDashboard.putNumber("leftFrontAbsEncoder", leftFrontAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
+    SmartDashboard.putNumber("rightFrontAbsEncoder", rightFrontAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
+    SmartDashboard.putNumber("leftRearAbsEncoder", leftRearAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
+    SmartDashboard.putNumber("rightRearAbsEncoder", rightRearAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
+    SmartDashboard.putNumber("leftFrontRelEncoder", m_frontLeft.m_turningEncoder.getPosition());
+    SmartDashboard.putNumber("rightFrontRelEncoder", m_frontRight.m_turningEncoder.getPosition());
+    SmartDashboard.putNumber("leftRearRelEncoder", m_rearLeft.m_turningEncoder.getPosition());
+    SmartDashboard.putNumber("rightRearRelEncoder", m_rearRight.m_turningEncoder.getPosition());
   }
 
 

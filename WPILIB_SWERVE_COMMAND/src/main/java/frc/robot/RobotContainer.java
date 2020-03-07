@@ -22,6 +22,7 @@ import frc.robot.autonomous.M1_Shoot3_Front3_Shoot3;
 import frc.robot.autonomous.M3_Shoot3_Buddy5;
 import frc.robot.autonomous.R1_WholeSide10;
 import frc.robot.autonomous.R2_Shoot3_FriendlyTriple;
+import frc.robot.autonomous.T3_DriveForwardIntakeDriveBackward;
 import frc.robot.autonomous.T4_ShootDriveForward;
 import frc.robot.autonomous.T5_ShootDriveBackward;
 import frc.robot.autonomous._NamedAutoMode;
@@ -130,7 +131,7 @@ public class RobotContainer {
     // .whenPressed(new TurnToAngleProfiled(30, m_robotDrive).withTimeout(5));
 
     // Activate Intake via Operator Left Axis/Trigger
-    new HanTrigger(HanTriggers.DR_TRIG_LEFT).whileActiveContinuous(new IntakeSeqCommand(m_intake, m_sequencer));
+    new HanTrigger(HanTriggers.DR_TRIG_RIGHT).whileActiveContinuous(new ShootSeqCommand(m_shootclimb ,m_sequencer), true);
     // Activate Intake via Operator Left Front Top - Up is Intaking, Down is Reset 
     //new JoystickButton(m_operatorController, 3).whileActiveContinuous(new IntakeSeqCommand(m_intake, m_sequencer));
     new JoystickButton(m_driverController, XboxConstants.kB).whileActiveContinuous(new SeqResetCommand(m_sequencer), true);
@@ -148,7 +149,7 @@ public class RobotContainer {
     //);
     
     new JoystickButton(m_operatorController, 16).whileActiveContinuous(
-      new ShootSeqCommand(m_shootclimb ,m_sequencer), true
+      new IntakeSeqCommand(m_intake, m_sequencer)
     );
     
 
@@ -276,6 +277,7 @@ public class RobotContainer {
       case "R1": return new _NamedAutoMode(new R1_WholeSide10(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision));
       case "R2": return new _NamedAutoMode(new R2_Shoot3_FriendlyTriple(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision));
 
+      case "T3": return new _NamedAutoMode(new T3_DriveForwardIntakeDriveBackward(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision));
       case "T4": return new _NamedAutoMode(new T4_ShootDriveForward(m_robotDrive, m_sequencer, m_shootclimb, m_vision));
       case "T5": return new _NamedAutoMode(new T5_ShootDriveBackward(m_robotDrive, m_sequencer, m_shootclimb, m_vision));
       
