@@ -7,6 +7,7 @@
 
 package frc.robot.commands;
 
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SequencerSubsystem;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj.Timer;
@@ -14,26 +15,28 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants.OpConstants;
 
 /**
- * Move the sequencer backwards until the last ball is down at the bottom (ready to intake more).
+ * An example command that uses an example subsystem.
  */
-public class SeqResetCommand extends CommandBase {
-  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
+public class SeqEjectCommand extends CommandBase {
+  @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
+  private final IntakeSubsystem m_IntakeSubsystem;
   private final SequencerSubsystem m_SeqSubsystem;
   private Timer mTimer;
   double elapsed;
 
   /**
-   * Creates a new ExampleCommand.
+   * Run the sequencer and intake backwards in case of jammed sequencer
    *
    * @param intakeSubsystem The intake subsystem this command will run on
-   * @param seqSubsystem The sequencer subsystem this command will run on
+   * @param seqSubsystem    The sequencer subsystem this command will run on
    */
-  public SeqResetCommand(SequencerSubsystem seqSubsystem) {
+  public SeqEjectCommand(IntakeSubsystem intakeSubsystem, SequencerSubsystem seqSubsystem) {
+    m_IntakeSubsystem = intakeSubsystem;
     m_SeqSubsystem = seqSubsystem;
-    mTimer = new Timer();
+   // mTimer = new Timer();
   
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(seqSubsystem);
+    addRequirements(seqSubsystem,intakeSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -41,19 +44,15 @@ public class SeqResetCommand extends CommandBase {
   @Override
   public void initialize() {
     //m_SeqSubsystem.stop();
-    mTimer.start();
-    elapsed = mTimer.get();
+   // mTimer.start();
+   // elapsed = mTimer.get();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // if mid sensor has not tripped then reset balls back to mid sensor (tripped)
-    if(m_SeqSubsystem.midSensorHasBall()) {
-      m_SeqSubsystem.stop();
-    } else {
-      m_SeqSubsystem.reverse();
-    }
+    m_IntakeSubsystem.eject();
+    m_SeqSubsystem.reverse();
   }
 
   // Called once the command ends or is interrupted.
@@ -61,16 +60,15 @@ public class SeqResetCommand extends CommandBase {
   public void end(boolean interrupted) {
     //System.out.println("SeqResetCommand end interrupted=" + (interrupted?"true":"false"));
     m_SeqSubsystem.stop();
-    mTimer.stop();
+    m_IntakeSubsystem.retract();
+    m_IntakeSubsystem.inactive();
+    //mTimer.stop();
   }
 
   // Returns true when the command should end after 2 seconds.
   @Override
   public boolean isFinished() {
-    boolean result = false;
-    if (mTimer.get() - elapsed > OpConstants.kSeqResetDelay) {
-      result = true;
-    }
-    return result;
+   // return (mTimer.get() - elapsed) > OpConstants.kSeqEjectDelay;
+   return false;
   }
 }

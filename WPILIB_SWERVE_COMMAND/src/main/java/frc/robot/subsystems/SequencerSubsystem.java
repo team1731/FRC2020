@@ -10,6 +10,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.OpConstants;
 import edu.wpi.first.wpilibj.PWMTalonFX;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -34,7 +35,8 @@ public class SequencerSubsystem extends SubsystemBase {
   private boolean mLastLowHasBall; // does robot want to index balls - mode
   private boolean mLastHighHasBall; // does robot want to index balls - mode
   private int mPowerCellCount;
-  private int targetTicks = 18500;
+  private int targetTicks = 20000;
+  private boolean mIsIntakingBall = false;
 
   /**
    * Creates a new SequencerSubsystem.
@@ -50,10 +52,13 @@ public class SequencerSubsystem extends SubsystemBase {
 		mTalonSeq.configPeakOutputForward(1, OpConstants.kTimeoutMs);
     mTalonSeq.configPeakOutputReverse(-1, OpConstants.kTimeoutMs);
     mTalonSeq.config_kF(OpConstants.kPIDLoopIdx, 0.07, OpConstants.kTimeoutMs);
-		mTalonSeq.config_kP(OpConstants.kPIDLoopIdx, 2.0, OpConstants.kTimeoutMs);
+		mTalonSeq.config_kP(OpConstants.kPIDLoopIdx, 0.05, OpConstants.kTimeoutMs);
 		mTalonSeq.config_kI(OpConstants.kPIDLoopIdx, 0, OpConstants.kTimeoutMs);
-		mTalonSeq.config_kD(OpConstants.kPIDLoopIdx, 0, OpConstants.kTimeoutMs);
+    mTalonSeq.config_kD(OpConstants.kPIDLoopIdx, 0, OpConstants.kTimeoutMs);
+    mTalonSeq.configMotionCruiseVelocity(12000);
+    mTalonSeq.configMotionAcceleration(20000);
     mTalonSeq.setInverted(true);
+    
     
     mLowSensor = new DigitalInput(OpConstants.kLowSequencer);
     mMidSensor = new DigitalInput(OpConstants.kMidSequencer);
@@ -84,6 +89,7 @@ public class SequencerSubsystem extends SubsystemBase {
     mLastLowHasBall = lowSensorHasBall();
     mLastHighHasBall = highSensorHasBall();
     mPowerCellCount = 0;
+    mTalonSeq.setSelectedSensorPosition(0);
   }
 
   public void enableInterrupts(){
@@ -102,6 +108,7 @@ public class SequencerSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    SmartDashboard.putNumber("seqencoder", mTalonSeq.getSelectedSensorPosition());
     // Incrementing ball count
     if (lowSensorHasBall()) {
       if (!mLastLowHasBall) {
@@ -121,6 +128,8 @@ public class SequencerSubsystem extends SubsystemBase {
 
     mLastLowHasBall = lowSensorHasBall();
     mLastHighHasBall = highSensorHasBall();
+
+   // System.out.println(mTalonSeq.getSelectedSensorPosition());
   }
   
   /**
@@ -147,7 +156,7 @@ public class SequencerSubsystem extends SubsystemBase {
    * For Ejecting balls: Reverses the motor.
    */
   public void reverse() {
-    mTalonSeq.set(ControlMode.PercentOutput,OpConstants.kMotorSeqRevShootSpeed);
+    mTalonSeq.set(ControlMode.PercentOutput,-0.4);
     mPowerCellCount = 0;
   }
 
@@ -184,15 +193,25 @@ public void resetEncoder() {
 }
 
 public void intakeBall() {
-  mTalonSeq.set(ControlMode.Position, targetTicks);
+ // mTalonSeq.set(ControlMode.Position, targetTicks);
+  mTalonSeq.set(ControlMode.MotionMagic, targetTicks);
 }
 
 public boolean atSetpoint() {
-	return Math.abs(mTalonSeq.getSelectedSensorPosition() - targetTicks) < 1000;
+	return Math.abs(targetTicks - mTalonSeq.getSelectedSensorPosition())  < 1000;
 }
 
 public double getencoder() {
 	return mTalonSeq.getSelectedSensorPosition();
+}
+
+public void setIntakingBall(boolean b) {
+  mIsIntakingBall = b;
+}
+
+
+public boolean isIntakingBall() {
+	return mIsIntakingBall;
 }
 
   /*

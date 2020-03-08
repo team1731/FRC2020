@@ -60,6 +60,7 @@ public class ShootAllBalls extends WaitCommand {
   public void end(boolean interrupted) {
     //System.out.println("ShootAllBalls - end. interrupted=" + interrupted);
     seqSubsystem.stop();
+    seqSubsystem.resetEncoder();
     shootSubsystem.hoodRetract();
   }
 

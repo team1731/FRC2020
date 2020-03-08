@@ -164,6 +164,7 @@ public final class Constants {
         public static final double kMotorShootPercent = 0.50;   // check shooting motor percent
         public static final double kMotorClimbPercent = 0.3;
         public static final int kMaxPowerCells = 5;
+        public static final double kSeqEjectDelay = 2.0;
         public static final double kSeqResetDelay = 2.0;
 
         // ColorWheel
@@ -272,7 +273,7 @@ public final class Constants {
          * kF: 1023 represents output value to Talon at 100%, 7200 represents Velocity units at 100% output
          * 
          * 	                                    		          	  kP ORIG=4.0   kI   kD   kF             Iz    PeakOut */
-        public final static Gains kGains_Velocity = new Gains( 0.5, 0, 0, .07,  300,  1.00);
+        public final static Gains kGains_Velocity = new Gains( 2.0, 0, 0, .06,  300,  1.00);
         ///// End TalonFX
     }
 

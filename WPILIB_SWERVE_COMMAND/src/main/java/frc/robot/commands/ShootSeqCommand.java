@@ -68,6 +68,7 @@ public class ShootSeqCommand extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     seqSubsystem.stop();
+    seqSubsystem.resetEncoder();
     //shootSubsystem.stopShooting();
     //shootSubsystem.hoodRetract();
   }

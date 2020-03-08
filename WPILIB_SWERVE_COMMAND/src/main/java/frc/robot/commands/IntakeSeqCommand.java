@@ -33,9 +33,10 @@ public class IntakeSeqCommand extends CommandBase {
   private boolean low;
   private boolean mid;
   private boolean high;
-  private Intake1ball sequenceBallCommand;
+ // private Intake1ball sequenceBallCommand;
   private boolean interruptible;
-  
+  private boolean intakingBallNow = false;
+
   /**
    * use this constructor for autonomous and set autonomous=true!
    */
@@ -43,7 +44,7 @@ public class IntakeSeqCommand extends CommandBase {
     m_IntakeSubsystem = intakeSubsystem;
     m_SeqSubsystem = seqSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(intakeSubsystem);
+    addRequirements(intakeSubsystem, seqSubsystem);
     this.interruptible = autonomous;
 
   }
@@ -62,7 +63,10 @@ public class IntakeSeqCommand extends CommandBase {
     m_IntakeSubsystem.extend();
     //m_SeqSubsystem.stop();
     m_SeqSubsystem.enableInterrupts();
-    sequenceBallCommand = new Intake1ball(m_SeqSubsystem);
+    if (!m_SeqSubsystem.isIntakingBall()) {
+      m_SeqSubsystem.resetEncoder();
+    }
+//    sequenceBallCommand = new Intake1ball(m_SeqSubsystem);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -86,10 +90,18 @@ public class IntakeSeqCommand extends CommandBase {
    //   m_SeqSubsystem.stop();
     }
 
-    if (low && !sequenceBallCommand.isScheduled()) {
+    if (low ) {
     //  sequenceBallCommand.withTimeout(2);
-      sequenceBallCommand.schedule(interruptible); // interruptible must be true for autonomous
+      m_SeqSubsystem.setIntakingBall(true);
     }
+    if (m_SeqSubsystem.atSetpoint() || m_SeqSubsystem.highSensorHasBall()) {
+        m_SeqSubsystem.setIntakingBall(false);
+        m_SeqSubsystem.resetEncoder();
+        m_SeqSubsystem.stop();
+    } else if (m_SeqSubsystem.isIntakingBall()) {
+      m_SeqSubsystem.intakeBall(); // interruptible must be true for autonomous
+    }
+  }
 
 
     
@@ -116,7 +128,7 @@ public class IntakeSeqCommand extends CommandBase {
       m_SeqSubsystem.stop();
     }
     */
-  }
+  //}
 
   // Called once the command ends or is interrupted.
   @Override
@@ -126,7 +138,7 @@ public class IntakeSeqCommand extends CommandBase {
     m_IntakeSubsystem.inactive();
     m_IntakeSubsystem.retract();
     m_SeqSubsystem.disableInterrupts();
-    sequenceBallCommand = null;
+ //   sequenceBallCommand = null;
     System.out.println("in end of intake sequence, interrupted=" + interrupted);
   }
 

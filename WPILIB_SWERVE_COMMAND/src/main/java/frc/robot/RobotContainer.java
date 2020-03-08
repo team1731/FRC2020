@@ -134,7 +134,7 @@ public class RobotContainer {
     new HanTrigger(HanTriggers.DR_TRIG_RIGHT).whileActiveContinuous(new ShootSeqCommand(m_shootclimb ,m_sequencer), true);
     // Activate Intake via Operator Left Front Top - Up is Intaking, Down is Reset 
     //new JoystickButton(m_operatorController, 3).whileActiveContinuous(new IntakeSeqCommand(m_intake, m_sequencer));
-    new JoystickButton(m_driverController, XboxConstants.kB).whileActiveContinuous(new SeqResetCommand(m_sequencer), true);
+    new JoystickButton(m_operatorController, 14).whileActiveContinuous(new SeqEjectCommand(m_intake, m_sequencer), true);
 
     //Map right bumper to rotation lock to power port
   //  new JoystickButton(m_driverController, XboxConstants.kRBumper)
@@ -174,9 +174,9 @@ public class RobotContainer {
     //);
 
     // Sequencer ejects works when button is held
-    new JoystickButton(m_operatorController, 14)
-    .whenHeld(new InstantCommand(m_sequencer::reverse, m_sequencer))
-    .whenReleased(new InstantCommand(m_sequencer::stop, m_sequencer));
+   // new JoystickButton(m_operatorController, 14)
+   // .whenHeld(new InstantCommand(m_sequencer::reverse, m_sequencer))
+   // .whenReleased(new InstantCommand(m_sequencer::stop, m_sequencer));
 
     new JoystickButton(m_driverController, 7).whenPressed(new InstantCommand(() -> { m_robotDrive.resetGyro(); System.out.println("Reset gyro"); }, m_robotDrive));
     new JoystickButton(m_driverController, XboxConstants.kMenu).whenPressed(new InstantCommand(() -> { m_robotDrive.resetEncoders(); System.out.println("Reset encoders"); }, m_robotDrive));

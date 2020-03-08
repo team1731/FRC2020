@@ -170,11 +170,11 @@ public class ShootClimbSubsystem extends SubsystemBase {
 		mTalonShoot1.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
     mTalonShoot2.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
 
-    if(System.currentTimeMillis() % 100 == 0){
+  //  if(System.currentTimeMillis() % 100 == 0){
       SmartDashboard.putNumber("bdltargetvelocity", targetVelocity_UnitsPer100ms);
       SmartDashboard.putNumber("talon1Velocity", mTalonShoot1.getSelectedSensorVelocity());
       SmartDashboard.putNumber("talon1Velocity2", mTalonShoot2.getSelectedSensorVelocity());
-    }
+  //  }
     if (!isHoodExtended) {
       hoodExtend();
     }
