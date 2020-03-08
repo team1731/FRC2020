@@ -277,9 +277,9 @@ public class RobotContainer {
       case "R1": return new _NamedAutoMode(new R1_WholeSide10(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision));
       case "R2": return new _NamedAutoMode(new R2_Shoot3_FriendlyTriple(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision));
 
-      case "T3": return new _NamedAutoMode(new T3_DriveForwardIntakeDriveBackward(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision));
-      case "T4": return new _NamedAutoMode(new T4_ShootDriveForward(m_robotDrive, m_sequencer, m_shootclimb, m_vision));
-      case "T5": return new _NamedAutoMode(new T5_ShootDriveBackward(m_robotDrive, m_sequencer, m_shootclimb, m_vision));
+      case "T3": return new _NamedAutoMode(new T3_DriveForwardIntakeDriveBackward(m_robotDrive, m_intake, m_sequencer, m_shootclimb));
+      case "T4": return new _NamedAutoMode(new T4_ShootDriveForward(m_robotDrive, m_sequencer, m_shootclimb));
+      case "T5": return new _NamedAutoMode(new T5_ShootDriveBackward(m_robotDrive, m_sequencer, m_shootclimb));
       
       default: 
         System.err.println("FATAL: SELECTED AUTO MODE " + autoModeName + " DOES NOT MAP TO A JAVA CLASS!!!!");

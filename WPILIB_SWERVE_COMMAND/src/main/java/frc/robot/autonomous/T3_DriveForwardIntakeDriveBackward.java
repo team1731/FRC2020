@@ -14,13 +14,13 @@ import frc.robot.commands.IntakeSeqCommand;
 
 public class T3_DriveForwardIntakeDriveBackward extends _DelayableStrafingAutoMode {
     public T3_DriveForwardIntakeDriveBackward(DriveSubsystem m_robotDrive, IntakeSubsystem m_intake,
-            SequencerSubsystem m_sequence, ShootClimbSubsystem m_shootclimb, Je   voisVisionSubsystem m_vision) {
+            SequencerSubsystem m_sequence, ShootClimbSubsystem m_shootclimb) {
 
         SequentialCommandGroup commandGroup = new SequentialCommandGroup(
             new WaitCommand(getInitialDelaySeconds()),
 
             new ParallelCommandGroup(
-                createSwerveCommand(m_robotDrive, "FORWARD 1 METER", TrajectoryDirection.REV, 
+                createSwerveCommand(m_robotDrive, "FORWARD 1 METER", TrajectoryDirection.FWD, 
                                 TrajectoryHeading.DO_NOTHING, 0, new double[][]
                     {{0, 0, 0},    // initial pose
                     {0.5, 0},     // waypoint(s)

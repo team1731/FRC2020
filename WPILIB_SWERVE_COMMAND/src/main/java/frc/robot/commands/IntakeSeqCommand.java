@@ -35,7 +35,7 @@ public class IntakeSeqCommand extends CommandBase {
   private boolean high;
   private Intake1ball sequenceBallCommand;
   private boolean interruptible;
-
+  
   /**
    * use this constructor for autonomous and set autonomous=true!
    */
@@ -45,6 +45,7 @@ public class IntakeSeqCommand extends CommandBase {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(intakeSubsystem);
     this.interruptible = autonomous;
+
   }
 
   /**

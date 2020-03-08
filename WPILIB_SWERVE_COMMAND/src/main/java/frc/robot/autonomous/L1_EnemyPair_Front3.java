@@ -31,18 +31,16 @@ public class L1_EnemyPair_Front3 extends _DelayableStrafingAutoMode {
                 new IntakeSeqCommand(m_intake, m_sequence, true).withTimeout(4)
             ),
 
-            new ParallelCommandGroup(
-                new InstantCommand(m_shootclimb::enableShooting, m_shootclimb).withTimeout(4),
-                createSwerveCommand(m_robotDrive, "STRAFE TO SHOOT LOCATION 1", TrajectoryDirection.FWD, 
-                                    TrajectoryHeading.UNROTATE, 0, new double[][]
-                {{-2.41, -0.15, 0.0},    // initial pose
-                    {-0.49, -1.84},       // waypoint(s)
-                    {-0.25, -4.95, -6.7}} // final pose
-                )
+            new InstantCommand(m_shootclimb::enableShooting, m_shootclimb).withTimeout(4),
+            createSwerveCommand(m_robotDrive, "STRAFE TO SHOOT LOCATION 1", TrajectoryDirection.FWD, 
+                                TrajectoryHeading.UNROTATE, 0, new double[][]
+            {{-2.41, -0.15, 0.0},    // initial pose
+                {-0.49, -1.84},       // waypoint(s)
+                {-0.25, -4.95, -6.7}} // final pose
             ),
 
             new WaitCommand(1),
-            new ShootSeqCommandAuto(m_shootclimb, m_sequence).withTimeout(1),
+            new ShootSeqCommandAuto(m_shootclimb, m_sequence).withTimeout(2),
             new WaitCommand(getSecondaryDelaySeconds()),
 
             // FRONT 3
@@ -68,7 +66,7 @@ public class L1_EnemyPair_Front3 extends _DelayableStrafingAutoMode {
             ),
 
             new WaitCommand(1),
-            new ShootSeqCommandAuto(m_shootclimb, m_sequence).withTimeout(1)
+            new ShootSeqCommandAuto(m_shootclimb, m_sequence).withTimeout(2)
         );
 
         // Run path following command, then stop at the end.

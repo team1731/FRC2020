@@ -12,7 +12,7 @@ import frc.robot.subsystems.ShootClimbSubsystem;
 
 public class T4_ShootDriveForward extends _DelayableStrafingAutoMode {
     public T4_ShootDriveForward(DriveSubsystem m_robotDrive,
-            SequencerSubsystem m_sequence, ShootClimbSubsystem m_shootclimb, JevoisVisionSubsystem m_vision) {
+            SequencerSubsystem m_sequence, ShootClimbSubsystem m_shootclimb) {
 
         SequentialCommandGroup commandGroup = new SequentialCommandGroup(
             new WaitCommand(getInitialDelaySeconds()),
