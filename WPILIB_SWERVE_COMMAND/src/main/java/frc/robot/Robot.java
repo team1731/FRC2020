@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.JevoisVisionSubsystem;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.OpConstants.LedOption;
 import frc.robot.autonomous._NamedAutoMode;
 import frc.robot.subsystems.ColorWheelSubsystem;
@@ -44,20 +45,7 @@ public class Robot extends TimedRobot {
   public ColorWheelSubsystem m_colorwheel;
   public LedStringSubsystem m_ledstring;
 
-  String DEFAULT_AUTO_CODE = "L1";// DEFAULT AUTO MODE if Drive Team is unable to set the mode via Dashboard
-                                  // NOTE: also useful if trying to run in the simulator!
-                                  // XNDD (X=L,M,R,F) (N=1,2,3,4) (DD=0-99 [optional])
-                                  // XN = one of Mark and Chuck's 10 auto modes plus new "forward" mode F
-                                  //      (and if it turns out we need a backward mode, B, we will add it)
-                                  // DD = up to 2 digits (0-9) signifying 2 possible delays (in seconds)
-                                  // 1st D = 0-9 second delay at very beginning of auto
-                                  // 2nd D = 0-9 second delay after first shooting event
-                                  // examples:
-                                  // M1 --> run M1 auto with NO DELAYS
-                                  // M25 --> wait 5 seconds, then run M2 auto
-                                  // M203 --> wait 0 seconds, run M2 with 3-sec delay after 1st shooting
-                                  // F12 --> wait 2 seconds, run "forward" auto mode (robot will drive forward a pre-programmed distance)
-  String autoCode = DEFAULT_AUTO_CODE;
+  String autoCode = AutoConstants.kDEFAULT_AUTO_CODE;
 
   private void initSubsystems(){
     // initial SubSystems to at rest states
@@ -98,7 +86,7 @@ public class Robot extends TimedRobot {
 
     SmartDashboard.putString("INIT CELL COUNT", "3"); // How much ammo we start with
 
-    SmartDashboard.putString("AUTO CODE", DEFAULT_AUTO_CODE); // see above for explanation
+    SmartDashboard.putString("AUTO CODE", AutoConstants.kDEFAULT_AUTO_CODE); // see above for explanation
     if (RobotBase.isReal()) {
       autoCode = SmartDashboard.getString("AUTO CODE", autoCode);
     }
@@ -176,7 +164,7 @@ public class Robot extends TimedRobot {
     }
     System.out.println("AUTO CODE retrieved from Dashboard --> " + autoCode);
     if (autoCode == null || autoCode.length() < 2) {
-      autoCode = DEFAULT_AUTO_CODE;
+      autoCode = AutoConstants.kDEFAULT_AUTO_CODE;
     }
     autoCode = autoCode.toUpperCase();
     System.out.println("AUTO CODE being used by the software --> " + autoCode);

@@ -111,6 +111,21 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
+    public static final String kDEFAULT_AUTO_CODE = "T5";
+                                  // DEFAULT AUTO MODE if Drive Team is unable to set the mode via Dashboard
+                                  // NOTE: also useful if trying to run in the simulator!
+                                  // XNDD (X=L,M,R,F) (N=1,2,3,4) (DD=0-99 [optional])
+                                  // XN = one of Mark and Chuck's 10 auto modes plus new "forward" mode F
+                                  //      (and if it turns out we need a backward mode, B, we will add it)
+                                  // DD = up to 2 digits (0-9) signifying 2 possible delays (in seconds)
+                                  // 1st D = 0-9 second delay at very beginning of auto
+                                  // 2nd D = 0-9 second delay after first shooting event
+                                  // examples:
+                                  // M1 --> run M1 auto with NO DELAYS
+                                  // M25 --> wait 5 seconds, then run M2 auto
+                                  // M203 --> wait 0 seconds, run M2 with 3-sec delay after 1st shooting
+                                  // F12 --> wait 2 seconds, run "forward" auto mode (robot will drive forward a pre-programmed distance)
+
     public static final double kMaxSpeedMetersPerSecond = 1; //2
     public static final double kMaxAccelerationMetersPerSecondSquared = 1; //2
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
@@ -256,8 +271,8 @@ public final class Constants {
          * PID Gains may have to be adjusted based on the responsiveness of control loop.
          * kF: 1023 represents output value to Talon at 100%, 7200 represents Velocity units at 100% output
          * 
-         * 	                                    		          	  kP   kI   kD   kF             Iz    PeakOut */
-        public final static Gains kGains_Velocity = new Gains( 4.0, 0, 0, .07,  300,  1.00);
+         * 	                                    		          	  kP ORIG=4.0   kI   kD   kF             Iz    PeakOut */
+        public final static Gains kGains_Velocity = new Gains( 0.5, 0, 0, .07,  300,  1.00);
         ///// End TalonFX
     }
 

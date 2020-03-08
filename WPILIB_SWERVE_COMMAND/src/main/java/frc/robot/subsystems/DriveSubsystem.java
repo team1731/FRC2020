@@ -335,6 +335,7 @@ public class DriveSubsystem extends SubsystemBase {
   public void resetEncoders() {
     m_frontLeft.resetEncoders(leftFrontAbsEncoder.getVoltage());     // frontLeft, frontRight, rearLeft, rearRight
     //m_frontRight.resetEncoders(rightFrontAbsEncoder.getVoltage());nope! took it back out!// had taken out but it started working again 7mar2020. // took this one out -- bad hardware encoder!!!
+    m_frontRight.resetEncoders(0);// had taken out but it started working again 7mar2020. // took this one out -- bad hardware encoder!!!
     m_rearLeft.resetEncoders(leftRearAbsEncoder.getVoltage());
     m_rearRight.resetEncoders(rightRearAbsEncoder.getVoltage());
   }

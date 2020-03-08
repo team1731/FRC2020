@@ -137,8 +137,8 @@ public class RobotContainer {
     new JoystickButton(m_driverController, XboxConstants.kB).whileActiveContinuous(new SeqResetCommand(m_sequencer), true);
 
     //Map right bumper to rotation lock to power port
-    new JoystickButton(m_driverController, XboxConstants.kRBumper)
-      .whenActive(new RotToPowerPortCommand(m_vision, m_robotDrive, m_driverController));
+  //  new JoystickButton(m_driverController, XboxConstants.kRBumper)
+  //    .whenActive(new RotToPowerPortCommand(m_vision, m_robotDrive, m_driverController));
 
     new JoystickButton(m_operatorController, 8) // convert -1 to +1 TO 0 to 1
       .whileActiveContinuous(() -> m_shootclimb.spinShooter((m_operatorController.getRawAxis(4)+1)/2))
@@ -148,7 +148,7 @@ public class RobotContainer {
       //.whileActiveContinuous(new ShootSeqCommand(m_shootclimb, m_sequencer, () -> m_operatorController.getRawAxis(4)), false
     //);
     
-    new JoystickButton(m_operatorController, 16).whileActiveContinuous(
+    new JoystickButton(m_operatorController, 15).whileActiveContinuous(
       new IntakeSeqCommand(m_intake, m_sequencer)
     );
     
