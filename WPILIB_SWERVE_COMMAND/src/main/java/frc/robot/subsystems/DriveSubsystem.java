@@ -201,8 +201,8 @@ public class DriveSubsystem extends SubsystemBase {
   public void drive(double xSpeed, double ySpeed, double rightX, double rightY, boolean fieldRelative) {
     double xSpeedAdjusted = xSpeed;
     double ySpeedAdjusted = ySpeed;
-    double rotAdjusted = rightX;
-    double rotationalOutput = 0;
+    //double rotAdjusted = rightX;
+    double rotationalOutput = rightX;
 
     // DEADBAND
     if(Math.abs(xSpeedAdjusted) < 0.3){
@@ -211,11 +211,18 @@ public class DriveSubsystem extends SubsystemBase {
     if(Math.abs(ySpeedAdjusted) < 0.3){
       ySpeedAdjusted = 0;
     }
+    /*
     if(Math.abs(rotAdjusted) < 0.3){
       rotAdjusted = 0;
     }
+*/
+    if(Math.abs(rotationalOutput) < 0.2){
+      rotationalOutput = 0;
+    }
 
-    
+    rotationalOutput *= Math.PI;
+
+    /*
     if(stickControlledHeading){
       //If the stick is released, don't change the rotation
       if((Math.abs(rightX) > DriveConstants.kMinRightStickThreshold || Math.abs(rightY) > DriveConstants.kMinRightStickThreshold)){
@@ -236,9 +243,14 @@ public class DriveSubsystem extends SubsystemBase {
         headingController.reset(getHeading());
       }
     } else {
+      */
       //Perhaps do the same continuous correction here as above? Test first.
+    if(!stickControlledHeading){
       rotationalOutput = headingController.calculate(getHeading());
+    } else {
+      headingController.reset(getHeading());
     }
+    //}
     
 
     //Replaced rotAdjusted with rotationalOutput
