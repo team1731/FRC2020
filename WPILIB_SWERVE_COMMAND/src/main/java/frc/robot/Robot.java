@@ -217,12 +217,22 @@ public class Robot extends TimedRobot {
   }
 
 
+  public static long millis = System.currentTimeMillis();
+  public static boolean doSD(){
+    long now = System.currentTimeMillis();
+    if(now - millis > 300){
+      millis = now;
+      return true;
+    }
+    return false;
+  }
+
   /**
    * This function is called periodically during operator control.
    */
   @Override
   public void teleopPeriodic() {
-    if(System.currentTimeMillis() % 100 == 0){
+    if(doSD()){
       SmartDashboard.putBoolean("LowSensor",  m_sequencer.lowSensorHasBall());
       SmartDashboard.putBoolean("MidSensor",  m_sequencer.midSensorHasBall());
       SmartDashboard.putBoolean("HighSensor",  m_sequencer.highSensorHasBall());
