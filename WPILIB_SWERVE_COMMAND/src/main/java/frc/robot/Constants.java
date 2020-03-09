@@ -126,10 +126,10 @@ public final class Constants {
                                   // M203 --> wait 0 seconds, run M2 with 3-sec delay after 1st shooting
                                   // F12 --> wait 2 seconds, run "forward" auto mode (robot will drive forward a pre-programmed distance)
 
-    public static final double kMaxSpeedMetersPerSecond = 1; //2
-    public static final double kMaxAccelerationMetersPerSecondSquared = 1; //2
-    public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
-    public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
+    public static final double kMaxSpeedMetersPerSecond = 2; //2
+    public static final double kMaxAccelerationMetersPerSecondSquared = 2; //2
+    public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI*2;
+    public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI*2;
 
     public static final double kPXController = 3;
     public static final double kPYController = 3;

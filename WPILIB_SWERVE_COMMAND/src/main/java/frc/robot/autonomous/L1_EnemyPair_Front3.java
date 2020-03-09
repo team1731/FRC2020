@@ -23,20 +23,22 @@ public class L1_EnemyPair_Front3 extends _DelayableStrafingAutoMode {
             // ENEMY PAIR
             new ParallelCommandGroup(
                 createSwerveCommand(m_robotDrive, "BACKWARD TO ENEMY PAIR", TrajectoryDirection.REV, 
-                                    TrajectoryHeading.UNROTATE, 15, new double[][]
-                {{0.0, 0.0, 0.0},    // initial pose
-                 {-2.41, -0.15, 0.0}}      // final pose
+                                    TrajectoryHeading.UNROTATE, -31, new double[][]
+                {{0.0, 0.0, 20},
+                  {-1.49, -0.65},    // initial pose
+                  {-2.4, -0.75},    // initial pose
+                  {-2.3, -0.5},    // initial pose
+                 {-2.66, -0.24,-20}}      // final pose
                 ),
         
-                new IntakeSeqCommand(m_intake, m_sequence, true).withTimeout(4)
+                new IntakeSeqCommand(m_intake, m_sequence, true).withTimeout(5)
             ),
 
             new InstantCommand(m_shootclimb::enableShooting, m_shootclimb).withTimeout(4),
             createSwerveCommand(m_robotDrive, "STRAFE TO SHOOT LOCATION 1", TrajectoryDirection.FWD, 
-                                TrajectoryHeading.UNROTATE, 0, new double[][]
-            {{-2.41, -0.15, 0.0},    // initial pose
-                {-0.49, -1.84},       // waypoint(s)
-                {-0.25, -4.95, -6.7}} // final pose
+                                TrajectoryHeading.UNROTATE, -15, new double[][]
+            {{-2.66, -0.24, -45},    // initial pose
+                {-0.18, -4.13, -45}} // final pose
             ),
 
             new WaitCommand(1),
@@ -46,10 +48,11 @@ public class L1_EnemyPair_Front3 extends _DelayableStrafingAutoMode {
             // FRONT 3
             new ParallelCommandGroup(
                 createSwerveCommand(m_robotDrive, "BACKWARD TO FRONT 3", TrajectoryDirection.REV,
-                                    TrajectoryHeading.MAINTAIN, 34.4, new double[][]
-                {{-0.25, -4.95, -6.7}, // initial pose
-                 {-1.97, -3.11, 34.4},      // waypoint(s)
-                 {-1.91, -3.96, 39}}   // final pose
+                                    TrajectoryHeading.MAINTAIN, 11, new double[][]
+                {{-0.18, -4.13, -10}, // initial pose
+                {-0.85, -3.8},      // waypoint(s)
+                 {-1.9, -4.03},      // waypoint(s)
+                 {-2.23, -3.27, 0}}   // final pose
                 ),
         
                 new IntakeSeqCommand(m_intake, m_sequence, true).withTimeout(4)
@@ -58,10 +61,9 @@ public class L1_EnemyPair_Front3 extends _DelayableStrafingAutoMode {
             new ParallelCommandGroup(
                 new InstantCommand(m_shootclimb::enableShooting, m_shootclimb).withTimeout(4),
                 createSwerveCommand(m_robotDrive, "STRAFE TO SHOOT LOCATION 2", TrajectoryDirection.FWD, 
-                                    TrajectoryHeading.UNROTATE, 0, new double[][]
-                {{-1.91, -3.96, 39},   // initial pose
-                 {-0.75, -4.01},      // waypoint(s)
-                 {-0.25, -4.95, -6.7}}  // final pose
+                                    TrajectoryHeading.UNROTATE, -15, new double[][]
+                {{-2.23, -3.27, 20},   // initial pose
+                 {-0.18, -4.13, 20}}  // final pose
                 )
             ),
 
