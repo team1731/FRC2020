@@ -1,6 +1,6 @@
 package frc.robot.util;
 
-  public class SwerveParams {
+  public class AutoSwerveDebug {
     public double curTime;
     public double desiredX;
     public double desiredY;
@@ -9,7 +9,8 @@ package frc.robot.util;
     public double actualY;
     public double actualTheta;
 
-    public SwerveParams( double curTime,
+  public AutoSwerveDebug(
+    double curTime,
     double desiredX,
     double desiredY,
     double desiredTheta,

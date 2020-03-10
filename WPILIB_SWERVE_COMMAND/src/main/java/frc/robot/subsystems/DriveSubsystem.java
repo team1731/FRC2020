@@ -11,7 +11,6 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 //import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.SPI;
@@ -24,26 +23,24 @@ import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpiutil.math.MathUtil;
+import frc.robot.Robot;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.autonomous._InstrumentedSwerveControllerCommand;
-import frc.robot.commands.TurnToAngleProfiled;
-import frc.robot.util.DebugOutput;
+import frc.robot.util.AutoSwerveDebug;
 import frc.robot.util.ReflectingCSVWriter;
-import frc.robot.util.SwerveParams;
+import frc.robot.util.SwerveModuleDebug;;
 
 @SuppressWarnings("PMD.ExcessiveImports")
 public class DriveSubsystem extends SubsystemBase {
+  private final Timer m_timer = new Timer();
 
-  private final ReflectingCSVWriter<SwerveParams> mCSVWriter;
+  private final ReflectingCSVWriter<AutoSwerveDebug> mCSVWriter1;
+  private final ReflectingCSVWriter<SwerveModuleDebug> mCSVWriter2;
 
-  private final ProfiledPIDController headingController = new ProfiledPIDController(
-    DriveConstants.kTurnP, DriveConstants.kTurnI, DriveConstants.kTurnD,
-    new TrapezoidProfile.Constraints(DriveConstants.kMaxTurnVelocity, DriveConstants.kMaxTurnAcceleration));
+  private final ProfiledPIDController headingController
+     = new ProfiledPIDController(DriveConstants.kTurnP, DriveConstants.kTurnI, DriveConstants.kTurnD,
+       new TrapezoidProfile.Constraints(DriveConstants.kMaxTurnVelocity, DriveConstants.kMaxTurnAcceleration));
 
   //After looking inside the ProfiledPIDController class, I suspect that a standard PIDController will work better as ProfiledPID seems to primarily use the
   //trapezoid profiler to calculate the next output rather than the PID. Since trapezoid profiler doesn't have continuous input it just ignores it.
@@ -102,9 +99,14 @@ public class DriveSubsystem extends SubsystemBase {
     headingController.setTolerance(DriveConstants.kTurnToleranceDeg, DriveConstants.kTurnRateToleranceDegPerS);
     //headingController.enableContinuousInput(-180, 180);
 
-    mCSVWriter = new ReflectingCSVWriter<>(this.getName(), SwerveParams.class);
+    mCSVWriter1 = new ReflectingCSVWriter<>(AutoSwerveDebug.class);
+    mCSVWriter2 = new ReflectingCSVWriter<>(SwerveModuleDebug.class);
   }
 
+
+  public ReflectingCSVWriter getCSVWriter() {
+    return mCSVWriter1;
+  }
 
 /**
    * Returns the angle of the robot as a Rotation2d.
@@ -141,14 +143,20 @@ public class DriveSubsystem extends SubsystemBase {
         m_rearLeft.getState(),
         m_rearRight.getState());
         
-    //.if(System.currentTimeMillis() % 100 == 0){
+    if(Robot.doSD()){
       SmartDashboard.putNumber("pose x", m_odometry.getPoseMeters().getTranslation().getX());
       SmartDashboard.putNumber("pose y", m_odometry.getPoseMeters().getTranslation().getY());
       SmartDashboard.putNumber("rot deg", m_odometry.getPoseMeters().getRotation().getDegrees());
       SmartDashboard.putNumber("heading radians", headingRadians);    
       SmartDashboard.putNumber("raw gyro", m_gyro.getAngle());
       SmartDashboard.putBoolean("gyro is calibrating", m_gyro.isCalibrating());
-    //}
+    }
+
+    mCSVWriter2.add(new SwerveModuleDebug(m_timer.get(),
+                                          m_frontLeft.getDebugValues(),
+                                          m_frontRight.getDebugValues(),
+                                          m_rearLeft.getDebugValues(),
+                                          m_rearRight.getDebugValues()));
   }
 
   /**
@@ -328,7 +336,7 @@ public class DriveSubsystem extends SubsystemBase {
   public void setModuleStates(SwerveModuleState[] desiredStates) {
     SwerveDriveKinematics.normalizeWheelSpeeds(desiredStates,
                                                DriveConstants.kMaxSpeedMetersPerSecond);
-    m_frontLeft.setDesiredState(desiredStates[0]);           // frontLeft, frontRight, rearLeft, rearRight
+    m_frontLeft.setDesiredState(desiredStates[0]); // frontLeft, frontRight, rearLeft, rearRight
     m_frontRight.setDesiredState(desiredStates[1]);
     m_rearLeft.setDesiredState(desiredStates[2]);
     m_rearRight.setDesiredState(desiredStates[3]);
@@ -381,14 +389,20 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void suspendCSVWriter() {
-    if(!mCSVWriter.isSuspended()){
-      mCSVWriter.suspend();
+    if(!mCSVWriter1.isSuspended()){
+      mCSVWriter1.suspend();
+    }
+    if(!mCSVWriter2.isSuspended()){
+      mCSVWriter2.suspend();
     }
   }
 
   public void resumeCSVWriter() {
-    if(mCSVWriter.isSuspended()){
-      mCSVWriter.resume();
+    if(mCSVWriter1.isSuspended()){
+      mCSVWriter1.resume();
+    }
+    if(mCSVWriter2.isSuspended()){
+      mCSVWriter2.resume();
     }
   }
 
@@ -425,58 +439,4 @@ public class DriveSubsystem extends SubsystemBase {
     }
   }
 
-  public class SwerveModuleDebugOutput {
-    public double drive1AppliedOutput;
-    public double drive2AppliedOutput;
-    public double drive3AppliedOutput;
-    public double drive4AppliedOutput;
-
-    public double drive1Velocity;
-    public double drive2Velocity;
-    public double drive3Velocity;
-    public double drive4Velocity;
-
-    public double turn1AppliedOutput;
-    public double turn2AppliedOutput;
-    public double turn3AppliedOutput;
-    public double turn4AppliedOutput;
-
-    public double turn1Velocity;
-    public double turn2Velocity;
-    public double turn3Velocity;
-    public double turn4Velocity;
-
-    public SwerveModuleDebugOutput(SwerveModule.DebugValues debugValues1, SwerveModule.DebugValues debugValues2, 
-    SwerveModule.DebugValues debugValues3, SwerveModule.DebugValues debugValues4){
-      update(debugValues1, debugValues2, debugValues3, debugValues4);
-    }
-
-    public void update(SwerveModule.DebugValues debugValues1, SwerveModule.DebugValues debugValues2, 
-    SwerveModule.DebugValues debugValues3, SwerveModule.DebugValues debugValues4){
-      drive1AppliedOutput = debugValues1.driveAppliedOutput;
-      drive1Velocity = debugValues1.driveVelocity;
-      turn1AppliedOutput = debugValues1.turnAppliedOutput;
-      turn1Velocity = debugValues1.turnVelocity;
-
-      drive2AppliedOutput = debugValues2.driveAppliedOutput;
-      drive2Velocity = debugValues2.driveVelocity;
-      turn2AppliedOutput = debugValues2.turnAppliedOutput;
-      turn2Velocity = debugValues2.turnVelocity;
-
-      drive3AppliedOutput = debugValues3.driveAppliedOutput;
-      drive3Velocity = debugValues3.driveVelocity;
-      turn3AppliedOutput = debugValues3.turnAppliedOutput;
-      turn3Velocity = debugValues3.turnVelocity;
-
-      drive4AppliedOutput = debugValues4.driveAppliedOutput;
-      drive4Velocity = debugValues4.driveVelocity;
-      turn4AppliedOutput = debugValues4.turnAppliedOutput;
-      turn4Velocity = debugValues4.turnVelocity;
-    }
-
-  }
-
-  public ReflectingCSVWriter getCSVWriter() {
-    return mCSVWriter;
-  }
 }

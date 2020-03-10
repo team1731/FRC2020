@@ -32,13 +32,13 @@ public class ReflectingCSVWriter<T> {
         return suspended;
     }
 
-    public ReflectingCSVWriter(String fileName, Class<T> typeClass) {
+    public ReflectingCSVWriter(Class<T> typeClass) {
         String pathName;
         if(RobotBase.isReal()){
-            pathName = "/home/lvuser/" + fileName + ".csv";
+            pathName = "/home/lvuser/" + typeClass.getSimpleName() + ".csv";
         }
         else{
-            pathName = fileName + ".csv";
+            pathName = typeClass.getSimpleName() + ".csv";
         }
       
     	//

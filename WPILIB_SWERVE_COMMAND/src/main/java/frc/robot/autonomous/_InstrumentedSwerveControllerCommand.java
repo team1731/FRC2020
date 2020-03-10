@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.util.ReflectingCSVWriter;
-import frc.robot.util.SwerveParams;
+import frc.robot.util.AutoSwerveDebug;
 
 import static edu.wpi.first.wpilibj.util.ErrorMessages.requireNonNullParam;
 
@@ -78,7 +78,7 @@ public class _InstrumentedSwerveControllerCommand extends CommandBase {
 
   @SuppressWarnings("ParameterName")
   public _InstrumentedSwerveControllerCommand(
-                               ReflectingCSVWriter<SwerveParams> csvWriter,
+                               ReflectingCSVWriter<AutoSwerveDebug> csvWriter,
                                Trajectory trajectory,
                                Supplier<Pose2d> pose,
                                SwerveDriveKinematics kinematics,
@@ -125,7 +125,7 @@ public class _InstrumentedSwerveControllerCommand extends CommandBase {
 
     Pose2d poseError = desiredPose.relativeTo(m_pose.get());
 
-    csvWriter.add(new SwerveParams(curTime, 
+    csvWriter.add(new AutoSwerveDebug(curTime, 
                                    desiredPose.getTranslation().getX(),
                                    desiredPose.getTranslation().getY(),
                                    desiredPose.getRotation().getDegrees(),
