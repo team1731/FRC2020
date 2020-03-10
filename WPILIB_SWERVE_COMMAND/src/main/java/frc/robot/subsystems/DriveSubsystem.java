@@ -24,22 +24,23 @@ import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.autonomous._InstrumentedSwerveControllerCommand;
 import frc.robot.commands.TurnToAngleProfiled;
 import frc.robot.util.DebugOutput;
 import frc.robot.util.ReflectingCSVWriter;
+import frc.robot.util.SwerveParams;
 
 @SuppressWarnings("PMD.ExcessiveImports")
 public class DriveSubsystem extends SubsystemBase {
 
-  private final ReflectingCSVWriter<DebugOutput> mCSVWriter;
-  private final ReflectingCSVWriter<SwerveModuleDebugOutput> mCSVWriter2;
-  private final DebugOutput debugOutput = new DebugOutput();
-  private SwerveModuleDebugOutput swerveDebugOutput;
+  private final ReflectingCSVWriter<SwerveParams> mCSVWriter;
+
   private final ProfiledPIDController headingController = new ProfiledPIDController(
     DriveConstants.kTurnP, DriveConstants.kTurnI, DriveConstants.kTurnD,
     new TrapezoidProfile.Constraints(DriveConstants.kMaxTurnVelocity, DriveConstants.kMaxTurnAcceleration));
@@ -101,10 +102,7 @@ public class DriveSubsystem extends SubsystemBase {
     headingController.setTolerance(DriveConstants.kTurnToleranceDeg, DriveConstants.kTurnRateToleranceDegPerS);
     //headingController.enableContinuousInput(-180, 180);
 
-    swerveDebugOutput = new SwerveModuleDebugOutput(m_frontLeft.getDebugValues(), m_frontRight.getDebugValues(), m_rearLeft.getDebugValues(), m_rearRight.getDebugValues());
-
-    mCSVWriter = new ReflectingCSVWriter<>(this.getName(), DebugOutput.class);
-    mCSVWriter2 = new ReflectingCSVWriter<>("SwerveModule", SwerveModuleDebugOutput.class);
+    mCSVWriter = new ReflectingCSVWriter<>(this.getName(), SwerveParams.class);
   }
 
 
@@ -151,11 +149,6 @@ public class DriveSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("raw gyro", m_gyro.getAngle());
       SmartDashboard.putBoolean("gyro is calibrating", m_gyro.isCalibrating());
     //}
-    debugOutput.update(Timer.getFPGATimestamp(), m_odometry, headingRadians, m_gyro.getAngle());
-    swerveDebugOutput.update(m_frontLeft.getDebugValues(), m_frontRight.getDebugValues(), m_rearLeft.getDebugValues(), m_rearRight.getDebugValues());
-    mCSVWriter.add(debugOutput);
-    mCSVWriter2.add(swerveDebugOutput);
-    
   }
 
   /**
@@ -379,19 +372,11 @@ public class DriveSubsystem extends SubsystemBase {
     if(!mCSVWriter.isSuspended()){
       mCSVWriter.suspend();
     }
-
-    if(!mCSVWriter2.isSuspended()){
-      mCSVWriter2.suspend();
-    }
   }
 
   public void resumeCSVWriter() {
     if(mCSVWriter.isSuspended()){
       mCSVWriter.resume();
-    }
-
-    if(mCSVWriter2.isSuspended()){
-      mCSVWriter2.resume();
     }
   }
 
@@ -475,5 +460,9 @@ public class DriveSubsystem extends SubsystemBase {
       turn4Velocity = debugValues4.turnVelocity;
     }
 
+  }
+
+  public ReflectingCSVWriter getCSVWriter() {
+    return mCSVWriter;
   }
 }

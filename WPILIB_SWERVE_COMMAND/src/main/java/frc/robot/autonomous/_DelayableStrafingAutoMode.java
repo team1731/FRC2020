@@ -147,8 +147,9 @@ public class _DelayableStrafingAutoMode {
         return trajectory;
     }
 
-    public SwerveControllerCommand createSwerveCommand(DriveSubsystem m_robotDrive, String name, TrajectoryDirection dir, TrajectoryHeading mode, double value, double[][] points){
-        return new SwerveControllerCommand(
+    public _InstrumentedSwerveControllerCommand createSwerveCommand(DriveSubsystem m_robotDrive, String name, TrajectoryDirection dir, TrajectoryHeading mode, double value, double[][] points){
+        return new _InstrumentedSwerveControllerCommand(
+            m_robotDrive.getCSVWriter(),
             createTrajectory(name, dir, mode, value, points),
             m_robotDrive::getPose, //Functional interface to feed supplier
             DriveConstants.kDriveKinematics,
