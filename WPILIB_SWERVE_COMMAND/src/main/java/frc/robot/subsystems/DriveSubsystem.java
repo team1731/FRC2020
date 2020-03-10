@@ -194,8 +194,8 @@ public class DriveSubsystem extends SubsystemBase {
   public void drive(double xSpeed, double ySpeed, double rightX, double rightY, boolean fieldRelative) {
     double xSpeedAdjusted = xSpeed;
     double ySpeedAdjusted = ySpeed;
-    double rotAdjusted = rightX;
-    double rotationalOutput = 0;
+    //double rotAdjusted = rightX;
+    double rotationalOutput = rightX;
 
     // DEADBAND
     if(Math.abs(xSpeedAdjusted) < 0.3){
@@ -204,11 +204,18 @@ public class DriveSubsystem extends SubsystemBase {
     if(Math.abs(ySpeedAdjusted) < 0.3){
       ySpeedAdjusted = 0;
     }
+    /*
     if(Math.abs(rotAdjusted) < 0.3){
       rotAdjusted = 0;
     }
+*/
+    if(Math.abs(rotationalOutput) < 0.2){
+      rotationalOutput = 0;
+    }
 
-    
+    rotationalOutput *= Math.PI;
+
+    /*
     if(stickControlledHeading){
       //If the stick is released, don't change the rotation
       if((Math.abs(rightX) > DriveConstants.kMinRightStickThreshold || Math.abs(rightY) > DriveConstants.kMinRightStickThreshold)){
@@ -229,9 +236,14 @@ public class DriveSubsystem extends SubsystemBase {
         headingController.reset(getHeading());
       }
     } else {
+      */
       //Perhaps do the same continuous correction here as above? Test first.
+    if(!stickControlledHeading){
       rotationalOutput = headingController.calculate(getHeading());
+    } else {
+      headingController.reset(getHeading());
     }
+    //}
     
 
     //Replaced rotAdjusted with rotationalOutput
@@ -398,10 +410,12 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("rightFrontAbsEncoder", rightFrontAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
     SmartDashboard.putNumber("leftRearAbsEncoder", leftRearAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
     SmartDashboard.putNumber("rightRearAbsEncoder", rightRearAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
-    SmartDashboard.putNumber("leftFrontRelEncoder", m_frontLeft.m_turningEncoder.getPosition());
-    SmartDashboard.putNumber("rightFrontRelEncoder", m_frontRight.m_turningEncoder.getPosition());
-    SmartDashboard.putNumber("leftRearRelEncoder", m_rearLeft.m_turningEncoder.getPosition());
-    SmartDashboard.putNumber("rightRearRelEncoder", m_rearRight.m_turningEncoder.getPosition());
+    if(RobotBase.isReal()){
+      SmartDashboard.putNumber("leftFrontRelEncoder", m_frontLeft.m_turningEncoder.getPosition());
+      SmartDashboard.putNumber("rightFrontRelEncoder", m_frontRight.m_turningEncoder.getPosition());
+      SmartDashboard.putNumber("leftRearRelEncoder", m_rearLeft.m_turningEncoder.getPosition());
+      SmartDashboard.putNumber("rightRearRelEncoder", m_rearRight.m_turningEncoder.getPosition());
+    }
   }
 
 

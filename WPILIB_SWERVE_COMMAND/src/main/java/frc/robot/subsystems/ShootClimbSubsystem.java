@@ -147,7 +147,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
   }
 
   public boolean atTargetVelocity(){
-    return mTalonShoot1.getSelectedSensorVelocity() >= targetVelocity_UnitsPer100ms*0.99 && mTalonShoot1.getSelectedSensorVelocity() < targetVelocity_UnitsPer100ms*1.01;
+    return mTalonShoot1.getSelectedSensorVelocity() >= targetVelocity_UnitsPer100ms*0.95 && mTalonShoot1.getSelectedSensorVelocity() < targetVelocity_UnitsPer100ms*1.05;
   }
   
   public void enableShooting() {

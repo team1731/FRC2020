@@ -33,6 +33,8 @@ public final class Constants {
 	
   public static final int kTICKS = 16;
 
+  public static final double kFlywheelVelocityTolerance = 5/100; // percent
+
   public static final class DriveConstants {
 
     //Drive motor CAN IDs
