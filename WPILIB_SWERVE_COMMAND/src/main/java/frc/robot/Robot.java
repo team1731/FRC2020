@@ -54,7 +54,7 @@ public class Robot extends TimedRobot {
     m_sequencer.stop();
     m_shootclimb.stopShooting();
     //m_colorwheel.init();
-    //m_ledstring.init();
+    m_ledstring.init();
   }
 
   /**
@@ -67,7 +67,7 @@ public class Robot extends TimedRobot {
     CameraServer camServer = CameraServer.getInstance();
     camServer.startAutomaticCapture();
     
-    m_ledstring = null; //new LedStringSubsystem();
+    m_ledstring = new LedStringSubsystem();
     m_robotDrive = new DriveSubsystem();
     m_vision = null; //new JevoisVisionSubsystem(m_robotDrive);
     m_intake = new IntakeSubsystem(m_ledstring);
@@ -132,7 +132,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    //m_ledstring.option(LedOption.TEAM);
+    m_ledstring.option(LedOption.TEAM);
     m_robotDrive.resetEncoders();
     if(System.currentTimeMillis() % 100 == 0){
       SmartDashboard.putBoolean("LowSensor",  m_sequencer.lowSensorHasBall());
@@ -149,7 +149,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     CommandScheduler.getInstance().cancelAll(); ///????????????????????????????????????????? SHOULD WE DO THIS????? ******************
     
-    //m_ledstring.option(LedOption.RAINBOW);
+    m_ledstring.option(LedOption.RAINBOW);
 
     m_robotDrive.resumeCSVWriter();
     m_sequencer.setPowerCellCount((int) SmartDashboard.getNumber("INIT CELL COUNT", 3));
@@ -239,7 +239,6 @@ public class Robot extends TimedRobot {
       SmartDashboard.putNumber("PowerCellCount",  (int)m_sequencer.getPowerCellCount());
       SmartDashboard.putString("Intake State",  m_intake.getIntakeState());
       //SmartDashboard.putNumber("Climb Encoder", m_shootclimb.getClimbEncoderValue());
-    }
 
     // switch((int)m_sequencer.getPowerCellCount()){
     //   case 1: m_ledstring.option(LedOption.BALLONE); break;
@@ -248,6 +247,7 @@ public class Robot extends TimedRobot {
     //   case 4: m_ledstring.option(LedOption.BALLFOUR); break;
     //   case 5: m_ledstring.option(LedOption.GREEN); break;
     // }
+    }
   }
 
   @Override
