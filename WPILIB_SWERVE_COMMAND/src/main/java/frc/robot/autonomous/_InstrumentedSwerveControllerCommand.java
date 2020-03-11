@@ -101,7 +101,7 @@ public class _InstrumentedSwerveControllerCommand extends CommandBase {
       "thetaController", "SwerveControllerCommand");
 
     m_outputModuleStates = requireNonNullParam(outputModuleStates,
-      "frontLeftOutput", "SwerveControllerCommand");
+      "leftFrontOutput", "SwerveControllerCommand");
     addRequirements(requirements);
   }
 

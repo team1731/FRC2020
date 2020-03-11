@@ -56,22 +56,22 @@ public class DriveSubsystem extends SubsystemBase {
   private final AnalogInput rightRearAbsEncoder;
   
   //Robot swerve modules
-  private final SwerveModule m_frontLeft = 
-      new SwerveModule(DriveConstants.kFrontLeftDriveMotorPort,
-                        DriveConstants.kFrontLeftTurningMotorPort);
+  private final SwerveModule m_leftFront = 
+      new SwerveModule(DriveConstants.kLeftFrontDriveMotorPort,
+                        DriveConstants.kLeftFrontTurningMotorPort);
 
-  private final SwerveModule m_frontRight =
-      new SwerveModule(DriveConstants.kFrontRightDriveMotorPort,
-                       DriveConstants.kFrontRightTurningMotorPort);
+  private final SwerveModule m_rightFront =
+      new SwerveModule(DriveConstants.kRightFrontDriveMotorPort,
+                       DriveConstants.kRightFrontTurningMotorPort);
 
-  private final SwerveModule m_rearLeft =
-      new SwerveModule(DriveConstants.kRearLeftDriveMotorPort,
-                       DriveConstants.kRearLeftTurningMotorPort);
+  private final SwerveModule m_leftRear =
+      new SwerveModule(DriveConstants.kLeftRearDriveMotorPort,
+                       DriveConstants.kLeftRearTurningMotorPort);
   
 
-  private final SwerveModule m_rearRight =
-      new SwerveModule(DriveConstants.kRearRightDriveMotorPort,
-                       DriveConstants.kRearRightTurningMotorPort);
+  private final SwerveModule m_rightRear =
+      new SwerveModule(DriveConstants.kRightRearDriveMotorPort,
+                       DriveConstants.kRightRearTurningMotorPort);
 
   // The gyro sensor
   //private final Gyro a_gyro = new ADXRS450_Gyro();
@@ -138,10 +138,10 @@ public class DriveSubsystem extends SubsystemBase {
     double headingRadians = Math.toRadians(getHeading());
     m_odometry.update(
         new Rotation2d(headingRadians),
-        m_frontLeft.getState(),              // frontLeft, frontRight, rearLeft, rearRight
-        m_frontRight.getState(),
-        m_rearLeft.getState(),
-        m_rearRight.getState());
+        m_leftFront.getState(),              // leftFront, rightFront, leftRear, rightRear
+        m_rightFront.getState(),
+        m_leftRear.getState(),
+        m_rightRear.getState());
         
     if(Robot.doSD()){
       SmartDashboard.putNumber("pose x", m_odometry.getPoseMeters().getTranslation().getX());
@@ -153,10 +153,10 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     mCSVWriter2.add(new SwerveModuleDebug(m_timer.get(),
-                                          m_frontLeft.getDebugValues(),
-                                          m_frontRight.getDebugValues(),
-                                          m_rearLeft.getDebugValues(),
-                                          m_rearRight.getDebugValues()));
+                                          m_leftFront.getDebugValues(),
+                                          m_rightFront.getDebugValues(),
+                                          m_leftRear.getDebugValues(),
+                                          m_rightRear.getDebugValues()));
   }
 
   /**
@@ -261,10 +261,10 @@ public class DriveSubsystem extends SubsystemBase {
             : new ChassisSpeeds(xSpeedAdjusted, ySpeedAdjusted, rotationalOutput)
     );
     SwerveDriveKinematics.normalizeWheelSpeeds(swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
-    m_frontLeft.setDesiredState(swerveModuleStates[0]);    // frontLeft, frontRight, rearLeft, rearRight
-    m_frontRight.setDesiredState(swerveModuleStates[1]);
-    m_rearLeft.setDesiredState(swerveModuleStates[2]);
-    m_rearRight.setDesiredState(swerveModuleStates[3]);
+    m_leftFront.setDesiredState(swerveModuleStates[0]);    // leftFront, rightFront, leftRear, rightRear
+    m_rightFront.setDesiredState(swerveModuleStates[1]);
+    m_leftRear.setDesiredState(swerveModuleStates[2]);
+    m_rightRear.setDesiredState(swerveModuleStates[3]);
   }
 
   /**
@@ -336,21 +336,21 @@ public class DriveSubsystem extends SubsystemBase {
   public void setModuleStates(SwerveModuleState[] desiredStates) {
     SwerveDriveKinematics.normalizeWheelSpeeds(desiredStates,
                                                DriveConstants.kMaxSpeedMetersPerSecond);
-    m_frontLeft.setDesiredState(desiredStates[0]); // frontLeft, frontRight, rearLeft, rearRight
-    m_frontRight.setDesiredState(desiredStates[1]);
-    m_rearLeft.setDesiredState(desiredStates[2]);
-    m_rearRight.setDesiredState(desiredStates[3]);
+    m_leftFront.setDesiredState(desiredStates[0]); // leftFront, rightFront, leftRear, rightRear
+    m_rightFront.setDesiredState(desiredStates[1]);
+    m_leftRear.setDesiredState(desiredStates[2]);
+    m_rightRear.setDesiredState(desiredStates[3]);
   }
 
   /**
    * Resets the drive encoders to currently read a position of 0.
    */
   public void resetEncoders() {
-    m_frontLeft.resetEncoders(leftFrontAbsEncoder.getVoltage());     // frontLeft, frontRight, rearLeft, rearRight
-    //m_frontRight.resetEncoders(rightFrontAbsEncoder.getVoltage());nope! took it back out!// had taken out but it started working again 7mar2020. // took this one out -- bad hardware encoder!!!
-    m_frontRight.resetEncoders(0);// had taken out but it started working again 7mar2020. // took this one out -- bad hardware encoder!!!
-    m_rearLeft.resetEncoders(leftRearAbsEncoder.getVoltage());
-    m_rearRight.resetEncoders(rightRearAbsEncoder.getVoltage());
+    m_leftFront.resetEncoders(leftFrontAbsEncoder.getVoltage());     // leftFront, rightFront, leftRear, rightRear
+    //m_rightFront.resetEncoders(rightFrontAbsEncoder.getVoltage());nope! took it back out!// had taken out but it started working again 7mar2020. // took this one out -- bad hardware encoder!!!
+    m_rightFront.resetEncoders(0);// had taken out but it started working again 7mar2020. // took this one out -- bad hardware encoder!!!
+    m_leftRear.resetEncoders(leftRearAbsEncoder.getVoltage());
+    m_rightRear.resetEncoders(rightRearAbsEncoder.getVoltage());
   }
 
   /**
@@ -425,10 +425,10 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("leftRearAbsEncoder", leftRearAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
     SmartDashboard.putNumber("rightRearAbsEncoder", rightRearAbsEncoder.getVoltage()); // 0.0 to 3.26, 180=1.63V
     if(RobotBase.isReal()){
-      SmartDashboard.putNumber("leftFrontRelEncoder", m_frontLeft.m_turningEncoder.getPosition());
-      SmartDashboard.putNumber("rightFrontRelEncoder", m_frontRight.m_turningEncoder.getPosition());
-      SmartDashboard.putNumber("leftRearRelEncoder", m_rearLeft.m_turningEncoder.getPosition());
-      SmartDashboard.putNumber("rightRearRelEncoder", m_rearRight.m_turningEncoder.getPosition());
+      SmartDashboard.putNumber("leftFrontRelEncoder", m_leftFront.m_turningEncoder.getPosition());
+      SmartDashboard.putNumber("rightFrontRelEncoder", m_rightFront.m_turningEncoder.getPosition());
+      SmartDashboard.putNumber("leftRearRelEncoder", m_leftRear.m_turningEncoder.getPosition());
+      SmartDashboard.putNumber("rightRearRelEncoder", m_rightRear.m_turningEncoder.getPosition());
     }
   }
 

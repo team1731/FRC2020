@@ -38,23 +38,23 @@ public final class Constants {
   public static final class DriveConstants {
 
     //Drive motor CAN IDs
-    public static final int kFrontLeftDriveMotorPort = 1;
-    public static final int kFrontRightDriveMotorPort = 2;
-    public static final int kRearLeftDriveMotorPort = 3;
-    public static final int kRearRightDriveMotorPort = 4;
+    public static final int kLeftFrontDriveMotorPort = 1;
+    public static final int kRightFrontDriveMotorPort = 2;
+    public static final int kLeftRearDriveMotorPort = 3;
+    public static final int kRightRearDriveMotorPort = 4;
 
     //Turn motor CAN IDs
-    public static final int kFrontLeftTurningMotorPort = 11;
-    public static final int kFrontRightTurningMotorPort = 12;
-    public static final int kRearLeftTurningMotorPort = 13;
-    public static final int kRearRightTurningMotorPort = 14;
+    public static final int kLeftFrontTurningMotorPort = 11;
+    public static final int kRightFrontTurningMotorPort = 12;
+    public static final int kLeftRearTurningMotorPort = 13;
+    public static final int kRightRearTurningMotorPort = 14;
 
     public static final double kTrackWidth = 0.7112;
     //Distance between centers of right and left wheels on robot
     public static final double kWheelBase = 0.7;
     //Distance between front and back wheels on robot
     public static final SwerveDriveKinematics kDriveKinematics =
-        new SwerveDriveKinematics(                                  // frontLeft, frontRight, rearLeft, rearRight
+        new SwerveDriveKinematics(                                  // leftFront, rightFront, leftRear, rightRear
           new Translation2d(kWheelBase / 2, kTrackWidth / 2),
           new Translation2d(kWheelBase / 2, -kTrackWidth / 2),
           new Translation2d(-kWheelBase / 2, kTrackWidth / 2),
@@ -128,7 +128,7 @@ public final class Constants {
                                   // M203 --> wait 0 seconds, run M2 with 3-sec delay after 1st shooting
                                   // F12 --> wait 2 seconds, run "forward" auto mode (robot will drive forward a pre-programmed distance)
 
-    public static final double kMaxSpeedMetersPerSecond = 2; //2
+    public static final double kMaxSpeedMetersPerSecond = 2.5; //2
     public static final double kMaxAccelerationMetersPerSecondSquared = 2; //2
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI*2;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI*2;

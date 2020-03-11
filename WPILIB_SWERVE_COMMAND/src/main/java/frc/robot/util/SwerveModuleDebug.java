@@ -5,6 +5,16 @@ import frc.robot.subsystems.SwerveModule;
 public class SwerveModuleDebug {
     public double time;
 
+    public double drive1DriveValue;
+    public double drive2DriveValue;
+    public double drive3DriveValue;
+    public double drive4DriveValue;
+
+    public double turn1TurnValue;
+    public double turn2TurnValue;
+    public double turn3TurnValue;
+    public double turn4TurnValue;
+    
     public double drive1AppliedOutput;
     public double drive2AppliedOutput;
     public double drive3AppliedOutput;
@@ -39,6 +49,16 @@ public class SwerveModuleDebug {
                        SwerveModule.DebugValues debugValues3, 
                        SwerveModule.DebugValues debugValues4){
       this.time = time;
+      drive1DriveValue = debugValues1.drive;
+      drive2DriveValue = debugValues2.drive;
+      drive3DriveValue = debugValues3.drive;
+      drive4DriveValue = debugValues4.drive;
+
+      turn1TurnValue = debugValues1.turningMotorOutput;
+      turn2TurnValue = debugValues2.turningMotorOutput;
+      turn3TurnValue = debugValues3.turningMotorOutput;
+      turn4TurnValue = debugValues4.turningMotorOutput;
+      
       drive1AppliedOutput = debugValues1.driveAppliedOutput;
       drive1Velocity = debugValues1.driveVelocity;
       turn1AppliedOutput = debugValues1.turnAppliedOutput;

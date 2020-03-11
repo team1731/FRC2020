@@ -71,10 +71,10 @@ public class SwerveModule {
       //m_driveMotor.setSmartCurrentLimit(stallLimit, freeLimit, limitRPM);
       m_drivePIDController = m_driveMotor.getPIDController();
       m_driveEncoder = m_driveMotor.getEncoder();
-      m_drivePIDController.setP(5e-5);
+      m_drivePIDController.setP(1.5e-4); //500 rpm error with 5e-5
       m_drivePIDController.setI(0);
       m_drivePIDController.setD(0);
-      m_drivePIDController.setFF(0.000156);
+      m_drivePIDController.setFF(0.0002); //156);
       m_drivePIDController.setOutputRange(-1, 1);
       m_drivePIDController.setSmartMotionMaxVelocity(2000, smartMotionSlot); //RPM
       m_drivePIDController.setSmartMotionMinOutputVelocity(0, smartMotionSlot);
@@ -231,7 +231,7 @@ public double getDriveEncoderPosition(){
         SmartDashboard.putNumber("driveVelocityOutput-" + id,  drive);
       }
 
-      debugValues.update(m_turningMotor.getAppliedOutput(), m_turningEncoder.getVelocity(), 
+      debugValues.update(drive, turningMotorOutput, m_turningMotor.getAppliedOutput(), m_turningEncoder.getVelocity(), 
       m_driveMotor.getAppliedOutput(), m_driveEncoder.getVelocity());
     }
 
@@ -258,6 +258,8 @@ public double getDriveEncoderPosition(){
   public class DebugValues {
     public int id;
     
+    public double drive;
+    public double turningMotorOutput;
     public double turnAppliedOutput;
     public double turnVelocity;
     public double driveAppliedOutput;
@@ -267,7 +269,9 @@ public double getDriveEncoderPosition(){
       this.id = id;
     }
 
-    public void update(double turnAppliedOutput, double turnVelocity, double driveAppliedOutput, double driveVelocity){
+    public void update(double drive, double turningMotorOutput, double turnAppliedOutput, double turnVelocity, double driveAppliedOutput, double driveVelocity) {
+      this.drive = drive;
+      this.turningMotorOutput = turningMotorOutput;
       this.turnAppliedOutput = turnAppliedOutput;
       this.turnVelocity = turnVelocity;
       this.driveAppliedOutput = driveAppliedOutput;
