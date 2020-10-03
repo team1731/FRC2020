@@ -15,6 +15,8 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import edu.wpi.first.wpilibj.DigitalInput;
 
@@ -85,7 +87,7 @@ public class ShootClimbSubsystem extends SubsystemBase {
 		mTalonShoot2.configNominalOutputForward(0, OpConstants.kTimeoutMs);
 		mTalonShoot2.configNominalOutputReverse(0, OpConstants.kTimeoutMs);
 		mTalonShoot2.configPeakOutputForward(1, OpConstants.kTimeoutMs);
-		mTalonShoot2.configPeakOutputReverse(-1, OpConstants.kTimeoutMs);
+    mTalonShoot2.configPeakOutputReverse(-1, OpConstants.kTimeoutMs);
 
 		/* Config the Velocity closed loop gains in slot0 */
 		mTalonShoot1.config_kF(OpConstants.kPIDLoopIdx, OpConstants.kGains_Velocity.kF, OpConstants.kTimeoutMs);
