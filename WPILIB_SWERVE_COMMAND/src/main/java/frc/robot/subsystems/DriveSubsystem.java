@@ -101,6 +101,8 @@ public class DriveSubsystem extends SubsystemBase {
 
     mCSVWriter1 = new ReflectingCSVWriter<>(AutoSwerveDebug.class);
     mCSVWriter2 = new ReflectingCSVWriter<>(SwerveModuleDebug.class);
+    m_timer.reset();
+    m_timer.start();
   }
 
 
@@ -206,10 +208,10 @@ public class DriveSubsystem extends SubsystemBase {
     double rotationalOutput = rightX;
 
     // DEADBAND
-    if(Math.abs(xSpeedAdjusted) < 0.3){
+    if(Math.abs(xSpeedAdjusted) < 0.1){
       xSpeedAdjusted = 0;
     }
-    if(Math.abs(ySpeedAdjusted) < 0.3){
+    if(Math.abs(ySpeedAdjusted) < 0.1){
       ySpeedAdjusted = 0;
     }
     /*
@@ -217,7 +219,7 @@ public class DriveSubsystem extends SubsystemBase {
       rotAdjusted = 0;
     }
 */
-    if(Math.abs(rotationalOutput) < 0.2){
+    if(Math.abs(rotationalOutput) < 0.1){
       rotationalOutput = 0;
     }
 
@@ -347,8 +349,8 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public void resetEncoders() {
     m_leftFront.resetEncoders(leftFrontAbsEncoder.getVoltage());     // leftFront, rightFront, leftRear, rightRear
-    //m_rightFront.resetEncoders(rightFrontAbsEncoder.getVoltage());nope! took it back out!// had taken out but it started working again 7mar2020. // took this one out -- bad hardware encoder!!!
-    m_rightFront.resetEncoders(0);// had taken out but it started working again 7mar2020. // took this one out -- bad hardware encoder!!!
+    m_rightFront.resetEncoders(rightFrontAbsEncoder.getVoltage());//nope! took it back out!// had taken out but it started working again 7mar2020. // took this one out -- bad hardware encoder!!!
+   // m_rightFront.resetEncoders(0);// had taken out but it started working again 7mar2020. // took this one out -- bad hardware encoder!!!
     m_leftRear.resetEncoders(leftRearAbsEncoder.getVoltage());
     m_rightRear.resetEncoders(rightRearAbsEncoder.getVoltage());
   }

@@ -12,6 +12,7 @@ import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
@@ -67,6 +68,10 @@ public class SwerveModule {
           limitRPM      RPM less than this value will be set to the stallLimit,
                         RPM values greater than limitRPM will scale linearly to freeLimit
       */
+     // m_driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 5);
+     // m_driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 5);
+     // m_driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 10);
+               
       m_driveMotor.setSmartCurrentLimit(40, 40);
       //m_driveMotor.setSmartCurrentLimit(stallLimit, freeLimit, limitRPM);
       m_drivePIDController = m_driveMotor.getPIDController();
@@ -83,6 +88,9 @@ public class SwerveModule {
   
       m_turningMotor = new CANSparkMax(turningMotorChannel, MotorType.kBrushless);
       m_turningMotor.restoreFactoryDefaults();
+   //   m_turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 5);
+    //  m_turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 5);
+    //  m_turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 10);
       m_turningPIDController = m_turningMotor.getPIDController();
       m_turningEncoder = m_turningMotor.getEncoder();
       m_turningMotor.setInverted(true);
@@ -90,12 +98,12 @@ public class SwerveModule {
       m_turningPIDController.setI(0);
       m_turningPIDController.setD(0);
       m_turningPIDController.setIZone(0);
-      m_turningPIDController.setFF(0.000156);
+      m_turningPIDController.setFF(0.0002); //.000156
       m_turningPIDController.setOutputRange(-1, 1);
       m_turningPIDController.setSmartMotionMaxVelocity(5000, smartMotionSlot);
       m_turningPIDController.setSmartMotionMinOutputVelocity(0, smartMotionSlot);
-      m_turningPIDController.setSmartMotionMaxAccel(5000, smartMotionSlot);
-      m_turningPIDController.setSmartMotionAllowedClosedLoopError(0, smartMotionSlot); 
+      m_turningPIDController.setSmartMotionMaxAccel(50000, smartMotionSlot);
+      m_turningPIDController.setSmartMotionAllowedClosedLoopError(0.1, smartMotionSlot); 
     }
     else{
       m_driveMotor = null;
@@ -169,7 +177,7 @@ public double getDriveEncoderPosition(){
        velocity = (m_driveEncoder.getVelocity() * Math.PI * 3.0) / (39.37 * 60.0 * 5.5);
        azimuth = -m_turningEncoder.getPosition();
     }
-    double azimuthPercent = Math.IEEEremainder(azimuth, kTICKS)/16.0;
+    double azimuthPercent = Math.IEEEremainder(azimuth, kTICKS)/kTICKS;
 
     if(RobotBase.isReal()){
       //SmartDashboard.putNumber("Module"+id+" Drive Encoder Tick", m_driveEncoder.getPosition());

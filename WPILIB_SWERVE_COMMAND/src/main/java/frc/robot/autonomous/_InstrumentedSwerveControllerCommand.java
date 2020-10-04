@@ -122,6 +122,7 @@ public class _InstrumentedSwerveControllerCommand extends CommandBase {
 
     var desiredState = m_trajectory.sample(curTime);
     var desiredPose = desiredState.poseMeters;
+  
 
     Pose2d poseError = desiredPose.relativeTo(m_pose.get());
 

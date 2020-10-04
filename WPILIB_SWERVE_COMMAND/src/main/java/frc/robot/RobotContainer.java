@@ -94,20 +94,20 @@ public class RobotContainer {
         new RunCommand(() -> m_robotDrive.drive(
             // Get the x speed. We are inverting this because Xbox controllers return
             // negative values when we push forward.
-            -m_driverController.getY(Hand.kLeft) * DriveConstants.kMaxSpeedMetersPerSecond,
+            -m_driverController.getY(Hand.kLeft) * Math.abs(m_driverController.getY(Hand.kLeft)) * DriveConstants.kMaxSpeedMetersPerSecond,
 
             // Get the y speed or sideways/strafe speed. We are inverting this because
             // we want a positive value when we pull to the left. Xbox controllers
             // return positive values when you pull to the right by default.
-            -m_driverController.getX(Hand.kLeft) * DriveConstants.kMaxSpeedMetersPerSecond,
+            -m_driverController.getX(Hand.kLeft) * Math.abs(m_driverController.getX(Hand.kLeft)) * DriveConstants.kMaxSpeedMetersPerSecond,
 
             // Get the rate of angular rotation. We are inverting this because we want a
             // positive value when we pull to the left (remember, CCW is positive in
             // mathematics). Xbox controllers return positive values when you pull to
             // the right by default.
-            -m_driverController.getX(Hand.kRight),
+            -m_driverController.getX(Hand.kRight) * Math.abs(m_driverController.getX(Hand.kRight)),
 
-            -m_driverController.getY(Hand.kRight), 
+            -m_driverController.getY(Hand.kRight) * Math.abs(m_driverController.getY(Hand.kRight)), 
             
             true),
 

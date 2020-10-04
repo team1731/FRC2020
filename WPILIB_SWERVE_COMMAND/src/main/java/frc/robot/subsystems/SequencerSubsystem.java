@@ -90,6 +90,7 @@ public class SequencerSubsystem extends SubsystemBase {
     mLastHighHasBall = highSensorHasBall();
     mPowerCellCount = 0;
     mTalonSeq.setSelectedSensorPosition(0);
+   
   }
 
   public void enableInterrupts(){

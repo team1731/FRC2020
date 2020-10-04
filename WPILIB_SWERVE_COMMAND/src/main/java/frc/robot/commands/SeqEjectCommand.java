@@ -52,14 +52,14 @@ public class SeqEjectCommand extends CommandBase {
   @Override
   public void execute() {
     m_IntakeSubsystem.eject();
-    m_SeqSubsystem.reverse();
+   // m_SeqSubsystem.reverse();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     //System.out.println("SeqResetCommand end interrupted=" + (interrupted?"true":"false"));
-    m_SeqSubsystem.stop();
+  //  m_SeqSubsystem.stop();
     m_IntakeSubsystem.retract();
     m_IntakeSubsystem.inactive();
     //mTimer.stop();
