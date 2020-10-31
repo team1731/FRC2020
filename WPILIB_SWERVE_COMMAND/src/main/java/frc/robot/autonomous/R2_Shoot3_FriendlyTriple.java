@@ -14,7 +14,7 @@ import frc.robot.subsystems.ShootClimbSubsystem;
 
 public class R2_Shoot3_FriendlyTriple extends _DelayableStrafingAutoMode {
     public R2_Shoot3_FriendlyTriple(DriveSubsystem m_robotDrive, IntakeSubsystem m_intake, 
-        SequencerSubsystem m_sequence, ShootClimbSubsystem m_shootclimb, JevoisVisionSubsystem m_vision) {
+        SequencerSubsystem m_sequence, ShootClimbSubsystem m_shootclimb) {
 
           SequentialCommandGroup commandGroup = new SequentialCommandGroup(
             new WaitCommand(getInitialDelaySeconds()),

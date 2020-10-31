@@ -32,6 +32,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.JevoisVisionSubsystem;
 import frc.robot.subsystems.LedStringSubsystem;
+import frc.robot.subsystems.LimeLightSubsystem;
 import frc.robot.subsystems.SequencerSubsystem;
 import frc.robot.subsystems.ShootClimbSubsystem;
 
@@ -61,7 +62,7 @@ public class RobotContainer {
   private IntakeSubsystem m_intake;
   private ShootClimbSubsystem m_shootclimb;
   private SequencerSubsystem m_sequencer;
-  private JevoisVisionSubsystem m_vision;
+  private LimeLightSubsystem m_vision;
 
   // Controller Triggers
   public enum HanTriggers {
@@ -75,7 +76,7 @@ public class RobotContainer {
    * @throws _NotImplementedProperlyException
    */
   public RobotContainer(LedStringSubsystem m_ledstring, DriveSubsystem m_robotDrive, IntakeSubsystem m_intake, SequencerSubsystem m_sequencer,
-      ShootClimbSubsystem m_shootclimb, JevoisVisionSubsystem m_vision) {
+      ShootClimbSubsystem m_shootclimb, LimeLightSubsystem m_vision) {
     this.m_ledstring = m_ledstring;
     this.m_robotDrive = m_robotDrive;
     this.m_intake = m_intake;
@@ -137,8 +138,8 @@ public class RobotContainer {
     new JoystickButton(m_operatorController, 14).whileActiveContinuous(new SeqEjectCommand(m_intake, m_sequencer), true);
 
     //Map right bumper to rotation lock to power port
-  //  new JoystickButton(m_driverController, XboxConstants.kRBumper)
-  //    .whenActive(new RotToPowerPortCommand(m_vision, m_robotDrive, m_driverController));
+    new JoystickButton(m_driverController, XboxConstants.kRBumper)
+      .whenActive(new RotToPowerPortCommand(m_vision, m_robotDrive, m_driverController));
 
     new JoystickButton(m_operatorController, 8) // convert -1 to +1 TO 0 to 1
       .whileActiveContinuous(() -> m_shootclimb.spinShooter((m_operatorController.getRawAxis(4)+1)/2))
@@ -271,11 +272,11 @@ public class RobotContainer {
     switch(autoModeName){
       case "F1": return new _NamedAutoMode(new F1_Move_Forward(m_robotDrive));
 
-      case "L1": return new _NamedAutoMode(new L1_EnemyPair_Front3(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision));
-      case "M1": return new _NamedAutoMode(new M1_Shoot3_Front3_Shoot3(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision));
-      case "M3": return new _NamedAutoMode(new M3_Shoot3_Buddy5(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision));
-      case "R1": return new _NamedAutoMode(new R1_WholeSide10(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision));
-      case "R2": return new _NamedAutoMode(new R2_Shoot3_FriendlyTriple(m_robotDrive, m_intake, m_sequencer, m_shootclimb, m_vision));
+      case "L1": return new _NamedAutoMode(new L1_EnemyPair_Front3(m_robotDrive, m_intake, m_sequencer, m_shootclimb));
+      case "M1": return new _NamedAutoMode(new M1_Shoot3_Front3_Shoot3(m_robotDrive, m_intake, m_sequencer, m_shootclimb));
+      case "M3": return new _NamedAutoMode(new M3_Shoot3_Buddy5(m_robotDrive, m_intake, m_sequencer, m_shootclimb));
+      case "R1": return new _NamedAutoMode(new R1_WholeSide10(m_robotDrive, m_intake, m_sequencer, m_shootclimb));
+      case "R2": return new _NamedAutoMode(new R2_Shoot3_FriendlyTriple(m_robotDrive, m_intake, m_sequencer, m_shootclimb));
 
       case "T3": return new _NamedAutoMode(new T3_DriveForwardIntakeDriveBackward(m_robotDrive, m_intake, m_sequencer, m_shootclimb));
       case "T4": return new _NamedAutoMode(new T4_ShootDriveForward(m_robotDrive, m_sequencer, m_shootclimb));
