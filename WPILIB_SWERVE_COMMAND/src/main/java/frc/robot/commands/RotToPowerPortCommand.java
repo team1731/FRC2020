@@ -8,15 +8,16 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.XboxConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.JevoisVisionSubsystem;
+import frc.robot.subsystems.LimeLightSubsystem;
 import frc.robot.vision.ShooterAimingParameters;
 
 public class RotToPowerPortCommand extends CommandBase {
 
-    private final JevoisVisionSubsystem m_vision;
+    private final LimeLightSubsystem m_vision;
     private final DriveSubsystem m_drive;
     private final XboxController m_driverController;
 
-    public RotToPowerPortCommand(JevoisVisionSubsystem visionSubsystem, DriveSubsystem driveSubsystem, XboxController driveController){
+    public RotToPowerPortCommand(LimeLightSubsystem visionSubsystem, DriveSubsystem driveSubsystem, XboxController driveController){
         m_vision = visionSubsystem;
         m_drive = driveSubsystem;
         m_driverController = driveController;
@@ -25,18 +26,17 @@ public class RotToPowerPortCommand extends CommandBase {
     @Override
     public void initialize(){
         m_drive.setStickControlledHeading(false);
-        m_vision.StartCameraDataStream();
+        m_vision.enableLED();
     }
 
     @Override
     public void execute(){
-        
-        Optional<ShooterAimingParameters> aimParams = m_vision.getAimingParameters();
-
-        if(!aimParams.isEmpty() && aimParams != null){
+        if(m_vision.hasTarget()){
             SmartDashboard.putBoolean("Vis_HasTarget", true);
-            SmartDashboard.putNumber("Vis_TargetAngle", m_drive.getHeading()+aimParams.get().getRobotToGoal().getDegrees());
-            m_drive.setHeadingControllerGoal(m_drive.getHeading()+aimParams.get().getRobotToGoal().getDegrees());
+            
+            double targetAngle = m_drive.getHeading() + m_vision.getLastTarget().getX();
+            SmartDashboard.putNumber("Vis_TargetAngle", targetAngle);
+            m_drive.setHeadingControllerGoal(targetAngle);
         } else {
             SmartDashboard.putBoolean("Vis_HasTarget", false);
         }
@@ -45,7 +45,7 @@ public class RotToPowerPortCommand extends CommandBase {
     @Override
     public void end(boolean interrupted){
         m_drive.setStickControlledHeading(true);
-        m_vision.StopCameraDataStream();
+        m_vision.disableLED();
         SmartDashboard.putBoolean("Vis_HasTarget", false);
     }
 
