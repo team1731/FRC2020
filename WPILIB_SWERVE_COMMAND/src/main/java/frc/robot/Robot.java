@@ -21,6 +21,7 @@ import frc.robot.Constants.OpConstants.LedOption;
 import frc.robot.autonomous._NamedAutoMode;
 import frc.robot.subsystems.ColorWheelSubsystem;
 import frc.robot.subsystems.LedStringSubsystem;
+import frc.robot.subsystems.LimeLightSubsystem;
 import frc.robot.subsystems.SequencerSubsystem;
 import frc.robot.subsystems.ShootClimbSubsystem;
 
@@ -38,7 +39,7 @@ public class Robot extends TimedRobot {
 
   // The robot's subsystems
   public DriveSubsystem m_robotDrive;
-  public JevoisVisionSubsystem m_vision;
+  public LimeLightSubsystem m_vision;
   public IntakeSubsystem m_intake;
   public SequencerSubsystem m_sequencer;
   public ShootClimbSubsystem m_shootclimb;
@@ -69,7 +70,7 @@ public class Robot extends TimedRobot {
     
     m_ledstring = new LedStringSubsystem();
     m_robotDrive = new DriveSubsystem();
-    m_vision = null; //new JevoisVisionSubsystem(m_robotDrive);
+    m_vision = new LimeLightSubsystem();
     m_intake = new IntakeSubsystem(m_ledstring);
     m_sequencer = new SequencerSubsystem(m_ledstring);
     m_shootclimb = new ShootClimbSubsystem(m_ledstring);
@@ -124,10 +125,6 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     m_robotDrive.suspendCSVWriter();
-    if(m_vision != null){
-      m_vision.AttemptConnections(true);
-      m_vision.StopCameraDataStream();
-    }
   }
 
   @Override
@@ -153,11 +150,6 @@ public class Robot extends TimedRobot {
 
     m_robotDrive.resumeCSVWriter();
     m_sequencer.setPowerCellCount((int) SmartDashboard.getNumber("INIT CELL COUNT", 3));
-
-    if(m_vision != null){
-      m_vision.AttemptConnections(false);
-      m_vision.StartCameraDataStream();
-    }
 
     if (RobotBase.isReal()) {
       autoCode = SmartDashboard.getString("AUTO CODE", autoCode);
@@ -201,11 +193,7 @@ public class Robot extends TimedRobot {
     m_robotDrive.resumeCSVWriter();
 
     initSubsystems();
-
-    if(m_vision != null){
-      m_vision.AttemptConnections(false);
-      m_vision.StartCameraDataStream();
-    }
+    
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
